@@ -12,11 +12,8 @@
 #   libcurl, version >= 7.21.1-w64_patched
 #   erlang, version >= 5.7.4
 #
-# To use this Makefile.all:
-#
-#   git clone git://github.com/membase/ns_server.git
-#   ln -s ns_server/Makefile.all Makefile
-#   make
+# To use this Makefile, see the repo manifest:
+#   https://github.com/membase/manifest
 #
 # That will build many sibling directories to ns_server.
 #
