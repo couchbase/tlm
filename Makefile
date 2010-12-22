@@ -71,23 +71,6 @@ test: test-shallow
 
 clean: clean-shallow
 
-status:
-	$(MAKE) COMPONENT_DO="git status" component_do
-
-pull:
-	$(MAKE) COMPONENT_DO="git pull" component_do
-
-fetch:
-	$(MAKE) COMPONENT_DO="git fetch --tags" component_do
-
-describe:
-	$(MAKE) COMPONENT_DO="git describe" component_do
-
-log-head:
-	$(MAKE) COMPONENT_DO="git log --pretty=format:'%h %an %s' \
-                                  --abbrev-commit HEAD^..HEAD" \
-            component_do
-
 # --------------------------------------------------------------
 
 CONFIGURE_FLAGS=
