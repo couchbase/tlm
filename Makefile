@@ -28,8 +28,7 @@ DISTFILE=membase-dev.tar.gz
 
 # --------------------------------------------------------------
 
-all: commit-msg \
-     $(BUILDPREFIX) \
+all: $(BUILDPREFIX) \
      $(BUILDPREFIX)/bin \
      $(BUILDPREFIX)/lib \
      $(BUILDPREFIX)/bin/memcached${EXE} \
@@ -135,7 +134,6 @@ CLEANFILES=bucket_engine \
            moxi \
            vbucketmigrator \
            $(BUILDPREFIX) $(DISTPREFIX) $(DISTFILE) \
-           commit-msg \
            grommix
 
 clean-deep:
@@ -150,10 +148,6 @@ clean-shallow:
         fi
 	$(MAKE) COMPONENT_DO="$(MAKE) distclean || $(MAKE) clean || true" component_do
 	rm -rf *.stamp
-
-commit-msg:
-	curl http://review.membase.org/tools/hooks/commit-msg > commit-msg
-	chmod +x commit-msg
 
 %.stamp: %.stamp_test
 	-@echo $@
@@ -358,7 +352,7 @@ $(BUILDPREFIX)/bin/moxi${EXE}: moxi.stamp \
 $(BUILDPREFIX)/lib/ns_server/ebin: ns_server.stamp
 	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
          COMPONENT=ns_server \
-         ns_server/.git/hooks/commit-msg dev-symlink
+         dev-symlink
 	(cd ns_server && $(MAKE))
 
 $(BUILDPREFIX)/bin/vbucketmigrator${EXE}: vbucketmigrator.stamp \
