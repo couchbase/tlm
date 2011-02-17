@@ -371,10 +371,10 @@ $(BUILDPREFIX)/bin/vbucketmigrator${EXE}: vbucketmigrator.stamp \
 # --------------------------------------------------------------
 
 dev-symlink:
-	mkdir -p ns_server/bin/memcached
-	ln -f -s ../../../memcached/memcached ns_server/bin/memcached/memcached
-	ln -f -s ../../../memcached/.libs/default_engine.so ns_server/bin/memcached/default_engine.so
-	ln -f -s ../../../memcached/.libs/stdin_term_handler.so ns_server/bin/memcached/stdin_term_handler.so
+	mkdir -p ns_server/bin ns_server/lib/memcached
+	ln -f -s ../../memcached/memcached ns_server/bin/memcached
+	ln -f -s ../../../memcached/.libs/default_engine.so ns_server/lib/memcached/default_engine.so
+	ln -f -s ../../../memcached/.libs/stdin_term_handler.so ns_server/lib/memcached/stdin_term_handler.so
 	mkdir -p ns_server/bin/bucket_engine
 	ln -f -s ../../../bucket_engine/.libs/bucket_engine.so ns_server/bin/bucket_engine/bucket_engine.so
 	mkdir -p ns_server/bin/ep_engine
