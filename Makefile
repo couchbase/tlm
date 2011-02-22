@@ -72,6 +72,7 @@ clean: clean-shallow
 
 # --------------------------------------------------------------
 
+LIBRARY_OPTIONS=--disable-static --enable-shared
 CONFIGURE_FLAGS=
 BUCKET_ENGINE_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
 EP_ENGINE_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
@@ -84,7 +85,8 @@ MOXI_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
 VBUCKETMIGRATOR_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
 
 win32:
-	$(MAKE) EXE=.exe BUILDPREFIX=$(BUILDPREFIX)32
+	$(MAKE) EXE=.exe BUILDPREFIX=$(BUILDPREFIX)32 \
+                LIBRARY_OPTIONS="--enable-static --disable-shared"
 
 win64:
 	$(MAKE) EXE=.exe BUILDPREFIX=$(BUILDPREFIX)64 \
@@ -92,7 +94,9 @@ win64:
                          CXX=x86_64-w64-mingw32-g++ \
                          CONFIGURE_FLAGS="--host=x86_64-w64-mingw32 \
                                           --build=i686-pc-mingw32" \
+                         LIBRARY_OPTIONS="--enable-static --disable-shared" \
                          MARCH=
+
 
 solaris:
 	$(MAKE) BUILDPREFIX=$(BUILDPREFIX)64 \
@@ -229,9 +233,8 @@ libmemcached/configure: libmemcached/configure.ac
 libmemcached/Makefile: libmemcached/configure $(BUILDPREFIX)/bin/memcached${EXE}
 	(cd libmemcached && ./configure --prefix=$(BUILDPREFIX) \
                                     --enable-dependency-tracking \
-                                    --disable-shared \
+                                    $(LIBRARY_OPTIONS) \
                                     --disable-dtrace \
-                                    --enable-static \
                                     --without-docs \
                                     --with-debug \
                                     --with-memcached=$(BUILDPREFIX)/bin/memcached${EXE} \
@@ -280,8 +283,7 @@ $(BUILDPREFIX)/include/libconflate: libconflate.stamp
 	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
          COMPONENT=libconflate \
          COMPONENT_OUT=libconflate.la \
-         COMPONENT_CONFIGURE_FLAGS="--disable-shared \
-                                    --enable-static \
+         COMPONENT_CONFIGURE_FLAGS="$(LIBRARY_OPTIONS) \
                                     --without-check \
                                     --with-debug \
                                     $(LIBCONFLATE_CONFIGURE_FLAGS)" \
@@ -296,8 +298,7 @@ $(BUILDPREFIX)/include/libvbucket: libvbucket.stamp \
 	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
          COMPONENT=libvbucket \
          COMPONENT_OUT=libvbucket.la \
-         COMPONENT_CONFIGURE_FLAGS="--disable-shared \
-                                    --enable-static \
+         COMPONENT_CONFIGURE_FLAGS="$(LIBRARY_OPTIONS) \
                                     --without-check \
                                     --without-docs \
                                     --with-debug \
