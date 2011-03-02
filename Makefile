@@ -1,399 +1,197 @@
-#
-# Copyright (C) 2010 Trond Norbye
-# Copyright (C) 2010 Membase, Inc.
-# All rights reserved.
-#
-# Use and distribution licensed under the BSD license.  See
-# the COPYING file in this directory for full text.
-#
-# Dependencies:
-#
-#   libevent, version >= 2.0.7-rc
-#   libcurl, version >= 7.21.1-w64_patched
-#   erlang, version >= 5.7.4
-#
-# To use this Makefile, see the repo manifest:
-#   https://github.com/membase/manifest
-#
-# That will build many sibling directories to ns_server.
-#
-# To run:
-#
-#   ./ns_server/start_shell.sh
-#
+# -*- Mode: makefile -*-
+TOPDIR := $(shell pwd)
+PREFIX := $(TOPDIR)/install
 
-BUILDPREFIX=/tmp/membase-build
-DISTPREFIX=/tmp/membase-dist
-DISTFILE=membase-dev.tar.gz
+COMPONENTS := bucket_engine \
+	ep-engine \
+	libconflate \
+	libvbucket \
+	membase-cli \
+	memcached \
+	memcachetest \
+	moxi \
+	ns_server \
+	vbucketmigrator
 
-# --------------------------------------------------------------
+ifdef FOR_WINDOWS
+COMPONENTS := $(filter-out memcachetest, $(COMPONENTS))
+endif
 
-all: $(BUILDPREFIX) \
-     $(BUILDPREFIX)/bin \
-     $(BUILDPREFIX)/lib \
-     $(BUILDPREFIX)/bin/memcached${EXE} \
-     $(BUILDPREFIX)/include/libconflate \
-     $(BUILDPREFIX)/include/libmemcached \
-     $(BUILDPREFIX)/include/libvbucket \
-     $(BUILDPREFIX)/bin/membase \
-     $(BUILDPREFIX)/bin/memcachetest${EXE} \
-     $(BUILDPREFIX)/bin/moxi${EXE} \
-     $(BUILDPREFIX)/bin/vbucketmigrator${EXE} \
-     $(BUILDPREFIX)/lib/bucket_engine.so \
-     $(BUILDPREFIX)/lib/ep.so \
-     $(BUILDPREFIX)/lib/ns_server/ebin
-	@echo "Everything successfully built"
+BUILD_COMPONENTS := $(filter-out ns_server, $(COMPONENTS)) libmemcached
 
-dist: all
-	rm -rf $(DISTPREFIX)
-	cp -pr $(BUILDPREFIX) $(DISTPREFIX)
-	rm -rf $(DISTPREFIX)/lib/*.la \
-               $(DISTPREFIX)/lib/*.a \
-               $(DISTPREFIX)/include \
-               $(DISTPREFIX)/share \
-               $(DISTPREFIX)/bin/engine_testapp* \
-               $(DISTPREFIX)/lib/basic_engine_testsuite* \
-               $(DISTPREFIX)/lib/example_protocol* \
-               $(DISTPREFIX)/lib/libconflate* \
-               $(DISTPREFIX)/lib/libmemcached* \
-               $(DISTPREFIX)/lib/libvbucket* \
-               $(DISTPREFIX)/lib/pkgconfig \
-               $(DISTPREFIX)/lib/bucket_engine.*.so \
-               $(DISTPREFIX)/lib/ep.*.so \
-               $(DISTPREFIX)/lib/ep_testsuite* \
-               $(DISTPREFIX)/lib/libhashkit* \
-               $(DISTPREFIX)/lib/timing_tests.*.so
-	(cd $(DISTPREFIX); tar cf - bin lib var) | gzip -9 > $(DISTFILE)
-	rm -rf $(DISTPREFIX)
+MAKE_INSTALL_TARGETS := $(patsubst %, make-install-%, $(BUILD_COMPONENTS))
+MAKEFILE_TARGETS := $(patsubst %, %/Makefile, $(BUILD_COMPONENTS))
 
-test: test-shallow
+OPTIONS := --prefix=$(PREFIX)
+AUTOGEN := ./config/autorun.sh
+ifdef PREFER_STATIC
+LIBRARY_OPTIONS := --enable-static --disable-shared
+else
+LIBRARY_OPTIONS := --disable-static --enable-shared
+endif
 
-clean: clean-shallow
+# this thing can override settings and add components
+ifneq "$(realpath .repo/Makefile.extra)" ""
+include .repo/Makefile.extra
+endif
 
-# --------------------------------------------------------------
+all: do-install-all dev-symlink build-ns_server
 
-LIBRARY_OPTIONS=--disable-static --enable-shared
-CONFIGURE_FLAGS=
-BUCKET_ENGINE_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
-EP_ENGINE_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
-LIBCONFLATE_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
-LIBMEMCACHED_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
-LIBVBUCKET_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
-MEMCACHED_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
-MEMCACHETEST_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
-MOXI_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
-VBUCKETMIGRATOR_CONFIGURE_FLAGS=$(CONFIGURE_FLAGS)
+do-install-all: $(MAKE_INSTALL_TARGETS)
 
-win32:
-	$(MAKE) EXE=.exe BUILDPREFIX=$(BUILDPREFIX)32 \
-                LIBRARY_OPTIONS="--enable-static --disable-shared"
+build-ns_server:
+	$(MAKE) -C ns_server
 
-win64:
-	$(MAKE) EXE=.exe BUILDPREFIX=$(BUILDPREFIX)64 \
-                         CC="x86_64-w64-mingw32-gcc -std=gnu99" \
-                         CXX=x86_64-w64-mingw32-g++ \
-                         CONFIGURE_FLAGS="--host=x86_64-w64-mingw32 \
-                                          --build=i686-pc-mingw32" \
-                         LIBRARY_OPTIONS="--enable-static --disable-shared" \
-                         MARCH=
+clean:
+	for i in $(COMPONENTS); do (cd $$i && make clean || true); done
+	rm -rf install tmp
+
+distclean:
+	for i in $(COMPONENTS); do (cd $$i && make distclean || true); done
+	rm -rf install tmp
+
+clean-xfd: $(patsubst %, do-clean-xfd-%, $(COMPONENTS))
+	rm -rf libmemcached install tmp
+
+do-clean-xfd-%:
+	(cd $* && git clean -Xfd)
+
+$(MAKEFILE_TARGETS): %/Makefile: | deps-for-%
+	cd $* && $(AUTOGEN_PREFIX) $(AUTOGEN) && $(CONFIGURE_PREFIX) ./configure $(OPTIONS) $($*_OPTIONS) $($*_EXTRA_OPTIONS)
+
+ifndef FUNKY_INSTALL
+
+TSTAMP_TARGETS := $(patsubst %, tmp/installed-%, $(BUILD_COMPONENTS))
+
+$(patsubst %, reinstall-%, $(BUILD_COMPONENTS)): reinstall-%: %/Makefile | deps-for-%
+	$(MAKE) -C $* install
+	mkdir -p tmp && touch tmp/installed-$*
+
+reinstall:
+	rm -rf $(TSTAMP_TARGETS)
+	$(MAKE) all
+
+$(TSTAMP_TARGETS): tmp/installed-%: %/Makefile | deps-for-%
+	$(MAKE) -C $* install
+	mkdir -p tmp && touch $@
+
+$(MAKE_INSTALL_TARGETS): make-install-%: tmp/installed-%
+
+else
+
+# TODO: this doesn't handle symlinks, disabled for now
+
+$(MAKE_INSTALL_TARGETS): make-install-%: %/Makefile deps-for-%
+	(rm -rf tmp/$*; mkdir -p tmp/$*)
+	$(MAKE) -C $* install DESTDIR=$(TOPDIR)/tmp/$*
+	cd $(TOPDIR)/tmp/$*; find . -type f -print | xargs -n1 -- bash -c 'diff -q "./$$1" "/$$1" >/dev/null 2>&1 || (mkdir -p `dirname "/$$1"` && cp -afl "./$$1" "/$$1")' --
+
+endif
 
 
-solaris:
-	$(MAKE) BUILDPREFIX=$(BUILDPREFIX)64 \
-            CONFIGURE_FLAGS="--with-debug" \
-            EP_ENGINE_CONFIGURE_FLAGS="--with-debug \
-                                       --enable-system-libsqlite3 \
-                                       CPPFLAGS=-I/opt/boost/cc/include" \
-            MEMCACHED_CONFIGURE_FLAGS=--enable-64bit \
-            BUCKET_ENGINE_CONFIGURE_FLAGS="CFLAGS=-m64 LDFLAGS=-m64"
+$(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 
-# --------------------------------------------------------------
-
-test-shallow: all
-	@(echo ---- bucket_engine; cd bucket_engine; $(MAKE) test)
-	@(echo ---- ep-engine; cd ep-engine; $(MAKE) test)
-	@(echo ---- libvbucket; cd libvbucket; $(MAKE) test)
-	@(echo ---- ns_server; cd ns_server; $(MAKE) test)
-	@(echo ---- vbucketmigrator; cd vbucketmigrator; $(MAKE) test)
-
-test-deep: test-shallow
-	@(echo ---- moxi; cd moxi; $(MAKE) test)
-
-test-MISSING:
-	@(echo ---- membase-cli; cd membase-cli; $(MAKE) test)
-	@(echo ---- memcachetest; cd memcachetest; $(MAKE) test)
-
-test-FAILING:
-	@(echo ---- libconflate; cd libconflate; $(MAKE) test)
-	@(echo ---- memcached; cd memcached; $(MAKE) test)
-
-CLEANFILES=bucket_engine \
-           ep-engine \
-           libconflate \
-           libmemcached \
-           libvbucket \
-           membase-cli \
-           memcached \
-           memcachetest \
-           moxi \
-           vbucketmigrator \
-           $(BUILDPREFIX) $(DISTPREFIX) $(DISTFILE) \
-           grommix
-
-clean-deep:
-	rm -rf $(CLEANFILES) *.stamp
-	(cd ns_server && $(MAKE) clean)
-
-clean-shallow:
-	@if test -n "${EXE}"; then \
-           (cd bucket_engine && $(MAKE) -f win32/Makefile.mingw clean) || true; \
-           (cd ep-engine && $(MAKE) -f win32/Makefile.mingw clean) || true; \
-           (cd memcached && $(MAKE) -f win32/Makefile.mingw clean) || true; \
-        fi
-	$(MAKE) COMPONENT_DO="$(MAKE) distclean || $(MAKE) clean || true" component_do
-	rm -rf *.stamp
-
-%.stamp: %.stamp_test
-	-@echo $@
-
-%.stamp_test:
-	$(MAKE) COMPONENT=$* $@
-
-$(BUILDPREFIX) $(BUILDPREFIX)/lib $(BUILDPREFIX)/bin:
-	-@mkdir $@
-
-# --------------------------------------------------------------
-
-COMPONENT=unknown
-COMPONENT_GIT=$(COMPONENT)
-COMPONENT_GIT_CHECKOUT=master
-COMPONENT_GERRIT=$(COMPONENT)
-COMPONENT_AUTOGEN=./config/autorun.sh
-
-$(COMPONENT)/configure: $(COMPONENT)/configure.ac
-	(cd $(COMPONENT) && $(COMPONENT_AUTOGEN))
-
-$(COMPONENT)/Makefile: $(COMPONENT)/configure
-	@if test -n "${EXE}" && test -f $(COMPONENT)/win32/Makefile.mingw; then \
-           touch $(COMPONENT)/Makefile; \
-        else \
-           (cd $(COMPONENT) && ./configure --prefix=$(BUILDPREFIX) \
-                                           --enable-dependency-tracking \
-                                           $(COMPONENT_CONFIGURE_FLAGS)); \
-        fi
-
-$(COMPONENT)/$(COMPONENT_OUT): $(COMPONENT)/Makefile $(COMPONENT).stamp
-	@if test -n "${EXE}" && test -f $(COMPONENT)/win32/Makefile.mingw; then \
-           (cd $(COMPONENT) && \
-            $(MAKE) -f win32/Makefile.mingw LOCAL=$(BUILDPREFIX) all); \
-            touch $(COMPONENT)/$(COMPONENT_OUT); \
-        else \
-           (cd $(COMPONENT) && $(MAKE) all); \
-        fi
-
-$(COMPONENT).stamp_test:
-	@if test -d $(COMPONENT)/.git; then \
-        if test -f $(COMPONENT).stamp; then \
-                if ! (cd $(COMPONENT) && (git describe | diff ../$(COMPONENT).stamp -)); then \
-                   (cd $(COMPONENT) && (git describe > ../$(COMPONENT).stamp)); \
-                   fi; \
-           else \
-                (cd $(COMPONENT) && (git describe > ../$(COMPONENT).stamp)); \
-           fi; \
-        fi
-
-component_do:
-	@(echo ---- bucket_engine; cd bucket_engine; $(COMPONENT_DO))
-	@(echo ---- ep-engine; cd ep-engine; $(COMPONENT_DO))
-	@(echo ---- libconflate; cd libconflate; $(COMPONENT_DO))
-	@(echo ---- libvbucket; cd libvbucket; $(COMPONENT_DO))
-	@(echo ---- membase-cli; cd membase-cli; $(COMPONENT_DO))
-	@(echo ---- memcached; cd memcached; $(COMPONENT_DO))
-	@(echo ---- memcachetest; cd memcachetest; $(COMPONENT_DO))
-	@(echo ---- moxi; cd moxi; $(COMPONENT_DO))
-	@(echo ---- ns_server; cd ns_server; $(COMPONENT_DO))
-	@(echo ---- vbucketmigrator; cd vbucketmigrator; $(COMPONENT_DO))
-
-# --------------------------------------------------------------
+libmemcached_OPTIONS := $(LIBRARY_OPTIONS) --disable-dtrace --without-docs
+ifndef CROSS_COMPILING
+libmemcached_OPTIONS += --with-memcached=$(PREFIX)/bin/memcached
+endif
 
 LIBMEMCACHED=libmemcached-0.41_trond-norbye_mingw32-revno895
 
-deps:
+deps/$(LIBMEMCACHED).tar.gz:
 	mkdir -p deps
-
-deps/$(LIBMEMCACHED).tar.gz: deps
 	wget --no-check-certificate -O $@ \
-        https://github.com/downloads/membase/tlm/$(LIBMEMCACHED).tar.gz
+		https://github.com/downloads/membase/tlm/$(LIBMEMCACHED).tar.gz
 
 libmemcached/configure.ac: deps/$(LIBMEMCACHED).tar.gz
 	rm -rf libmemcached
-	tar xzf deps/$(LIBMEMCACHED).tar.gz
+	tar xzf deps/$(LIBMEMCACHED).tar.gz || (rm -rf $(LIBMEMCACHED) && false)
 	mv $(LIBMEMCACHED) libmemcached
+	((cd libmemcached && patch -p1) <tlm/deps/libmemcached-0001-test-fix.diff) || (rm -rf libmemcached/configure.ac && false)
+	touch libmemcached/configure.ac
 
-libmemcached/configure: libmemcached/configure.ac
-	(cd libmemcached && ./config/autorun.sh)
+libmemcached/Makefile: libmemcached/configure.ac | make-install-memcached
 
-libmemcached/Makefile: libmemcached/configure $(BUILDPREFIX)/bin/memcached${EXE}
-	(cd libmemcached && ./configure --prefix=$(BUILDPREFIX) \
-                                    --enable-dependency-tracking \
-                                    $(LIBRARY_OPTIONS) \
-                                    --disable-dtrace \
-                                    --without-docs \
-                                    --with-debug \
-                                    --with-memcached=$(BUILDPREFIX)/bin/memcached${EXE} \
-                                    $(LIBMEMCACHED_CONFIGURE_FLAGS))
+# tar.gz _should_ have ./configure inside, but it doesn't
+# make-install-libmemcached: AUTOGEN := true
 
-libmemcached/libmemcached/libmemcached.la: libmemcached/Makefile
-	(cd libmemcached && $(MAKE) all)
+libvbucket_OPTIONS :=  $(LIBRARY_OPTIONS) --without-docs --with-debug --disable-shared
+deps-for-libvbucket: make-install-libmemcached
 
-# --------------------------------------------------------------
+deps-for-memcachetest: make-install-libmemcached make-install-libvbucket
 
-$(BUILDPREFIX)/lib/bucket_engine.so: bucket_engine.stamp \
-                                     $(BUILDPREFIX)/bin/memcached${EXE}
-	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
-         COMPONENT=bucket_engine \
-         COMPONENT_OUT=bucket_engine.la \
-         COMPONENT_CONFIGURE_FLAGS="--with-memcached=../memcached \
-                                    $(BUCKET_ENGINE_CONFIGURE_FLAGS)" \
-         bucket_engine/bucket_engine.la
-	@if test -n "${EXE}"; then \
-           cp bucket_engine/.libs/bucket_engine.so $(BUILDPREFIX)/lib; \
-           cp bucket_engine/.libs/bucket_engine.so $(BUILDPREFIX)/lib/bucket_engine.so.0; \
-           cp bucket_engine/.libs/bucket_engine.so $(BUILDPREFIX)/lib/bucket_engine.so.0.0.0; \
-        else \
-            (cd bucket_engine && $(MAKE) install); \
-        fi
+ep-engine_OPTIONS := --with-memcached=../memcached --with-debug
+deps-for-ep-engine: make-install-memcached
 
-$(BUILDPREFIX)/lib/ep.so: ep-engine.stamp \
-                          $(BUILDPREFIX)/bin/memcached${EXE}
-	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
-         COMPONENT=ep-engine \
-         COMPONENT_OUT=ep.la \
-         COMPONENT_CONFIGURE_FLAGS="--with-memcached=../memcached \
-                                    --with-debug \
-                                    $(EP_ENGINE_CONFIGURE_FLAGS)" \
-         COMPONENT_GERRIT=membase \
-         ep-engine/ep.la
-	@if test -n "${EXE}"; then \
-           cp ep-engine/.libs/ep.so $(BUILDPREFIX)/lib; \
-           cp ep-engine/.libs/ep.so $(BUILDPREFIX)/lib/ep.so.0; \
-           cp ep-engine/.libs/ep.so $(BUILDPREFIX)/lib/ep.so.0.0.0; \
-        else \
-           (cd ep-engine && $(MAKE) install); \
-        fi
+bucket_engine_OPTIONS := --with-memcached=../memcached --with-debug
+deps-for-bucket_engine: make-install-memcached
 
-$(BUILDPREFIX)/include/libconflate: libconflate.stamp
-	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
-         COMPONENT=libconflate \
-         COMPONENT_OUT=libconflate.la \
-         COMPONENT_CONFIGURE_FLAGS="$(LIBRARY_OPTIONS) \
-                                    --without-check \
-                                    --with-debug \
-                                    $(LIBCONFLATE_CONFIGURE_FLAGS)" \
-         libconflate/libconflate.la
-	(cd libconflate && $(MAKE) install)
+moxi_OPTIONS := --enable-moxi-libvbucket \
+	--enable-moxi-libmemcached \
+	--without-check
+ifndef CROSS_COMPILING
+moxi_OPTIONS += --with-memcached=$(PREFIX)/bin/memcached
+endif
+deps-for-moxi: make-install-libconflate make-install-libvbucket make-install-libmemcached make-install-memcached
 
-$(BUILDPREFIX)/include/libmemcached: libmemcached/libmemcached/libmemcached.la
-	(cd libmemcached && $(MAKE) install)
+libconflate_OPTIONS := $(LIBRARY_OPTIONS) --without-check --with-debug
 
-$(BUILDPREFIX)/include/libvbucket: libvbucket.stamp \
-                                   $(BUILDPREFIX)/include/libmemcached
-	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
-         COMPONENT=libvbucket \
-         COMPONENT_OUT=libvbucket.la \
-         COMPONENT_CONFIGURE_FLAGS="$(LIBRARY_OPTIONS) \
-                                    --without-check \
-                                    --without-docs \
-                                    --with-debug \
-                                    $(LIBVBUCKET_CONFIGURE_FLAGS)" \
-         libvbucket/libvbucket.la
-	(cd libvbucket && $(MAKE) install)
+vbucketmigrator_OPTIONS := --without-sasl --with-isasl
 
-$(BUILDPREFIX)/bin/membase: membase-cli.stamp
-	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
-         COMPONENT=membase-cli \
-         membase-cli/Makefile
-	rm -f $(BUILDPREFIX)/bin/membase
-	(cd membase-cli && $(MAKE) install)
-
-$(BUILDPREFIX)/bin/memcached$(EXE): memcached.stamp
-	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
-         COMPONENT=memcached \
-         COMPONENT_OUT=memcached$(EXE) \
-         COMPONENT_GIT_CHECKOUT=engine \
-         COMPONENT_CONFIGURE_FLAGS="--enable-isasl \
-                                    $(MEMCACHED_CONFIGURE_FLAGS)" \
-         memcached/memcached$(EXE)
-	@if test -n "${EXE}"; then \
-           cp memcached/memcached$(EXE) $(BUILDPREFIX)/bin; \
-        else \
-           (cd memcached && $(MAKE) install); \
-        fi
-
-$(BUILDPREFIX)/bin/memcachetest$(EXE): memcachetest.stamp
-	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
-         COMPONENT=memcachetest \
-         COMPONENT_OUT=memcachetest${EXE} \
-         COMPONENT_CONFIGURE_FLAGS="--with-memcached=$(BUILDPREFIX)/bin/memcached$(EXE) $(MEMCACHETEST_CONFIGURE_FLAGS)" \
-         memcachetest/memcachetest$(EXE)
-	(cd memcachetest && $(MAKE) install)
-
-$(BUILDPREFIX)/bin/moxi${EXE}: moxi.stamp \
-                               $(BUILDPREFIX)/include/libvbucket \
-                               $(BUILDPREFIX)/include/libmemcached \
-                               $(BUILDPREFIX)/include/libconflate
-	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
-         COMPONENT=moxi \
-         COMPONENT_OUT=moxi${EXE} \
-         COMPONENT_CONFIGURE_FLAGS="--enable-moxi-libvbucket \
-                                    --enable-moxi-libmemcached \
-                                    --without-check \
-                                    --with-memcached=$(BUILDPREFIX)/bin/memcached$(EXE) \
-                                    $(MOXI_CONFIGURE_FLAGS)" \
-         moxi/moxi${EXE}
-	(cd moxi && $(MAKE) install)
-
-$(BUILDPREFIX)/lib/ns_server/ebin: ns_server.stamp
-	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
-         COMPONENT=ns_server \
-         dev-symlink
-	(cd ns_server && $(MAKE))
-
-$(BUILDPREFIX)/bin/vbucketmigrator${EXE}: vbucketmigrator.stamp \
-                                          $(BUILDPREFIX)/bin/memcached${EXE}
-	$(MAKE) EXE=$(EXE) BUILDPREFIX=$(BUILDPREFIX) GITBASE=$(GITBASE) \
-         COMPONENT=vbucketmigrator \
-         COMPONENT_OUT=vbucketmigrator${EXE} \
-         COMPONENT_CONFIGURE_FLAGS="--without-docs \
-                                    --without-sasl \
-                                    --with-isasl \
-                                    --with-debug \
-                                    $(VBUCKETMIGRATOR_CONFIGURE_FLAGS)" \
-         vbucketmigrator/vbucketmigrator$(EXE)
-	(cd vbucketmigrator && $(MAKE) install)
-
-# --------------------------------------------------------------
-
-dev-symlink:
+dev-symlink: $(MAKE_INSTALL_TARGETS)
 	mkdir -p ns_server/bin ns_server/lib/memcached
-	ln -f -s ../../memcached/memcached ns_server/bin/memcached
-	ln -f -s ../../../memcached/.libs/default_engine.so ns_server/lib/memcached/default_engine.so
-	ln -f -s ../../../memcached/.libs/stdin_term_handler.so ns_server/lib/memcached/stdin_term_handler.so
+	ln -f -s $(TOPDIR)/install/bin/memcached ns_server/bin/memcached
+	ln -f -s $(TOPDIR)/install/lib/memcached/default_engine.so ns_server/lib/memcached/default_engine.so
+	ln -f -s $(TOPDIR)/install/lib/memcached/stdin_term_handler.so ns_server/lib/memcached/stdin_term_handler.so
 	mkdir -p ns_server/bin/bucket_engine
-	ln -f -s ../../../bucket_engine/.libs/bucket_engine.so ns_server/bin/bucket_engine/bucket_engine.so
+	ln -f -s $(TOPDIR)/install/lib/bucket_engine.so ns_server/bin/bucket_engine/bucket_engine.so
 	mkdir -p ns_server/bin/ep_engine
-	ln -f -s ../../../ep-engine/.libs/ep.so ns_server/bin/ep_engine/ep.so
+	ln -f -s $(TOPDIR)/install/lib/ep.so ns_server/bin/ep_engine/ep.so
 	mkdir -p ns_server/bin/moxi
-	ln -f -s ../../../moxi/moxi ns_server/bin/moxi/moxi
+	ln -f -s $(TOPDIR)/install/bin/moxi ns_server/bin/moxi/moxi
 	mkdir -p ns_server/bin/vbucketmigrator
-	ln -f -s ../../../vbucketmigrator/vbucketmigrator ns_server/bin/vbucketmigrator/vbucketmigrator
+	ln -f -s $(TOPDIR)/install/bin/vbucketmigrator ns_server/bin/vbucketmigrator/vbucketmigrator
 
-install-symlink:
-	ln -f -s ../../../bin/memcached $(BUILDPREFIX)/lib/ns_server/bin/memcached/memcached
-	ln -f -s ../../../lib/default_engine.so $(BUILDPREFIX)/lib/ns_server/bin/memcached/default_engine.so
-	ln -f -s ../../../lib/stdin_term_handler.so $(BUILDPREFIX)/lib/ns_server/bin/memcached/stdin_term_handler.so
-	ln -f -s ../../../lib/bucket_engine.so $(BUILDPREFIX)/lib/ns_server/bin/bucket_engine/bucket_engine.so
-	ln -f -s ../../../lib/ep.so $(BUILDPREFIX)/lib/ns_server/bin/ep_engine/ep.so
-	ln -f -s ../../../bin/moxi $(BUILDPREFIX)/lib/ns_server/bin/moxi/moxi
-	ln -f -s ../../../bin/vbucketmigrator $(BUILDPREFIX)/lib/ns_server/bin/vbucketmigrator/vbucketmigrator
+WIN32_MAKE_TARGET := do-install-all
+WIN32_HOST := i586-mingw32msvc
 
+win32-cross:
+	$(MAKE) $(WIN32_MAKE_TARGET) FOR_WINDOWS=1 HOST=$(WIN32_HOST) CROSS_COMPILING=1
+
+ifdef FOR_WINDOWS
+
+LIBS_PREFIX=$(HOME)/membase-win32
+OPTIONS += 'CFLAGS=-I$(LIBS_PREFIX)/include' 'LDFLAGS=-L$(LIBS_PREFIX)/lib'
+LOCALINC := -I$(LIBS_PREFIX)/include
+ifdef NO_USECONDS_T
+LOCALINC := -Duseconds_t=unsigned
+endif
+BAD_FLAGS := 'LOCAL=$(PREFIX)' 'LOCALINC=$(LOCALINC)' 'LIB=-L$(LIBS_PREFIX)/lib'
+
+ifdef HOST
+OPTIONS := --host=$(HOST) $(OPTIONS)
+BAD_FLAGS += CC=$(HOST)-gcc CXX=$(HOST)-g++
+endif
+
+memcached/Makefile:
+	@true
+
+ep-engine/Makefile:
+	@true
+
+bucket_engine/Makefile:
+	@true
+
+make-install-memcached:
+	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) install)
+
+make-install-ep-engine:
+	chmod +x ep-engine/win32/config.sh
+	(cd ep-engine && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) all \
+	 && cp .libs/ep.so "$(PREFIX)/lib" && cp management/sqlite3.exe management/mbdbconvert.exe "$(PREFIX)/bin")
+
+make-install-bucket_engine:
+	(cd bucket_engine && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) all \
+	 && cp .libs/bucket_engine.so "$(PREFIX)/lib")
+
+endif
