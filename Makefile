@@ -218,14 +218,17 @@ component_do:
 
 LIBMEMCACHED=libmemcached-0.41_trond-norbye_mingw32-revno895
 
-libmemcached/configure.ac:
-	@if test -f grommit/$(LIBMEMCACHED).tar.gz; then \
-           rm -rf libmemcached; \
-           tar xzf grommit/$(LIBMEMCACHED).tar.gz; \
-           mv $(LIBMEMCACHED) libmemcached; \
-        else \
-           bzr branch lp:libmemcached libmemcached; \
-        fi
+deps:
+	mkdir -p deps
+
+deps/$(LIBMEMCACHED).tar.gz: deps
+	wget --no-check-certificate -O $@ \
+        https://github.com/downloads/membase/tlm/$(LIBMEMCACHED).tar.gz
+
+libmemcached/configure.ac: deps/$(LIBMEMCACHED).tar.gz
+	rm -rf libmemcached
+	tar xzf deps/$(LIBMEMCACHED).tar.gz
+	mv $(LIBMEMCACHED) libmemcached
 
 libmemcached/configure: libmemcached/configure.ac
 	(cd libmemcached && ./config/autorun.sh)
