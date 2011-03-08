@@ -14,8 +14,13 @@ COMPONENTS := bucket_engine \
 	ns_server \
 	vbucketmigrator
 
+ifneq "$(realpath couchdb/configure.ac)" ""
+BUILD_COUCH := 1
+COMPONENTS += couchdb
+endif
+
 ifdef FOR_WINDOWS
-COMPONENTS := $(filter-out memcachetest, $(COMPONENTS))
+COMPONENTS := $(filter-out couchdb memcachetest, $(COMPONENTS))
 endif
 
 BUILD_COMPONENTS := $(filter-out ns_server, $(COMPONENTS))
@@ -53,6 +58,8 @@ distclean:
 
 clean-xfd: $(patsubst %, do-clean-xfd-%, $(COMPONENTS))
 	rm -rf install tmp
+	(cd icu4c && git clean -xfd) || true
+	(cd spidermonkey && git clean -xfd) || true
 
 do-clean-xfd-%:
 	(cd $* && git clean -Xfd)
@@ -68,12 +75,14 @@ $(patsubst %, reinstall-%, $(BUILD_COMPONENTS)): reinstall-%: %/Makefile | deps-
 	$(MAKE) -C $* install
 	mkdir -p tmp && touch tmp/installed-$*
 
+REINSTALL_TSTAMPS := $(TSTAMP_TARGETS) tmp/installed-icu4c tmp/installed-spidermonkey
+
 reinstall:
-	rm -rf $(TSTAMP_TARGETS)
+	rm -rf $(REINSTALL_TSTAMPS)
 	$(MAKE) all
 
 $(TSTAMP_TARGETS): tmp/installed-%: %/Makefile | deps-for-%
-	$(MAKE) -C $* install
+	$(MAKE) -C $* install $($*_EXTRA_MAKE_OPTIONS)
 	mkdir -p tmp && touch $@
 
 $(MAKE_INSTALL_TARGETS): make-install-%: tmp/installed-%
@@ -127,6 +136,24 @@ vbucketmigrator_OPTIONS := --without-sasl --with-isasl
 
 memcached_OPTIONS := --enable-isasl
 
+ifndef DONT_BUILD_COUCH_DEPS
+couchdb_OPTIONS := --with-js-lib=$(PREFIX)/lib --with-js-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
+endif
+
+# it's necessary to pass this late. couchdb is using libtool and
+# libtool portably understands -rpath (NOTE: _single_ dash). Passing
+# it to configure fails, because a bunch of stuff is checked with
+# plain gcc versus with libtool wrapper.
+couchdb_EXTRA_MAKE_OPTIONS := "LDFLAGS=-rpath $(PREFIX)/lib"
+
+ifdef BUILD_COUCH
+couchdb/Makefile: AUTOGEN = ./bootstrap
+endif
+
+ifndef DONT_BUILD_COUCH_DEPS
+deps-for-couchdb: make-install-couchdb-deps
+endif
+
 dev-symlink: $(MAKE_INSTALL_TARGETS)
 	mkdir -p ns_server/bin ns_server/lib/memcached
 	ln -f -s $(TOPDIR)/install/bin/memcached ns_server/bin/memcached
@@ -140,6 +167,8 @@ dev-symlink: $(MAKE_INSTALL_TARGETS)
 	ln -f -s $(TOPDIR)/install/bin/moxi ns_server/bin/moxi/moxi
 	mkdir -p ns_server/bin/vbucketmigrator
 	ln -f -s $(TOPDIR)/install/bin/vbucketmigrator ns_server/bin/vbucketmigrator/vbucketmigrator
+	rm -rf ns_server/lib/couchdb
+	ln -sf $(TOPDIR)/install ns_server/lib/couchdb
 
 WIN32_MAKE_TARGET := do-install-all
 WIN32_HOST := i586-mingw32msvc
@@ -184,3 +213,25 @@ tmp/installed-bucket_engine:
 	 && cp .libs/bucket_engine.so "$(PREFIX)/lib")
 
 endif
+
+AUTOCONF213 := autoconf213
+
+spidermonkey/configure:
+	(cd spidermonkey && $(AUTOCONF213))
+
+spidermonkey/Makefile: spidermonkey/configure
+	(cd spidermonkey && ./configure "--prefix=$(PREFIX)" --without-x)
+
+tmp/installed-spidermonkey: spidermonkey/Makefile
+	$(MAKE) -C spidermonkey
+	$(MAKE) -C spidermonkey install
+	mkdir -p tmp && touch $@
+
+icu4c/source/Makefile:
+	(cd icu4c/source && ./configure "--prefix=$(PREFIX)")
+
+tmp/installed-icu4c: icu4c/source/Makefile
+	$(MAKE) -C icu4c/source install
+	mkdir -p tmp && touch $@
+
+make-install-couchdb-deps: tmp/installed-spidermonkey tmp/installed-icu4c
