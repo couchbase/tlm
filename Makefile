@@ -6,6 +6,7 @@ COMPONENTS := bucket_engine \
 	ep-engine \
 	libconflate \
 	libvbucket \
+	libmemcached \
 	membase-cli \
 	memcached \
 	memcachetest \
@@ -17,7 +18,7 @@ ifdef FOR_WINDOWS
 COMPONENTS := $(filter-out memcachetest, $(COMPONENTS))
 endif
 
-BUILD_COMPONENTS := $(filter-out ns_server, $(COMPONENTS)) libmemcached
+BUILD_COMPONENTS := $(filter-out ns_server, $(COMPONENTS))
 
 MAKE_INSTALL_TARGETS := $(patsubst %, make-install-%, $(BUILD_COMPONENTS))
 MAKEFILE_TARGETS := $(patsubst %, %/Makefile, $(BUILD_COMPONENTS))
@@ -96,7 +97,7 @@ ifndef CROSS_COMPILING
 libmemcached_OPTIONS += --with-memcached=$(PREFIX)/bin/memcached
 endif
 
-libmemcached/Makefile: make-install-memcached
+deps-for-libmemcached: make-install-memcached
 
 # tar.gz _should_ have ./configure inside, but it doesn't
 # make-install-libmemcached: AUTOGEN := true
