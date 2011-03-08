@@ -182,15 +182,15 @@ ep-engine/Makefile:
 bucket_engine/Makefile:
 	@true
 
-make-install-memcached:
+tmp/installed-memcached:
 	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) install)
 
-make-install-ep-engine:
+tmp/installed-ep-engine:
 	chmod +x ep-engine/win32/config.sh
 	(cd ep-engine && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) all \
 	 && cp .libs/ep.so "$(PREFIX)/lib" && cp management/sqlite3.exe management/mbdbconvert.exe "$(PREFIX)/bin")
 
-make-install-bucket_engine:
+tmp/installed-bucket_engine:
 	(cd bucket_engine && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) all \
 	 && cp .libs/bucket_engine.so "$(PREFIX)/lib")
 
