@@ -115,7 +115,7 @@ libmemcached/Makefile: libmemcached/configure.ac | make-install-memcached
 # tar.gz _should_ have ./configure inside, but it doesn't
 # make-install-libmemcached: AUTOGEN := true
 
-libvbucket_OPTIONS :=  $(LIBRARY_OPTIONS) --without-docs --with-debug --disable-shared
+libvbucket_OPTIONS :=  $(LIBRARY_OPTIONS) --without-docs --with-debug
 deps-for-libvbucket: make-install-libmemcached
 
 deps-for-memcachetest: make-install-libmemcached make-install-libvbucket
