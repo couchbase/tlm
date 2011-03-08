@@ -51,7 +51,7 @@ distclean:
 	rm -rf install tmp
 
 clean-xfd: $(patsubst %, do-clean-xfd-%, $(COMPONENTS))
-	rm -rf libmemcached install tmp
+	rm -rf install tmp
 
 do-clean-xfd-%:
 	(cd $* && git clean -Xfd)
@@ -96,21 +96,7 @@ ifndef CROSS_COMPILING
 libmemcached_OPTIONS += --with-memcached=$(PREFIX)/bin/memcached
 endif
 
-LIBMEMCACHED=libmemcached-0.41_trond-norbye_mingw32-revno895
-
-deps/$(LIBMEMCACHED).tar.gz:
-	mkdir -p deps
-	wget --no-check-certificate -O $@ \
-		https://github.com/downloads/membase/tlm/$(LIBMEMCACHED).tar.gz
-
-libmemcached/configure.ac: deps/$(LIBMEMCACHED).tar.gz
-	rm -rf libmemcached
-	tar xzf deps/$(LIBMEMCACHED).tar.gz || (rm -rf $(LIBMEMCACHED) && false)
-	mv $(LIBMEMCACHED) libmemcached
-	((cd libmemcached && patch -p1) <tlm/deps/libmemcached-0001-test-fix.diff) || (rm -rf libmemcached/configure.ac && false)
-	touch libmemcached/configure.ac
-
-libmemcached/Makefile: libmemcached/configure.ac | make-install-memcached
+libmemcached/Makefile: make-install-memcached
 
 # tar.gz _should_ have ./configure inside, but it doesn't
 # make-install-libmemcached: AUTOGEN := true
