@@ -48,16 +48,21 @@ do-install-all: $(MAKE_INSTALL_TARGETS)
 build-ns_server:
 	$(MAKE) -C ns_server
 
-clean:
-	for i in $(COMPONENTS); do (cd $$i && make clean || true); done
+-clean-common:
 	rm -rf install tmp
+	rm -f moxi*log
+	rm -f memcached*log
 
-distclean:
+clean: -clean-common
+	for i in $(COMPONENTS); do (cd $$i && make clean || true); done
+
+distclean: -clean-common
 	for i in $(COMPONENTS); do (cd $$i && make distclean || true); done
 	rm -rf install tmp
+	rm moxi*log
+	rm memcached*log
 
-clean-xfd: $(patsubst %, do-clean-xfd-%, $(COMPONENTS))
-	rm -rf install tmp
+clean-xfd: $(patsubst %, do-clean-xfd-%, $(COMPONENTS)) -clean-common
 	(cd icu4c && git clean -xfd) || true
 	(cd spidermonkey && git clean -xfd) || true
 
@@ -154,9 +159,16 @@ ifndef DONT_BUILD_COUCH_DEPS
 deps-for-couchdb: make-install-couchdb-deps
 endif
 
-dev-symlink: $(MAKE_INSTALL_TARGETS)
+WRAPPERS := $(patsubst %, $(PREFIX)/bin/%, memcached-wrapper moxi-wrapper)
+
+$(WRAPPERS): $(PREFIX)/bin/%: tlm/%.in
+	mkdir -p $(PREFIX)/bin
+	sed -e 's|@PREFIX@|$(PREFIX)|g' <$< >$@ || (rm $@ && false)
+	chmod +x $@
+
+dev-symlink: $(MAKE_INSTALL_TARGETS) $(WRAPPERS)
 	mkdir -p ns_server/bin ns_server/lib/memcached
-	ln -f -s $(TOPDIR)/install/bin/memcached ns_server/bin/memcached
+	ln -f -s $(TOPDIR)/install/bin/memcached-wrapper ns_server/bin/memcached
 	ln -f -s $(TOPDIR)/install/lib/memcached/default_engine.so ns_server/lib/memcached/default_engine.so
 	ln -f -s $(TOPDIR)/install/lib/memcached/stdin_term_handler.so ns_server/lib/memcached/stdin_term_handler.so
 	mkdir -p ns_server/bin/bucket_engine
@@ -164,7 +176,7 @@ dev-symlink: $(MAKE_INSTALL_TARGETS)
 	mkdir -p ns_server/bin/ep_engine
 	ln -f -s $(TOPDIR)/install/lib/ep.so ns_server/bin/ep_engine/ep.so
 	mkdir -p ns_server/bin/moxi
-	ln -f -s $(TOPDIR)/install/bin/moxi ns_server/bin/moxi/moxi
+	ln -f -s $(TOPDIR)/install/bin/moxi-wrapper ns_server/bin/moxi/moxi
 	mkdir -p ns_server/bin/vbucketmigrator
 	ln -f -s $(TOPDIR)/install/bin/vbucketmigrator ns_server/bin/vbucketmigrator/vbucketmigrator
 	rm -rf ns_server/lib/couchdb
