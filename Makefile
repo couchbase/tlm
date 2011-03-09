@@ -43,7 +43,7 @@ ifneq "$(realpath .repo/Makefile.extra)" ""
 include .repo/Makefile.extra
 endif
 
-do-install-all: $(MAKE_INSTALL_TARGETS)
+do-install-all: $(MAKE_INSTALL_TARGETS) make-install-ns_server
 
 build-ns_server:
 	$(MAKE) -C ns_server
@@ -140,6 +140,9 @@ libconflate_OPTIONS := $(LIBRARY_OPTIONS) --without-check --with-debug
 vbucketmigrator_OPTIONS := --without-sasl --with-isasl
 
 memcached_OPTIONS := --enable-isasl
+
+make-install-ns_server:
+	$(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
 
 ifndef DONT_BUILD_COUCH_DEPS
 couchdb_OPTIONS := --with-js-lib=$(PREFIX)/lib --with-js-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
