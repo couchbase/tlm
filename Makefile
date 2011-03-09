@@ -125,6 +125,8 @@ libconflate_OPTIONS := $(LIBRARY_OPTIONS) --without-check --with-debug
 
 vbucketmigrator_OPTIONS := --without-sasl --with-isasl
 
+memcached_OPTIONS := --enable-isasl
+
 dev-symlink: $(MAKE_INSTALL_TARGETS)
 	mkdir -p ns_server/bin ns_server/lib/memcached
 	ln -f -s $(TOPDIR)/install/bin/memcached ns_server/bin/memcached
