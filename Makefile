@@ -250,3 +250,18 @@ tmp/installed-icu4c: icu4c/source/Makefile
 	mkdir -p tmp && touch $@
 
 make-install-couchdb-deps: tmp/installed-spidermonkey tmp/installed-icu4c
+
+CHECK_COMPONENTS ?= $(COMPONENTS)
+
+CHECK_TARGETS := $(patsubst %, check-%, $(CHECK_COMPONENTS))
+
+MAKE_CHECK_TARGET := check
+
+check-fast: check-ns_server check-bucket_engine check-ep-engine check-ns_server check-libvbucket check-couchdb
+
+check: $(CHECK_TARGETS)
+
+check-memcached check-moxi check-bucket_engine check-ns_server: MAKE_CHECK_TARGET := test
+
+$(CHECK_TARGETS): check-%: make-install-%
+	$(MAKE) -C $* $(MAKE_CHECK_TARGET)
