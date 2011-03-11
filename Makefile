@@ -31,12 +31,12 @@ else
 LIBRARY_OPTIONS := --disable-static --enable-shared
 endif
 
+all: do-install-all dev-symlink build-ns_server
+
 # this thing can override settings and add components
 ifneq "$(realpath .repo/Makefile.extra)" ""
 include .repo/Makefile.extra
 endif
-
-all: do-install-all dev-symlink build-ns_server
 
 do-install-all: $(MAKE_INSTALL_TARGETS)
 
