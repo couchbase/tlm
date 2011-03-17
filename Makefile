@@ -112,6 +112,10 @@ libmemcached_OPTIONS += --with-memcached=$(PREFIX)/bin/memcached
 memcachetest_OPTIONS += --with-memcached=$(PREFIX)/bin/memcached
 endif
 
+ifdef USE_TCMALLOC
+libmemcached_OPTIONS += --enable-tcmalloc
+endif
+
 deps-for-libmemcached: make-install-memcached
 
 # tar.gz _should_ have ./configure inside, but it doesn't
