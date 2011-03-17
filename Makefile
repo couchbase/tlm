@@ -19,6 +19,11 @@ BUILD_COUCH := 1
 COMPONENTS += couchdb
 endif
 
+ifneq "$(realpath portsigar/configure.ac)" ""
+COMPONENTS += sigar portsigar
+BUILD_SIGAR := 1
+endif
+
 ifdef FOR_WINDOWS
 COMPONENTS := $(filter-out couchdb memcachetest, $(COMPONENTS))
 endif
@@ -41,6 +46,13 @@ all: do-install-all dev-symlink build-ns_server
 # this thing can override settings and add components
 ifneq "$(realpath .repo/Makefile.extra)" ""
 include .repo/Makefile.extra
+endif
+
+ifdef BUILD_SIGAR
+deps-for-portsigar: make-install-sigar
+portsigar/Makefile: AUTOGEN := ./bootstrap
+portsigar/Makefile: CONFIGURE_PREFIX := LDFLAGS="-L$(PREFIX)/lib"
+sigar/Makefile: AUTOGEN := ./autogen.sh
 endif
 
 do-install-all: $(MAKE_INSTALL_TARGETS) make-install-ns_server
@@ -189,6 +201,7 @@ dev-symlink: $(MAKE_INSTALL_TARGETS) $(WRAPPERS)
 	ln -f -s $(TOPDIR)/install/bin/vbucketmigrator ns_server/bin/vbucketmigrator/vbucketmigrator
 	rm -rf ns_server/lib/couchdb
 	ln -sf $(TOPDIR)/install ns_server/lib/couchdb
+	ln -f -s $(TOPDIR)/install/bin/sigar_port ns_server/bin/
 
 WIN32_MAKE_TARGET := do-install-all
 WIN32_HOST := i586-mingw32msvc
