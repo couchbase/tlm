@@ -109,6 +109,7 @@ $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 libmemcached_OPTIONS := $(LIBRARY_OPTIONS) --disable-dtrace --without-docs
 ifndef CROSS_COMPILING
 libmemcached_OPTIONS += --with-memcached=$(PREFIX)/bin/memcached
+memcachetest_OPTIONS += --with-memcached=$(PREFIX)/bin/memcached
 endif
 
 deps-for-libmemcached: make-install-memcached
