@@ -43,6 +43,12 @@ endif
 
 all: do-install-all dev-symlink build-ns_server
 
+# Allow the user to override stuff for all projects (like
+# --with-erlang=)
+ifneq "$(realpath $(HOME)/.couchbase/build/Makefile.extra)" ""
+include $(HOME)/.couchbase/build/Makefile.extra
+endif
+
 # this thing can override settings and add components
 ifneq "$(realpath .repo/Makefile.extra)" ""
 include .repo/Makefile.extra
