@@ -43,17 +43,6 @@ endif
 
 all: do-install-all dev-symlink build-ns_server
 
-# Allow the user to override stuff for all projects (like
-# --with-erlang=)
-ifneq "$(realpath $(HOME)/.couchbase/build/Makefile.extra)" ""
-include $(HOME)/.couchbase/build/Makefile.extra
-endif
-
-# this thing can override settings and add components
-ifneq "$(realpath .repo/Makefile.extra)" ""
-include .repo/Makefile.extra
-endif
-
 ifdef BUILD_SIGAR
 deps-for-portsigar: make-install-sigar
 portsigar/Makefile: AUTOGEN := ./bootstrap
@@ -289,3 +278,14 @@ check-memcached check-moxi check-bucket_engine check-ns_server: MAKE_CHECK_TARGE
 
 $(CHECK_TARGETS): check-%: make-install-%
 	$(MAKE) -C $* $(MAKE_CHECK_TARGET)
+
+# Allow the user to override stuff for all projects (like
+# --with-erlang=)
+ifneq "$(realpath $(HOME)/.couchbase/build/Makefile.extra)" ""
+include $(HOME)/.couchbase/build/Makefile.extra
+endif
+
+# this thing can override settings and add components
+ifneq "$(realpath .repo/Makefile.extra)" ""
+include .repo/Makefile.extra
+endif
