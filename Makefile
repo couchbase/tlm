@@ -156,21 +156,22 @@ memcached_OPTIONS := --enable-isasl
 make-install-ns_server:
 	$(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
 
-ifndef DONT_BUILD_COUCH_DEPS
+ifdef PLEASE_BUILD_COUCH_DEPS
 couchdb_OPTIONS := --with-js-lib=$(PREFIX)/lib --with-js-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
-endif
 
 # it's necessary to pass this late. couchdb is using libtool and
 # libtool portably understands -rpath (NOTE: _single_ dash). Passing
 # it to configure fails, because a bunch of stuff is checked with
 # plain gcc versus with libtool wrapper.
-couchdb_EXTRA_MAKE_OPTIONS := "LDFLAGS=-rpath $(PREFIX)/lib"
+# NOTE: this doesn't work on Darwin and has issues on Solaris
+couchdb_EXTRA_MAKE_OPTIONS := "LDFLAGS=-R $(PREFIX)/lib $(LDFLAGS)"
+endif
 
 ifdef BUILD_COUCH
 couchdb/Makefile: AUTOGEN = ./bootstrap
 endif
 
-ifndef DONT_BUILD_COUCH_DEPS
+ifdef PLEASE_BUILD_COUCH_DEPS
 deps-for-couchdb: make-install-couchdb-deps
 endif
 
