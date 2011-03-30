@@ -14,6 +14,12 @@ COMPONENTS := bucket_engine \
 	ns_server \
 	vbucketmigrator
 
+ifneq "$(DESTDIR)" ""
+LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib
+CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include
+export LDFLAGS CPPFLAGS
+endif
+
 ifneq "$(realpath couchdb/configure.ac)" ""
 BUILD_COUCH := 1
 COMPONENTS += couchdb
@@ -46,7 +52,7 @@ all: do-install-all dev-symlink build-ns_server
 ifdef BUILD_SIGAR
 deps-for-portsigar: make-install-sigar
 portsigar/Makefile: AUTOGEN := ./bootstrap
-portsigar/Makefile: CONFIGURE_PREFIX := LDFLAGS="-L$(PREFIX)/lib"
+portsigar/Makefile: CONFIGURE_PREFIX := LDFLAGS="-L$(PREFIX)/lib $(LDFLAGS)"
 sigar/Makefile: AUTOGEN := ./autogen.sh
 endif
 
@@ -122,8 +128,8 @@ $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 
 libmemcached_OPTIONS := $(LIBRARY_OPTIONS) --disable-dtrace --without-docs
 ifndef CROSS_COMPILING
-libmemcached_OPTIONS += --with-memcached=$(PREFIX)/bin/memcached
-memcachetest_OPTIONS += --with-memcached=$(PREFIX)/bin/memcached
+libmemcached_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
+memcachetest_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 endif
 
 ifdef USE_TCMALLOC
@@ -150,7 +156,7 @@ moxi_OPTIONS := --enable-moxi-libvbucket \
 	--enable-moxi-libmemcached \
 	--without-check
 ifndef CROSS_COMPILING
-moxi_OPTIONS += --with-memcached=$(PREFIX)/bin/memcached
+moxi_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 endif
 deps-for-moxi: make-install-libconflate make-install-libvbucket make-install-libmemcached make-install-memcached
 
