@@ -201,9 +201,9 @@ dev-symlink: $(MAKE_INSTALL_TARGETS) $(WRAPPERS)
 	ln -f -s $(TOPDIR)/install/lib/memcached/default_engine.so ns_server/lib/memcached/default_engine.so
 	ln -f -s $(TOPDIR)/install/lib/memcached/stdin_term_handler.so ns_server/lib/memcached/stdin_term_handler.so
 	mkdir -p ns_server/bin/bucket_engine
-	ln -f -s $(TOPDIR)/install/lib/bucket_engine.so ns_server/bin/bucket_engine/bucket_engine.so
+	ln -f -s `ls "$(TOPDIR)/install/lib/bucket_engine.so" "$(TOPDIR)/install/lib/memcached/bucket_engine.so" 2>/dev/null` ns_server/bin/bucket_engine/bucket_engine.so
 	mkdir -p ns_server/bin/ep_engine
-	ln -f -s $(TOPDIR)/install/lib/ep.so ns_server/bin/ep_engine/ep.so
+	ln -f -s `ls "$(TOPDIR)/install/lib/ep.so" "$(TOPDIR)/install/lib/memcached/ep.so" 2>/dev/null` ns_server/bin/ep_engine/ep.so
 	mkdir -p ns_server/bin/moxi
 	ln -f -s $(TOPDIR)/install/bin/moxi-wrapper ns_server/bin/moxi/moxi
 	mkdir -p ns_server/bin/vbucketmigrator
