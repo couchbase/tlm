@@ -70,11 +70,18 @@ distclean: -clean-common
 	rm memcached*log
 
 clean-xfd: $(patsubst %, do-clean-xfd-%, $(COMPONENTS)) -clean-common
+	(cd icu4c && git clean -Xfd) || true
+	(cd spidermonkey && git clean -Xfd) || true
+
+clean-xfd-hard: $(patsubst %, do-hard-clean-xfd-%, $(COMPONENTS)) -clean-common
 	(cd icu4c && git clean -xfd) || true
 	(cd spidermonkey && git clean -xfd) || true
 
 do-clean-xfd-%:
 	(cd $* && git clean -Xfd)
+
+do-hard-clean-xfd-%:
+	(cd $* && git clean -xfd)
 
 $(MAKEFILE_TARGETS): %/Makefile: | deps-for-%
 	cd $* && $(AUTOGEN_PREFIX) $(AUTOGEN) && $(CONFIGURE_PREFIX) ./configure $(OPTIONS) $($*_OPTIONS) $($*_EXTRA_OPTIONS)
