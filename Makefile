@@ -15,8 +15,8 @@ COMPONENTS := bucket_engine \
 	vbucketmigrator
 
 ifneq "$(DESTDIR)" ""
-LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib
-CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include
+LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)
+CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)
 export LDFLAGS CPPFLAGS
 endif
 
@@ -221,12 +221,12 @@ win32-cross:
 ifdef FOR_WINDOWS
 
 LIBS_PREFIX=$(HOME)/membase-win32
-OPTIONS += 'CFLAGS=-I$(LIBS_PREFIX)/include' 'LDFLAGS=-L$(LIBS_PREFIX)/lib'
+OPTIONS += 'CFLAGS=-I$(LIBS_PREFIX)/include $(CFLAGS)' 'LDFLAGS=-L$(LIBS_PREFIX)/lib $(LDFLAGS)'
 LOCALINC := -I$(LIBS_PREFIX)/include
 ifdef NO_USECONDS_T
 LOCALINC := -Duseconds_t=unsigned
 endif
-BAD_FLAGS := 'LOCAL=$(PREFIX)' 'LOCALINC=$(LOCALINC)' 'LIB=-L$(LIBS_PREFIX)/lib'
+BAD_FLAGS := 'LOCAL=$(PREFIX)' 'LOCALINC=$(LOCALINC)' 'LIB=-L$(LIBS_PREFIX)/lib $(LIB)'
 
 ifdef HOST
 OPTIONS := --host=$(HOST) $(OPTIONS)
