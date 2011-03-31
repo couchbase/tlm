@@ -222,9 +222,10 @@ ifdef FOR_WINDOWS
 
 LIBS_PREFIX=$(HOME)/membase-win32
 OPTIONS += 'CFLAGS=-I$(LIBS_PREFIX)/include $(CFLAGS)' 'LDFLAGS=-L$(LIBS_PREFIX)/lib $(LDFLAGS)'
-LOCALINC := -I$(LIBS_PREFIX)/include
+LOCALINC := -I${PREFIX}/include
+LOCALINC += -I$(LIBS_PREFIX)/include
 ifdef NO_USECONDS_T
-LOCALINC := -Duseconds_t=unsigned
+LOCALINC += -Duseconds_t=unsigned
 endif
 BAD_FLAGS := 'LOCAL=$(PREFIX)' 'LOCALINC=$(LOCALINC)' 'LIB=-L$(LIBS_PREFIX)/lib $(LIB)'
 
