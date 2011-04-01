@@ -31,7 +31,7 @@ BUILD_SIGAR := 1
 endif
 
 ifdef FOR_WINDOWS
-COMPONENTS := $(filter-out couchdb memcachetest, $(COMPONENTS))
+COMPONENTS := $(filter-out couchdb memcachetest vbucketmigrator, $(COMPONENTS))
 endif
 
 BUILD_COMPONENTS := $(filter-out ns_server, $(COMPONENTS))
@@ -220,14 +220,22 @@ win32-cross:
 
 ifdef FOR_WINDOWS
 
-LIBS_PREFIX=$(HOME)/membase-win32
+BAD_FLAGS := 'LOCAL=$(PREFIX)'
+
+ifndef LIBS_PREFIX
+$(warning LIBS_PREFIX usually needs to be given so that I can find libcurl, libevent and libpthread)
+else
+
 OPTIONS += 'CFLAGS=-I$(LIBS_PREFIX)/include $(CFLAGS)' 'LDFLAGS=-L$(LIBS_PREFIX)/lib $(LDFLAGS)'
 LOCALINC := -I${PREFIX}/include
 LOCALINC += -I$(LIBS_PREFIX)/include
 ifdef NO_USECONDS_T
 LOCALINC += -Duseconds_t=unsigned
 endif
-BAD_FLAGS := 'LOCAL=$(PREFIX)' 'LOCALINC=$(LOCALINC)' 'LIB=-L$(LIBS_PREFIX)/lib $(LIB)'
+
+BAD_FLAGS += 'LOCALINC=$(LOCALINC)' 'LIB=-L$(LIBS_PREFIX)/lib $(LIB)'
+
+endif
 
 ifdef HOST
 OPTIONS := --host=$(HOST) $(OPTIONS)
@@ -235,27 +243,36 @@ BAD_FLAGS += CC=$(HOST)-gcc CXX=$(HOST)-g++
 endif
 
 libmemcached_OPTIONS += --without-memcached
+moxi_OPTIONS += --without-memcached
 
 memcached/Makefile:
-	@true
+	touch $@
 
 ep-engine/Makefile:
-	@true
+	touch $@
 
 bucket_engine/Makefile:
-	@true
+	touch $@
 
 tmp/installed-memcached:
 	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) install)
+	mkdir -p tmp
+	touch $@
+
+# hey, it's almost like Lisp
+EP_ENGINE_MARCH := $(strip $(if $(or $(findstring x86_64, $(HOST)), $(findstring amd64, $(HOST))), ,-march=i686))
 
 tmp/installed-ep-engine:
 	chmod +x ep-engine/win32/config.sh
-	(cd ep-engine && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) all \
+	(cd ep-engine && $(MAKE) -f win32/Makefile.mingw "MARCH=$(EP_ENGINE_MARCH)" $(BAD_FLAGS) all \
 	 && cp .libs/ep.so "$(PREFIX)/lib" && cp management/sqlite3.exe management/mbdbconvert.exe "$(PREFIX)/bin")
+	mkdir -p tmp && touch $@
 
 tmp/installed-bucket_engine:
 	(cd bucket_engine && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) all \
 	 && cp .libs/bucket_engine.so "$(PREFIX)/lib")
+	mkdir -p tmp
+	touch $@
 
 libmemcached/Makefile: fix-broken-libmemcached-tests
 
