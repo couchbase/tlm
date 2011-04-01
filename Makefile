@@ -15,8 +15,8 @@ COMPONENTS := bucket_engine \
 	vbucketmigrator
 
 ifneq "$(DESTDIR)" ""
-LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)
-CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)
+LDFLAGS := -L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)
+CPPFLAGS := -I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)
 export LDFLAGS CPPFLAGS
 endif
 
