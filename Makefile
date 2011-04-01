@@ -130,13 +130,13 @@ libmemcached_OPTIONS := $(LIBRARY_OPTIONS) --disable-dtrace --without-docs
 ifndef CROSS_COMPILING
 libmemcached_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 memcachetest_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
+deps-for-libmemcached: make-install-memcached
 endif
 
 ifdef USE_TCMALLOC
 libmemcached_OPTIONS += --enable-tcmalloc
 endif
 
-deps-for-libmemcached: make-install-memcached
 
 # tar.gz _should_ have ./configure inside, but it doesn't
 # make-install-libmemcached: AUTOGEN := true
@@ -234,6 +234,8 @@ OPTIONS := --host=$(HOST) $(OPTIONS)
 BAD_FLAGS += CC=$(HOST)-gcc CXX=$(HOST)-g++
 endif
 
+libmemcached_OPTIONS += --without-memcached
+
 memcached/Makefile:
 	@true
 
@@ -254,6 +256,11 @@ tmp/installed-ep-engine:
 tmp/installed-bucket_engine:
 	(cd bucket_engine && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) all \
 	 && cp .libs/bucket_engine.so "$(PREFIX)/lib")
+
+libmemcached/Makefile: fix-broken-libmemcached-tests
+
+fix-broken-libmemcached-tests:
+	patch -p1 -N -r /dev/null -t -d libmemcached <tlm/libmemcached-win32-fix.diff  || true
 
 endif
 
