@@ -58,6 +58,7 @@ deps-for-portsigar: make-install-sigar
 portsigar/Makefile: AUTOGEN := ./bootstrap
 portsigar/Makefile: CONFIGURE_PREFIX := LDFLAGS="-L$(PREFIX)/lib $(LDFLAGS)"
 sigar/Makefile: AUTOGEN := ./autogen.sh
+portsigar_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/sigar/include $(CPPFLAGS)'
 endif
 
 do-install-all: $(MAKE_INSTALL_TARGETS) make-install-ns_server
@@ -119,19 +120,24 @@ endif
 # make-install-libmemcached: AUTOGEN := true
 
 libvbucket_OPTIONS :=  $(LIBRARY_OPTIONS) --without-docs --with-debug
+libvbucket_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/libmemcached $(CPPFLAGS)'
 deps-for-libvbucket: make-install-libmemcached
 
-deps-for-memcachetest: make-install-libmemcached make-install-libvbucket
+memcachetest_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include -I$(TOPDIR)/libmemcached -I$(TOPDIR)/libvbucket/include $(CPPFLAGS)'
+deps-for-memcachetest: make-install-memcached make-install-libmemcached make-install-libvbucket
 
 ep-engine_OPTIONS := --with-memcached=../memcached --with-debug
+ep-engine_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include $(CPPFLAGS)'
 deps-for-ep-engine: make-install-memcached
 
 bucket_engine_OPTIONS := --with-memcached=../memcached --with-debug
+bucket-engine_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include $(CPPFLAGS)'
 deps-for-bucket_engine: make-install-memcached
 
 moxi_OPTIONS := --enable-moxi-libvbucket \
 	--enable-moxi-libmemcached \
 	--without-check
+moxi_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/libmemcached -I$(TOPDIR)/libvbucket/include -I$(PREFIX)/include $(CPPFLAGS)'
 ifndef CROSS_COMPILING
 moxi_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 endif
