@@ -92,36 +92,9 @@ do-hard-clean-xfd-%:
 $(MAKEFILE_TARGETS): %/Makefile: | deps-for-%
 	cd $* && $(AUTOGEN_PREFIX) $(AUTOGEN) && $(CONFIGURE_PREFIX) ./configure $(OPTIONS) $($*_OPTIONS) $($*_EXTRA_OPTIONS)
 
-ifndef FUNKY_INSTALL
-
-TSTAMP_TARGETS := $(patsubst %, tmp/installed-%, $(BUILD_COMPONENTS))
-
-$(patsubst %, reinstall-%, $(BUILD_COMPONENTS)): reinstall-%: %/Makefile | deps-for-%
-	$(MAKE) -C $* install
-	mkdir -p tmp && touch tmp/installed-$*
-
-REINSTALL_TSTAMPS := $(TSTAMP_TARGETS) tmp/installed-icu4c tmp/installed-spidermonkey
-
-reinstall:
-	rm -rf $(REINSTALL_TSTAMPS)
-	$(MAKE) all
-
-$(TSTAMP_TARGETS): tmp/installed-%: %/Makefile | deps-for-%
-	$(MAKE) -C $* install $($*_EXTRA_MAKE_OPTIONS)
-	mkdir -p tmp && touch $@
-
-$(MAKE_INSTALL_TARGETS): make-install-%: tmp/installed-%
-
-else
-
-# TODO: this doesn't handle symlinks, disabled for now
-
 $(MAKE_INSTALL_TARGETS): make-install-%: %/Makefile deps-for-%
 	(rm -rf tmp/$*; mkdir -p tmp/$*)
-	$(MAKE) -C $* install DESTDIR=$(TOPDIR)/tmp/$*
-	cd $(TOPDIR)/tmp/$*; find . -type f -print | xargs -n1 -- bash -c 'diff -q "./$$1" "/$$1" >/dev/null 2>&1 || (mkdir -p `dirname "/$$1"` && cp -afl "./$$1" "/$$1")' --
-
-endif
+	$(MAKE) -C $* install $($*_EXTRA_MAKE_OPTIONS)
 
 
 $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
@@ -254,25 +227,20 @@ ep-engine/Makefile:
 bucket_engine/Makefile:
 	touch $@
 
-tmp/installed-memcached:
+make-install-memcached:
 	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) install)
-	mkdir -p tmp
-	touch $@
 
 # hey, it's almost like Lisp
 EP_ENGINE_MARCH := $(strip $(if $(or $(findstring x86_64, $(HOST)), $(findstring amd64, $(HOST))), ,-march=i686))
 
-tmp/installed-ep-engine:
+make-install-ep-engine:
 	chmod +x ep-engine/win32/config.sh
 	(cd ep-engine && $(MAKE) -f win32/Makefile.mingw "MARCH=$(EP_ENGINE_MARCH)" $(BAD_FLAGS) all \
 	 && cp .libs/ep.so "$(PREFIX)/lib" && cp management/sqlite3.exe management/mbdbconvert.exe "$(PREFIX)/bin")
-	mkdir -p tmp && touch $@
 
-tmp/installed-bucket_engine:
+make-install-bucket_engine:
 	(cd bucket_engine && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) all \
 	 && cp .libs/bucket_engine.so "$(PREFIX)/lib")
-	mkdir -p tmp
-	touch $@
 
 libmemcached/Makefile: fix-broken-libmemcached-tests
 
@@ -289,17 +257,15 @@ spidermonkey/configure:
 spidermonkey/Makefile: spidermonkey/configure
 	(cd spidermonkey && ./configure "--prefix=$(PREFIX)" --without-x)
 
-tmp/installed-spidermonkey: spidermonkey/Makefile
+make-install-spidermonkey: spidermonkey/Makefile
 	$(MAKE) -C spidermonkey
 	$(MAKE) -C spidermonkey install
-	mkdir -p tmp && touch $@
 
 icu4c/source/Makefile:
 	(cd icu4c/source && ./configure "--prefix=$(PREFIX)")
 
-tmp/installed-icu4c: icu4c/source/Makefile
+make-install-icu4c: icu4c/source/Makefile
 	$(MAKE) -C icu4c/source install
-	mkdir -p tmp && touch $@
 
 make-install-couchdb-deps: tmp/installed-spidermonkey tmp/installed-icu4c
 
