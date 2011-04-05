@@ -277,7 +277,7 @@ icu4c/source/Makefile:
 make-install-icu4c: icu4c/source/Makefile
 	$(MAKE) -C icu4c/source install
 
-make-install-couchdb-deps: tmp/installed-spidermonkey tmp/installed-icu4c
+make-install-couchdb-deps: make-install-spidermonkey make-install-icu4c
 
 CHECK_COMPONENTS ?= $(COMPONENTS)
 
