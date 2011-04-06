@@ -294,6 +294,13 @@ check-memcached check-moxi check-bucket_engine check-ns_server: MAKE_CHECK_TARGE
 $(CHECK_TARGETS): check-%: make-install-%
 	$(MAKE) -C $* $(MAKE_CHECK_TARGET)
 
+replace-wrappers:
+	test -f $(PREFIX)/bin/memcached.orig || mv $(PREFIX)/bin/memcached $(PREFIX)/bin/memcached.orig
+	test -f $(PREFIX)/bin/moxi.orig || mv $(PREFIX)/bin/moxi $(PREFIX)/bin/moxi.orig
+	sed -e 's|/bin/memcached|/bin/memcached.orig|g' <$(PREFIX)/bin/memcached-wrapper >$(PREFIX)/bin/memcached
+	sed -e 's|/bin/moxi|/bin/moxi.orig|g' <$(PREFIX)/bin/moxi-wrapper >$(PREFIX)/bin/moxi
+	chmod +x $(PREFIX)/bin/memcached $(PREFIX)/bin/moxi
+
 # Allow the user to override stuff for all projects (like
 # --with-erlang=)
 ifneq "$(realpath $(HOME)/.couchbase/build/Makefile.extra)" ""
