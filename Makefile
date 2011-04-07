@@ -150,6 +150,7 @@ vbucketmigrator_OPTIONS := --without-sasl --with-isasl
 memcached_OPTIONS := --enable-isasl
 
 make-install-ns_server:
+	(cd ns_server && ./configure "--prefix=$(PREFIX)") || true
 	$(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
 
 ifdef PLEASE_BUILD_COUCH_DEPS
