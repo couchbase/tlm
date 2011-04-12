@@ -281,7 +281,7 @@ check-memcached check-moxi check-bucket_engine check-ns_server: MAKE_CHECK_TARGE
 $(CHECK_TARGETS): check-%: make-install-%
 	$(MAKE) -C $* $(MAKE_CHECK_TARGET)
 
-replace-wrappers:
+replace-wrappers: $(WRAPPERS)
 	test -f $(PREFIX)/bin/memcached.orig || mv $(PREFIX)/bin/memcached $(PREFIX)/bin/memcached.orig
 	test -f $(PREFIX)/bin/moxi.orig || mv $(PREFIX)/bin/moxi $(PREFIX)/bin/moxi.orig
 	sed -e 's|/bin/memcached|/bin/memcached.orig|g' <$(PREFIX)/bin/memcached-wrapper >$(PREFIX)/bin/memcached
