@@ -51,7 +51,7 @@ else
 LIBRARY_OPTIONS := --disable-static --enable-shared
 endif
 
-all: do-install-all dev-symlink build-ns_server
+all: do-install-all build-ns_server
 
 ifdef BUILD_SIGAR
 deps-for-portsigar: make-install-sigar
@@ -179,22 +179,6 @@ $(WRAPPERS): $(PREFIX)/bin/%: tlm/%.in
 	sed -e 's|@PREFIX@|$(PREFIX)|g' <$< >$@ || (rm $@ && false)
 	chmod +x $@
 
-dev-symlink: $(MAKE_INSTALL_TARGETS) $(WRAPPERS)
-	mkdir -p ns_server/bin ns_server/lib/memcached
-	ln -f -s $(TOPDIR)/install/bin/memcached-wrapper ns_server/bin/memcached
-	ln -f -s $(TOPDIR)/install/lib/memcached/default_engine.so ns_server/lib/memcached/default_engine.so
-	ln -f -s $(TOPDIR)/install/lib/memcached/stdin_term_handler.so ns_server/lib/memcached/stdin_term_handler.so
-	mkdir -p ns_server/bin/bucket_engine
-	ln -f -s `ls "$(TOPDIR)/install/lib/bucket_engine.so" "$(TOPDIR)/install/lib/memcached/bucket_engine.so" 2>/dev/null` ns_server/bin/bucket_engine/bucket_engine.so
-	mkdir -p ns_server/bin/ep_engine
-	ln -f -s `ls "$(TOPDIR)/install/lib/ep.so" "$(TOPDIR)/install/lib/memcached/ep.so" 2>/dev/null` ns_server/bin/ep_engine/ep.so
-	mkdir -p ns_server/bin/moxi
-	ln -f -s $(TOPDIR)/install/bin/moxi-wrapper ns_server/bin/moxi/moxi
-	mkdir -p ns_server/bin/vbucketmigrator
-	ln -f -s $(TOPDIR)/install/bin/vbucketmigrator ns_server/bin/vbucketmigrator/vbucketmigrator
-	rm -rf ns_server/lib/couchdb
-	ln -sf $(TOPDIR)/install ns_server/lib/couchdb
-	ln -f -s $(TOPDIR)/install/bin/sigar_port ns_server/bin/
 
 WIN32_MAKE_TARGET := do-install-all
 WIN32_HOST := i586-mingw32msvc
