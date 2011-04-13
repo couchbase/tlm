@@ -239,19 +239,21 @@ bucket_engine/Makefile:
 	touch $@
 
 make-install-memcached:
-	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) install)
+	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) install \
+         && mkdir -p $(PREFIX)/lib/memcached \
+         && cp .libs/default_engine.so .libs/ascii_scrub.so $(PREFIX)/lib/memcached \
+         && cp memcached.exe mcstat.exe $(PREFIX)/bin)
 
 # hey, it's almost like Lisp
 EP_ENGINE_MARCH := $(strip $(if $(or $(findstring x86_64, $(HOST)), $(findstring amd64, $(HOST))), ,-march=i686))
 
 make-install-ep-engine:
 	chmod +x ep-engine/win32/config.sh
-	(cd ep-engine && $(MAKE) -f win32/Makefile.mingw "MARCH=$(EP_ENGINE_MARCH)" $(BAD_FLAGS) all \
-	 && cp .libs/ep.so "$(PREFIX)/lib" && cp management/sqlite3.exe management/mbdbconvert.exe "$(PREFIX)/bin")
+	(cd ep-engine && $(MAKE) -f win32/Makefile.mingw "MARCH=$(EP_ENGINE_MARCH)" $(BAD_FLAGS) install)
 
 make-install-bucket_engine:
 	(cd bucket_engine && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) all \
-	 && cp .libs/bucket_engine.so "$(PREFIX)/lib")
+	 && cp .libs/bucket_engine.so "$(PREFIX)/lib/memcached")
 
 libmemcached/Makefile: fix-broken-libmemcached-tests
 
