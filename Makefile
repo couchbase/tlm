@@ -45,6 +45,7 @@ MAKEFILE_TARGETS := $(patsubst %, %/Makefile, $(BUILD_COMPONENTS))
 
 OPTIONS := --prefix=$(PREFIX)
 AUTOGEN := ./config/autorun.sh
+
 ifdef PREFER_STATIC
 LIBRARY_OPTIONS := --enable-static --disable-shared
 else
@@ -101,7 +102,6 @@ $(MAKE_INSTALL_TARGETS): make-install-%: %/Makefile deps-for-%
 	(rm -rf tmp/$*; mkdir -p tmp/$*)
 	$(MAKE) -C $* install $($*_EXTRA_MAKE_OPTIONS)
 
-
 $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 
 libmemcached_OPTIONS := $(LIBRARY_OPTIONS) --disable-dtrace --without-docs
@@ -114,7 +114,6 @@ endif
 ifdef USE_TCMALLOC
 libmemcached_OPTIONS += --enable-tcmalloc
 endif
-
 
 # tar.gz _should_ have ./configure inside, but it doesn't
 # make-install-libmemcached: AUTOGEN := true
@@ -179,7 +178,6 @@ $(WRAPPERS): $(PREFIX)/bin/%: tlm/%.in
 	sed -e 's|@PREFIX@|$(PREFIX)|g' <$< >$@ || (rm $@ && false)
 	chmod +x $@
 
-
 WIN32_MAKE_TARGET := do-install-all
 WIN32_HOST := i586-mingw32msvc
 
@@ -188,7 +186,7 @@ win32-cross:
 
 ifdef FOR_WINDOWS
 
-BAD_FLAGS := 'LOCAL=$(PREFIX)'
+WIN_FLAGS := 'LOCAL=$(PREFIX)'
 
 ifndef LIBS_PREFIX
 $(warning LIBS_PREFIX usually needs to be given so that I can find libcurl, libevent and libpthread)
@@ -201,13 +199,13 @@ ifdef NO_USECONDS_T
 LOCALINC += -Duseconds_t=unsigned
 endif
 
-BAD_FLAGS += 'LOCALINC=$(LOCALINC)' 'LIB=-L$(LIBS_PREFIX)/lib $(LIB)'
+WIN_FLAGS += 'LOCALINC=$(LOCALINC)' 'LIB=-L$(LIBS_PREFIX)/lib $(LIB)'
 
 endif
 
 ifdef HOST
 OPTIONS := --host=$(HOST) $(OPTIONS)
-BAD_FLAGS += CC=$(HOST)-gcc CXX=$(HOST)-g++
+WIN_FLAGS += CC=$(HOST)-gcc CXX=$(HOST)-g++
 endif
 
 libmemcached_OPTIONS += --without-memcached
@@ -223,7 +221,7 @@ bucket_engine/Makefile:
 	touch $@
 
 make-install-memcached:
-	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) all \
+	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
          && mkdir -p $(PREFIX)/lib/memcached \
          && cp .libs/default_engine.so .libs/ascii_scrub.so $(PREFIX)/lib/memcached \
          && cp memcached.exe mcstat.exe $(PREFIX)/bin)
@@ -233,10 +231,10 @@ EP_ENGINE_MARCH := $(strip $(if $(or $(findstring x86_64, $(HOST)), $(findstring
 
 make-install-ep-engine:
 	chmod +x ep-engine/win32/config.sh
-	(cd ep-engine && $(MAKE) -f win32/Makefile.mingw "MARCH=$(EP_ENGINE_MARCH)" $(BAD_FLAGS) install)
+	(cd ep-engine && $(MAKE) -f win32/Makefile.mingw "MARCH=$(EP_ENGINE_MARCH)" $(WIN_FLAGS) install)
 
 make-install-bucket_engine:
-	(cd bucket_engine && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) all \
+	(cd bucket_engine && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
 	 && cp .libs/bucket_engine.so "$(PREFIX)/lib/memcached")
 
 libmemcached/Makefile: fix-broken-libmemcached-tests
