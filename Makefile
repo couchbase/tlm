@@ -223,7 +223,7 @@ bucket_engine/Makefile:
 make-install-memcached:
 	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
          && mkdir -p $(PREFIX)/lib/memcached \
-         && cp .libs/default_engine.so .libs/ascii_scrub.so $(PREFIX)/lib/memcached \
+         && cp .libs/*.so $(PREFIX)/lib/memcached \
          && cp memcached.exe mcstat.exe $(PREFIX)/bin)
 
 # hey, it's almost like Lisp
