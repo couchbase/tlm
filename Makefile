@@ -239,7 +239,7 @@ bucket_engine/Makefile:
 	touch $@
 
 make-install-memcached:
-	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) install \
+	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(BAD_FLAGS) all \
          && mkdir -p $(PREFIX)/lib/memcached \
          && cp .libs/default_engine.so .libs/ascii_scrub.so $(PREFIX)/lib/memcached \
          && cp memcached.exe mcstat.exe $(PREFIX)/bin)
