@@ -95,8 +95,13 @@ do-clean-xfd-%:
 do-hard-clean-xfd-%:
 	(cd $* && git clean -xfd)
 
-$(MAKEFILE_TARGETS): %/Makefile: | deps-for-%
-	cd $* && $(AUTOGEN_PREFIX) $(AUTOGEN) && $(CONFIGURE_PREFIX) ./configure $(OPTIONS) $($*_OPTIONS) $($*_EXTRA_OPTIONS)
+CONFIGURE_TARGETS := $(patsubst %, %/configure, $(BUILD_COMPONENTS))
+
+$(CONFIGURE_TARGETS): %/configure:
+	cd $* && $(AUTOGEN_PREFIX) $(AUTOGEN)
+
+$(MAKEFILE_TARGETS): %/Makefile: | %/configure deps-for-%
+	cd $* && $(CONFIGURE_PREFIX) ./configure $(OPTIONS) $($*_OPTIONS) $($*_EXTRA_OPTIONS)
 
 $(MAKE_INSTALL_TARGETS): make-install-%: %/Makefile deps-for-%
 	(rm -rf tmp/$*; mkdir -p tmp/$*)
@@ -219,6 +224,9 @@ ep-engine/Makefile:
 
 bucket_engine/Makefile:
 	touch $@
+
+memcached/configure ep-engine/configure bucket_engine/configure:
+	@true
 
 membase-cli/Makefile:
 	touch $@
