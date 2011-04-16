@@ -220,6 +220,16 @@ ep-engine/Makefile:
 bucket_engine/Makefile:
 	touch $@
 
+membase-cli/Makefile:
+	touch $@
+
+make-install-membase-cli:
+	(cd membase-cli && mkdir -p $(PREFIX)/bin/cli && \
+	mkdir -p $(PREFIX)/bin/cli/simplejson && \
+	cp membase *.py LICENSE $(PREFIX)/bin/cli && \
+	cp simplejson/*.py $(PREFIX)/bin/cli/simplejson && \
+	cp simplejson/LICENSE.txt $(PREFIX)/bin/cli/simplejson)
+
 make-install-memcached:
 	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
          && mkdir -p $(PREFIX)/lib/memcached \
