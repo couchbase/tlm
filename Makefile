@@ -98,12 +98,18 @@ do-hard-clean-xfd-%:
 CONFIGURE_TARGETS := $(patsubst %, %/configure, $(BUILD_COMPONENTS))
 
 ifdef AUTO_RECONFIG
-$(CONFIGURE_TARGETS): %/configure: %/.git/HEAD
-	cd $* && $(AUTOGEN_PREFIX) $(AUTOGEN)
-else
-$(CONFIGURE_TARGETS): %/configure:
-	cd $* && $(AUTOGEN_PREFIX) $(AUTOGEN)
+
+define define-configure-target-deps
+$(1)/configure: $(1)/.git/HEAD $(1)/.git/$(shell git --git-dir=$(1)/.git symbolic-ref -q HEAD || echo HEAD)
+endef
+# $(foreach comp, $(BUILD_COMPONENTS),$(eval $(info $(call define-configure-target-deps,$(comp)))))
+# $(error stop)
+$(foreach comp, $(BUILD_COMPONENTS),$(eval $(call define-configure-target-deps,$(comp))))
+
 endif
+
+$(CONFIGURE_TARGETS):
+	cd $(dir $@) && $(AUTOGEN_PREFIX) $(AUTOGEN)
 
 $(MAKEFILE_TARGETS): %/Makefile: | %/configure deps-for-%
 	cd $* && $(CONFIGURE_PREFIX) ./configure $(OPTIONS) $($*_OPTIONS) $($*_EXTRA_OPTIONS)
