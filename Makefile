@@ -97,8 +97,13 @@ do-hard-clean-xfd-%:
 
 CONFIGURE_TARGETS := $(patsubst %, %/configure, $(BUILD_COMPONENTS))
 
+ifdef AUTO_RECONFIG
+$(CONFIGURE_TARGETS): %/configure: %/.git/HEAD
+	cd $* && $(AUTOGEN_PREFIX) $(AUTOGEN)
+else
 $(CONFIGURE_TARGETS): %/configure:
 	cd $* && $(AUTOGEN_PREFIX) $(AUTOGEN)
+endif
 
 $(MAKEFILE_TARGETS): %/Makefile: | %/configure deps-for-%
 	cd $* && $(CONFIGURE_PREFIX) ./configure $(OPTIONS) $($*_OPTIONS) $($*_EXTRA_OPTIONS)
