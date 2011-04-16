@@ -166,7 +166,7 @@ memcached_OPTIONS := --enable-isasl
 
 make-install-ns_server:
 	cd ns_server && ./configure "--prefix=$(PREFIX)"
-	$(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
+	ERL_FLAGS='-smp disable' $(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
 
 ifdef PLEASE_BUILD_COUCH_DEPS
 couchdb_OPTIONS := --with-js-lib=$(PREFIX)/lib --with-js-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
