@@ -54,6 +54,21 @@ endif
 
 all: do-install-all
 
+DIST_VERSION = `git describe`
+
+dist:
+	for i in $(COMPONENTS); do (cd $$i && rm -f *.tar.gz && make dist || true); done
+	mkdir -p tmp/membase-server_src
+	rm -rf tmp/membase-server_src/*
+	(for i in $(COMPONENTS); do \
+         mkdir -p tmp/membase-server_src/$$i; \
+         (cd tmp/membase-server_src/$$i && \
+          tar --strip-components 1 -xzf ../../../$$i/$$i-*.tar.gz || \
+          tar --strip-components 1 -xzf ../../../$$i/*.tar.gz || true); \
+         done)
+	cp Makefile tmp/membase-server_src
+	tar -C tmp -czf membase-server_src-$(DIST_VERSION).tar.gz membase-server_src
+
 ifdef BUILD_SIGAR
 deps-for-portsigar: make-install-sigar
 portsigar/Makefile: AUTOGEN := ./bootstrap
