@@ -52,7 +52,7 @@ else
 LIBRARY_OPTIONS := --disable-static --enable-shared
 endif
 
-all: do-install-all build-ns_server
+all: do-install-all
 
 ifdef BUILD_SIGAR
 deps-for-portsigar: make-install-sigar
@@ -63,9 +63,6 @@ portsigar_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/sigar/include $(CPPFLAGS)'
 endif
 
 do-install-all: $(MAKE_INSTALL_TARGETS) make-install-ns_server
-
-build-ns_server:
-	$(MAKE) -C ns_server
 
 -clean-common:
 	rm -rf install tmp
@@ -166,7 +163,7 @@ memcached_OPTIONS := --enable-isasl
 
 make-install-ns_server:
 	cd ns_server && ./configure "--prefix=$(PREFIX)"
-	ERL_FLAGS='-smp disable' $(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
+	$(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
 
 ifdef PLEASE_BUILD_COUCH_DEPS
 couchdb_OPTIONS := --with-js-lib=$(PREFIX)/lib --with-js-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
