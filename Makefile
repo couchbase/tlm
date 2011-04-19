@@ -240,11 +240,9 @@ membase-cli/Makefile:
 	touch $@
 
 make-install-membase-cli:
-	(cd membase-cli && mkdir -p $(PREFIX)/bin/cli && \
-	mkdir -p $(PREFIX)/bin/cli/simplejson && \
-	cp membase *.py LICENSE $(PREFIX)/bin/cli && \
-	cp simplejson/*.py $(PREFIX)/bin/cli/simplejson && \
-	cp simplejson/LICENSE.txt $(PREFIX)/bin/cli/simplejson)
+	(cd membase-cli && mkdir -p $(PREFIX)/bin/simplejson && \
+	cp membase *.py LICENSE $(PREFIX)/bin && \
+	cp simplejson/LICENSE.txt simplejson/*.py $(PREFIX)/bin/simplejson)
 
 make-install-memcached:
 	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
