@@ -55,6 +55,7 @@ endif
 all: do-install-all
 
 DIST_VERSION = `git describe`
+DIST_MANIFEST = manifest.xml
 
 dist:
 	for i in $(COMPONENTS); do (cd $$i && rm -f *.tar.gz && make dist || true); done
@@ -67,6 +68,7 @@ dist:
           tar --strip-components 1 -xzf ../../../$$i/*.tar.gz || true); \
          done)
 	cp Makefile tmp/membase-server_src
+	if [ -f $(DIST_MANIFEST) ]; then cp $(DIST_MANIFEST) tmp/membase-server_src; fi
 	tar -C tmp -czf membase-server_src-$(DIST_VERSION).tar.gz membase-server_src
 
 ifdef BUILD_SIGAR
