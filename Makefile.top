@@ -2,10 +2,6 @@
 TOPDIR := $(shell pwd)
 PREFIX := $(TOPDIR)/install
 
-ifeq "$(realpath tlm/Makefile)" ""
-$(error You need to be in top-level directory to use top-level makefile)
-endif
-
 COMPONENTS := bucket_engine \
 	ep-engine \
 	libconflate \
