@@ -45,6 +45,7 @@ AUTOGEN := ./config/autorun.sh
 ifdef PREFER_STATIC
 LIBRARY_OPTIONS := --enable-static --disable-shared
 else
+NUKE_LA_FILES=true
 LIBRARY_OPTIONS := --disable-static --enable-shared
 endif
 
@@ -128,6 +129,7 @@ $(MAKEFILE_TARGETS): %/Makefile: | %/configure deps-for-%
 $(MAKE_INSTALL_TARGETS): make-install-%: %/Makefile deps-for-%
 	(rm -rf tmp/$*; mkdir -p tmp/$*)
 	$(MAKE) -C $* install $($*_EXTRA_MAKE_OPTIONS)
+	if [ -n "$(NUKE_LA_FILES)" ]; then $(RM) -f $(DESTDIR)$(PREFIX)/lib/*.la; fi
 
 $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 
