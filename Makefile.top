@@ -20,6 +20,10 @@ CPPFLAGS := -I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)
 export LDFLAGS CPPFLAGS
 endif
 
+ifneq "$(COUCHBASE_DEBUG_BUILD)" ""
+WITH_DEBUG_FLAG=--with-debug
+endif
+
 ifneq "$(realpath couchdb/configure.ac)" ""
 BUILD_COUCH := 1
 COMPONENTS += couchdb
@@ -147,18 +151,18 @@ endif
 # tar.gz _should_ have ./configure inside, but it doesn't
 # make-install-libmemcached: AUTOGEN := true
 
-libvbucket_OPTIONS :=  $(LIBRARY_OPTIONS) --without-docs --with-debug
+libvbucket_OPTIONS :=  $(LIBRARY_OPTIONS) --without-docs $(WITH_DEBUG_FLAG)
 libvbucket_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/libmemcached $(CPPFLAGS)'
 deps-for-libvbucket: make-install-libmemcached
 
 memcachetest_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include -I$(TOPDIR)/libmemcached -I$(TOPDIR)/libvbucket/include $(CPPFLAGS)'
 deps-for-memcachetest: make-install-memcached make-install-libmemcached make-install-libvbucket
 
-ep-engine_OPTIONS := --with-memcached=../memcached --with-debug
+ep-engine_OPTIONS := --with-memcached=../memcached $(WITH_DEBUG_FLAG)
 ep-engine_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include $(CPPFLAGS)'
 deps-for-ep-engine: make-install-memcached
 
-bucket_engine_OPTIONS := --with-memcached=../memcached --with-debug
+bucket_engine_OPTIONS := --with-memcached=../memcached $(WITH_DEBUG_FLAG)
 bucket-engine_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include $(CPPFLAGS)'
 deps-for-bucket_engine: make-install-memcached
 
@@ -171,7 +175,7 @@ moxi_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 endif
 deps-for-moxi: make-install-libconflate make-install-libvbucket make-install-libmemcached make-install-memcached
 
-libconflate_OPTIONS := $(LIBRARY_OPTIONS) --without-check --with-debug
+libconflate_OPTIONS := $(LIBRARY_OPTIONS) --without-check $(WITH_DEBUG_FLAG)
 
 vbucketmigrator_OPTIONS := --without-sasl --with-isasl
 
