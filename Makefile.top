@@ -24,9 +24,13 @@ ifneq "$(COUCHBASE_DEBUG_BUILD)" ""
 WITH_DEBUG_FLAG=--with-debug
 endif
 
+ifndef DISABLE_COUCH
+
 ifneq "$(realpath couchdb/configure.ac)" ""
 BUILD_COUCH := 1
 COMPONENTS += couchdb
+endif
+
 endif
 
 ifneq "$(realpath portsigar/configure.ac)" ""
