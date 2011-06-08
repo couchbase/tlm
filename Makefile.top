@@ -45,6 +45,14 @@ endif
 BUILD_COMPONENTS := $(filter-out ns_server, $(COMPONENTS))
 
 MAKE_INSTALL_TARGETS := $(patsubst %, make-install-%, $(BUILD_COMPONENTS))
+MAKE_INSTALL_TARGETS_EX :=
+
+ifdef BUILD_COUCH
+ifneq "$(realpath geocouch/Makefile)" ""
+MAKE_INSTALL_TARGETS_EX += make-install-geocouch
+endif
+endif
+
 MAKEFILE_TARGETS := $(patsubst %, %/Makefile, $(BUILD_COMPONENTS))
 
 OPTIONS := --prefix=$(PREFIX)
@@ -85,7 +93,7 @@ portsigar_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/sigar/include $(CPPFLAGS)'
 sigar_OPTIONS := $(LIBRARY_OPTIONS) $(sigar_OPTIONS)
 endif
 
-do-install-all: $(MAKE_INSTALL_TARGETS) make-install-ns_server
+do-install-all: $(MAKE_INSTALL_TARGETS) make-install-ns_server $(MAKE_INSTALL_TARGETS_EX)
 
 -clean-common:
 	rm -rf install tmp
@@ -188,6 +196,13 @@ memcached_OPTIONS := --enable-isasl
 make-install-ns_server:
 	cd ns_server && ./configure "--prefix=$(PREFIX)"
 	$(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
+
+make-install-geocouch:
+	$(MAKE) -C geocouch COUCH_SRC=../couchdb/src/couchdb
+	mkdir -p $(PREFIX)/lib/couchdb/plugins/geocouch/ebin
+	cp -r geocouch/build/* $(PREFIX)/lib/couchdb/plugins/geocouch/ebin
+	cp -r geocouch/etc/* $(PREFIX)/etc
+	cp -r geocouch/share/www/* $(PREFIX)/share/couchdb/www
 
 ifdef PLEASE_BUILD_COUCH_DEPS
 couchdb_OPTIONS := --with-js-lib=$(PREFIX)/lib --with-js-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
