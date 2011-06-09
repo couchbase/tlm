@@ -201,8 +201,10 @@ make-install-geocouch:
 	$(MAKE) -C geocouch COUCH_SRC=../couchdb/src/couchdb
 	mkdir -p $(PREFIX)/lib/couchdb/plugins/geocouch/ebin
 	cp -r geocouch/build/* $(PREFIX)/lib/couchdb/plugins/geocouch/ebin
-	cp -r geocouch/etc/* $(PREFIX)/etc
-	cp -r geocouch/share/www/* $(PREFIX)/share/couchdb/www
+	mkdir -p $(PREFIX)/etc/couchdb/local.d
+	cp -r geocouch/etc/couchdb/local.d/* $(PREFIX)/etc/couchdb/local.d
+	mkdir -p $(PREFIX)/share/couchdb/www/script/test
+	cp -r geocouch/share/www/script/test/* $(PREFIX)/share/couchdb/www/script/test
 
 ifdef PLEASE_BUILD_COUCH_DEPS
 couchdb_OPTIONS := --with-js-lib=$(PREFIX)/lib --with-js-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
