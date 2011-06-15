@@ -39,7 +39,7 @@ BUILD_SIGAR := 1
 endif
 
 ifdef FOR_WINDOWS
-COMPONENTS := $(filter-out couchdb memcachetest vbucketmigrator, $(COMPONENTS))
+COMPONENTS := $(filter-out memcachetest vbucketmigrator, $(COMPONENTS))
 endif
 
 BUILD_COMPONENTS := $(filter-out ns_server, $(COMPONENTS))
