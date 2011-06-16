@@ -206,6 +206,13 @@ make-install-geocouch:
 	mkdir -p $(PREFIX)/share/couchdb/www/script/test
 	cp -r geocouch/share/www/script/test/* $(PREFIX)/share/couchdb/www/script/test
 
+make-install-mccouch:
+	$(MAKE) -C mccouch
+	mkdir -p $(PREFIX)/lib/couchdb/plugins/mccouch/ebin
+	cp -r mccouch/ebin/* $(PREFIX)/lib/couchdb/plugins/mccouch/ebin
+	mkdir -p $(PREFIX)/etc/couchdb/local.d
+	cp -r mccouch/etc/couchdb/local.d/* $(PREFIX)/etc/couchdb/local.d
+
 ifdef PLEASE_BUILD_COUCH_DEPS
 couchdb_OPTIONS := --with-js-lib=$(PREFIX)/lib --with-js-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
 
