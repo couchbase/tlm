@@ -56,6 +56,10 @@ MAKE_INSTALL_TARGETS_EX += make-install-mccouch
 endif
 endif
 
+TEST_COMPONENTS := $(filter-out libconflate membase-cli memcachetest moxi, $(BUILD_COMPONENTS))
+MAKE_TEST_TARGETS := $(patsubst %, make-test-%, $(TEST_COMPONENTS))
+MAKE_TEST_TARGETS_EX :=
+
 MAKEFILE_TARGETS := $(patsubst %, %/Makefile, $(BUILD_COMPONENTS))
 
 OPTIONS := --prefix=$(PREFIX)
@@ -86,6 +90,8 @@ dist:
 	cp Makefile tmp/membase-server_src
 	if [ -f $(DIST_MANIFEST) ]; then cp $(DIST_MANIFEST) tmp/membase-server_src; fi
 	tar -C tmp -czf membase-server_src-$(DIST_VERSION).tar.gz membase-server_src
+
+test: $(MAKE_TEST_TARGETS) $(MAKE_TEST_TARGETS_EX)
 
 ifdef BUILD_SIGAR
 deps-for-portsigar: make-install-sigar
@@ -149,6 +155,9 @@ $(MAKE_INSTALL_TARGETS): make-install-%: %/Makefile deps-for-%
 	(rm -rf tmp/$*; mkdir -p tmp/$*)
 	$(MAKE) -C $* install $($*_EXTRA_MAKE_OPTIONS)
 	if [ "x$(NUKE_LA_FILES)" = "xtrue" ]; then $(RM) -f $(DESTDIR)$(PREFIX)/lib/*.la; fi
+
+$(MAKE_TEST_TARGETS): make-test-%: make-install-%
+	$(MAKE) -C $* test
 
 $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 
