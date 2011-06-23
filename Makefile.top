@@ -183,7 +183,6 @@ memcachetest_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include -I$(T
 deps-for-memcachetest: make-install-memcached make-install-libmemcached make-install-libvbucket
 
 ep-engine_OPTIONS := --with-memcached=../memcached $(WITH_DEBUG_FLAG)
-ep-engine_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include $(CPPFLAGS)'
 deps-for-ep-engine: make-install-memcached
 
 bucket_engine_OPTIONS := --with-memcached=../memcached $(WITH_DEBUG_FLAG)
