@@ -2,4 +2,4 @@
 
 PREFIX="@PREFIX@"
 
-"$PREFIX/bin/memcached" -u `whoami` "$@" 2>&1 | tee -a "$PREFIX"/../memcached.$BASHPID.log
+exec "$PREFIX/bin/memcached" -u `whoami` "$@"
