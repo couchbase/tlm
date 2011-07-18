@@ -252,6 +252,7 @@ $(WRAPPERS): $(PREFIX)/bin/%: tlm/%.in
 
 WIN32_MAKE_TARGET := do-install-all
 WIN32_HOST := i586-mingw32msvc
+WIN_CYGWIN_FLAGS := CC=i686-pc-cygwin-gcc CXX=i686-pc-cgywin-g++
 
 win32-cross:
 	$(MAKE) $(WIN32_MAKE_TARGET) FOR_WINDOWS=1 HOST=$(WIN32_HOST) CROSS_COMPILING=1
@@ -314,7 +315,8 @@ EP_ENGINE_MARCH := $(strip $(if $(or $(findstring x86_64, $(HOST)), $(findstring
 
 make-install-ep-engine:
 	chmod +x ep-engine/win32/config.sh
-	(cd ep-engine && $(MAKE) -f win32/Makefile.genconf && $(MAKE) -f win32/Makefile.mingw "MARCH=$(EP_ENGINE_MARCH)" $(WIN_FLAGS) install)
+	(cd ep-engine && $(MAKE) -f win32/Makefile.genconf $(WIN_CYGWIN_FLAGS) \
+         && $(MAKE) -f win32/Makefile.mingw "MARCH=$(EP_ENGINE_MARCH)" $(WIN_FLAGS) install)
 
 make-install-bucket_engine:
 	(cd bucket_engine && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
