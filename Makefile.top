@@ -252,7 +252,7 @@ $(WRAPPERS): $(PREFIX)/bin/%: tlm/%.in
 
 WIN32_MAKE_TARGET := do-install-all
 WIN32_HOST := i586-mingw32msvc
-WIN_CYGWIN_FLAGS := CC=i686-pc-cygwin-gcc CXX=i686-pc-cgywin-g++
+WIN_CYGWIN_FLAGS := CC=i686-pc-cygwin-gcc CXX=i686-pc-cygwin-g++
 
 win32-cross:
 	$(MAKE) $(WIN32_MAKE_TARGET) FOR_WINDOWS=1 HOST=$(WIN32_HOST) CROSS_COMPILING=1
