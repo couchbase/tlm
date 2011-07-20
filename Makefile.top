@@ -76,20 +76,21 @@ all: do-install-all
 
 DIST_VERSION = `git describe`
 DIST_MANIFEST = manifest.xml
+DIST_PRODUCT = membase-server
 
 dist:
 	for i in $(COMPONENTS); do (cd $$i && rm -f *.tar.gz && make dist || true); done
-	mkdir -p tmp/membase-server_src
-	rm -rf tmp/membase-server_src/*
+	mkdir -p tmp/$(DIST_PRODUCT)_src
+	rm -rf tmp/$(DIST_PRODUCT)_src/*
 	(for i in $(COMPONENTS); do \
-         mkdir -p tmp/membase-server_src/$$i; \
-         (cd tmp/membase-server_src/$$i && \
+         mkdir -p tmp/$(DIST_PRODUCT)_src/$$i; \
+         (cd tmp/$(DIST_PRODUCT)_src/$$i && \
           tar --strip-components 1 -xzf ../../../$$i/$$i-*.tar.gz || \
           tar --strip-components 1 -xzf ../../../$$i/*.tar.gz || true); \
          done)
-	cp Makefile tmp/membase-server_src
-	if [ -f $(DIST_MANIFEST) ]; then cp $(DIST_MANIFEST) tmp/membase-server_src; fi
-	tar -C tmp -czf membase-server_src-$(DIST_VERSION).tar.gz membase-server_src
+	cp Makefile tmp/$(DIST_PRODUCT)_src
+	if [ -f $(DIST_MANIFEST) ]; then cp $(DIST_MANIFEST) tmp/$(DIST_PRODUCT)_src; fi
+	tar -C tmp -czf $(DIST_PRODUCT)_src-$(DIST_VERSION).tar.gz $(DIST_PRODUCT)_src
 
 test: $(MAKE_TEST_TARGETS) $(MAKE_TEST_TARGETS_EX)
 
