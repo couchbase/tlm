@@ -77,19 +77,20 @@ all: do-install-all
 DIST_VERSION = `git describe`
 DIST_MANIFEST = manifest.xml
 DIST_PRODUCT = membase-server
+DIST_COMPONENTS = $(COMPONENTS)
 
 dist:
-	for i in $(COMPONENTS); do (cd $$i && rm -f *.tar.gz && make dist || true); done
+	for i in $(DIST_COMPONENTS); do (cd $$i && rm -f *.tar.gz && make dist || true); done
 	mkdir -p tmp/$(DIST_PRODUCT)_src
 	rm -rf tmp/$(DIST_PRODUCT)_src/*
-	(for i in $(COMPONENTS); do \
+	(for i in $(DIST_COMPONENTS); do \
          mkdir -p tmp/$(DIST_PRODUCT)_src/$$i; \
          (cd tmp/$(DIST_PRODUCT)_src/$$i && \
           tar --strip-components 1 -xzf ../../../$$i/$$i-*.tar.gz || \
           tar --strip-components 1 -xzf ../../../$$i/*.tar.gz || true); \
          done)
 	cp Makefile tmp/$(DIST_PRODUCT)_src
-	if [ -f $(DIST_MANIFEST) ]; then cp $(DIST_MANIFEST) tmp/$(DIST_PRODUCT)_src; fi
+	if [ -f $(DIST_MANIFEST) ]; then cp $(DIST_MANIFEST) tmp/$(DIST_PRODUCT)_src/manifest.xml; fi
 	tar -C tmp -czf $(DIST_PRODUCT)_src-$(DIST_VERSION).tar.gz $(DIST_PRODUCT)_src
 
 test: $(MAKE_TEST_TARGETS) $(MAKE_TEST_TARGETS_EX)
