@@ -151,7 +151,7 @@ $(CONFIGURE_TARGETS):
 	cd $(dir $@) && $(AUTOGEN_PREFIX) $(AUTOGEN)
 
 $(MAKEFILE_TARGETS): %/Makefile: | %/configure deps-for-%
-	cd $* && $(CONFIGURE_PREFIX) ./configure $(OPTIONS) $($*_OPTIONS) $($*_EXTRA_OPTIONS)
+	cd $* && $(CONFIGURE_PREFIX) ./configure -C $(OPTIONS) $($*_OPTIONS) $($*_EXTRA_OPTIONS)
 
 $(MAKE_INSTALL_TARGETS): make-install-%: %/Makefile deps-for-%
 	(rm -rf tmp/$*; mkdir -p tmp/$*)
