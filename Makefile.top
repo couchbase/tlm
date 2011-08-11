@@ -7,6 +7,7 @@ COMPONENTS := bucket_engine \
 	libconflate \
 	libvbucket \
 	libmemcached \
+        libcouchbase \
 	membase-cli \
 	memcached \
 	memcachetest \
@@ -180,6 +181,9 @@ endif
 libvbucket_OPTIONS :=  $(LIBRARY_OPTIONS) --without-docs $(WITH_DEBUG_FLAG)
 libvbucket_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/libmemcached $(CPPFLAGS)'
 deps-for-libvbucket: make-install-libmemcached
+
+libcouchbase_OPTIONS :=  $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
+deps-for-libcouchbase: make-install-libvbucket
 
 memcachetest_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include -I$(TOPDIR)/libmemcached -I$(TOPDIR)/libvbucket/include $(CPPFLAGS)'
 deps-for-memcachetest: make-install-memcached make-install-libmemcached make-install-libvbucket
