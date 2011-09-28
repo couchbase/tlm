@@ -210,7 +210,7 @@ make-install-ns_server: make-install-geocouch
 make-install-geocouch: build-geos
 	$(MAKE) -C geocouch COUCH_SRC=../couchdb/src/couchdb "CFLAGS=-I$(PREFIX)/include $(CFLAGS)" "LDFLAGS=-L$(PREFIX)/lib $(LDFLAGS)"
 	mkdir -p $(DESTDIR)$(PREFIX)/lib/couchdb/plugins/geocouch/ebin
-	cp -r geocouch/build/* $(DESTDIR)$(PREFIX)/lib/couchdb/plugins/geocouch/ebin
+	cp -r geocouch/ebin/* $(DESTDIR)$(PREFIX)/lib/couchdb/plugins/geocouch/ebin
 	mkdir -p $(DESTDIR)$(PREFIX)/etc/couchdb/default.d
 	cp -r geocouch/etc/couchdb/default.d/* $(DESTDIR)$(PREFIX)/etc/couchdb/default.d
 	mkdir -p $(DESTDIR)$(PREFIX)/share/couchdb/www/script/test
