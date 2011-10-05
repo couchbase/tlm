@@ -28,7 +28,7 @@ ifndef DISABLE_COUCH
 
 ifneq "$(realpath couchdb/configure.ac)" ""
 BUILD_COUCH := 1
-COMPONENTS += couchdb
+COMPONENTS += couchdb couchbase-examples
 endif
 
 endif
@@ -306,6 +306,15 @@ make-install-membase-cli:
 	(cd membase-cli && mkdir -p $(PREFIX)/bin/simplejson && \
 	cp membase *.py LICENSE $(PREFIX)/bin && \
 	cp simplejson/LICENSE.txt simplejson/*.py $(PREFIX)/bin/simplejson)
+
+couchbase-examples/Makefile:
+	touch $@
+
+make-install-couchbase-examples:
+	(cd couchbase-python-client && python setup.py install) && \
+    (cp couchbase-examples/docloader $(PREFIX)/bin && \
+     mkdir -p $(PREFIX)/samples && \
+     cp couchbase-examples/gamesim-sample.zip $(PREFIX)/samples)
 
 make-install-memcached:
 	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
