@@ -104,7 +104,7 @@ portsigar_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/sigar/include $(CPPFLAGS)'
 sigar_OPTIONS := $(LIBRARY_OPTIONS) $(sigar_OPTIONS)
 endif
 
-do-install-all: $(MAKE_INSTALL_TARGETS) make-install-ns_server $(MAKE_INSTALL_TARGETS_EX)
+do-install-all: $(MAKE_INSTALL_TARGETS) $(MAKE_INSTALL_TARGETS_EX) make-install-ns_server
 
 -clean-common:
 	rm -rf install tmp
