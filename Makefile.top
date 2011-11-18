@@ -53,6 +53,7 @@ MAKE_INSTALL_TARGETS_EX += make-install-geocouch
 endif
 ifneq "$(realpath mccouch/Makefile)" ""
 MAKE_INSTALL_TARGETS_EX += make-install-mccouch
+DO_BUILD_MCCOUCH := 1
 endif
 endif
 
@@ -382,6 +383,12 @@ replace-wrappers: $(WRAPPERS) all
 	sed -e 's|/bin/memcached|/bin/memcached.orig|g' <$(PREFIX)/bin/memcached-wrapper >$(PREFIX)/bin/memcached
 	sed -e 's|/bin/moxi|/bin/moxi.orig|g' <$(PREFIX)/bin/moxi-wrapper >$(PREFIX)/bin/moxi
 	chmod +x $(PREFIX)/bin/memcached $(PREFIX)/bin/moxi
+
+ifdef DO_BUILD_MCCOUCH
+
+make-install-ns_server: make-install-mccouch
+
+endif
 
 # Allow the user to override stuff for all projects (like
 # --with-erlang=)
