@@ -51,12 +51,8 @@ ifdef BUILD_COUCH
 ifneq "$(realpath geocouch/Makefile)" ""
 MAKE_INSTALL_TARGETS_EX += make-install-geocouch
 endif
-
 ifneq "$(realpath mccouch/Makefile)" ""
 MAKE_INSTALL_TARGETS_EX += make-install-mccouch
-
-make-install-ns_server: make-install-mccouch
-
 endif
 endif
 
