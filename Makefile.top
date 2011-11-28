@@ -12,6 +12,8 @@ COMPONENTS := bucket_engine \
 	memcached \
 	memcachetest \
 	moxi \
+	couchdb \
+	couchbase-examples \
 	ns_server
 
 ifneq "$(DESTDIR)" ""
@@ -22,15 +24,6 @@ endif
 
 ifneq "$(COUCHBASE_DEBUG_BUILD)" ""
 WITH_DEBUG_FLAG=--with-debug
-endif
-
-ifndef DISABLE_COUCH
-
-ifneq "$(realpath couchdb/configure.ac)" ""
-BUILD_COUCH := 1
-COMPONENTS += couchdb couchbase-examples
-endif
-
 endif
 
 ifneq "$(realpath portsigar/configure.ac)" ""
@@ -45,17 +38,7 @@ endif
 BUILD_COMPONENTS := $(filter-out ns_server, $(COMPONENTS))
 
 MAKE_INSTALL_TARGETS := $(patsubst %, make-install-%, $(BUILD_COMPONENTS))
-MAKE_INSTALL_TARGETS_EX :=
-
-ifdef BUILD_COUCH
-ifneq "$(realpath geocouch/Makefile)" ""
-MAKE_INSTALL_TARGETS_EX += make-install-geocouch
-endif
-ifneq "$(realpath mccouch/Makefile)" ""
-MAKE_INSTALL_TARGETS_EX += make-install-mccouch
-DO_BUILD_MCCOUCH := 1
-endif
-endif
+MAKE_INSTALL_TARGETS_EX := geocouch mccouch
 
 TEST_COMPONENTS := $(filter-out libconflate membase-cli memcachetest moxi, $(BUILD_COMPONENTS))
 MAKE_TEST_TARGETS := $(patsubst %, make-test-%, $(TEST_COMPONENTS))
@@ -208,6 +191,8 @@ libconflate_OPTIONS := $(LIBRARY_OPTIONS) --without-check $(WITH_DEBUG_FLAG)
 
 memcached_OPTIONS := --enable-isasl
 
+make-install-ns_server: make-install-mccouch
+
 make-install-ns_server:
 	cd ns_server && ./configure "--prefix=$(PREFIX)"
 	$(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
@@ -239,9 +224,7 @@ couchdb_OPTIONS := --with-js-lib=$(PREFIX)/lib --with-js-include=$(PREFIX)/inclu
 couchdb_EXTRA_MAKE_OPTIONS := "LDFLAGS=-R $(PREFIX)/lib $(LDFLAGS)"
 endif
 
-ifdef BUILD_COUCH
 couchdb/Makefile: AUTOGEN = ./bootstrap
-endif
 
 ifdef PLEASE_BUILD_COUCH_DEPS
 deps-for-couchdb: make-install-couchdb-deps
@@ -383,12 +366,6 @@ replace-wrappers: $(WRAPPERS) all
 	sed -e 's|/bin/memcached|/bin/memcached.orig|g' <$(PREFIX)/bin/memcached-wrapper >$(PREFIX)/bin/memcached
 	sed -e 's|/bin/moxi|/bin/moxi.orig|g' <$(PREFIX)/bin/moxi-wrapper >$(PREFIX)/bin/moxi
 	chmod +x $(PREFIX)/bin/memcached $(PREFIX)/bin/moxi
-
-ifdef DO_BUILD_MCCOUCH
-
-make-install-ns_server: make-install-mccouch
-
-endif
 
 # Allow the user to override stuff for all projects (like
 # --with-erlang=)
