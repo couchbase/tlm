@@ -191,9 +191,7 @@ libconflate_OPTIONS := $(LIBRARY_OPTIONS) --without-check $(WITH_DEBUG_FLAG)
 
 memcached_OPTIONS := --enable-isasl
 
-make-install-ns_server: make-install-mccouch
-
-make-install-ns_server:
+make-install-ns_server: make-install-geocouch
 	cd ns_server && ./configure "--prefix=$(PREFIX)"
 	$(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
 
