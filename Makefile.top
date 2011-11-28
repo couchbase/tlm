@@ -36,9 +36,10 @@ COMPONENTS := $(filter-out memcachetest libcouchbase, $(COMPONENTS))
 endif
 
 BUILD_COMPONENTS := $(filter-out ns_server, $(COMPONENTS))
+BUILD_COMPONENTS_EX := geocouch mccouch
 
 MAKE_INSTALL_TARGETS := $(patsubst %, make-install-%, $(BUILD_COMPONENTS))
-MAKE_INSTALL_TARGETS_EX := geocouch mccouch
+MAKE_INSTALL_TARGETS_EX := $(patsubst %, make-install-%, $(BUILD_COMPONENTS_EX))
 
 TEST_COMPONENTS := $(filter-out libconflate membase-cli memcachetest moxi, $(BUILD_COMPONENTS))
 MAKE_TEST_TARGETS := $(patsubst %, make-test-%, $(TEST_COMPONENTS))
