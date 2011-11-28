@@ -365,6 +365,10 @@ replace-wrappers: $(WRAPPERS) all
 	sed -e 's|/bin/moxi|/bin/moxi.orig|g' <$(PREFIX)/bin/moxi-wrapper >$(PREFIX)/bin/moxi
 	chmod +x $(PREFIX)/bin/memcached $(PREFIX)/bin/moxi
 
+Makefile: tlm/Makefile.top
+	rm -f $@
+	cp $< $@
+
 # Allow the user to override stuff for all projects (like
 # --with-erlang=)
 ifneq "$(realpath $(HOME)/.couchbase/build/Makefile.extra)" ""
