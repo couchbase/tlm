@@ -136,7 +136,7 @@ $(CONFIGURE_TARGETS):
 	cd $(dir $@) && $(AUTOGEN_PREFIX) $(AUTOGEN)
 
 $(MAKEFILE_TARGETS): %/Makefile: | %/configure deps-for-%
-	cd $* && $(CONFIGURE_PREFIX) ./configure $(OPTIONS) $($*_OPTIONS) $($*_EXTRA_OPTIONS)
+	cd $* && $(CONFIGURE_PREFIX) ./configure -C $(OPTIONS) $($*_OPTIONS) $($*_EXTRA_OPTIONS)
 
 $(MAKE_INSTALL_TARGETS): make-install-%: %/Makefile deps-for-%
 	(rm -rf tmp/$*; mkdir -p tmp/$*)
@@ -287,7 +287,7 @@ membase-cli/Makefile:
 
 make-install-membase-cli:
 	(cd membase-cli && mkdir -p $(PREFIX)/bin/simplejson && \
-	cp membase *.py LICENSE $(PREFIX)/bin && \
+	cp couchbase *.py LICENSE $(PREFIX)/bin && \
 	cp simplejson/LICENSE.txt simplejson/*.py $(PREFIX)/bin/simplejson)
 
 couchbase-examples/Makefile:
@@ -310,8 +310,7 @@ EP_ENGINE_MARCH := $(strip $(if $(or $(findstring x86_64, $(HOST)), $(findstring
 
 make-install-ep-engine:
 	chmod +x ep-engine/win32/config.sh
-	(cd ep-engine && $(MAKE) -f win32/Makefile.genconf $(WIN_CYGWIN_FLAGS) \
-         && $(MAKE) -f win32/Makefile.mingw "MARCH=$(EP_ENGINE_MARCH)" $(WIN_FLAGS) install)
+	(cd ep-engine && $(MAKE) -f win32/Makefile.mingw "MARCH=$(EP_ENGINE_MARCH)" $(WIN_FLAGS) install)
 
 make-install-bucket_engine:
 	(cd bucket_engine && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
