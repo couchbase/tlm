@@ -311,8 +311,9 @@ workload-generator/Makefile:
 	touch $@
 
 make-install-workload-generator:
-	(cd couchbase-python-client && python setup.py install)
-	cp workload-generator/workload-generator $(PREFIX)/bin
+	(cd couchbase-python-client && mkdir -p $(PREFIX)/bin/couchbase && \
+         cp -r couchbase $(PREFIX)/bin/)
+	cp workload-generator/cbworkloadgen $(PREFIX)/bin
 
 make-install-memcached:
 	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
