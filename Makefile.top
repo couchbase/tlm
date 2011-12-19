@@ -164,8 +164,6 @@ endif
 # make-install-libmemcached: AUTOGEN := true
 
 libvbucket_OPTIONS :=  $(LIBRARY_OPTIONS) --without-docs $(WITH_DEBUG_FLAG)
-libvbucket_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/libmemcached $(CPPFLAGS)'
-deps-for-libvbucket: make-install-libmemcached
 
 libcouchbase_OPTIONS :=  $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
 deps-for-libcouchbase: make-install-libvbucket
