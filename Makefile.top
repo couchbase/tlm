@@ -149,9 +149,8 @@ $(MAKE_TEST_TARGETS): make-test-%: make-install-%
 
 $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 
-libmemcached_OPTIONS := $(LIBRARY_OPTIONS) --disable-dtrace --without-docs --disable-sasl
+libmemcached_OPTIONS := $(LIBRARY_OPTIONS) --disable-dtrace --without-docs --disable-sasl --without-memcached
 ifndef CROSS_COMPILING
-libmemcached_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 memcachetest_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 deps-for-libmemcached: make-install-memcached
 endif
