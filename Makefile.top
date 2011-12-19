@@ -7,14 +7,15 @@ COMPONENTS := bucket_engine \
 	libconflate \
 	libvbucket \
 	libmemcached \
-        libcouchbase \
+    libcouchbase \
 	membase-cli \
 	memcached \
 	memcachetest \
 	moxi \
 	couchdb \
 	couchbase-examples \
-	ns_server
+	ns_server \
+	workload-generator
 
 ifneq "$(DESTDIR)" ""
 LDFLAGS := -L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)
@@ -298,6 +299,14 @@ make-install-couchbase-examples:
     (cp couchbase-examples/docloader $(PREFIX)/bin && \
      mkdir -p $(PREFIX)/samples && \
      cp couchbase-examples/gamesim-sample.zip $(PREFIX)/samples)
+
+workload-generator/Makefile:
+	touch $@
+
+make-install-workload-generator:
+	(cd couchbase-python-client && mkdir -p $(PREFIX)/bin/couchbase && \
+     cp -r couchbase $(PREFIX)/bin/)
+	cp workload-generator/cbworkloadgen $(PREFIX)/bin
 
 make-install-memcached:
 	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
