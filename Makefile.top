@@ -294,18 +294,19 @@ make-install-membase-cli:
 couchbase-examples/Makefile:
 	touch $@
 
-make-install-couchbase-examples:
-	(cd couchbase-python-client && python setup.py install) && \
-    (cp couchbase-examples/docloader $(PREFIX)/bin && \
-     mkdir -p $(PREFIX)/samples && \
-     cp couchbase-examples/gamesim-sample.zip $(PREFIX)/samples)
+make-install-couchbase-examples: install-couchbase-python-client
+	(cp couchbase-examples/docloader $(PREFIX)/bin && \
+	 mkdir -p $(PREFIX)/samples && \
+	 cp couchbase-examples/gamesim-sample.zip $(PREFIX)/samples)
+
+install-couchbase-python-client:
+	cd couchbase-python-client && mkdir -p $(PREFIX)/bin/couchbase && \
+	cp -r couchbase $(PREFIX)/bin
 
 workload-generator/Makefile:
 	touch $@
 
-make-install-workload-generator:
-	(cd couchbase-python-client && mkdir -p $(PREFIX)/bin/couchbase && \
-     cp -r couchbase $(PREFIX)/bin/)
+make-install-workload-generator: install-couchbase-python-client
 	cp workload-generator/cbworkloadgen $(PREFIX)/bin
 
 make-install-memcached:
