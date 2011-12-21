@@ -167,7 +167,7 @@ libvbucket_OPTIONS :=  $(LIBRARY_OPTIONS) --without-docs $(WITH_DEBUG_FLAG)
 libcouchbase_OPTIONS :=  $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
 libcouchbase_EXTRA_OPTIONS := 'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
                               'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
-deps-for-libcouchbase: make-install-libvbucket
+deps-for-libcouchbase: make-install-libvbucket make-install-memcached
 
 memcachetest_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include -I$(TOPDIR)/libmemcached -I$(TOPDIR)/libvbucket/include -I$(PREFIX)/include $(CPPFLAGS)'
 deps-for-memcachetest: make-install-memcached make-install-libmemcached make-install-libvbucket
