@@ -103,8 +103,8 @@ clean: -clean-common
 distclean: -clean-common
 	for i in $(COMPONENTS); do (cd $$i && make distclean || true); done
 	rm -rf install tmp
-	rm moxi*log
-	rm memcached*log
+	rm -f moxi*log
+	rm -f memcached*log
 
 clean-xfd: $(patsubst %, do-clean-xfd-%, $(COMPONENTS)) -clean-common
 	(cd icu4c && git clean -Xfd) || true
