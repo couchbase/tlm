@@ -203,7 +203,7 @@ deps-for-moxi: make-install-libconflate make-install-libvbucket make-install-lib
 
 libconflate_OPTIONS := $(LIBRARY_OPTIONS) --without-check $(WITH_DEBUG_FLAG)
 
-vbucketmigrator_OPTIONS := --without-sasl --with-isasl
+vbucketmigrator_OPTIONS := --without-sasl --with-isasl --disable-sasl 
 
 memcached_OPTIONS := --enable-isasl
 
