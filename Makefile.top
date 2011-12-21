@@ -7,7 +7,6 @@ COMPONENTS := bucket_engine \
 	libconflate \
 	libvbucket \
 	libmemcached \
-    libcouchbase \
 	membase-cli \
 	memcached \
 	memcachetest \
