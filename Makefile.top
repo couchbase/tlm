@@ -31,6 +31,10 @@ COMPONENTS += sigar portsigar
 BUILD_SIGAR := 1
 endif
 
+ifneq "$(realpath geos)" ""
+BUILD_GEOS := 1
+endif
+
 ifdef FOR_WINDOWS
 COMPONENTS := $(filter-out memcachetest libcouchbase, $(COMPONENTS))
 endif
@@ -202,8 +206,8 @@ make-install-ns_server: make-install-geocouch
 	cd ns_server && ./configure "--prefix=$(PREFIX)"
 	$(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
 
-make-install-geocouch:
-	$(MAKE) -C geocouch COUCH_SRC=../couchdb/src/couchdb
+make-install-geocouch: build-geos
+	$(MAKE) -C geocouch COUCH_SRC=../couchdb/src/couchdb "CFLAGS=-I$(PREFIX)/include $(CFLAGS)" "LDFLAGS=-L$(PREFIX)/lib $(LDFLAGS)"
 	mkdir -p $(DESTDIR)$(PREFIX)/lib/couchdb/plugins/geocouch/ebin
 	cp -r geocouch/ebin/* $(DESTDIR)$(PREFIX)/lib/couchdb/plugins/geocouch/ebin
 	mkdir -p $(DESTDIR)$(PREFIX)/lib/couchdb/plugins/geocouch/deps/erlgeom
@@ -239,6 +243,12 @@ couchdb/Makefile: AUTOGEN = ./bootstrap
 
 ifdef PLEASE_BUILD_COUCH_DEPS
 deps-for-couchdb: make-install-couchdb-deps
+endif
+
+ifdef BUILD_GEOS
+build-geos: make-install-geos
+else
+build-geos:
 endif
 
 WRAPPERS := $(patsubst %, $(PREFIX)/bin/%, memcached-wrapper moxi-wrapper)
@@ -368,6 +378,15 @@ make-install-icu4c: icu4c/source/Makefile
 	$(MAKE) -C icu4c/source install
 
 make-install-couchdb-deps: make-install-spidermonkey make-install-icu4c
+
+
+geos/Makefile:
+	(cd geos && ./autogen.sh && ./configure "--prefix=$(PREFIX)")
+
+make-install-geos: geos/Makefile
+	$(MAKE) -C geos
+	$(MAKE) -C geos install
+
 
 CHECK_COMPONENTS ?= $(COMPONENTS)
 
