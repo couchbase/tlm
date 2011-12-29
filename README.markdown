@@ -1,4 +1,4 @@
-# Toplevel Makefile
+# Top-level Makefile
 
 What's this, then?
 
