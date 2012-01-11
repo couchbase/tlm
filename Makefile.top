@@ -374,9 +374,11 @@ replace-wrappers: $(WRAPPERS) all
 	sed -e 's|/bin/moxi|/bin/moxi.orig|g' <$(PREFIX)/bin/moxi-wrapper >$(PREFIX)/bin/moxi
 	chmod +x $(PREFIX)/bin/memcached $(PREFIX)/bin/moxi
 
+ifneq "$(realpath tlm/Makefile.top)" ""
 Makefile: tlm/Makefile.top
 	rm -f $@
 	cp $< $@
+endif
 
 # Allow the user to override stuff for all projects (like
 # --with-erlang=)
