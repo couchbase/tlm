@@ -80,6 +80,12 @@ dist:
 
 test: $(MAKE_TEST_TARGETS) $(MAKE_TEST_TARGETS_EX)
 
+e2etest:
+	cd testrunner && $(MAKE) test
+
+e2eviewtests:
+	cd testrunner && $(MAKE) test-views
+
 ifdef BUILD_SIGAR
 deps-for-portsigar: make-install-sigar
 portsigar/Makefile: AUTOGEN := ./bootstrap
