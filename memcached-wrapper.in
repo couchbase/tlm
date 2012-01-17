@@ -2,4 +2,31 @@
 
 PREFIX="@PREFIX@"
 
+if [ "x$MEMCACHED_UMEM" = "xyes" ]
+then
+   export UMEM_DEBUG=default
+   export UMEM_LOGGING=transaction,contents,fail
+   export LD_PRELOAD=libumem.so.1
+   exec "$PREFIX/bin/memcached" -u `whoami` "$@"
+
+elif [ "x$MEMCACHED_WATCHMALLOC" = "xyes" ]
+then
+   export MALLOC_DEBUG=WATCH,RW,STOP
+   export LD_PRELOAD=watchmalloc.so.1
+   exec "$PREFIX/bin/memcached" -u `whoami` "$@"
+
+elif [ "x$MEMCACHED_VALGRIND" = "xyes" ]
+then
+  exec valgrind \
+           --time-stamp=yes \
+           --log-file=/tmp/memcached.%p.valgrind \
+           --leak-check=yes \
+           --track-origins=yes \
+           --read-var-info=yes \
+           --malloc-fill=55 \
+           --free-fill=aa \
+           --show-reachable=yes \
+           "$PREFIX/bin/memcached" -u `whoami` "$@"
+fi
+
 exec "$PREFIX/bin/memcached" -u `whoami` "$@"
