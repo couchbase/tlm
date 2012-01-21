@@ -61,8 +61,8 @@ all: do-install-all
 
 DIST_VERSION = `git describe`
 DIST_MANIFEST = manifest.xml
-DIST_PRODUCT = membase-server
-DIST_COMPONENTS = $(COMPONENTS) $(DIST_COMPONENTS_EXTRA)
+DIST_PRODUCT = couchbase-server
+DIST_COMPONENTS = $(filter-out workload-generator, $(COMPONENTS)) $(DIST_COMPONENTS_EXTRA)
 
 dist:
 	for i in $(DIST_COMPONENTS); do (cd $$i && rm -f *.tar.gz && make dist || true); done
