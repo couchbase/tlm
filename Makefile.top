@@ -182,7 +182,7 @@ libvbucket_OPTIONS :=  $(LIBRARY_OPTIONS) --without-docs $(WITH_DEBUG_FLAG)
 libvbucket_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/libmemcached $(CPPFLAGS)'
 deps-for-libvbucket: make-install-libmemcached
 
-memcachetest_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include -I$(TOPDIR)/libmemcached -I$(TOPDIR)/libvbucket/include $(CPPFLAGS)'
+memcachetest_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include -I$(TOPDIR)/libmemcached -I$(TOPDIR)/libvbucket/include -I$(PREFIX)/include $(CPPFLAGS)'
 deps-for-memcachetest: make-install-memcached make-install-libmemcached make-install-libvbucket
 
 ep-engine_OPTIONS := --with-memcached=../memcached $(WITH_DEBUG_FLAG)
@@ -203,7 +203,7 @@ deps-for-moxi: make-install-libconflate make-install-libvbucket make-install-lib
 
 libconflate_OPTIONS := $(LIBRARY_OPTIONS) --without-check $(WITH_DEBUG_FLAG)
 
-vbucketmigrator_OPTIONS := --without-sasl --with-isasl --disable-sasl 
+vbucketmigrator_OPTIONS := --without-sasl --with-isasl --disable-sasl
 
 memcached_OPTIONS := --enable-isasl
 
