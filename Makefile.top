@@ -62,7 +62,7 @@ all: do-install-all
 DIST_VERSION = `git describe`
 DIST_MANIFEST = manifest.xml
 DIST_PRODUCT = couchbase-server
-DIST_COMPONENTS = $(filter-out workload-generator, $(COMPONENTS)) $(DIST_COMPONENTS_EXTRA)
+DIST_COMPONENTS = $(filter-out workload-generator memcachetest libcouchbase, $(COMPONENTS)) $(DIST_COMPONENTS_EXTRA)
 
 dist:
 	for i in $(DIST_COMPONENTS); do (cd $$i && rm -f *.tar.gz && make dist || true); done
@@ -72,7 +72,8 @@ dist:
          mkdir -p tmp/$(DIST_PRODUCT)_src/$$i; \
          (cd tmp/$(DIST_PRODUCT)_src/$$i && \
           tar --strip-components 1 -xzf ../../../$$i/$$i-*.tar.gz || \
-          tar --strip-components 1 -xzf ../../../$$i/*.tar.gz || true); \
+          tar --strip-components 1 -xzf ../../../$$i/*.tar.gz || \
+          (cd ../.. && rm -rf $(DIST_PRODUCT)_src/$$i)); \
          done)
 	cp Makefile tmp/$(DIST_PRODUCT)_src
 	if [ -f $(DIST_MANIFEST) ]; then cp $(DIST_MANIFEST) tmp/$(DIST_PRODUCT)_src/manifest.xml; fi
