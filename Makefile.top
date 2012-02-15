@@ -5,8 +5,8 @@ PREFIX := $(TOPDIR)/install
 COMPONENTS := bucket_engine \
 	ep-engine \
 	libconflate \
+        libmemcached \
 	libvbucket \
-	libmemcached \
 	membase-cli \
 	memcached \
 	memcachetest \
