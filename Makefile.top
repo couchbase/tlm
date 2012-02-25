@@ -335,7 +335,7 @@ make-install-bucket_engine:
 libmemcached/Makefile: fix-broken-libmemcached-tests
 
 fix-broken-libmemcached-tests:
-	patch -p1 -N -r /dev/null -t -d libmemcached <tlm/libmemcached-win32-fix.diff  || true
+	patch -p1 -N -r /dev/null -t -d libmemcached <tlm/libmemcached-win32-fix.diff  || (echo "probably patched"; patch -v >/dev/null 2>&1)
 
 endif
 
