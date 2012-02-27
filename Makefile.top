@@ -249,6 +249,10 @@ WIN_CYGWIN_FLAGS := CC=i686-pc-cygwin-gcc CXX=i686-pc-cygwin-g++
 win32-cross:
 	$(MAKE) $(WIN32_MAKE_TARGET) FOR_WINDOWS=1 HOST=$(WIN32_HOST) CROSS_COMPILING=1
 
+# those don't really depend on each other, but both install python
+# client. So we workaround -jN issues by declaring dependency
+make-install-workload-generator: make-install-couchbase-examples
+
 ifdef FOR_WINDOWS
 
 WIN_FLAGS := 'LOCAL=$(PREFIX)'
