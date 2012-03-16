@@ -196,6 +196,17 @@ moxi_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 endif
 deps-for-moxi: make-install-libconflate make-install-libvbucket make-install-libmemcached make-install-memcached
 
+snappy/autotools-rebuild-silenced: snappy/Makefile
+	touch snappy/aclocal.m4
+	touch snappy/Makefile.in
+	touch snappy/config.h.in
+	touch snappy/configure
+	touch snappy/config.status
+	touch snappy/Makefile
+	touch $@
+
+make-install-snappy: snappy/autotools-rebuild-silenced
+
 deps-for-couchstore: make-install-snappy
 couchstore_OPTIONS := CFLAGS='-I$(PREFIX)/include' CPPFLAGS='-I$(PREFIX)/include' LDFLAGS='-L$(PREFIX)/lib'
 
