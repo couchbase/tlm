@@ -3,6 +3,7 @@ TOPDIR := $(shell pwd)
 PREFIX := $(TOPDIR)/install
 
 COMPONENTS := bucket_engine \
+	couchstore \
 	ep-engine \
 	libconflate \
         libmemcached \
@@ -179,7 +180,7 @@ memcachetest_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include -I$(T
 deps-for-memcachetest: make-install-memcached make-install-libmemcached make-install-libvbucket
 
 ep-engine_OPTIONS := --with-memcached=../memcached $(WITH_DEBUG_FLAG)
-deps-for-ep-engine: make-install-memcached
+deps-for-ep-engine: make-install-memcached  make-install-couchstore
 
 bucket_engine_OPTIONS := --with-memcached=../memcached $(WITH_DEBUG_FLAG)
 bucket-engine_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include $(CPPFLAGS)'
