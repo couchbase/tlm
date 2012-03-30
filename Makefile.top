@@ -115,11 +115,9 @@ distclean: -clean-common
 
 clean-xfd: $(patsubst %, do-clean-xfd-%, $(COMPONENTS)) -clean-common
 	(cd icu4c && git clean -Xfd) || true
-	(cd spidermonkey && git clean -Xfd) || true
 
 clean-xfd-hard: $(patsubst %, do-hard-clean-xfd-%, $(COMPONENTS)) -clean-common
 	(cd icu4c && git clean -xfd) || true
-	(cd spidermonkey && git clean -xfd) || true
 
 do-clean-xfd-%:
 	(cd $* && git clean -Xfd)
@@ -220,7 +218,7 @@ make-install-mccouch:
 	cp -r mccouch/etc/couchdb/local.d/* $(DESTDIR)$(PREFIX)/etc/couchdb/local.d
 
 ifdef PLEASE_BUILD_COUCH_DEPS
-couchdb_OPTIONS := --with-js-lib=$(PREFIX)/lib --with-js-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
+couchdb_OPTIONS := --with-v8-lib=$(PREFIX)/lib --with-v8-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
 
 # it's necessary to pass this late. couchdb is using libtool and
 # libtool portably understands -rpath (NOTE: _single_ dash). Passing
@@ -346,23 +344,13 @@ endif
 
 AUTOCONF213 := autoconf213
 
-spidermonkey/configure:
-	(cd spidermonkey && $(AUTOCONF213))
-
-spidermonkey/Makefile: spidermonkey/configure
-	(cd spidermonkey && ./configure "--prefix=$(PREFIX)" --without-x)
-
-make-install-spidermonkey: spidermonkey/Makefile
-	$(MAKE) -C spidermonkey
-	$(MAKE) -C spidermonkey install
-
 icu4c/source/Makefile:
 	(cd icu4c/source && ./configure "--prefix=$(PREFIX)")
 
 make-install-icu4c: icu4c/source/Makefile
 	$(MAKE) -C icu4c/source install
 
-make-install-couchdb-deps: make-install-spidermonkey make-install-icu4c
+make-install-couchdb-deps: make-install-icu4c
 
 CHECK_COMPONENTS ?= $(COMPONENTS)
 
