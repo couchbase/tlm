@@ -180,6 +180,8 @@ deps-for-memcachetest: make-install-memcached make-install-libmemcached make-ins
 ep-engine_OPTIONS := --with-memcached=../memcached $(WITH_DEBUG_FLAG)
 deps-for-ep-engine: make-install-memcached  make-install-couchstore
 
+couchstore_OPTIONS := $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
+
 bucket_engine_OPTIONS := --with-memcached=../memcached $(WITH_DEBUG_FLAG)
 bucket-engine_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include $(CPPFLAGS)'
 deps-for-bucket_engine: make-install-memcached
