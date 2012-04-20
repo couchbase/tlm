@@ -113,10 +113,10 @@ distclean: -clean-common
 	rm -f moxi*log
 	rm -f memcached*log
 
-clean-xfd: $(patsubst %, do-clean-xfd-%, $(COMPONENTS)) -clean-common
+clean-xfd: $(patsubst %, do-clean-xfd-%, $(COMPONENTS) $(BUILD_COMPONENTS_EX)) -clean-common
 	(cd icu4c && git clean -Xfd) || true
 
-clean-xfd-hard: $(patsubst %, do-hard-clean-xfd-%, $(COMPONENTS)) -clean-common
+clean-xfd-hard: $(patsubst %, do-hard-clean-xfd-%, $(COMPONENTS) $(BUILD_COMPONENTS_EX)) -clean-common
 	(cd icu4c && git clean -xfd) || true
 
 do-clean-xfd-%:
