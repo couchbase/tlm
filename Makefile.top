@@ -37,7 +37,7 @@ COMPONENTS := $(filter-out memcachetest libcouchbase, $(COMPONENTS))
 endif
 
 BUILD_COMPONENTS := $(filter-out ns_server, $(COMPONENTS))
-BUILD_COMPONENTS_EX := geocouch mccouch
+BUILD_COMPONENTS_EX := geocouch
 
 MAKE_INSTALL_TARGETS := $(patsubst %, make-install-%, $(BUILD_COMPONENTS))
 MAKE_INSTALL_TARGETS_EX := $(patsubst %, make-install-%, $(BUILD_COMPONENTS_EX))
@@ -211,13 +211,6 @@ make-install-geocouch:
 	cp -r geocouch/etc/couchdb/default.d/* $(DESTDIR)$(PREFIX)/etc/couchdb/default.d
 	mkdir -p $(DESTDIR)$(PREFIX)/share/couchdb/www/script/test
 	cp -r geocouch/share/www/script/test/* $(DESTDIR)$(PREFIX)/share/couchdb/www/script/test
-
-make-install-mccouch:
-	$(MAKE) -C mccouch
-	mkdir -p $(DESTDIR)$(PREFIX)/lib/couchdb/plugins/mccouch/ebin
-	cp -r mccouch/ebin/* $(DESTDIR)$(PREFIX)/lib/couchdb/plugins/mccouch/ebin
-	mkdir -p $(DESTDIR)$(PREFIX)/etc/couchdb/local.d
-	cp -r mccouch/etc/couchdb/local.d/* $(DESTDIR)$(PREFIX)/etc/couchdb/local.d
 
 ifdef PLEASE_BUILD_COUCH_DEPS
 couchdb_OPTIONS := --with-v8-lib=$(PREFIX)/lib --with-v8-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
