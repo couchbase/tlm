@@ -310,7 +310,7 @@ make-install-couchbase-examples: install-couchbase-python-client
 
 install-couchbase-python-client:
 	cd couchbase-python-client && mkdir -p $(PREFIX)/bin/couchbase && \
-	cp -r couchbase $(PREFIX)/bin
+	cp -r couchbase httplib2 simplejson $(PREFIX)/bin
 
 workload-generator/Makefile:
 	touch $@
