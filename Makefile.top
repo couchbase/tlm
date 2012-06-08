@@ -310,7 +310,7 @@ workload-generator/Makefile:
 
 make-install-workload-generator:
 	(cd couchbase-python-client && mkdir -p $(PREFIX)/bin/couchbase && \
-     cp -r couchbase httplib2 simplejson $(PREFIX)/bin)
+     cp -r uuid.py couchbase httplib2 simplejson $(PREFIX)/bin)
 	cp workload-generator/cbworkloadgen $(PREFIX)/bin
 
 make-install-memcached:
