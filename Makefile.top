@@ -302,7 +302,7 @@ membase-cli/Makefile:
 
 make-install-membase-cli:
 	(cd membase-cli && mkdir -p $(PREFIX)/bin/simplejson && \
-	cp couchbase-cli *.py LICENSE $(PREFIX)/bin && \
+	cp couchbase-cli cbclusterstats *.py LICENSE $(PREFIX)/bin && \
 	cp simplejson/LICENSE.txt simplejson/*.py $(PREFIX)/bin/simplejson)
 
 workload-generator/Makefile:
