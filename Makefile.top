@@ -304,7 +304,7 @@ couchbase-examples/Makefile:
 	touch $@
 
 make-install-couchbase-examples: install-couchbase-python-client
-	(cp couchbase-examples/docloader $(PREFIX)/bin && \
+	(cp couchbase-examples/cbdocloader $(PREFIX)/bin && \
 	 mkdir -p $(PREFIX)/samples && \
 	 cp couchbase-examples/gamesim-sample.zip $(PREFIX)/samples)
 
