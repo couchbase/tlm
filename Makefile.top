@@ -5,9 +5,9 @@ PREFIX := $(TOPDIR)/install
 COMPONENTS := bucket_engine \
 	couchstore \
 	ep-engine \
-        libcbio \
+	libcbio \
 	libconflate \
-        libmemcached \
+	libmemcached \
 	libvbucket \
 	membase-cli \
 	memcached \
@@ -64,7 +64,8 @@ all: do-install-all
 DIST_VERSION = `git describe`
 DIST_MANIFEST = manifest.xml
 DIST_PRODUCT = couchbase-server
-DIST_COMPONENTS = $(filter-out workload-generator memcachetest libcouchbase, $(COMPONENTS)) $(DIST_COMPONENTS_EXTRA)
+DIST_COMPONENTS_EXTRA = couchbase-python-client
+DIST_COMPONENTS = $(filter-out memcachetest libcouchbase, $(COMPONENTS)) $(DIST_COMPONENTS_EXTRA)
 
 dist:
 	for i in $(DIST_COMPONENTS); do (cd $$i && rm -f *.tar.gz && make dist || true); done
