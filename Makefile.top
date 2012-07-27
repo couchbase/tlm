@@ -271,6 +271,7 @@ endif
 
 WIN_FLAGS += 'LOCALINC=$(LOCALINC)' 'LIB=-L$(LIBS_PREFIX)/lib $(LIB)'
 
+couchstore_OPTIONS += --enable-shared --enable-static
 endif
 
 ifdef HOST
