@@ -189,9 +189,9 @@ libcbio_OPTIONS := $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)  \
                    'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
 deps-for-libcbio: make-install-couchstore
 
-bucket_engine_OPTIONS := --with-memcached=../memcached $(WITH_DEBUG_FLAG)
-bucket-engine_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include $(CPPFLAGS)'
-deps-for-bucket_engine: make-install-memcached
+bucket_engine_OPTIONS := $(WITH_DEBUG_FLAG) \
+                         'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
+deps-for-bucket_engine: make-install-memcached make-install-ep-engine
 
 moxi_OPTIONS := --enable-moxi-libvbucket \
 	--enable-moxi-libmemcached \
