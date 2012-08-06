@@ -2,7 +2,8 @@
 TOPDIR := $(shell pwd)
 PREFIX := $(TOPDIR)/install
 
-COMPONENTS := bucket_engine \
+COMPONENTS := $(COMPONENTS_EXTRA) \
+        bucket_engine \
 	couchstore \
 	ep-engine \
 	libcbio \
