@@ -158,7 +158,6 @@ $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 
 libmemcached_OPTIONS := $(LIBRARY_OPTIONS) --disable-dtrace --without-docs --disable-sasl --without-memcached
 ifndef CROSS_COMPILING
-memcachetest_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 deps-for-libmemcached: make-install-memcached
 endif
 
@@ -176,7 +175,8 @@ libcouchbase_EXTRA_OPTIONS := 'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
                               'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
 deps-for-libcouchbase: make-install-libvbucket make-install-memcached
 
-memcachetest_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/memcached/include -I$(TOPDIR)/libmemcached -I$(TOPDIR)/libvbucket/include -I$(PREFIX)/include $(CPPFLAGS)'
+memcachetest_EXTRA_MAKE_OPTIONS := 'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
+                                   'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
 deps-for-memcachetest: make-install-memcached make-install-libmemcached make-install-libvbucket
 
 ep-engine_OPTIONS := --with-memcached=../memcached $(WITH_DEBUG_FLAG)
