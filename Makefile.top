@@ -179,7 +179,9 @@ memcachetest_EXTRA_MAKE_OPTIONS := 'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)
                                    'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
 deps-for-memcachetest: make-install-memcached make-install-libmemcached make-install-libvbucket
 
-ep-engine_OPTIONS := --with-memcached=../memcached $(WITH_DEBUG_FLAG)
+ep-engine_OPTIONS := $(WITH_DEBUG_FLAG) \
+                     'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
+                     'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
 deps-for-ep-engine: make-install-memcached make-install-couchstore
 
 couchstore_OPTIONS := $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
