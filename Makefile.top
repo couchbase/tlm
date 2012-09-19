@@ -15,8 +15,7 @@ COMPONENTS := $(COMPONENTS_EXTRA) \
 	moxi \
 	couchdb \
 	couchbase-examples \
-	ns_server \
-	workload-generator
+	ns_server
 
 ifneq "$(DESTDIR)" ""
 LDFLAGS := -L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)
@@ -247,10 +246,6 @@ WIN_CYGWIN_FLAGS := CC=i686-pc-cygwin-gcc CXX=i686-pc-cygwin-g++
 win32-cross:
 	$(MAKE) $(WIN32_MAKE_TARGET) FOR_WINDOWS=1 HOST=$(WIN32_HOST) CROSS_COMPILING=1
 
-# those don't really depend on each other, but both install python
-# client. So we workaround -jN issues by declaring dependency
-make-install-workload-generator: make-install-couchbase-examples
-
 ifdef FOR_WINDOWS
 
 WIN_FLAGS := 'LOCAL=$(PREFIX)'
@@ -296,7 +291,7 @@ membase-cli/Makefile:
 
 make-install-membase-cli:
 	(cd membase-cli && mkdir -p $(PREFIX)/bin/simplejson && \
-	cp couchbase-cli cbbackup cbrestore cbtransfer cbclusterstats *.py LICENSE $(PREFIX)/bin && \
+	cp couchbase-cli cbbackup cbrestore cbtransfer cbclusterstats cbworkloadgen *.py LICENSE $(PREFIX)/bin && \
 	cp simplejson/LICENSE.txt simplejson/*.py $(PREFIX)/bin/simplejson)
 
 couchbase-examples/Makefile:
@@ -310,12 +305,6 @@ make-install-couchbase-examples: install-couchbase-python-client
 install-couchbase-python-client:
 	cd couchbase-python-client && mkdir -p $(PREFIX)/bin/couchbase && \
 	cp -r couchbase httplib2 simplejson $(PREFIX)/bin
-
-workload-generator/Makefile:
-	touch $@
-
-make-install-workload-generator: install-couchbase-python-client
-	cp workload-generator/cbworkloadgen $(PREFIX)/bin
 
 make-install-memcached:
 	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
