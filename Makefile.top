@@ -11,7 +11,6 @@ COMPONENTS := $(COMPONENTS_EXTRA) \
 	libvbucket \
 	membase-cli \
 	memcached \
-	memcachetest \
 	moxi \
 	couchdb \
 	couchbase-examples \
@@ -33,7 +32,7 @@ BUILD_SIGAR := 1
 endif
 
 ifdef FOR_WINDOWS
-COMPONENTS := $(filter-out memcachetest libcouchbase, $(COMPONENTS))
+COMPONENTS := $(filter-out libcouchbase, $(COMPONENTS))
 endif
 
 BUILD_COMPONENTS := $(filter-out ns_server, $(COMPONENTS))
@@ -42,7 +41,7 @@ BUILD_COMPONENTS_EX := geocouch
 MAKE_INSTALL_TARGETS := $(patsubst %, make-install-%, $(BUILD_COMPONENTS))
 MAKE_INSTALL_TARGETS_EX := $(patsubst %, make-install-%, $(BUILD_COMPONENTS_EX))
 
-TEST_COMPONENTS := $(filter-out libconflate membase-cli memcachetest moxi, $(BUILD_COMPONENTS))
+TEST_COMPONENTS := $(filter-out libconflate membase-cli moxi, $(BUILD_COMPONENTS))
 MAKE_TEST_TARGETS := $(patsubst %, make-test-%, $(TEST_COMPONENTS))
 MAKE_TEST_TARGETS_EX :=
 
@@ -64,7 +63,7 @@ DIST_VERSION = `git describe`
 DIST_MANIFEST = manifest.xml
 DIST_PRODUCT = couchbase-server
 DIST_COMPONENTS_EXTRA = couchbase-python-client
-DIST_COMPONENTS = $(filter-out memcachetest libcouchbase, $(COMPONENTS)) $(DIST_COMPONENTS_EXTRA)
+DIST_COMPONENTS = $(filter-out libcouchbase, $(COMPONENTS)) $(DIST_COMPONENTS_EXTRA)
 
 dist:
 	for i in $(DIST_COMPONENTS); do (cd $$i && rm -f *.tar.gz && make dist || true); done
@@ -173,10 +172,6 @@ libcouchbase_OPTIONS :=  $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
 libcouchbase_EXTRA_OPTIONS := 'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
                               'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
 deps-for-libcouchbase: make-install-libvbucket make-install-memcached
-
-memcachetest_EXTRA_MAKE_OPTIONS := 'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
-                                   'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
-deps-for-memcachetest: make-install-memcached make-install-libmemcached make-install-libvbucket
 
 ep-engine_OPTIONS := $(WITH_DEBUG_FLAG) \
                      'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
