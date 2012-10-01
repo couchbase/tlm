@@ -299,7 +299,7 @@ make-install-couchbase-examples: install-couchbase-python-client
 
 install-couchbase-python-client:
 	cd couchbase-python-client && mkdir -p $(PREFIX)/bin/couchbase && \
-	cp -r couchbase httplib2 simplejson $(PREFIX)/bin
+	cp -r couchbase httplib2 simplejson uuid.py $(PREFIX)/bin
 
 make-install-memcached:
 	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
