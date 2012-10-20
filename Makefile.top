@@ -13,6 +13,7 @@ COMPONENTS := $(COMPONENTS_EXTRA) \
 	memcached \
 	moxi \
 	couchdb \
+        couchbase-python-client \
 	couchbase-examples \
 	ns_server
 
