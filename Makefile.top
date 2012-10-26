@@ -63,7 +63,7 @@ all: do-install-all
 DIST_VERSION = `git describe`
 DIST_MANIFEST = manifest.xml
 DIST_PRODUCT = couchbase-server
-DIST_COMPONENTS_EXTRA = couchbase-python-client
+DIST_COMPONENTS_EXTRA = couchbase-python-client geocouch
 DIST_COMPONENTS = $(filter-out libcouchbase, $(COMPONENTS)) $(DIST_COMPONENTS_EXTRA)
 
 dist:
