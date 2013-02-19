@@ -9,7 +9,7 @@ COMPONENTS := $(COMPONENTS_EXTRA) \
 	libconflate \
 	libmemcached \
 	libvbucket \
-	membase-cli \
+	couchbase-cli \
 	memcached \
 	moxi \
 	couchdb \
@@ -42,7 +42,7 @@ BUILD_COMPONENTS_EX := geocouch
 MAKE_INSTALL_TARGETS := $(patsubst %, make-install-%, $(BUILD_COMPONENTS))
 MAKE_INSTALL_TARGETS_EX := $(patsubst %, make-install-%, $(BUILD_COMPONENTS_EX))
 
-TEST_COMPONENTS := $(filter-out libconflate membase-cli moxi, $(BUILD_COMPONENTS))
+TEST_COMPONENTS := $(filter-out libconflate couchbase-cli moxi, $(BUILD_COMPONENTS))
 MAKE_TEST_TARGETS := $(patsubst %, make-test-%, $(TEST_COMPONENTS))
 MAKE_TEST_TARGETS_EX :=
 
@@ -282,11 +282,11 @@ bucket_engine/Makefile:
 memcached/configure ep-engine/configure bucket_engine/configure:
 	@true
 
-membase-cli/Makefile:
+couchbase-cli/Makefile:
 	touch $@
 
-make-install-membase-cli:
-	(cd membase-cli && mkdir -p $(PREFIX)/bin/simplejson && \
+make-install-couchbase-cli:
+	(cd couchbase-cli && mkdir -p $(PREFIX)/bin/simplejson && \
 	cp couchbase-cli cbbackup cbrestore cbtransfer cbclusterstats cbworkloadgen *.py LICENSE $(PREFIX)/bin && \
 	cp simplejson/LICENSE.txt simplejson/*.py $(PREFIX)/bin/simplejson)
 
