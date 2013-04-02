@@ -287,7 +287,7 @@ couchbase-cli/Makefile:
 
 make-install-couchbase-cli:
 	(cd couchbase-cli && mkdir -p $(PREFIX)/bin/simplejson && \
-	cp couchbase-cli cbbackup cbrestore cbtransfer cbclusterstats cbworkloadgen *.py LICENSE $(PREFIX)/bin && \
+	cp couchbase-cli cbbackup cbrestore cbtransfer cbclusterstats cbworkloadgen cbrecovery *.py LICENSE $(PREFIX)/bin && \
 	cp simplejson/LICENSE.txt simplejson/*.py $(PREFIX)/bin/simplejson)
 
 couchbase-examples/Makefile:
