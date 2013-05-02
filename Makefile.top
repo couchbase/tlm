@@ -4,18 +4,19 @@ PREFIX := $(TOPDIR)/install
 
 COMPONENTS := $(COMPONENTS_EXTRA) \
         bucket_engine \
-	couchstore \
-	ep-engine \
-	libconflate \
-	libmemcached \
-	libvbucket \
-	couchbase-cli \
-	memcached \
-	moxi \
-	couchdb \
+        couchstore \
+        ep-engine \
+        libconflate \
+        libmemcached \
+        libvbucket \
+        couchbase-cli \
+        memcached \
+        moxi \
+        couchdb \
         couchbase-python-client \
-	couchbase-examples \
-	ns_server
+        couchbase-examples \
+        ns_server \
+        healthchecker
 
 ifneq "$(DESTDIR)" ""
 LDFLAGS := -L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)
