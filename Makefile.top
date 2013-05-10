@@ -296,7 +296,7 @@ healthchecker/Makefile:
 
 make-install-healthchecker:
 	(cd healthchecker && \
-	 cp -r cbhealthchecker *.py Cheetah reports $(PREFIX)/bin
+	 cp -r cbhealthchecker *.py Cheetah reports $(PREFIX)/bin)
 
 couchbase-examples/Makefile:
 	touch $@
