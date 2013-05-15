@@ -18,6 +18,8 @@ COMPONENTS := $(COMPONENTS_EXTRA) \
         ns_server \
         healthchecker
 
+COMPONENTS-GROMMIT := ctypes curl google-perftools gperftools libevent sqlite 
+
 ifneq "$(DESTDIR)" ""
 LDFLAGS := -L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)
 CPPFLAGS := -I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)
@@ -106,6 +108,9 @@ do-install-all: $(MAKE_INSTALL_TARGETS) $(MAKE_INSTALL_TARGETS_EX) make-install-
 	rm -f moxi*log
 	rm -f memcached*log
 
+clean-grommit:
+	for i in $(COMPONENTS-GROMMIT);  do (rm -rf $$i* || true); done
+
 clean: -clean-common
 	for i in $(COMPONENTS); do (cd $$i && make clean || true); done
 
@@ -126,6 +131,8 @@ do-clean-xfd-%:
 
 do-hard-clean-xfd-%:
 	(cd $* && git clean -xfdq)
+
+clean-all: clean-grommit clean-xfd-hard
 
 CONFIGURE_TARGETS := $(patsubst %, %/configure, $(BUILD_COMPONENTS))
 
