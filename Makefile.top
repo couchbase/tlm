@@ -18,7 +18,7 @@ COMPONENTS := $(COMPONENTS_EXTRA) \
         ns_server \
         healthchecker
 
-COMPONENTS-GROMMIT := ctypes curl google-perftools gperftools libevent sqlite 
+COMPONENTS-GROMMIT := ctypes-1 curl google-perftools gperftools libevent sqlite 
 
 ifneq "$(DESTDIR)" ""
 LDFLAGS := -L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)
