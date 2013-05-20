@@ -3,18 +3,21 @@ TOPDIR := $(shell pwd)
 PREFIX := $(TOPDIR)/install
 
 COMPONENTS := $(COMPONENTS_EXTRA) \
-	couchstore \
-	ep-engine \
-	libconflate \
-	libmemcached \
-	libvbucket \
-	membase-cli \
-	memcached \
-	moxi \
-	couchdb \
+        couchstore \
+        ep-engine \
+        libconflate \
+        libmemcached \
+        libvbucket \
+        couchbase-cli \
+        memcached \
+        moxi \
+        couchdb \
         couchbase-python-client \
-	couchbase-examples \
-	ns_server
+        couchbase-examples \
+        ns_server \
+        healthchecker
+
+COMPONENTS-GROMMIT := ctypes curl google-perftools gperftools libevent sqlite 
 
 ifneq "$(DESTDIR)" ""
 LDFLAGS := -L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)
@@ -41,7 +44,7 @@ BUILD_COMPONENTS_EX := geocouch
 MAKE_INSTALL_TARGETS := $(patsubst %, make-install-%, $(BUILD_COMPONENTS))
 MAKE_INSTALL_TARGETS_EX := $(patsubst %, make-install-%, $(BUILD_COMPONENTS_EX))
 
-TEST_COMPONENTS := $(filter-out libconflate membase-cli moxi, $(BUILD_COMPONENTS))
+TEST_COMPONENTS := $(filter-out libconflate couchbase-cli moxi healthchecker, $(BUILD_COMPONENTS))
 MAKE_TEST_TARGETS := $(patsubst %, make-test-%, $(TEST_COMPONENTS))
 MAKE_TEST_TARGETS_EX :=
 
@@ -104,6 +107,9 @@ do-install-all: $(MAKE_INSTALL_TARGETS) $(MAKE_INSTALL_TARGETS_EX) make-install-
 	rm -f moxi*log
 	rm -f memcached*log
 
+clean-grommit:
+	for i in $(COMPONENTS-GROMMIT);  do (rm -rf $$i* || true); done
+
 clean: -clean-common
 	for i in $(COMPONENTS); do (cd $$i && make clean || true); done
 
@@ -124,6 +130,8 @@ do-clean-xfd-%:
 
 do-hard-clean-xfd-%:
 	(cd $* && git clean -xfdq)
+
+clean-all: clean-grommit clean-xfd-hard
 
 CONFIGURE_TARGETS := $(patsubst %, %/configure, $(BUILD_COMPONENTS))
 
@@ -274,13 +282,20 @@ ep-engine/Makefile:
 memcached/configure ep-engine/configure:
 	@true
 
-membase-cli/Makefile:
+couchbase-cli/Makefile:
 	touch $@
 
-make-install-membase-cli:
-	(cd membase-cli && mkdir -p $(PREFIX)/bin/simplejson && \
-	cp couchbase-cli cbbackup cbrestore cbtransfer cbclusterstats cbworkloadgen *.py LICENSE $(PREFIX)/bin && \
+make-install-couchbase-cli:
+	(cd couchbase-cli && mkdir -p $(PREFIX)/bin/simplejson && \
+	cp couchbase-cli cbbackup cbrestore cbtransfer cbclusterstats cbworkloadgen cbrecovery *.py LICENSE $(PREFIX)/bin && \
 	cp simplejson/LICENSE.txt simplejson/*.py $(PREFIX)/bin/simplejson)
+
+healthchecker/Makefile:
+	touch $@
+
+make-install-healthchecker:
+	(cd healthchecker && \
+	 cp -r cbhealthchecker *.py Cheetah reports $(PREFIX)/bin)
 
 couchbase-examples/Makefile:
 	touch $@
