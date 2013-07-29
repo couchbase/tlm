@@ -1,0 +1,30 @@
+#
+# Set up default values for couchbase related variables
+#
+IF (WIN32)
+   IF ("${DEPS_INCLUDE_DIR}" STREQUAL "")
+      SET(DEPS_INCLUDE_DIR c:\\compile\\deps\\include)
+   ENDIF ()
+   IF ("${DEPS_LIB_DIR}" STREQUAL "")
+      SET(DEPS_LIB_DIR c:\\compile\\deps\\lib)
+   ENDIF ()
+   IF ("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
+      SET(CMAKE_INSTALL_PREFIX c:\\compile\\install)
+   ENDIF ()
+ELSE (WIN32)
+   IF ("${DEPS_INCLUDE_DIR}" STREQUAL "")
+      SET(DEPS_INCLUDE_DIR /opt/couchbase/include)
+   ENDIF ()
+   IF ("${DEPS_LIB_DIR}" STREQUAL "")
+      SET(DEPS_LIB_DIR /opt/couchbase/lib)
+   ENDIF ()
+   IF ("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
+      SET(CMAKE_INSTALL_PREFIX /opt/couchbase)
+   ENDIF ()
+ENDIF (WIN32)
+
+SET(INSTALL_ROOT ${CMAKE_INSTALL_PREFIX})
+
+MESSAGE(STATUS "Searching for headerfiles in ${DEPS_INCLUDE_DIR}")
+MESSAGE(STATUS "Searching for libs in ${DEPS_LIB_DIR}")
+MESSAGE(STATUS "Installing to ${INSTALL_ROOT}")

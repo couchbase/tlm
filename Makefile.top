@@ -7,7 +7,6 @@ COMPONENTS := $(COMPONENTS_EXTRA) \
         ep-engine \
         libconflate \
         libmemcached \
-        libvbucket \
         couchbase-cli \
         memcached \
         moxi \
@@ -17,12 +16,18 @@ COMPONENTS := $(COMPONENTS_EXTRA) \
         ns_server \
         healthchecker
 
-COMPONENTS-GROMMIT := ctypes curl google-perftools gperftools libevent sqlite 
+COMPONENTS-GROMMIT := ctypes curl google-perftools gperftools libevent sqlite
 
 ifneq "$(DESTDIR)" ""
 LDFLAGS := -L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)
 CPPFLAGS := -I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)
 export LDFLAGS CPPFLAGS
+endif
+
+ifdef FOR_WINDOWS
+  MAKETYPE="NMake Makefiles"
+else
+  MAKETYPE="Unix Makefiles"
 endif
 
 ifneq "$(COUCHBASE_DEBUG_BUILD)" ""
@@ -146,6 +151,30 @@ $(foreach comp, $(BUILD_COMPONENTS),$(eval $(call define-configure-target-deps,$
 
 endif
 
+
+ifdef FOR_WINDOWS
+WIN_PREFIX=$(shell cygpath -w ${PREFIX})
+libvbucket/Makefile: libvbucket/CMakeLists.txt
+	(cd libvbucket; cmd /c ..\\tlm\\winbuild.bat "C:\Program Files\CMake 2.8\bin\cmake.exe" -G ${MAKETYPE} \
+                              -D "INSTALL_ROOT=${WIN_PREFIX}" \
+                              -D "CMAKE_INSTALL_PREFIX=${WIN_PREFIX}" \
+                              -D "DEPS_INCLUDE_DIR=${WIN_PREFIX}/include" \
+                              .)
+make-install-libvbucket: libvbucket/Makefile
+	(cd libvbucket; cmd /c ..\\tlm\\winbuild.bat nmake /nologo all install)
+
+else
+libvbucket/Makefile: libvbucket/CMakeLists.txt
+	(cd libvbucket; cmake -G ${MAKETYPE} \
+                              -D INSTALL_ROOT=${PREFIX} \
+                              -D CMAKE_INSTALL_PREFIX=${PREFIX} \
+                              -D DEPS_INCLUDE_DIR=${PREFIX}/include \
+                              .)
+
+make-install-libvbucket: libvbucket/Makefile
+	(cd libvbucket; $(MAKE) all install)
+endif
+
 $(CONFIGURE_TARGETS):
 	cd $(dir $@) && $(AUTOGEN_PREFIX) $(AUTOGEN)
 
@@ -174,8 +203,6 @@ endif
 # tar.gz _should_ have ./configure inside, but it doesn't
 # make-install-libmemcached: AUTOGEN := true
 
-libvbucket_OPTIONS :=  $(LIBRARY_OPTIONS) --without-docs $(WITH_DEBUG_FLAG)
-
 libcouchbase_OPTIONS :=  $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
 libcouchbase_EXTRA_OPTIONS := 'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
                               'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
@@ -186,6 +213,7 @@ ep-engine_OPTIONS := $(WITH_DEBUG_FLAG) \
                      'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
 deps-for-ep-engine: make-install-memcached make-install-couchstore
 
+deps-for-couchstore: make-install-libvbucket
 couchstore_OPTIONS := $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
 
 moxi_OPTIONS := --enable-moxi-libvbucket \
