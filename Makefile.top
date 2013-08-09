@@ -3,6 +3,7 @@ TOPDIR := $(shell pwd)
 PREFIX := $(TOPDIR)/install
 
 COMPONENTS := $(COMPONENTS_EXTRA) \
+        cbsasl \
         bucket_engine \
         couchstore \
         ep-engine \
@@ -204,7 +205,9 @@ deps-for-moxi: make-install-libconflate make-install-libvbucket make-install-lib
 
 libconflate_OPTIONS := $(LIBRARY_OPTIONS) --without-check $(WITH_DEBUG_FLAG)
 
-memcached_OPTIONS := --enable-isasl
+memcached_OPTIONS := --enable-cbsasl \
+                     'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
+                     'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
 
 make-install-ns_server: make-install-geocouch
 	cd ns_server && ./configure "--prefix=$(PREFIX)"
