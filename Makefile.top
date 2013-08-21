@@ -163,6 +163,17 @@ libvbucket/Makefile: libvbucket/CMakeLists.txt
 make-install-libvbucket: libvbucket/Makefile
 	(cd libvbucket; cmd /c ..\\tlm\\winbuild.bat nmake /nologo all install)
 
+
+platform/Makefile: platform/CMakeLists.txt
+	(cd platform; cmd /c ..\\tlm\\winbuild.bat "C:\Program Files\CMake 2.8\bin\cmake.exe" -G ${MAKETYPE} \
+                              -D "INSTALL_ROOT=${WIN_PREFIX}" \
+                              -D "CMAKE_INSTALL_PREFIX=${WIN_PREFIX}" \
+                              -D "DEPS_INCLUDE_DIR=${WIN_PREFIX}/include" \
+                              .)
+make-install-platform: platform/Makefile
+	(cd platform; cmd /c ..\\tlm\\winbuild.bat nmake /nologo all install)
+
+
 else
 libvbucket/Makefile: libvbucket/CMakeLists.txt
 	(cd libvbucket; cmake -G ${MAKETYPE} \
@@ -173,6 +184,16 @@ libvbucket/Makefile: libvbucket/CMakeLists.txt
 
 make-install-libvbucket: libvbucket/Makefile
 	(cd libvbucket; $(MAKE) all install)
+
+platform/Makefile: platform/CMakeLists.txt
+	(cd platform; cmake -G ${MAKETYPE} \
+                              -D INSTALL_ROOT=${PREFIX} \
+                              -D CMAKE_INSTALL_PREFIX=${PREFIX} \
+                              -D DEPS_INCLUDE_DIR=${PREFIX}/include \
+                              .)
+
+make-install-platform: platform/Makefile
+	(cd platform; $(MAKE) all install)
 endif
 
 $(CONFIGURE_TARGETS):
@@ -213,7 +234,7 @@ ep-engine_OPTIONS := $(WITH_DEBUG_FLAG) \
                      'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
 deps-for-ep-engine: make-install-memcached make-install-couchstore
 
-deps-for-couchstore: make-install-libvbucket
+deps-for-couchstore: make-install-libvbucket make-install-platform
 couchstore_OPTIONS := $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
 
 moxi_OPTIONS := --enable-moxi-libvbucket \
