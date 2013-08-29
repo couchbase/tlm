@@ -3,12 +3,12 @@
 #
 
 SET(CB_GNU_CPPFLAGS "-Wall -pedantic -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing -fvisibility=hidden -pthread")
-SET(CB_CLANG_CPPFLAGS "-Wall -pedantic -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing -fvisibility=hidden -pthread")
+SET(CB_CLANG_CPPFLAGS "-Qunused-arguments -Wall -pedantic -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing -fvisibility=hidden -pthread ")
 SET(CB_MSVC_CPPFLAGS "")
 SET(CB_SPRO_CPPFLAGS "-errfmt=error -errwarn -errshort=tags -xldscope=hidden -mt")
 
 SET(CB_GNU_CXXFLAGS "-Wall -pedantic -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing -fvisibility=hidden -pthread")
-SET(CB_CLANG_CXXFLAGS "-Wall -pedantic -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing -fvisibility=hidden -pthread")
+SET(CB_CLANG_CXXFLAGS "-Qunused-arguments -Wall -pedantic -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing -fvisibility=hidden -pthread")
 SET(CB_MSVC_CXXFLAGS "")
 SET(CB_SPRO_CXXFLAGS "-errfmt=error -errwarn -errshort=tags -xldscope=hidden -mt")
 
