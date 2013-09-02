@@ -1,0 +1,17 @@
+#
+# This is the toplevel CMakeLists.txt that is used to build Couchbase
+#
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8)
+
+SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/../tlm/cmake/Modules/")
+
+INCLUDE(CouchbaseSingleModuleBuild)
+
+# Build the dependencies we couldn't find
+IF (NOT LIBEVENT_FOUND)
+ADD_SUBDIRECTORY(libevent)
+ENDIF (NOT LIBEVENT_FOUND)
+
+IF (NOT CURL_FOUND)
+ADD_SUBDIRECTORY(curl)
+ENDIF (NOT CURL_FOUND)
