@@ -244,11 +244,6 @@ endif
 # tar.gz _should_ have ./configure inside, but it doesn't
 # make-install-libmemcached: AUTOGEN := true
 
-libcouchbase_OPTIONS :=  $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
-libcouchbase_EXTRA_OPTIONS := 'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
-                              'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
-deps-for-libcouchbase: make-install-libvbucket make-install-memcached
-
 ep-engine_OPTIONS := $(WITH_DEBUG_FLAG) \
                      'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
                      'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
