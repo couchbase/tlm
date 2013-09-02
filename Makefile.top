@@ -7,7 +7,6 @@ COMPONENTS := $(COMPONENTS_EXTRA) \
         ep-engine \
         libmemcached \
         couchbase-cli \
-        memcached \
         moxi \
         couchdb \
         couchbase-python-client \
@@ -191,7 +190,7 @@ $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 
 libmemcached_OPTIONS := $(LIBRARY_OPTIONS) --disable-dtrace --without-docs --disable-sasl --without-memcached
 ifndef CROSS_COMPILING
-deps-for-libmemcached: make-install-memcached
+deps-for-libmemcached: make-install-cmake-stuff
 endif
 
 ifdef USE_TCMALLOC
@@ -204,7 +203,7 @@ endif
 ep-engine_OPTIONS := $(WITH_DEBUG_FLAG) \
                      'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
                      'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
-deps-for-ep-engine: make-install-memcached make-install-couchstore
+deps-for-ep-engine: make-install-cmake-stuff make-install-couchstore
 
 deps-for-couchstore: make-install-cmake-stuff
 couchstore_OPTIONS := $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
@@ -216,7 +215,7 @@ moxi_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/libmemcached -I$(TOPDIR)/libvbu
 ifndef CROSS_COMPILING
 moxi_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 endif
-deps-for-moxi: make-install-cmake-stuff make-install-libmemcached make-install-memcached
+deps-for-moxi: make-install-cmake-stuff make-install-libmemcached
 
 memcached_OPTIONS := --enable-isasl
 
@@ -292,13 +291,10 @@ endif
 libmemcached_OPTIONS += --without-memcached
 moxi_OPTIONS += --without-memcached
 
-memcached/Makefile:
-	touch $@
-
 ep-engine/Makefile:
 	touch $@
 
-memcached/configure ep-engine/configure:
+ep-engine/configure:
 	@true
 
 couchbase-cli/Makefile:
@@ -327,12 +323,6 @@ make-install-couchbase-examples: install-couchbase-python-client
 install-couchbase-python-client:
 	cd couchbase-python-client && mkdir -p $(PREFIX)/bin/couchbase && \
 	cp -r couchbase httplib2 simplejson uuid.py $(PREFIX)/bin
-
-make-install-memcached:
-	(cd memcached && $(MAKE) -f win32/Makefile.mingw $(WIN_FLAGS) all \
-         && mkdir -p $(PREFIX)/lib/memcached \
-         && cp .libs/*.so $(PREFIX)/lib/memcached \
-         && cp memcached.exe mcstat.exe $(PREFIX)/bin)
 
 # hey, it's almost like Lisp
 EP_ENGINE_MARCH := $(strip $(if $(or $(findstring x86_64, $(HOST)), $(findstring amd64, $(HOST))), ,-march=i686))
