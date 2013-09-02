@@ -5,7 +5,6 @@ PREFIX := $(TOPDIR)/install
 COMPONENTS := $(COMPONENTS_EXTRA) \
         couchstore \
         ep-engine \
-        libconflate \
         libmemcached \
         couchbase-cli \
         memcached \
@@ -49,7 +48,7 @@ BUILD_COMPONENTS_EX := geocouch
 MAKE_INSTALL_TARGETS := $(patsubst %, make-install-%, $(BUILD_COMPONENTS))
 MAKE_INSTALL_TARGETS_EX := $(patsubst %, make-install-%, $(BUILD_COMPONENTS_EX))
 
-TEST_COMPONENTS := $(filter-out libconflate couchbase-cli moxi healthchecker, $(BUILD_COMPONENTS))
+TEST_COMPONENTS := $(filter-out couchbase-cli moxi healthchecker, $(BUILD_COMPONENTS))
 MAKE_TEST_TARGETS := $(patsubst %, make-test-%, $(TEST_COMPONENTS))
 MAKE_TEST_TARGETS_EX :=
 
@@ -217,9 +216,7 @@ moxi_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/libmemcached -I$(TOPDIR)/libvbu
 ifndef CROSS_COMPILING
 moxi_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 endif
-deps-for-moxi: make-install-libconflate make-install-cmake-stuff make-install-libmemcached make-install-memcached
-
-libconflate_OPTIONS := $(LIBRARY_OPTIONS) --without-check $(WITH_DEBUG_FLAG)
+deps-for-moxi: make-install-cmake-stuff make-install-libmemcached make-install-memcached
 
 memcached_OPTIONS := --enable-isasl
 
