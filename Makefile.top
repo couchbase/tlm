@@ -154,66 +154,24 @@ endif
 
 ifdef FOR_WINDOWS
 WIN_PREFIX=$(shell cygpath -w ${PREFIX})
-libvbucket/Makefile: libvbucket/CMakeLists.txt
-	(cd libvbucket; cmd /c ..\\tlm\\winbuild.bat "C:\Program Files\CMake 2.8\bin\cmake.exe" -G ${MAKETYPE} \
+cmake/Makefile: cmake/CMakeLists.txt
+	(cd cmake; cmd /c ..\\tlm\\winbuild.bat "C:\Program Files\CMake 2.8\bin\cmake.exe" -G ${MAKETYPE} \
                               -D "INSTALL_ROOT=${WIN_PREFIX}" \
                               -D "CMAKE_INSTALL_PREFIX=${WIN_PREFIX}" \
                               -D "DEPS_INCLUDE_DIR=${WIN_PREFIX}/include" \
                               .)
-make-install-libvbucket: libvbucket/Makefile
-	(cd libvbucket; cmd /c ..\\tlm\\winbuild.bat nmake /nologo all install)
-
-
-platform/Makefile: platform/CMakeLists.txt
-	(cd platform; cmd /c ..\\tlm\\winbuild.bat "C:\Program Files\CMake 2.8\bin\cmake.exe" -G ${MAKETYPE} \
-                              -D "INSTALL_ROOT=${WIN_PREFIX}" \
-                              -D "CMAKE_INSTALL_PREFIX=${WIN_PREFIX}" \
-                              -D "DEPS_INCLUDE_DIR=${WIN_PREFIX}/include" \
-                              .)
-make-install-platform: platform/Makefile
-	(cd platform; cmd /c ..\\tlm\\winbuild.bat nmake /nologo all install)
-
-
-cbsasl/Makefile: cbsasl/CMakeLists.txt
-	(cd cbsasl; cmd /c ..\\tlm\\winbuild.bat "C:\Program Files\CMake 2.8\bin\cmake.exe" -G ${MAKETYPE} \
-                              -D "INSTALL_ROOT=${WIN_PREFIX}" \
-                              -D "CMAKE_INSTALL_PREFIX=${WIN_PREFIX}" \
-                              -D "DEPS_INCLUDE_DIR=${WIN_PREFIX}/include" \
-                              .)
-make-install-cbsasl: cbsasl/Makefile
-	(cd cbsasl; cmd /c ..\\tlm\\winbuild.bat nmake /nologo all install)
-
-
+make-install-cmake-stuff: cmake/Makefile
+	(cd cmake; cmd /c ..\\tlm\\winbuild.bat nmake /nologo all install)
 else
-libvbucket/Makefile: libvbucket/CMakeLists.txt
-	(cd libvbucket; cmake -G ${MAKETYPE} \
+cmake/Makefile: cmake/CMakeLists.txt
+	(cd cmake; cmake -G ${MAKETYPE} \
                               -D INSTALL_ROOT=${PREFIX} \
                               -D CMAKE_INSTALL_PREFIX=${PREFIX} \
                               -D DEPS_INCLUDE_DIR=${PREFIX}/include \
                               .)
 
-make-install-libvbucket: libvbucket/Makefile
-	(cd libvbucket; $(MAKE) all install)
-
-platform/Makefile: platform/CMakeLists.txt
-	(cd platform; cmake -G ${MAKETYPE} \
-                              -D INSTALL_ROOT=${PREFIX} \
-                              -D CMAKE_INSTALL_PREFIX=${PREFIX} \
-                              -D DEPS_INCLUDE_DIR=${PREFIX}/include \
-                              .)
-
-make-install-platform: platform/Makefile
-	(cd platform; $(MAKE) all install)
-
-cbsasl/Makefile: cbsasl/CMakeLists.txt
-	(cd cbsasl; cmake -G ${MAKETYPE} \
-                              -D INSTALL_ROOT=${PREFIX} \
-                              -D CMAKE_INSTALL_PREFIX=${PREFIX} \
-                              -D DEPS_INCLUDE_DIR=${PREFIX}/include \
-                              .)
-
-make-install-cbsasl: cbsasl/Makefile
-	(cd cbsasl; $(MAKE) all install)
+make-install-cmake-stuff: cmake/Makefile
+	(cd cmake; $(MAKE) all install)
 endif
 
 $(CONFIGURE_TARGETS):
@@ -249,7 +207,7 @@ ep-engine_OPTIONS := $(WITH_DEBUG_FLAG) \
                      'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
 deps-for-ep-engine: make-install-memcached make-install-couchstore
 
-deps-for-couchstore: make-install-libvbucket make-install-platform make-install-cbsasl
+deps-for-couchstore: make-install-cmake-stuff
 couchstore_OPTIONS := $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
 
 moxi_OPTIONS := --enable-moxi-libvbucket \
@@ -259,7 +217,7 @@ moxi_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/libmemcached -I$(TOPDIR)/libvbu
 ifndef CROSS_COMPILING
 moxi_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 endif
-deps-for-moxi: make-install-libconflate make-install-libvbucket make-install-libmemcached make-install-memcached
+deps-for-moxi: make-install-libconflate make-install-cmake-stuff make-install-libmemcached make-install-memcached
 
 libconflate_OPTIONS := $(LIBRARY_OPTIONS) --without-check $(WITH_DEBUG_FLAG)
 
