@@ -4,15 +4,35 @@ rem environment set up for the Microsoft Visual Studio toolchanin
 
 setlocal
 
-for /F "tokens=1,2*" %%i in ('reg query "HKLM\Software\WOE6432Node\Microsoft\VisualStudio\SxS\VC7"') DO (
-   if "%%i"=="10.0" SET "FOUND_DIR=%%k"
-   if "%%i"=="11.0" SET "FOUND_DIR=%%k"
+echo "query registry for: HKLM\Software\WOW6432Node\Microsoft\VisualStudio\SxS\VC7"
+for /F "tokens=1,2*" %%i in ('reg query "HKLM\Software\WOW6432Node\Microsoft\VisualStudio\SxS\VC7"') DO (
+   if "%%i"=="10.0" ( SET "FOUND_DIR=%%k"
+                      goto FOUND_DIR
+                    )
+   if "%%i"=="11.0" ( SET "FOUND_DIR=%%k"
+                      goto FOUND_DIR
+                    )
 )
 
+echo "query registry for: HKLM\Software\WOE6432Node\Microsoft\VisualStudio\SxS\VC7"
+for /F "tokens=1,2*" %%i in ('reg query "HKLM\Software\WOE6432Node\Microsoft\VisualStudio\SxS\VC7"') DO (
+   if "%%i"=="10.0" ( SET "FOUND_DIR=%%k"
+                      goto FOUND_DIR
+                    )
+   if "%%i"=="11.0" ( SET "FOUND_DIR=%%k"
+                      goto FOUND_DIR
+                    )
+)
+
+echo "query registry for: HKLM\Software\Microsoft\VisualStudio\SxS\VC7"
 if "%FOUND_DIR%" == "" (
    for /F "tokens=1,2*" %%i in ('reg query "HKLM\Software\Microsoft\VisualStudio\SxS\VC7"') DO (
-      if "%%i"=="10.0" SET "FOUND_DIR=%%k"
-      if "%%i"=="11.0" SET "FOUND_DIR=%%k"
+      if "%%i"=="10.0" ( SET "FOUND_DIR=%%k"
+                         goto FOUND_DIR
+                       )
+      if "%%i"=="11.0" ( SET "FOUND_DIR=%%k"
+                         goto FOUND_DIR
+                       )
    )
 )
 
@@ -22,7 +42,9 @@ if "%FOUND_DIR%" == "" (
   goto ll_done
 )
 
-rem echo "Using %FOUND_DIR%\bin\vcvars32.bat"
+:FOUND_DIR
+
+echo "Using %FOUND_DIR%\bin\vcvars32.bat"
 call "%FOUND_DIR%\bin\vcvars32.bat"
 rem echo "Current environment: "
 rem set
