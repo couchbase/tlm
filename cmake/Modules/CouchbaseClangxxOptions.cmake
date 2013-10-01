@@ -1,9 +1,10 @@
-SET(CB_CLANG_WARNINGS "-Qunused-arguments  -Wall -pedantic -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing")
-SET(CB_CLANG_VISIBILITY "-fvisibility=hidden")
-SET(CB_CLANG_THREAD "-pthread")
+SET(CB_CLANGXX_DEBUG "-g")
+SET(CB_CLANGXX_WARNINGS "-Qunused-arguments  -Wall -pedantic -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing")
+SET(CB_CLANGXX_VISIBILITY "-fvisibility=hidden")
+SET(CB_CLANGXX_THREAD "-pthread")
 
 IF ("${ENABLE_WERROR}" STREQUAL "YES")
-   SET(CB_CLANG_WERROR "-Werror")
+   SET(CB_CLANGXX_WERROR "-Werror")
 ENDIF()
 
-SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CB_CLANG_WARNINGS} ${CB_CLANG_VISIBILITY} ${CB_CLANG_THREAD} ${CB_CLANG_WERROR}")
+SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${CB_CLANGXX_DEBUG} ${CB_CLANGXX_WARNINGS} ${CB_CLANGXX_VISIBILITY} ${CB_CLANGXX_THREAD} ${CB_CLANGXX_WERROR}")
