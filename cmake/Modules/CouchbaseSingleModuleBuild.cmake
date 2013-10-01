@@ -16,7 +16,8 @@ INCLUDE(FindIcu)
 INCLUDE(FindSnappy)
 INCLUDE(FindV8)
 INCLUDE(FindGTest)
-INCLUDE(FindPythonInterp)
+INCLUDE(FindCouchbasePythonInterp)
+
 
 IF (WIN32)
    SET(COUCHBASE_NETWORK_LIBS "Ws2_32")
