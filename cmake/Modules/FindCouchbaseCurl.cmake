@@ -21,7 +21,7 @@ FIND_PATH(CURL_INCLUDE_DIR curl/curl.h
                /opt)
 
 FIND_LIBRARY(CURL_LIBRARIES
-             NAMES curl libcurl
+             NAMES curl libcurl libcurl_imp
              HINTS
                  ENV CURL_DIR
              PATHS
