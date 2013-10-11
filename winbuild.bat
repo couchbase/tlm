@@ -57,7 +57,7 @@ rem
 set MAKEFLAGS=
 set MAKELEVEL=
 set MAKEOVERRIDES=
-rem echo "Executing %*"
+SET PATH=C:\Program Files\CMake 2.8\bin;C:\Program Files (x86)\CMake 2.8\bin;%PATH%
 @echo on
 %*
 set RC=%ERRORLEVEL%
