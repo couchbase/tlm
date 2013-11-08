@@ -5,7 +5,6 @@ PREFIX := $(TOPDIR)/install
 COMPONENTS := $(COMPONENTS_EXTRA) \
         couchstore \
         ep-engine \
-        libmemcached \
         couchbase-cli \
         moxi \
         couchdb \
@@ -200,15 +199,6 @@ $(MAKE_TEST_TARGETS): make-test-%: make-install-%
 
 $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 
-libmemcached_OPTIONS := $(LIBRARY_OPTIONS) --disable-dtrace --without-docs --disable-sasl --without-memcached
-ifndef CROSS_COMPILING
-deps-for-libmemcached: make-install-cmake-stuff
-endif
-
-ifdef USE_TCMALLOC
-libmemcached_OPTIONS += --enable-tcmalloc
-endif
-
 # tar.gz _should_ have ./configure inside, but it doesn't
 # make-install-libmemcached: AUTOGEN := true
 
@@ -220,14 +210,12 @@ deps-for-ep-engine: make-install-cmake-stuff make-install-couchstore
 deps-for-couchstore: make-install-cmake-stuff
 couchstore_OPTIONS := $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
 
-moxi_OPTIONS := --enable-moxi-libvbucket \
-	--enable-moxi-libmemcached \
-	--without-check
-moxi_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/libmemcached -I$(TOPDIR)/libvbucket/include -I$(PREFIX)/include $(CPPFLAGS)'
+moxi_OPTIONS := --without-check
+moxi_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/cmake/libmemcached -I$(TOPDIR)/libvbucket/include -I$(PREFIX)/include $(CPPFLAGS)'
 ifndef CROSS_COMPILING
 moxi_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
 endif
-deps-for-moxi: make-install-cmake-stuff make-install-libmemcached
+deps-for-moxi: make-install-cmake-stuff
 
 memcached_OPTIONS := --enable-isasl
 
@@ -300,7 +288,6 @@ OPTIONS := --host=$(HOST) $(OPTIONS)
 WIN_FLAGS += CC=$(HOST)-gcc CXX=$(HOST)-g++
 endif
 
-libmemcached_OPTIONS += --without-memcached
 moxi_OPTIONS += --without-memcached
 
 ep-engine/Makefile:
@@ -343,11 +330,6 @@ make-install-ep-engine:
 	chmod +x ep-engine/win32/config.sh
 	(cd ep-engine && \
             $(MAKE) -f win32/Makefile.mingw "MARCH=$(EP_ENGINE_MARCH)" $(WIN_FLAGS) install)
-
-libmemcached/Makefile: fix-broken-libmemcached-tests
-
-fix-broken-libmemcached-tests:
-	patch -p1 -N -r /dev/null -t -d libmemcached <tlm/libmemcached-win32-fix.diff  || (echo "probably patched"; patch -v >/dev/null 2>&1)
 
 endif
 
