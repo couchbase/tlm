@@ -3,7 +3,6 @@ TOPDIR := $(shell pwd)
 PREFIX := $(TOPDIR)/install
 
 COMPONENTS := $(COMPONENTS_EXTRA) \
-        couchstore \
         ep-engine \
         couchbase-cli \
         moxi \
@@ -205,10 +204,7 @@ $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 ep-engine_OPTIONS := $(WITH_DEBUG_FLAG) \
                      'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
                      'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
-deps-for-ep-engine: make-install-cmake-stuff make-install-couchstore
-
-deps-for-couchstore: make-install-cmake-stuff
-couchstore_OPTIONS := $(LIBRARY_OPTIONS) $(WITH_DEBUG_FLAG)
+deps-for-ep-engine: make-install-cmake-stuff
 
 moxi_OPTIONS := --without-check
 moxi_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/cmake/libmemcached -I$(TOPDIR)/libvbucket/include -I$(PREFIX)/include $(CPPFLAGS)'
@@ -280,7 +276,6 @@ endif
 
 WIN_FLAGS += 'LOCALINC=$(LOCALINC)' 'LIB=-L$(LIBS_PREFIX)/lib $(LIB)'
 
-couchstore_OPTIONS += --enable-shared --enable-static
 endif
 
 ifdef HOST
