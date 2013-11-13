@@ -15,7 +15,7 @@ INCLUDE(FindCouchbaseCurl)
 INCLUDE(FindIcu)
 INCLUDE(FindSnappy)
 INCLUDE(FindV8)
-INCLUDE(FindLua)
+INCLUDE(FindCouchbaseLua)
 INCLUDE(FindGTest)
 INCLUDE(FindCouchbasePythonInterp)
 
