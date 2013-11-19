@@ -3,7 +3,6 @@ TOPDIR := $(shell pwd)
 PREFIX := $(TOPDIR)/install
 
 COMPONENTS := $(COMPONENTS_EXTRA) \
-        ep-engine \
         couchbase-cli \
         moxi \
         couchdb \
@@ -202,11 +201,6 @@ $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 # tar.gz _should_ have ./configure inside, but it doesn't
 # make-install-libmemcached: AUTOGEN := true
 
-ep-engine_OPTIONS := $(WITH_DEBUG_FLAG) \
-                     'LDFLAGS=-L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)' \
-                     'CPPFLAGS=-I$(DESTDIR)$(PREFIX)/include $(CPPFLAGS)'
-deps-for-ep-engine: make-install-cmake-stuff
-
 moxi_OPTIONS := --without-check
 moxi_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/cmake/libmemcached -I$(TOPDIR)/libvbucket/include -I$(PREFIX)/include $(CPPFLAGS)'
 ifndef CROSS_COMPILING
@@ -286,12 +280,6 @@ endif
 
 moxi_OPTIONS += --without-memcached
 
-ep-engine/Makefile:
-	touch $@
-
-ep-engine/configure:
-	@true
-
 couchbase-cli/Makefile:
 	touch $@
 
@@ -321,11 +309,6 @@ install-couchbase-python-client:
 
 # hey, it's almost like Lisp
 EP_ENGINE_MARCH := $(strip $(if $(or $(findstring x86_64, $(HOST)), $(findstring amd64, $(HOST))), ,-march=i686))
-
-make-install-ep-engine:
-	chmod +x ep-engine/win32/config.sh
-	(cd ep-engine && \
-            $(MAKE) -f win32/Makefile.mingw "MARCH=$(EP_ENGINE_MARCH)" $(WIN_FLAGS) install)
 
 endif
 
