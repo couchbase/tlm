@@ -3,13 +3,9 @@ TOPDIR := $(shell pwd)
 PREFIX := $(TOPDIR)/install
 
 COMPONENTS := $(COMPONENTS_EXTRA) \
-        couchbase-cli \
         moxi \
         couchdb \
-        couchbase-python-client \
-        couchbase-examples \
         ns_server \
-        healthchecker
 
 COMPONENTS-GROMMIT := ctypes curl google-perftools gperftools libevent sqlite
 
@@ -44,7 +40,7 @@ BUILD_COMPONENTS_EX := geocouch
 MAKE_INSTALL_TARGETS := $(patsubst %, make-install-%, $(BUILD_COMPONENTS))
 MAKE_INSTALL_TARGETS_EX := $(patsubst %, make-install-%, $(BUILD_COMPONENTS_EX))
 
-TEST_COMPONENTS := $(filter-out couchbase-cli moxi healthchecker, $(BUILD_COMPONENTS))
+TEST_COMPONENTS := $(filter-out couchbase-cli moxi, $(BUILD_COMPONENTS))
 MAKE_TEST_TARGETS := $(patsubst %, make-test-%, $(TEST_COMPONENTS))
 MAKE_TEST_TARGETS_EX :=
 
@@ -65,7 +61,7 @@ all: do-install-all
 DIST_VERSION = `git describe`
 DIST_MANIFEST = manifest.xml
 DIST_PRODUCT = couchbase-server
-DIST_COMPONENTS_EXTRA = couchbase-python-client geocouch
+DIST_COMPONENTS_EXTRA =  geocouch
 DIST_COMPONENTS = $(filter-out libcouchbase, $(COMPONENTS)) $(DIST_COMPONENTS_EXTRA)
 
 dist:
@@ -280,32 +276,7 @@ endif
 
 moxi_OPTIONS += --without-memcached
 
-couchbase-cli/Makefile:
-	touch $@
 
-make-install-couchbase-cli:
-	(cd couchbase-cli && mkdir -p $(PREFIX)/bin/simplejson && \
-	cp couchbase-cli cbbackup cbrestore cbtransfer cbclusterstats cbworkloadgen cbrecovery *.py LICENSE $(PREFIX)/bin && \
-	cp simplejson/LICENSE.txt simplejson/*.py $(PREFIX)/bin/simplejson)
-
-healthchecker/Makefile:
-	touch $@
-
-make-install-healthchecker:
-	(cd healthchecker && \
-	 cp -r cbhealthchecker *.py Cheetah reports $(PREFIX)/bin)
-
-couchbase-examples/Makefile:
-	touch $@
-
-make-install-couchbase-examples: install-couchbase-python-client
-	(cp couchbase-examples/cbdocloader $(PREFIX)/bin && \
-	 mkdir -p $(PREFIX)/samples && \
-	 cp couchbase-examples/*.zip $(PREFIX)/samples)
-
-install-couchbase-python-client:
-	cd couchbase-python-client && mkdir -p $(PREFIX)/bin/couchbase && \
-	cp -r couchbase httplib2 simplejson uuid.py $(PREFIX)/bin
 
 # hey, it's almost like Lisp
 EP_ENGINE_MARCH := $(strip $(if $(or $(findstring x86_64, $(HOST)), $(findstring amd64, $(HOST))), ,-march=i686))
