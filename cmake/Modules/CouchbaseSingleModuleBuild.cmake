@@ -10,7 +10,6 @@ MESSAGE(STATUS "Extra dependency library directory: ${DEPS_LIB_DIR}")
 
 INCLUDE(FindLibevent)
 INCLUDE(FindTcMalloc)
-INCLUDE(FindLua51)
 INCLUDE(FindCouchbaseCurl)
 INCLUDE(FindIcu)
 INCLUDE(FindSnappy)
