@@ -25,11 +25,6 @@ ifneq "$(COUCHBASE_DEBUG_BUILD)" ""
 WITH_DEBUG_FLAG=--with-debug
 endif
 
-ifneq "$(realpath portsigar/configure.ac)" ""
-COMPONENTS += sigar portsigar
-BUILD_SIGAR := 1
-endif
-
 ifdef FOR_WINDOWS
 COMPONENTS := $(filter-out libcouchbase, $(COMPONENTS))
 endif
@@ -86,15 +81,6 @@ e2etest:
 
 e2eviewtests:
 	cd testrunner && $(MAKE) test-views
-
-ifdef BUILD_SIGAR
-deps-for-portsigar: make-install-sigar
-portsigar/Makefile: AUTOGEN := ./bootstrap
-portsigar/Makefile: CONFIGURE_PREFIX := LDFLAGS="-L$(PREFIX)/lib $(LDFLAGS)"
-sigar/Makefile: AUTOGEN := ./autogen.sh
-portsigar_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/sigar/include $(CPPFLAGS)'
-sigar_OPTIONS := $(LIBRARY_OPTIONS) $(sigar_OPTIONS)
-endif
 
 do-install-all: $(MAKE_INSTALL_TARGETS) $(MAKE_INSTALL_TARGETS_EX) make-install-ns_server
 
