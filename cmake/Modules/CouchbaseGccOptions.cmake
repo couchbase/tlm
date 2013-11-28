@@ -1,5 +1,5 @@
 SET(CB_GNU_DEBUG "-g")
-SET(CB_GNU_WARNINGS "-Wall -pedantic -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing")
+SET(CB_GNU_WARNINGS "-Wall -pedantic -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing -Wno-overlength-strings")
 SET(CB_GNU_VISIBILITY "-fvisibility=hidden")
 SET(CB_GNU_THREAD "-pthread")
 

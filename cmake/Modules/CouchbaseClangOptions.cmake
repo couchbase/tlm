@@ -1,5 +1,5 @@
 SET(CB_CLANG_DEBUG "-g")
-SET(CB_CLANG_WARNINGS "-Qunused-arguments -Wall -pedantic -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing")
+SET(CB_CLANG_WARNINGS "-Qunused-arguments -Wall -pedantic -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing -Wno-overlength-strings")
 SET(CB_CLANG_VISIBILITY "-fvisibility=hidden")
 SET(CB_CLANG_THREAD "-pthread")
 
