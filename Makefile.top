@@ -85,6 +85,7 @@ e2eviewtests:
 do-install-all: $(MAKE_INSTALL_TARGETS) $(MAKE_INSTALL_TARGETS_EX) make-install-ns_server
 
 -clean-common:
+	(cd cmake && make clean || true)
 	rm -rf cmake/CMakeFiles cmake/CMakeCache.txt cmake/cmake_install.cmake cmake/CTestTestfile.cmake cmake/install_manifest.txt cmake/Makefile
 	rm -rf install tmp
 	rm -f moxi*log
