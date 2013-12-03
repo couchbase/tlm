@@ -7,7 +7,7 @@ COMPONENTS := $(COMPONENTS_EXTRA) \
         couchdb \
         ns_server \
 
-COMPONENTS-GROMMIT := ctypes curl google-perftools gperftools libevent sqlite
+COMPONENTS-GROMMIT := ctypes curl libevent sqlite
 
 ifneq "$(DESTDIR)" ""
 LDFLAGS := -L$(DESTDIR)$(PREFIX)/lib $(LDFLAGS)
