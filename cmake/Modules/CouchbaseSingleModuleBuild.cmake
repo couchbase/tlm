@@ -5,6 +5,7 @@
 #
 INCLUDE(CouchbaseDefaultValues)
 
+MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Extra dependency include directory: ${DEPS_INCLUDE_DIR}")
 MESSAGE(STATUS "Extra dependency library directory: ${DEPS_LIB_DIR}")
 
