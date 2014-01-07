@@ -86,7 +86,7 @@ do-install-all: $(MAKE_INSTALL_TARGETS) $(MAKE_INSTALL_TARGETS_EX) make-install-
 
 -clean-common:
 	(cd cmake && make clean || true)
-	rm -rf cmake/CMakeFiles cmake/CMakeCache.txt cmake/cmake_install.cmake cmake/CTestTestfile.cmake cmake/install_manifest.txt cmake/Makefile
+	rm -rf cmake/CMakeFiles cmake/CMakeCache.txt cmake/cmake_install.cmake cmake/CTestTestfile.cmake cmake/install_manifest.txt cmake/Makefile cmake/CPack*
 	rm -rf install tmp
 	rm -f moxi*log
 	rm -f memcached*log
@@ -136,9 +136,9 @@ WIN_PREFIX=$(shell cygpath -w ${PREFIX})
 
 dependencies/Makefile: dependencies/CMakeLists.txt
 	(cd dependencies; cmd /c ..\\tlm\\winbuild.bat cmake.exe -G ${MAKETYPE} \
-                              -D "INSTALL_ROOT=${WIN_PREFIX}" \
                               -D "CMAKE_INSTALL_PREFIX=${WIN_PREFIX}" \
                               -D "DEPS_INCLUDE_DIR=${WIN_PREFIX}/include" \
+                              -D "DEPS_LIB_DIR=${WIN_PREFIX}/lib" \
                               .)
 
 make-install-dependencies: dependencies/Makefile
@@ -147,18 +147,18 @@ make-install-dependencies: dependencies/Makefile
 
 cmake/Makefile: cmake/CMakeLists.txt make-install-dependencies
 	(cd cmake; cmd /c ..\\tlm\\winbuild.bat cmake.exe -G ${MAKETYPE} \
-                              -D "INSTALL_ROOT=${WIN_PREFIX}" \
                               -D "CMAKE_INSTALL_PREFIX=${WIN_PREFIX}" \
                               -D "DEPS_INCLUDE_DIR=${WIN_PREFIX}/include" \
+                              -D "DEPS_LIB_DIR=${WIN_PREFIX}/lib" \
                               .)
 make-install-cmake-stuff: cmake/Makefile
 	(cd cmake; cmd /c ..\\tlm\\winbuild.bat nmake /nologo all install)
 else
 cmake/Makefile: cmake/CMakeLists.txt
 	(cd cmake; cmake -G ${MAKETYPE} \
-                              -D INSTALL_ROOT=${PREFIX} \
                               -D CMAKE_INSTALL_PREFIX=${PREFIX} \
                               -D DEPS_INCLUDE_DIR=${PREFIX}/include \
+                              -D DEPS_LIB_DIR=${PREFIX}/lib \
                               .)
 
 make-install-cmake-stuff: cmake/Makefile

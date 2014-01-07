@@ -22,9 +22,3 @@ ELSE (WIN32)
       SET(CMAKE_INSTALL_PREFIX /opt/couchbase)
    ENDIF ()
 ENDIF (WIN32)
-
-SET(INSTALL_ROOT ${CMAKE_INSTALL_PREFIX})
-
-MESSAGE(STATUS "Searching for headerfiles in ${DEPS_INCLUDE_DIR}")
-MESSAGE(STATUS "Searching for libs in ${DEPS_LIB_DIR}")
-MESSAGE(STATUS "Installing to ${INSTALL_ROOT}")
