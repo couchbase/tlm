@@ -3,7 +3,6 @@ TOPDIR := $(shell pwd)
 PREFIX := $(TOPDIR)/install
 
 COMPONENTS := $(COMPONENTS_EXTRA) \
-        moxi \
         couchdb \
         ns_server \
 
@@ -25,17 +24,13 @@ ifneq "$(COUCHBASE_DEBUG_BUILD)" ""
 WITH_DEBUG_FLAG=--with-debug
 endif
 
-ifdef FOR_WINDOWS
-COMPONENTS := $(filter-out libcouchbase, $(COMPONENTS))
-endif
-
 BUILD_COMPONENTS := $(filter-out ns_server, $(COMPONENTS))
 BUILD_COMPONENTS_EX := geocouch
 
 MAKE_INSTALL_TARGETS := $(patsubst %, make-install-%, $(BUILD_COMPONENTS))
 MAKE_INSTALL_TARGETS_EX := $(patsubst %, make-install-%, $(BUILD_COMPONENTS_EX))
 
-TEST_COMPONENTS := $(filter-out couchbase-cli moxi, $(BUILD_COMPONENTS))
+TEST_COMPONENTS := $(BUILD_COMPONENTS)
 MAKE_TEST_TARGETS := $(patsubst %, make-test-%, $(TEST_COMPONENTS))
 MAKE_TEST_TARGETS_EX :=
 
@@ -184,15 +179,6 @@ $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 # tar.gz _should_ have ./configure inside, but it doesn't
 # make-install-libmemcached: AUTOGEN := true
 
-moxi_OPTIONS := --without-check
-moxi_EXTRA_MAKE_OPTIONS := 'CPPFLAGS=-I$(TOPDIR)/cmake/libmemcached -I$(TOPDIR)/libvbucket/include -I$(PREFIX)/include $(CPPFLAGS)'
-ifndef CROSS_COMPILING
-moxi_OPTIONS += --with-memcached=$(DESTDIR)$(PREFIX)/bin/memcached
-endif
-deps-for-moxi: make-install-cmake-stuff
-
-memcached_OPTIONS := --enable-isasl
-
 make-install-ns_server: make-install-geocouch
 	cd ns_server && ./configure "--prefix=$(PREFIX)"
 	$(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
@@ -218,6 +204,8 @@ couchdb_EXTRA_MAKE_OPTIONS := "LDFLAGS=-R $(PREFIX)/lib $(LDFLAGS)"
 endif
 
 couchdb/Makefile: AUTOGEN = ./bootstrap
+
+deps-for-couchdb: make-install-cmake-stuff
 
 ifdef PLEASE_BUILD_COUCH_DEPS
 deps-for-couchdb: make-install-couchdb-deps
@@ -261,10 +249,6 @@ OPTIONS := --host=$(HOST) $(OPTIONS)
 WIN_FLAGS += CC=$(HOST)-gcc CXX=$(HOST)-g++
 endif
 
-moxi_OPTIONS += --without-memcached
-
-
-
 # hey, it's almost like Lisp
 EP_ENGINE_MARCH := $(strip $(if $(or $(findstring x86_64, $(HOST)), $(findstring amd64, $(HOST))), ,-march=i686))
 
@@ -290,7 +274,7 @@ check-fast: check-ns_server check-ep-engine check-ns_server check-libvbucket che
 
 check: $(CHECK_TARGETS)
 
-check-memcached check-moxi check-ns_server: MAKE_CHECK_TARGET := test
+check-ns_server: MAKE_CHECK_TARGET := test
 
 $(CHECK_TARGETS): check-%: make-install-%
 	$(MAKE) -C $* $(MAKE_CHECK_TARGET)
