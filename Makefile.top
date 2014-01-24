@@ -129,18 +129,7 @@ endif
 ifdef FOR_WINDOWS
 WIN_PREFIX=$(shell cygpath -w ${PREFIX})
 
-dependencies/Makefile: dependencies/CMakeLists.txt
-	(cd dependencies; cmd /c ..\\tlm\\winbuild.bat cmake.exe -G ${MAKETYPE} \
-                              -D "CMAKE_INSTALL_PREFIX=${WIN_PREFIX}" \
-                              -D "DEPS_INCLUDE_DIR=${WIN_PREFIX}/include" \
-                              -D "DEPS_LIB_DIR=${WIN_PREFIX}/lib" \
-                              .)
-
-make-install-dependencies: dependencies/Makefile
-	(cd dependencies; cmd /c ..\\tlm\\winbuild.bat nmake /nologo all install)
-
-
-cmake/Makefile: cmake/CMakeLists.txt make-install-dependencies
+cmake/Makefile: cmake/CMakeLists.txt
 	(cd cmake; cmd /c ..\\tlm\\winbuild.bat cmake.exe -G ${MAKETYPE} \
                               -D "CMAKE_INSTALL_PREFIX=${WIN_PREFIX}" \
                               -D "DEPS_INCLUDE_DIR=${WIN_PREFIX}/include" \
