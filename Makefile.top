@@ -3,7 +3,6 @@ TOPDIR := $(shell pwd)
 PREFIX := $(TOPDIR)/install
 
 COMPONENTS := $(COMPONENTS_EXTRA) \
-        couchdb \
         ns_server \
 
 COMPONENTS-GROMMIT := ctypes curl libevent sqlite
@@ -170,36 +169,17 @@ $(patsubst %, deps-for-%, $(BUILD_COMPONENTS)):
 # make-install-libmemcached: AUTOGEN := true
 
 make-install-ns_server: make-install-geocouch
-	cd ns_server && ./configure "--prefix=$(PREFIX)"
+	cd ns_server && ./configure "--prefix=$(PREFIX)" --couchdb-src=../cmake/couchdb
 	$(MAKE) -C ns_server install "PREFIX=$(PREFIX)"
 
-make-install-geocouch:
-	$(MAKE) -C geocouch COUCH_SRC=../couchdb/src/couchdb
+make-install-geocouch: make-install-cmake-stuff
+	$(MAKE) -C geocouch COUCH_SRC=../cmake/couchdb/src/couchdb
 	mkdir -p $(DESTDIR)$(PREFIX)/lib/couchdb/plugins/geocouch/ebin
 	cp -r geocouch/ebin/* $(DESTDIR)$(PREFIX)/lib/couchdb/plugins/geocouch/ebin
 	mkdir -p $(DESTDIR)$(PREFIX)/etc/couchdb/default.d
 	cp -r geocouch/etc/couchdb/default.d/* $(DESTDIR)$(PREFIX)/etc/couchdb/default.d
 	mkdir -p $(DESTDIR)$(PREFIX)/share/couchdb/www/script/test
 	cp -r geocouch/share/www/script/test/* $(DESTDIR)$(PREFIX)/share/couchdb/www/script/test
-
-ifdef PLEASE_BUILD_COUCH_DEPS
-couchdb_OPTIONS := --with-v8-lib=$(PREFIX)/lib --with-v8-include=$(PREFIX)/include "PATH=$(PREFIX)/bin:$(PATH)"
-
-# it's necessary to pass this late. couchdb is using libtool and
-# libtool portably understands -rpath (NOTE: _single_ dash). Passing
-# it to configure fails, because a bunch of stuff is checked with
-# plain gcc versus with libtool wrapper.
-# NOTE: this doesn't work on Darwin and has issues on Solaris
-couchdb_EXTRA_MAKE_OPTIONS := "LDFLAGS=-R $(PREFIX)/lib $(LDFLAGS)"
-endif
-
-couchdb/Makefile: AUTOGEN = ./bootstrap
-
-deps-for-couchdb: make-install-cmake-stuff
-
-ifdef PLEASE_BUILD_COUCH_DEPS
-deps-for-couchdb: make-install-couchdb-deps
-endif
 
 WRAPPERS := $(patsubst %, $(PREFIX)/bin/%, memcached-wrapper moxi-wrapper)
 
@@ -252,15 +232,13 @@ icu4c/source/Makefile:
 make-install-icu4c: icu4c/source/Makefile
 	$(MAKE) -C icu4c/source install
 
-make-install-couchdb-deps: make-install-icu4c
-
 CHECK_COMPONENTS ?= $(COMPONENTS)
 
 CHECK_TARGETS := $(patsubst %, check-%, $(CHECK_COMPONENTS))
 
 MAKE_CHECK_TARGET := check
 
-check-fast: check-ns_server check-ep-engine check-ns_server check-libvbucket check-couchdb
+check-fast: check-ns_server
 
 check: $(CHECK_TARGETS)
 
