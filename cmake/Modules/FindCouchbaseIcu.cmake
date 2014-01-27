@@ -39,8 +39,13 @@ ENDIF(ICU_CONFIG_EXECUTABLE)
 
 IF (WIN32)
   # @TODO fix me!!!
-  SET(ICU_INCLUDE_DIR /compile/couchbase/deps/include)
-  SET(ICU_LIB_DIR /compile/couchbase/deps/lib)
+  IF (EXISTS ${DEPS_INCLUDE_DIR}/unicode)
+    SET(ICU_INCLUDE_DIR ${DEPS_INCLUDE_DIR})
+    SET(ICU_LIB_DIR ${DEPS_LIB_DIR})
+  ELSE ()
+    SET(ICU_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
+    SET(ICU_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib)
+  ENDIF()
 ENDIF(WIN32)
 
 
