@@ -10,6 +10,7 @@ MESSAGE(STATUS "Extra dependency include directory: ${DEPS_INCLUDE_DIR}")
 MESSAGE(STATUS "Extra dependency library directory: ${DEPS_LIB_DIR}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
 
+INCLUDE(FindCouchbaseOpenSSL)
 INCLUDE(FindCouchbaseLibevent)
 INCLUDE(FindCouchbaseTcMalloc)
 INCLUDE(FindCouchbaseCurl)
