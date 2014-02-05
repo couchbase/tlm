@@ -7,13 +7,13 @@ then
    export UMEM_DEBUG=default
    export UMEM_LOGGING=transaction,contents,fail
    export LD_PRELOAD=libumem.so.1
-   exec "$PREFIX/bin/memcached" -u `whoami` "$@"
+   exec "$PREFIX/bin/memcached" "$@"
 
 elif [ "x$MEMCACHED_WATCHMALLOC" = "xyes" ]
 then
    export MALLOC_DEBUG=WATCH,RW,STOP
    export LD_PRELOAD=watchmalloc.so.1
-   exec "$PREFIX/bin/memcached" -u `whoami` "$@"
+   exec "$PREFIX/bin/memcached" "$@"
 
 elif [ "x$MEMCACHED_VALGRIND" = "xyes" ]
 then
@@ -29,4 +29,4 @@ then
            "$PREFIX/bin/memcached" -u `whoami` "$@"
 fi
 
-exec "$PREFIX/bin/memcached" -u `whoami` "$@"
+exec "$PREFIX/bin/memcached" "$@"
