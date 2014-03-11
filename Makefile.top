@@ -125,7 +125,6 @@ $(foreach comp, $(BUILD_COMPONENTS),$(eval $(call define-configure-target-deps,$
 
 endif
 
-
 ifdef FOR_WINDOWS
 WIN_PREFIX=$(shell cygpath -w ${PREFIX})
 
@@ -134,6 +133,7 @@ cmake/Makefile: cmake/CMakeLists.txt
                               -D "CMAKE_INSTALL_PREFIX=${WIN_PREFIX}" \
                               -D "DEPS_INCLUDE_DIR=${WIN_PREFIX}/include" \
                               -D "DEPS_LIB_DIR=${WIN_PREFIX}/lib" \
+                              -D "BUILD_ENTERPRISE=${BUILD_ENTERPRISE}" \
                               .)
 make-install-cmake-stuff: cmake/Makefile
 	(cd cmake; cmd /c ..\\tlm\\winbuild.bat nmake /nologo all install)
@@ -143,6 +143,7 @@ cmake/Makefile: cmake/CMakeLists.txt
                               -D CMAKE_INSTALL_PREFIX=${PREFIX} \
                               -D DEPS_INCLUDE_DIR=${PREFIX}/include \
                               -D DEPS_LIB_DIR=${PREFIX}/lib \
+                              -D BUILD_ENTERPRISE=${BUILD_ENTERPRISE} \
                               .)
 
 make-install-cmake-stuff: cmake/Makefile
