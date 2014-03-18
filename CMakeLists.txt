@@ -28,10 +28,7 @@ ADD_CUSTOM_TARGET(reset
                   VERBATIM)
 
 ADD_SUBDIRECTORY(platform)
-ADD_SUBDIRECTORY(cbsasl)
-ADD_SUBDIRECTORY(libvbucket)
 ADD_SUBDIRECTORY(memcached)
-ADD_SUBDIRECTORY(libconflate)
 ADD_SUBDIRECTORY(libmemcached)
 ADD_SUBDIRECTORY(couchstore)
 ADD_SUBDIRECTORY(ep-engine)
