@@ -280,6 +280,13 @@ ifneq "$(realpath tlm/Makefile.top)" ""
 Makefile: tlm/Makefile.top
 	rm -f $@
 	cp $< $@
+
+cmake/CMakeLists.txt: tlm/CMakeLists.txt
+	rm -rf cmake/CMakeFiles cmake/CMakeCache.txt \
+               cmake/cmake_install.cmake cmake/CTestTestfile.cmake \
+               cmake/install_manifest.txt cmake/Makefile cmake/CPack* \
+               cmake/CMakeLists.txt
+	cp tlm/CMakeLists.txt cmake/CMakeLists.txt
 endif
 
 # Allow the user to override stuff for all projects (like
