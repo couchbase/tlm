@@ -29,7 +29,6 @@ ADD_CUSTOM_TARGET(reset
 
 ADD_SUBDIRECTORY(platform)
 ADD_SUBDIRECTORY(memcached)
-ADD_SUBDIRECTORY(libmemcached)
 ADD_SUBDIRECTORY(couchstore)
 ADD_SUBDIRECTORY(ep-engine)
 ADD_SUBDIRECTORY(couchbase-cli)
