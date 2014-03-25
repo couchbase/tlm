@@ -30,7 +30,8 @@ ELSE (ERLC_EXECUTABLE-NOTFOUND OR ERL_EXECUTABLE-NOTFOUND)
                  ${ERL_LOCATION}/../usr/include
                  /usr/lib/erlang/usr/include
                  /usr/local/lib/erlang/usr/include
-                 /opt/local/lib/erlang/usr/include)
+                 /opt/local/lib/erlang/usr/include
+                 /usr/lib64/erlang/usr/include)
 
     MESSAGE(STATUS "Erlang runtime and compiler found in ${ERL_EXECUTABLE} and ${ERLC_EXECUTABLE}")
     MESSAGE(STATUS "Erlang nif header in ${ERLANG_INCLUDE_PATH}")
