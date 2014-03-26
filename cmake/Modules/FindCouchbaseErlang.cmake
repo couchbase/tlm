@@ -82,7 +82,7 @@ MACRO (ERL_BUILD AppName)
         GET_FILENAME_COMPONENT(it ${it} ABSOLUTE)
         ADD_CUSTOM_COMMAND(
             OUTPUT ${outfile}
-            COMMAND ${ERLC_EXECUTABLE} -o ${${AppName}_ebin} ${ERLANG_INCLUDES} ${it}
+            COMMAND ${ERLC_EXECUTABLE} -o ${${AppName}_ebin} ${ERLANG_INCLUDES} +debug_info -Werror +nowarn_deprecated_function ${it}
             DEPENDS ${it}
             VERBATIM)
     ENDFOREACH(it)
