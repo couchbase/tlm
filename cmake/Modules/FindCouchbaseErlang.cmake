@@ -92,7 +92,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
           "rebar support will be unavailable")
       ELSE (ESCRIPT_EXECUTABLE-NOTFOUND)
         MESSAGE(STATUS "Escript interpreter found in ${ESCRIPT_EXECUTABLE}")
-        SET (REBAR_SCRIPT "${PROJECT_SOURCE_DIR}/cmake_modules/rebar"
+        SET (REBAR_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/rebar"
           CACHE STRING "Path to default rebar script")
       ENDIF (ESCRIPT_EXECUTABLE-NOTFOUND)
 
