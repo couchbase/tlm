@@ -85,6 +85,12 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
         /usr/lib64/erlang/usr/include)
 
       MESSAGE(STATUS "Erlang runtime and compiler found in ${ERL_EXECUTABLE} and ${ERLC_EXECUTABLE}")
+      
+      FIND_PROGRAM(PROVE_EXECUTABLE prove)
+      IF (PROVE_EXECUTABLE-NOTFOUND)
+        MESSAGE ("prove testdriver not found - "
+          "erlang testing unavailable")
+      ENDIF (PROVE_EXECUTABLE-NOTFOUND)
 
       FIND_PROGRAM(ESCRIPT_EXECUTABLE escript)
       IF (ESCRIPT_EXECUTABLE-NOTFOUND)
@@ -102,18 +108,24 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
     MARK_AS_ADVANCED(ERLANG_FOUND ERL_EXECUTABLE ERLC_EXECUTABLE ESCRIPT_EXECUTABLE ERLANG_INCLUDE_PATH)
   ENDIF (NOT ERLANG_FOUND)
 
+  # Add the "realclean" top-level target that other things can hang
+  # off of.
+  IF (NOT TARGET)
+    ADD_CUSTOM_TARGET (realclean)
+  ENDIF (NOT TARGET)
 
   # Adds a target named <target> which runs "rebar compile" in the
   # current source directory, and a target named <target>-clean to run
-  # "rebar clean". If a target named "realclean" exits, <target>-clean
-  # will be added as a dependency.
+  # "rebar clean". <target>-clean will be added as a dependency to
+  # "realclean".
   MACRO (Rebar)
     IF (ESCRIPT_EXECUTABLE-NOTFOUND)
       MESSAGE (FATAL_ERROR "escript not found, therefore Rebar() "
         "cannot function.")
     ENDIF (ESCRIPT_EXECUTABLE-NOTFOUND)
 
-    PARSE_ARGUMENTS (Rebar "DEPENDS" "TARGET;REBAR_SCRIPT" "NOCLEAN" ${ARGN})
+    PARSE_ARGUMENTS (Rebar "DEPENDS;REBAR_OPTS" "TARGET;REBAR_SCRIPT"
+      "NOCLEAN;NOALL" ${ARGN})
 
     SET (rebar_script "${REBAR_SCRIPT}")
     IF (Rebar_REBAR_SCRIPT)
@@ -127,8 +139,12 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
         "or pass path using Rebar (... REBAR_SCRIPT /full/path)")
     ENDIF (NOT EXISTS "${rebar_script}")
 
-    ADD_CUSTOM_TARGET (${Rebar_TARGET} ALL
-      "${ESCRIPT_EXECUTABLE}" "${rebar_script}" compile
+    SET (_all ALL)
+    IF (Rebar_NOALL)
+      SET (_all "")
+    ENDIF (Rebar_NOALL)
+    ADD_CUSTOM_TARGET (${Rebar_TARGET} ${_all}
+      "${ESCRIPT_EXECUTABLE}" "${rebar_script}" ${Rebar_REBAR_OPTS} compile
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
 
     IF (Rebar_DEPENDS)
