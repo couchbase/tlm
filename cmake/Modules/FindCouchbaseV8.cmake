@@ -9,7 +9,6 @@ FIND_PATH(V8_INCLUDE_DIR v8.h
                ENV V8_DIR
           PATH_SUFFIXES include
           PATHS
-               ${DEPS_INCLUDE_DIR}
                ~/Library/Frameworks
                /Library/Frameworks
                /opt/local
@@ -22,7 +21,6 @@ FIND_LIBRARY(V8_LIBRARIES
              HINTS
                  ENV V8_DIR
              PATHS
-                 ${DEPS_LIB_DIR}
                  ~/Library/Frameworks
                  /Library/Frameworks
                  /opt/local

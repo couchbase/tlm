@@ -9,7 +9,6 @@ FIND_PATH(SNAPPY_INCLUDE_DIR snappy.h
                ENV SNAPPY_DIR
           PATH_SUFFIXES include
           PATHS
-               ${DEPS_INCLUDE_DIR}
                ~/Library/Frameworks
                /Library/Frameworks
                /opt/local
@@ -22,7 +21,6 @@ FIND_LIBRARY(SNAPPY_LIBRARIES
              HINTS
                  ENV SNAPPY_DIR
              PATHS
-                 ${DEPS_LIB_DIR}
                  ~/Library/Frameworks
                  /Library/Frameworks
                  /opt/local

@@ -9,7 +9,6 @@ FIND_PATH(TCMALLOC_INCLUDE_DIR gperftools/malloc_hook_c.h
                ENV TCMALLOC_DIR
           PATH_SUFFIXES include
           PATHS
-               ${DEPS_INCLUDE_DIR}
                ~/Library/Frameworks
                /Library/Frameworks
                /opt/local
@@ -22,7 +21,6 @@ FIND_LIBRARY(TCMALLOC_LIBRARIES
              HINTS
                  ENV TCMALLOC_DIR
              PATHS
-                 ${DEPS_LIB_DIR}
                  ~/Library/Frameworks
                  /Library/Frameworks
                  /opt/local

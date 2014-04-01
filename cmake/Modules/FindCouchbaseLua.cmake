@@ -9,7 +9,6 @@ FIND_PATH(LUA_INCLUDE_DIR lua.h
                ENV LUA_DIR
           PATH_SUFFIXES include include/lua5.2 include/lua5.1
           PATHS
-               ${DEPS_INCLUDE_DIR}
                ~/Library/Frameworks
                /Library/Frameworks
                /opt/local
@@ -22,7 +21,6 @@ FIND_LIBRARY(LUA_LIBRARIES
              HINTS
                  ENV LUA_DIR
              PATHS
-                 ${DEPS_LIB_DIR}
                  ~/Library/Frameworks
                  /Library/Frameworks
                  /opt/local

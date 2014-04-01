@@ -9,7 +9,6 @@ FIND_PATH(OPENSSL_INCLUDE_DIR openssl/ssl.h
                ENV OPENSSL_DIR
           PATH_SUFFIXES include
           PATHS
-               ${DEPS_INCLUDE_DIR}
                ~/Library/Frameworks
                /Library/Frameworks
                /usr/local
@@ -25,7 +24,6 @@ FIND_LIBRARY(OPENSSL_SSL_LIBRARY
              HINTS
                  ENV OPENSSL_DIR
              PATHS
-                 ${DEPS_LIB_DIR}
                  ~/Library/Frameworks
                  /Library/Frameworks
                  /usr/local

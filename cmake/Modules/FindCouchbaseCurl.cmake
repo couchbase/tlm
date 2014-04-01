@@ -12,7 +12,6 @@ FIND_PATH(CURL_INCLUDE_DIR curl/curl.h
                ENV CURL_DIR
           PATH_SUFFIXES include
           PATHS
-               ${DEPS_INCLUDE_DIR}
                ~/Library/Frameworks
                /Library/Frameworks
                /opt/local
@@ -25,7 +24,6 @@ FIND_LIBRARY(CURL_LIBRARIES
              HINTS
                  ENV CURL_DIR
              PATHS
-                 ${DEPS_LIB_DIR}
                  ~/Library/Frameworks
                  /Library/Frameworks
                  /opt/local

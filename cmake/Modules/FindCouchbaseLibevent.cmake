@@ -9,7 +9,6 @@ FIND_PATH(LIBEVENT_INCLUDE_DIR evutil.h
                ENV LIBEVENT_DIR
           PATH_SUFFIXES include
           PATHS
-               ${DEPS_INCLUDE_DIR}
                ~/Library/Frameworks
                /Library/Frameworks
                /opt/local
@@ -22,7 +21,6 @@ FIND_LIBRARY(LIBEVENT_LIBRARIES
              HINTS
                  ENV LIBEVENT_DIR
              PATHS
-                 ${DEPS_LIB_DIR}
                  ~/Library/Frameworks
                  /Library/Frameworks
                  /opt/local

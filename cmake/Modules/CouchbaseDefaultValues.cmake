@@ -1,24 +1,6 @@
 #
 # Set up default values for couchbase related variables
 #
-IF (WIN32)
-   IF ("${DEPS_INCLUDE_DIR}" STREQUAL "")
-      SET(DEPS_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}\\include)
-   ENDIF ()
-   IF ("${DEPS_LIB_DIR}" STREQUAL "")
-      SET(DEPS_LIB_DIR ${CMAKE_INSTALL_PREFIX}\\lib)
-   ENDIF ()
-ELSE (WIN32)
-   IF ("${DEPS_INCLUDE_DIR}" STREQUAL "")
-      SET(DEPS_INCLUDE_DIR /opt/couchbase/include)
-   ENDIF ()
-   IF ("${DEPS_LIB_DIR}" STREQUAL "")
-      SET(DEPS_LIB_DIR /opt/couchbase/lib)
-   ENDIF ()
-   IF ("${CMAKE_INSTALL_PREFIX}" STREQUAL "")
-      SET(CMAKE_INSTALL_PREFIX /opt/couchbase)
-   ENDIF ()
-ENDIF (WIN32)
 
 IF ("${INSTALL_HEADER_FILES}" STREQUAL "")
    SET(INSTALL_HEADER_FILES false)
