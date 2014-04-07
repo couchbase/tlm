@@ -85,7 +85,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
         /usr/lib64/erlang/usr/include)
 
       MESSAGE(STATUS "Erlang runtime and compiler found in ${ERL_EXECUTABLE} and ${ERLC_EXECUTABLE}")
-      
+
       FIND_PROGRAM(PROVE_EXECUTABLE prove)
       IF (PROVE_EXECUTABLE-NOTFOUND)
         MESSAGE ("prove testdriver not found - "
@@ -211,6 +211,50 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
     ENDFOREACH(it)
     ADD_CUSTOM_TARGET(${AppName} ALL DEPENDS ${outfiles})
   ENDMACRO (ERL_BUILD)
+
+  MACRO (ERL_BUILD_OTP AppName)
+    SET(outfiles)
+    GET_FILENAME_COMPONENT(EBIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ebin" ABSOLUTE)
+    IF (IS_DIRECTORY ${EBIN_DIR})
+      SET(${AppName}_ebin ${EBIN_DIR})
+    ELSE (IS_DIRECTORY ${EBIN_DIR})
+      SET(${AppName}_ebin ${CMAKE_CURRENT_BINARY_DIR}/ebin)
+      FILE(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/ebin)
+    ENDIF (IS_DIRECTORY ${EBIN_DIR})
+
+    IF (ERLANG_INCLUDE_DIR)
+      SET(ERLANG_INCLUDES ${ERLANG_INCLUDE_DIR})
+    ENDIF (ERLANG_INCLUDE_DIR)
+
+    SET(${AppName}_src ${CMAKE_CURRENT_SOURCE_DIR})
+
+    #Set application modules
+    SET(${AppName}_module_list)
+
+    FOREACH (it ${ARGN})
+      GET_FILENAME_COMPONENT(outfile ${it} NAME_WE)
+      GET_FILENAME_COMPONENT(outfile_ext ${it} EXT)
+      SET(${AppName}_module_list ${${AppName}_module_list} "'${outfile}'")
+      IF (${outfile_ext} STREQUAL ".asn" OR ${outfile_ext} STREQUAL ".ASN")
+        SET(outfile
+          ${${AppName}_ebin}/${outfile}.erl
+          ${${AppName}_ebin}/${outfile}.hrl
+          ${${AppName}_ebin}/${outfile}.asn1db
+          ${${AppName}_ebin}/${outfile}.beam)
+      ELSE(${outfile_ext} STREQUAL ".asn" OR ${outfile_ext} STREQUAL ".ASN")
+        SET(outfile
+          ${${AppName}_ebin}/${outfile}.beam)
+      ENDIF(${outfile_ext} STREQUAL ".asn" OR ${outfile_ext} STREQUAL ".ASN")
+      SET(outfiles ${outfiles} ${outfile})
+      GET_FILENAME_COMPONENT(it ${it} ABSOLUTE)
+      ADD_CUSTOM_COMMAND(
+        OUTPUT ${outfile}
+        COMMAND ${ERLC_EXECUTABLE} -o ${${AppName}_ebin} ${ERLANG_INCLUDES} ${ERLANG_COMPILE_FLAGS} ${it}
+        DEPENDS ${it}
+        VERBATIM)
+    ENDFOREACH(it)
+    ADD_CUSTOM_TARGET(${AppName} ALL DEPENDS ${outfiles})
+  ENDMACRO (ERL_BUILD_OTP)
 
   SET (FindCouchbaseErlang_INCLUDED 1)
 ENDIF (NOT FindCouchbaseErlang_INCLUDED)
