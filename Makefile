@@ -7,7 +7,7 @@ RMOPTS=/Q /S
 
 all: build/Makefile compile
 
-compile:
+compile: build/Makefile
 	(cd build && $(MAKE) all install)
 
 test: all
