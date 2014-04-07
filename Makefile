@@ -34,7 +34,8 @@ clean:
 	$(RM) $(RMOPTS) build
 
 clean-xfd: clean
-	repo forall -c "git clean -dfx"
+	cd ns_server && git clean -dfXq
+	cd geocouch && git clean -dfXq
 
 clean-xfd-hard: clean-xfd
 
