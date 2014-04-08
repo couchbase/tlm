@@ -18,6 +18,7 @@ build/Makefile: CMakeLists.txt
 	(cd build && cmake -G "$(MAKETYPE)" \
                            -D CMAKE_INSTALL_PREFIX=$(PREFIX) \
                            -D CMAKE_PREFIX_PATH=$(PREFIX) \
+                           -D PRODUCT_VERSION=$(PRODUCT_VERSION) \
                            -D BUILD_ENTERPRISE=$(BUILD_ENTERPRISE) \
                            ..)
 
