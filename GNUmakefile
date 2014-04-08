@@ -3,6 +3,9 @@ PREFIX:=$(shell pwd)/install
 all:
 	@$(MAKE) -f Makefile PREFIX=$(PREFIX) MAKETYPE="Unix Makefiles" all
 
+install: all
+	@$(MAKE) -f Makefile PREFIX=$(PREFIX) MAKETYPE="Unix Makefiles" install
+
 test:
 	@$(MAKE) -f Makefile PREFIX=$(PREFIX) MAKETYPE="Unix Makefiles" test
 
