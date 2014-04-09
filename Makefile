@@ -1,9 +1,17 @@
 # -*- Mode: makefile -*-
 
+# The deault destination for the installed data
 PREFIX=$(MAKEDIR)/install
+# The makefile type to generate
 MAKETYPE=NMake Makefiles
+# The command used to delete directories
 RM=rmdir
+# Options passed to the command to nuke directories
 RMOPTS=/Q /S
+# The kind of build type: Debug, Release, RelWithDebInfo or MinSizeRel
+BUILD_TYPE=Debug
+# Other options you would like to pass to cmake
+EXTRA_CMAKE_OPTIONS=
 
 all: build/Makefile compile
 
@@ -20,6 +28,8 @@ build/Makefile: CMakeLists.txt
                            -D CMAKE_PREFIX_PATH=$(PREFIX) \
                            -D PRODUCT_VERSION=$(PRODUCT_VERSION) \
                            -D BUILD_ENTERPRISE=$(BUILD_ENTERPRISE) \
+                           -D CMAKE_BUILD_TYPE=$(BUILD_TYPE) \
+                           $(EXTRA_CMAKE_OPTIONS) \
                            ..)
 
 run-mats:
