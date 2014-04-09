@@ -24,8 +24,8 @@ test: all
 build/Makefile: CMakeLists.txt
 	@-mkdir build
 	(cd build && cmake -G "$(MAKETYPE)" \
-                           -D CMAKE_INSTALL_PREFIX=$(PREFIX) \
-                           -D CMAKE_PREFIX_PATH=$(PREFIX) \
+                           -D CMAKE_INSTALL_PREFIX="$(PREFIX)" \
+                           -D CMAKE_PREFIX_PATH="$(PREFIX)" \
                            -D PRODUCT_VERSION=$(PRODUCT_VERSION) \
                            -D BUILD_ENTERPRISE=$(BUILD_ENTERPRISE) \
                            -D CMAKE_BUILD_TYPE=$(BUILD_TYPE) \
