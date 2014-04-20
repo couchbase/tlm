@@ -18,6 +18,7 @@ INCLUDE(FindCouchbaseV8)
 INCLUDE(FindCouchbaseLua)
 INCLUDE(FindCouchbasePythonInterp)
 INCLUDE(FindCouchbaseErlang)
+INCLUDE(FindCouchbaseDtrace)
 
 IF (WIN32)
    SET(COUCHBASE_NETWORK_LIBS "Ws2_32")
