@@ -31,23 +31,7 @@ FIND_LIBRARY(CURL_LIBRARIES
                  /opt/curl
                  /opt)
 
-FIND_LIBRARY(RTMP_LIBRARY
-             NAMES rtmp
-             HINTS
-                 ENV CURL_DIR
-             PATHS
-                 ~/Library/Frameworks
-                 /Library/Frameworks
-                 /opt/local
-                 /opt/csw
-                 /opt/curl
-                 /opt)
-
-
 IF (CURL_LIBRARIES)
-  IF (RTMP_LIBRARY)
-     SET(CURL_LIBRARIES ${CURL_LIBRARIES} ${RTMP_LIBRARY})
-  ENDIF (RTMP_LIBRARY)
   MESSAGE(STATUS "Found cURL in ${CURL_INCLUDE_DIR} : ${CURL_LIBRARIES}")
 ELSE (CURL_LIBRARIES)
   MESSAGE(FATAL_ERROR "Can't build Couchbase without cURL")
