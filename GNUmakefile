@@ -1,4 +1,5 @@
 PREFIX:=$(shell pwd)/install
+MAKEFLAGS=--no-print-directory
 
 all:
 	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" MAKETYPE="Unix Makefiles" all
