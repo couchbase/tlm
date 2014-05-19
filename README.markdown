@@ -7,12 +7,12 @@ building Couchbase on multiple platforms.
 
 - [Content](#user-content-content)
 - [How to build](#user-content-how-to-build)
+	- [Simple](#user-content-simple-build)
+	- [Customize your builds](#user-content-customize-your-builds)
 - [Microsoft Windows 2008R2](#user-content-microsoft-windows-2008r2)
 	- [Configuration](#user-content-configuration)
 		- [git](#user-content-git)
 	- [How to build](#user-content-how-to-build-1)
-		- [Check out source](#user-content-check-out-source)
-		- [Environment](#user-content-environment)
 - [MacOSX](#user-content-macosx)
 - [SmartOS containers](#user-content-smartos)
 	- [CentOS 6](#user-content-centos-6)
@@ -39,7 +39,49 @@ root of your source directory. GNU make will favor this file over
 
 ## How to build
 
-It is recommended to perform "out of source builds". Running a build is simply:
+Couchbase utilizes [CMake][cmake_link] in order to provide build
+support for a wide range of platforms. CMake isn't a build system
+like GNU Autotools, but a tool that generates build information for
+external systems like: Visual Studio projects, XCode projects and
+Makefiles to name a few. Their good support for Microsoft Windows and
+Makefiles is the primary reason why we decided to move away from GNU
+Autotools. CMake isn't a magic pill that solves all our problems; it
+comes with its own list of challenges.
+
+It is recommended to perform "out of source builds", which means that
+the build artifacts is stored _outside_ the source directory.
+
+### Simple build
+
+If you just want to build Couchbase and without any special
+configuration, you may use the Makefile we've supplied for your
+convenience:
+
+    trond@ok > mkdir source
+    trond@ok > mkdir build
+    trond@ok > cd source
+    trond@ok source> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
+    trond@ok source> repo sync
+    trond@ok source> make
+
+This would install the build software in a subdirectory named
+`install`. To change this you may run:
+
+    trond@ok source> make PREFIX=/opt/couchbase
+
+### Customize your builds
+
+CMake offers a wide range of customizations, and this chapter won't
+try to cover all of them. There is plenty of documentation available
+on the [webpage](http://www.cmake.org/cmake/help/documentation.html).
+
+There is no point of trying to keep a list of all tunables in this
+document. To find the tunables you have two options: look in
+`cmake/Modules/*.cmake` or you may look in the cache file generated
+during a normal build (see `build/CMakeCache.txt`)
+
+There are two ways to customize your own builds. You can do it all by
+yourself by invoking cmake yourself:
 
     trond@ok > mkdir source
     trond@ok > mkdir build
@@ -47,9 +89,17 @@ It is recommended to perform "out of source builds". Running a build is simply:
     trond@ok source> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
     trond@ok source> repo sync
     trond@ok source> cd ../build
-    trond@ok build> cmake -D CMAKE_INSTALL_PREFIX=`pwd`/../install ../source
+    trond@ok build> cmake -D CMAKE_INSTALL_PREFIX=/opt/couchbase -D CMAKE_BUILD_TYPE=Debug -D ERLANG_FOUND:BOOL=True -D ERLANG_INCLUDE_PATH:PATH=/opt/r14b04/lib/erlang/usr/include -D ERLC_EXECUTABLE:FILEPATH=/opt/r14b04/bin/erlc -D ERL_EXECUTABLE:FILEPATH=/opt/r14b04/bin/erl -D ESCRIPT_EXECUTABLE:FILEPATH=/opt/r14b04/bin/escript -DREBAR_SCRIPT=/root/src/repo3/tlm/cmake/Modules/rebar -G "Unix Makefiles" ../source
     trond@ok build> gmake all install
 
+Or pass extra options to the convenience Makefile provided:
+
+    trond@ok > mkdir source
+    trond@ok > mkdir build
+    trond@ok > cd source
+    trond@ok source> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
+    trond@ok source> repo sync
+    trond@ok source> make PREFIX=/opt/couchbase EXTRA_CMAKE_OPTIONS='-D ERLANG_FOUND:BOOL=True -D ERLANG_INCLUDE_PATH:PATH=/opt/r14b04/lib/erlang/usr/include -D ERLC_EXECUTABLE:FILEPATH=/opt/r14b04/bin/erlc -D ERL_EXECUTABLE:FILEPATH=/opt/r14b04/bin/erl -D ESCRIPT_EXECUTABLE:FILEPATH=/opt/r14b04/bin/escript -DREBAR_SCRIPT=/root/src/repo3/tlm/cmake/Modules/rebar'
 
 ## Microsoft Windows 2008R2
 
@@ -80,23 +130,8 @@ email should be sufficient
 
 ### How to build
 
-#### Check out source
-
-Unfortunately google repo don’t work that well on windows, so we have
-to use a hack provided by Volker. This procedure assume you want to
-build by using c:\compile\couchbase as the directory to hold the
-source:
-
-    C:\> mkdir C:\compile
-    C:\> mkdir C:\compile\couchbase
-    C:\> mkdir C:\compile\couchbase\.repo
-    C:\> cd C:\compile\couchbase\.repo
-    C:\compile\couchbase\.repo> git clone git://github.com/trondn/git-repo repo
-    C:\compile\couchbase\.repo> cd ..
-    C:\compile\couchbase> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
-    C:\compile\couchbase> repo sync
-
-#### Environment
+Before you may start to build on Microsoft Windows you have to set up
+the environment.
 
 Open cmd.com and type in the following (assuming c:\compile\couchbase
 is the directory holding your source):
@@ -104,10 +139,10 @@ is the directory holding your source):
     C:\> set source_root=c:\compile\couchbase
     C:\> set target_platform=amd64
     C:\> environment
-    C:\compile\couchbase> nmake
 
-And it should build the entire suite and install it into
-`c:\compile\couchbase\install`
+You may now follow the build description outlined in [How to
+build](#user-content-how-to-build). Please note that the make utility
+on windows is named `nmake`.
 
 ## MacOSX
 
@@ -318,3 +353,4 @@ start building the code as described above.
 [win_2008_runtime_ext_link]: http://www.microsoft.com/en-us/download/confirmation.aspx?id=15336
 [google_repo_link]: http://source.android.com/source/downloading.html#installing-repo
 [homebrew_link]: http://brew.sh/
+[cmake_link]: http://www.cmake.org/cmake/
