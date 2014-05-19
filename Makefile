@@ -1,7 +1,7 @@
 # -*- Mode: makefile -*-
 
 # The deault destination for the installed data
-PREFIX=$(MAKEDIR)/install
+PREFIX=$(MAKEDIR)\\install
 # The makefile type to generate
 MAKETYPE=NMake Makefiles
 # The command used to delete directories
@@ -42,12 +42,12 @@ e2eviewtests:
 	cd testrunner && $(MAKE) test-views
 
 clean:
-	$(RM) $(RMOPTS) build
+	-$(RM) $(RMOPTS) build $(PREFIX)
 
 clean-xfd: clean
-	cd couchdb && git clean -dfXq
-	cd ns_server && git clean -dfXq
-	cd geocouch && git clean -dfXq
+	cd couchdb && git clean -dfxq
+	cd ns_server && git clean -dfxq
+	cd geocouch && git clean -dfxq
 
 clean-xfd-hard: clean-xfd
 

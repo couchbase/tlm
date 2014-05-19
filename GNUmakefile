@@ -11,19 +11,19 @@ test:
 	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" MAKETYPE="Unix Makefiles" test
 
 run-mats:
-	@$(MAKE) -f Makefile run-mats
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" run-mats
 
 e2etest:
-	@$(MAKE) -f Makefile e2etest
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" e2etest
 
 e2eviewtests:
-	@$(MAKE) -f Makefile e2eviewtests
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" e2eviewtests
 
 clean:
-	@$(MAKE) -f Makefile RM=rm RMOPTS=-rf clean
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" RM=rm RMOPTS=-rf clean
 
 clean-xfd:
-	@$(MAKE) -f Makefile RM=rm RMOPTS=-rf clean-xfd
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" RM=rm RMOPTS=-rf clean-xfd
 
 clean-xfd-hard: clean-xfd
 
