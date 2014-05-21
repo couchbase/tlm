@@ -22,7 +22,7 @@ IF (ICU_CONFIG_EXECUTABLE)
   EXECUTE_PROCESS(COMMAND ${ICU_CONFIG_EXECUTABLE} --ldflags-searchpath
                   OUTPUT_VARIABLE ICU_LIB_SEARCHPATH
                   ERROR_QUIET)
-  STRING(REGEX REPLACE "^[-/]L" "" ICU_LIB_DIR "${ICU_LIB_SEARCHPATH}")
+  STRING(REGEX REPLACE "^[-/]L" "" ICU_LIB_HINT_DIR "${ICU_LIB_SEARCHPATH}")
 
   IF (NOT WIN32)
       EXECUTE_PROCESS(COMMAND ${ICU_CONFIG_EXECUTABLE} --ldflags-libsonly
@@ -35,59 +35,51 @@ IF (ICU_CONFIG_EXECUTABLE)
 	  SET(ICU_LIBRARIES ${ICU_LIB_SEARCHPATH})
       ENDIF(ICU_LIBRARIES)
   ENDIF(NOT WIN32)
-ENDIF(ICU_CONFIG_EXECUTABLE)
 
-IF (WIN32)
-  # @TODO fix me!!!
-  IF (EXISTS ${CMAKE_PREFIX_PATH}/include/unicode)
-    SET(ICU_INCLUDE_DIR ${CMAKE_PREFIX_PATH}/include)
-    SET(ICU_LIB_DIR ${CMAKE_PREFIX_PATH}/lib)
-  ELSE ()
-    SET(ICU_INCLUDE_DIR ${CMAKE_INSTALL_PREFIX}/include)
-    SET(ICU_LIB_DIR ${CMAKE_INSTALL_PREFIX}/lib)
-  ENDIF()
-ENDIF(WIN32)
+ELSE (ICU_CONFIG_EXECUTABLE)
+  # Mostly for Windows, where icu-config is not common
+  FIND_PATH (ICU_INCLUDE_DIR
+    NAMES unicode/utypes.h utypes.h
+    PATH_SUFFIXES include
+    DOC "Include directories for ICU")
+  # Don't set ICU_LIB_HINT_DIR; depend on FIND_LIBRARY() calls below
+ENDIF(ICU_CONFIG_EXECUTABLE)
 
 
 IF (ICU_INCLUDE_DIR)
   STRING(STRIP ${ICU_INCLUDE_DIR} ICU_INCLUDE_DIR)
-  STRING(STRIP ${ICU_LIB_DIR} ICU_LIB_DIR)
+  STRING(STRIP "${ICU_LIB_HINT_DIR}" ICU_LIB_HINT_DIR)
 
   IF (NOT ICU_LIBRARIES)
       FIND_LIBRARY(ICU_ICUUC_LIBRARY
                    NAMES icuuc
                    HINTS
                        ENV LUA_DIR
-                   PATHS
-                       ${ICU_LIB_DIR})
+                       ${ICU_LIB_HINT_DIR})
 
       FIND_LIBRARY(ICU_ICUDATA_LIBRARY
                    NAMES icudata
                    HINTS
                        ENV LUA_DIR
-                   PATHS
-                       ${ICU_LIB_DIR})
+                       ${ICU_LIB_HINT_DIR})
 
       FIND_LIBRARY(ICU_ICUI18N_LIBRARY
                    NAMES icui18n
                    HINTS
                        ENV LUA_DIR
-                   PATHS
-                       ${ICU_LIB_DIR})
+                       ${ICU_LIB_HINT_DIR})
 
       FIND_LIBRARY(ICU_ICUCDT_LIBRARY
                    NAMES icucdt
                    HINTS
                        ENV LUA_DIR
-                   PATHS
-                       ${ICU_LIB_DIR})
+                       ${ICU_LIB_HINT_DIR})
 
       FIND_LIBRARY(ICU_ICUIN_LIBRARY
                    NAMES icuin
                    HINTS
                        ENV LUA_DIR
-                   PATHS
-                       ${ICU_LIB_DIR})
+                       ${ICU_LIB_HINT_DIR})
 
       IF (ICU_ICUUC_LIBRARY)
           SET(ICU_LIBRARIES ${ICU_LIBRARIES} ${ICU_ICUUC_LIBRARY})
@@ -111,7 +103,6 @@ IF (ICU_INCLUDE_DIR)
   ENDIF(NOT ICU_LIBRARIES)
 
   MESSAGE(STATUS "Found ICU headers in ${ICU_INCLUDE_DIR}")
-  MESSAGE(STATUS "Found ICU libraries in ${ICU_LIB_DIR}")
   MESSAGE(STATUS "Using ICU libraries: ${ICU_LIBRARIES}")
 ELSE (ICU_INCLUDE_DIR)
   MESSAGE(FATAL_ERROR "Can't build Couchbase without ICU")

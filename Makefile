@@ -1,6 +1,9 @@
 # -*- Mode: makefile -*-
 
-# The deault destination for the installed data
+# The default destination for installing. CMake will also search for
+# dependencies in this directory, so you may pre-build dependencies
+# that you wish to ship with your compiled Couchbase into this
+# directory.
 PREFIX=$(MAKEDIR)\\install
 # The makefile type to generate
 MAKETYPE=NMake Makefiles
@@ -25,7 +28,7 @@ build/Makefile: CMakeLists.txt
 	@-mkdir build
 	(cd build && cmake -G "$(MAKETYPE)" \
                            -D CMAKE_INSTALL_PREFIX="$(PREFIX)" \
-                           -D CMAKE_PREFIX_PATH="$(PREFIX)" \
+                           -D CMAKE_PREFIX_PATH="$(CMAKE_PREFIX_PATH);$(PREFIX)" \
                            -D PRODUCT_VERSION=$(PRODUCT_VERSION) \
                            -D BUILD_ENTERPRISE=$(BUILD_ENTERPRISE) \
                            -D CMAKE_BUILD_TYPE=$(BUILD_TYPE) \
