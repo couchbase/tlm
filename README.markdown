@@ -89,7 +89,7 @@ yourself by invoking cmake yourself:
     trond@ok source> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
     trond@ok source> repo sync
     trond@ok source> cd ../build
-    trond@ok build> cmake -D CMAKE_INSTALL_PREFIX=/opt/couchbase -D CMAKE_BUILD_TYPE=Debug -D ERLANG_FOUND:BOOL=True -D ERLANG_INCLUDE_PATH:PATH=/opt/r14b04/lib/erlang/usr/include -D ERLC_EXECUTABLE:FILEPATH=/opt/r14b04/bin/erlc -D ERL_EXECUTABLE:FILEPATH=/opt/r14b04/bin/erl -D ESCRIPT_EXECUTABLE:FILEPATH=/opt/r14b04/bin/escript -DREBAR_SCRIPT=/root/src/repo3/tlm/cmake/Modules/rebar -G "Unix Makefiles" ../source
+    trond@ok build> cmake -D CMAKE_INSTALL_PREFIX=/opt/couchbase -D CMAKE_BUILD_TYPE=Debug -D DTRACE_FOUND:BOOL=True -D DTRACE:FILEPATH=/usr/sbin/dtrace CMAKE_PREFIX_PATH="/opt/r14b04;/opt/couchbase"
     trond@ok build> gmake all install
 
 Or pass extra options to the convenience Makefile provided:
@@ -99,7 +99,13 @@ Or pass extra options to the convenience Makefile provided:
     trond@ok > cd source
     trond@ok source> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
     trond@ok source> repo sync
-    trond@ok source> make PREFIX=/opt/couchbase EXTRA_CMAKE_OPTIONS='-D ERLANG_FOUND:BOOL=True -D ERLANG_INCLUDE_PATH:PATH=/opt/r14b04/lib/erlang/usr/include -D ERLC_EXECUTABLE:FILEPATH=/opt/r14b04/bin/erlc -D ERL_EXECUTABLE:FILEPATH=/opt/r14b04/bin/erl -D ESCRIPT_EXECUTABLE:FILEPATH=/opt/r14b04/bin/escript -DREBAR_SCRIPT=/root/src/repo3/tlm/cmake/Modules/rebar'
+    trond@ok source> make PREFIX=/opt/couchbase CMAKE_PREFIX_PATH="/opt/r14b04;/opt/couchbase" EXTRA_CMAKE_OPTIONS='-D DTRACE_FOUND:BOOL=True -D DTRACE:FILEPATH=/usr/sbin/dtrace'
+
+Use `CMAKE_PREFIX_PATH` to specify a "list" of directories to search
+for tools/libraries if they are stored in "non-standard"
+locations. Ex:
+
+    CMAKE_PREFIX_PATH="/opt/r14b04;/opt/couchbase;/opt/local"
 
 ## Microsoft Windows 2008R2
 
