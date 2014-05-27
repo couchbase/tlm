@@ -16,6 +16,8 @@ BUILD_TYPE=Debug
 # Other options you would like to pass to cmake
 EXTRA_CMAKE_OPTIONS=
 
+CMAKE=cmake
+
 all: build/Makefile compile
 
 compile: build/Makefile
@@ -26,7 +28,7 @@ test: all
 
 build/Makefile: CMakeLists.txt
 	@-mkdir build
-	(cd build && cmake -G "$(MAKETYPE)" \
+	(cd build && $(CMAKE) -G "$(MAKETYPE)" \
                            -D CMAKE_INSTALL_PREFIX="$(PREFIX)" \
                            -D CMAKE_PREFIX_PATH="$(CMAKE_PREFIX_PATH);$(PREFIX)" \
                            -D PRODUCT_VERSION=$(PRODUCT_VERSION) \
