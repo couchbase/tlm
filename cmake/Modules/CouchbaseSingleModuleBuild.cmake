@@ -34,5 +34,6 @@ IF (NOT WIN32)
 ENDIF(NOT WIN32)
 
 INCLUDE(CouchbaseCompilerOptions)
+INCLUDE(CouchbaseCodeCoverage)
 
 ENABLE_TESTING()
