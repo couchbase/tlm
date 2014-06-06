@@ -18,6 +18,14 @@ EXTRA_CMAKE_OPTIONS=
 
 CMAKE=cmake
 
+CMAKE_ARGS=-G "$(MAKETYPE)" -D CMAKE_INSTALL_PREFIX="$(PREFIX)" \
+                            -D CMAKE_PREFIX_PATH="$(CMAKE_PREFIX_PATH);$(PREFIX)" \
+                            -D PRODUCT_VERSION=$(PRODUCT_VERSION) \
+                            -D BUILD_ENTERPRISE=$(BUILD_ENTERPRISE) \
+                            -D CMAKE_BUILD_TYPE=$(BUILD_TYPE) \
+                            $(EXTRA_CMAKE_OPTIONS)
+
+
 all: build/Makefile compile
 
 compile: build/Makefile
@@ -28,14 +36,15 @@ test: all
 
 build/Makefile: CMakeLists.txt
 	@-mkdir build
-	(cd build && $(CMAKE) -G "$(MAKETYPE)" \
-                           -D CMAKE_INSTALL_PREFIX="$(PREFIX)" \
-                           -D CMAKE_PREFIX_PATH="$(CMAKE_PREFIX_PATH);$(PREFIX)" \
-                           -D PRODUCT_VERSION=$(PRODUCT_VERSION) \
-                           -D BUILD_ENTERPRISE=$(BUILD_ENTERPRISE) \
-                           -D CMAKE_BUILD_TYPE=$(BUILD_TYPE) \
-                           $(EXTRA_CMAKE_OPTIONS) \
-                           ..)
+	(cd build && $(CMAKE) $(CMAKE_ARGS) ..)
+
+# Invoke static analyser. Requires Clang Static Analyser
+# (http://clang-analyzer.llvm.org). See tlm/README.markdown for more information.
+analyze:
+	@-mkdir build-analyzer
+	(cd build-analyzer && 				\
+	 scan-build --use-analyzer=Xcode $(CMAKE) $(CMAKE_ARGS) .. && \
+	 scan-build --use-analyzer=Xcode -o analyser-results/ $(MAKE) all)
 
 run-mats:
 	cd testrunner && $(MAKE) simple-test

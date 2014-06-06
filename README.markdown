@@ -17,6 +17,7 @@ building Couchbase on multiple platforms.
 - [SmartOS containers](#user-content-smartos)
 	- [CentOS 6](#user-content-centos-6)
 	- [Ubuntu](#user-content-ubuntu)
+- [Static Analysis](#user-content-static-analysis)
 
 ## Content
 
@@ -343,10 +344,40 @@ A newer version of cmake and google perftools is needed so we have to compile th
 [Install Google repo][google_repo_link] and you should be all set to
 start building the code as described above.
 
+## Static Analysis
+
+There are pre-canned build rules to allow you to run the
+[Clang Static Analyzer][clang_static_analyzer_link] against the Couchbase
+codebase.
+
+So far this has only been tested on OS X, using Clang shipping as part
+of OS X Developer Tools. It *should* be possible to also run on other
+platforms which Clang/LLVM is available, however this isn't tested.
+
+### Prerequisites
+
+* Install `clang` (from OS X Developer Tools). If you can build from source you should already have this :)
+* Download and extract clang Static Analyzer tools
+  (from [clang-analyzer.llvm.org][clang_static_analyzer_link]).
+  Note that while the actual analyzer functionality is built into
+  clang, this is needed for `scan-build` and `scan-view` tools to
+  invoke and display the analyser results.
+
+### Running
+
+*  Add `scan-build` and `scan-view` to your path:
+
+        export PATH=$PATH:/path/to/checker-276
+
+*  Run `make analyzer` at the top-level to configure clang-analyser as the 'compiler':
+
+        make analyzer
+
+*  At the end you will see a message similar to the following - Invoke the specified command to browse the found bugs:
 
 
-
-
+        scan-build: 31 bugs found.
+        scan-build: Run 'scan-view /source/build-analyzer/analyser-results/2014-06-05-173247-52416-1' to examine bug reports.
 
 
 
@@ -360,3 +391,4 @@ start building the code as described above.
 [google_repo_link]: http://source.android.com/source/downloading.html#installing-repo
 [homebrew_link]: http://brew.sh/
 [cmake_link]: http://www.cmake.org/cmake/
+[clang_static_analyzer_link]: http://clang-analyzer.llvm.org

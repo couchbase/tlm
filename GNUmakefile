@@ -19,6 +19,9 @@ e2etest:
 e2eviewtests:
 	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" e2eviewtests
 
+analyze:
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" MAKETYPE="Unix Makefiles" $@
+
 clean:
 	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" RM=rm RMOPTS=-rf clean
 
