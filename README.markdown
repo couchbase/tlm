@@ -130,10 +130,13 @@ The following steps is needed to build Couchbase on Microsoft Windows 2008R2
 #### git
 
 Repo will complain if git isn't properly configured. Setting name and
-email should be sufficient
+email should be sufficient, but you also may at least want to set the
+two additional settings suggested:
 
     C:\> git config --global user.email trond.norbye@gmail.com
     C:\> git config --global user.name "Trond Norbye"
+    C:\> git config --global color.ui false
+    C:\> git config --global core.autocrlf true
 
 ### How to build
 
