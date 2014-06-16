@@ -1,5 +1,8 @@
-FIND_PROGRAM(DTRACE dtrace)
+# stupid systemtap use a binary named dtrace as well..
 
+IF (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+
+FIND_PROGRAM(DTRACE dtrace)
 IF (DTRACE)
    SET(ENABLE_DTRACE True CACHE BOOL "Whether DTrace has been found")
    MESSAGE(STATUS "Found dtrace in ${DTRACE}")
@@ -11,3 +14,5 @@ IF (DTRACE)
 ENDIF (DTRACE)
 
 MARK_AS_ADVANCED(DTRACE_NEED_INSTUMENT ENABLE_DTRACE DTRACE)
+
+ENDIF (NOT ${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
