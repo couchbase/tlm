@@ -32,8 +32,17 @@ clean-xfd-hard: clean-xfd
 
 clean-all: clean-xfd
 
+ICU_OPT=
+UNAME := $(shell uname -s)
+ifeq ($(UNAME),Darwin)
+    # MB-11442
+    ICU_OPT=-mmacosx-version-min=10.7
+endif
+
 icu4c/source/Makefile:
-	(cd icu4c/source && ./configure "--prefix=$(PREFIX)")
+	(cd icu4c/source && \
+	CFLAGS=$(ICU_OPT) CXXFLAGS=$(ICU_OPT) LDFLAGS=$(ICU_OPT) \
+	  ./configure "--prefix=$(PREFIX)")
 
 make-install-icu4c: icu4c/source/Makefile
 	$(MAKE) -C icu4c/source install
