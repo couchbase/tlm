@@ -15,6 +15,10 @@ RMOPTS=/Q /S
 BUILD_TYPE=Debug
 # Other options you would like to pass to cmake
 EXTRA_CMAKE_OPTIONS=
+# Command used to remove read only flag for files
+CHMODCMD=attrib -r
+# Command used for copying files
+CP=copy
 
 CMAKE=cmake
 
@@ -26,7 +30,7 @@ CMAKE_ARGS=-G "$(MAKETYPE)" -D CMAKE_INSTALL_PREFIX="$(PREFIX)" \
                             $(EXTRA_CMAKE_OPTIONS)
 
 
-all: build/Makefile compile
+all: CMakeLists.txt Makefile GNUmakefile build/Makefile compile
 
 compile: build/Makefile
 	(cd build && $(MAKE) all install)
@@ -37,6 +41,19 @@ test: all
 build/Makefile: CMakeLists.txt
 	@-mkdir build
 	(cd build && $(CMAKE) $(CMAKE_ARGS) ..)
+
+CMakeLists.txt: tlm/CMakeLists.txt
+	$(CHMODCMD) CMakeLists.txt
+	$(CP) tlm/CMakeLists.txt CMakeLists.txt
+
+GNUmakefile: tlm/GNUmakefile
+	$(CHMODCMD) GNUmakefile
+	$(CP) tlm/GNUmakefile GNUmakefile
+
+Makefile: tlm/Makefile
+	$(CHMODCMD) Makefile
+	$(CP) tlm/Makefile Makefile
+
 
 # Invoke static analyser. Requires Clang Static Analyser
 # (http://clang-analyzer.llvm.org). See tlm/README.markdown for more
