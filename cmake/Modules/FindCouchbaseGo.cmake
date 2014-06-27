@@ -7,6 +7,8 @@
 # Prevent double-definition if two projects use this script
 IF (NOT FindCouchbaseGo_INCLUDED)
 
+  INCLUDE (ParseArguments)
+
   IF (NOT GO_FOUND)
 
     # Figure out which Go compiler to use
@@ -33,8 +35,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
         MESSAGE (FATAL_ERROR "No go compiler was found!")
       ENDIF (NOT GO_FOUND)
 
-      # PARSE_ARGUMENTS comes from FindCouchbaseErlang - make sure that
-      # is included first.
       PARSE_ARGUMENTS (Go "DEPENDS;SOURCES" "TARGET;OUTPUT;INSTALL_PATH" ""
         ${ARGN})
 

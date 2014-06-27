@@ -5,6 +5,10 @@ CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10)
 PROJECT("Couchbase")
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
 
+# Have to add deps first, before any other part of the build tries to
+# FIND anything
+ADD_SUBDIRECTORY(tlm/deps)
+
 INCLUDE(CouchbaseSingleModuleBuild)
 
 SET(ASTYLE_CFLAGS --recursive
