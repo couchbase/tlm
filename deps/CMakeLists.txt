@@ -37,7 +37,7 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
 ENDMACRO (_DETERMINE_LINUX_DISTRO)
 
 # Returns a simple string describing the current platform. Possible
-# return values currently include: windows-msvc; macosx; ubuntu-1204;
+# return values currently include: windows_msvc; macosx; ubuntu-1204;
 # ubuntu-1004; centos5; centos6.
 MACRO (_DETERMINE_PLATFORM var)
   IF (DEFINED CB_DOWNLOAD_DEPS_PLATFORM)
@@ -45,7 +45,7 @@ MACRO (_DETERMINE_PLATFORM var)
   ELSE (DEFINED CB_DOWNLOAD_DEPS_PLATFORM)
     SET (_plat ${CMAKE_SYSTEM_NAME})
     IF (_plat STREQUAL "Windows")
-      SET (_plat "windows-msvc")
+      SET (_plat "windows_msvc")
     ELSEIF (_plat STREQUAL "Darwin")
       SET (_plat "macosx")
     ELSEIF (_plat STREQUAL "Linux")
