@@ -63,7 +63,7 @@ MACRO (_DETERMINE_PLATFORM var)
 ENDMACRO (_DETERMINE_PLATFORM)
 
 # Returns a simple string describing the current architecture. Possible
-# return values currently include: x86_64, x86.
+# return values currently include: AMD64, x86_64, x86.
 MACRO (_DETERMINE_ARCH var)
   IF (DEFINED CB_DOWNLOAD_DEPS_ARCH)
     SET (_arch ${CB_DOWNLOAD_DEPS_ARCH})
@@ -71,7 +71,7 @@ MACRO (_DETERMINE_ARCH var)
     # We tweak MacOS, which for some reason claims to be i386
     IF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
       # QQQ MacOS 10.7 could be 32-bit; we should catch and abort
-      SET (_arch x64_64)
+      SET (_arch x86_64)
     ELSE (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
       SET (_arch ${CMAKE_SYSTEM_PROCESSOR})
     ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
