@@ -184,20 +184,24 @@ FUNCTION (DECLARE_DEP name)
   SET (_explode_dir "${CMAKE_CURRENT_BINARY_DIR}/${name}.exploded")
   SET (_binary_dir "${CMAKE_CURRENT_BINARY_DIR}/${name}.binary")
 
-  # See if dependency is already downloaded
+  # See if dependency is already downloaded. We assume the existence of the
+  # exploded dir is sufficient.
   IF (IS_DIRECTORY "${_explode_dir}")
-    MESSAGE (STATUS "Dependency '${name}' already installed")
-    RETURN ()
+    MESSAGE (STATUS "Dependency '${name}' already downloaded")
+  ELSE (IS_DIRECTORY "${_explode_dir}")
+    _DOWNLOAD_DEP (${name} ${dep_VERSION})
+    SET (_cache_tgz "${CB_DOWNLOAD_DEPS_CACHE}/${name}-${dep_VERSION}.tgz")
+
+    # Explode tgz into build directory.
+    MESSAGE (STATUS "Installing dependency: ${name}-${dep_VERSION}...")
+    FILE (MAKE_DIRECTORY "${_explode_dir}")
+    EXECUTE_PROCESS (COMMAND "${CMAKE_COMMAND}" -E tar xf "${_cache_tgz}"
+      WORKING_DIRECTORY "${_explode_dir}")
   ENDIF (IS_DIRECTORY "${_explode_dir}")
 
-  _DOWNLOAD_DEP (${name} ${dep_VERSION})
-  SET (_cache_tgz "${CB_DOWNLOAD_DEPS_CACHE}/${name}-${dep_VERSION}.tgz")
-
-  # Explode tgz into build directory, then add to current build
-  MESSAGE (STATUS "Installing dependency: ${name}-${dep_VERSION}...")
-  FILE (MAKE_DIRECTORY "${_explode_dir}" "${_binary_dir}")
-  EXECUTE_PROCESS (COMMAND "${CMAKE_COMMAND}" -E tar xf "${_cache_tgz}"
-    WORKING_DIRECTORY "${_explode_dir}")
+  # Always add the dep subdir; this will "re-install" the dep every time you
+  # run CMake, which might be wasteful, but at least should be safe.
+  FILE (MAKE_DIRECTORY "${_binary_dir}")
   ADD_SUBDIRECTORY ("${_explode_dir}" "${_binary_dir}" EXCLUDE_FROM_ALL)
 
 ENDFUNCTION (DECLARE_DEP)
