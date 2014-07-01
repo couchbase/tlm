@@ -39,7 +39,8 @@ build/Makefile: CMakeLists.txt
 	(cd build && $(CMAKE) $(CMAKE_ARGS) ..)
 
 # Invoke static analyser. Requires Clang Static Analyser
-# (http://clang-analyzer.llvm.org). See tlm/README.markdown for more information.
+# (http://clang-analyzer.llvm.org). See tlm/README.markdown for more
+# information.
 analyze:
 	@-mkdir build-analyzer
 	(cd build-analyzer && 				\
