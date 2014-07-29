@@ -20,6 +20,7 @@ FIND_LIBRARY(JEMALLOC_LIBRARIES
              NAMES jemalloc libjemalloc
              HINTS
                  ENV JEMALLOC_DIR
+             PATH_SUFFIXES lib
              PATHS
                  ~/Library/Frameworks
                  /Library/Frameworks
