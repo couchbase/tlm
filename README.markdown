@@ -17,6 +17,7 @@ building Couchbase on multiple platforms.
 - [SmartOS containers](#user-content-smartos)
 	- [CentOS 6](#user-content-centos-6)
 	- [Ubuntu](#user-content-ubuntu)
+	- [Debian 7](#user-content-debian7)
 - [Static Analysis](#user-content-static-analysis)
 
 ## Content
@@ -333,6 +334,79 @@ Install as much as possible of the precompiled dependencies with:
                                      libv8-dev make ccache libcurl4-openssl-dev
 
 A newer version of cmake and google perftools is needed so we have to compile them from source with:
+
+    wget http://www.cmake.org/files/v2.8/cmake-2.8.12.1.tar.gz
+    tar xfz cmake-2.8.12.1.tar.gz
+    cd cmake-2.8.12.1
+    ./bootstrap && make && make install
+    cd ..
+    wget https://gperftools.googlecode.com/files/gperftools-2.1.tar.gz
+    tar xfz gperftools-2.1.tar.gz
+    cd gperftools-2.1
+    ./configure && make && make install
+
+[Install Google repo][google_repo_link] and you should be all set to
+start building the code as described above.
+
+### Debian7
+
+The following descrtiption use the Debian image imported by:
+
+    root@smartos~> imgadm import b9c27838-1730-11e4-adbd-43d91422294f
+
+The KVM may be created with the following attributes (store in `debian7.json`):
+
+    {
+      "alias": "debian-7",
+      "brand": "kvm",
+      "resolvers": [
+        "10.0.0.1",
+        "8.8.4.4"
+      ],
+      "default-gateway": "10.0.0.1",
+      "hostname":"debian",
+      "ram": "1027",
+      "vcpus": "2",
+      "nics": [
+        {
+          "nic_tag": "admin",
+          "ip": "10.0.0.204",
+          "netmask": "255.255.255.0",
+          "gateway": "10.0.0.1",
+          "model": "virtio",
+          "primary": true
+        }
+      ],
+      "disks": [
+        {
+          "image_uuid": "b9c27838-1730-11e4-adbd-43d91422294f",
+          "boot": true,
+          "model": "virtio",
+          "image_size": 10240
+        }
+      ],
+      "customer_metadata": {
+        "root_authorized_keys": "ssh-rsa <my-personal-public-key>"
+      }
+    }
+
+Create the KVM with:
+
+    root@smartos~> vmadm create -f debian7.json
+
+You should now be able to ssh into the machine and run `aptitude` and
+install all of the updates ;-)
+
+Install as much as possible of the precompiled dependencies with:
+
+    root@debian~> apt-get install -y git automake autoconf libtool clang \
+                                     libevent-dev libicu-dev \
+                                     libsnappy-dev libunwind7-dev erlang \
+                                     libv8-dev make ccache libcurl4-openssl-dev
+
+
+A newer version of cmake and google perftools is needed so we have to
+compile them from source with:
 
     wget http://www.cmake.org/files/v2.8/cmake-2.8.12.1.tar.gz
     tar xfz cmake-2.8.12.1.tar.gz
