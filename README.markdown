@@ -330,7 +330,7 @@ Install as much as possible of the precompiled dependencies with:
     root@ubuntu~> apt-get install -y git automake autoconf libtool clang \
                                      clang++ libevent-dev libicu-dev \
                                      libsnappy-dev libunwind7-dev erlang \
-                                     libv8-dev make ccache ibcurl4-openssl-dev
+                                     libv8-dev make ccache libcurl4-openssl-dev
 
 A newer version of cmake and google perftools is needed so we have to compile them from source with:
 
