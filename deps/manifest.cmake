@@ -1,1 +1,3 @@
-MESSAGE (STATUS "In stock manifest - no contents yet")
+DECLARE_DEP (curl VERSION 7.35.0 PLATFORMS windows_msvc)
+DECLARE_DEP (erlang VERSION R16B03 PLATFORMS macosx)
+

@@ -18,7 +18,7 @@ ENDMACRO (_LSB_RELEASE)
 
 # Returns a simple string describing the current Linux distribution
 # compatibility. Possible return values currently include:
-# ubuntu12.04, ubuntu10.04, centos5, centos6.
+# ubuntu14.04, ubuntu12.04, ubuntu10.04, centos5, centos6.
 MACRO (_DETERMINE_LINUX_DISTRO _distro)
   _LSB_RELEASE (id _id)
   _LSB_RELEASE (release _rel)
@@ -37,8 +37,8 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
 ENDMACRO (_DETERMINE_LINUX_DISTRO)
 
 # Returns a simple string describing the current platform. Possible
-# return values currently include: windows_msvc; macosx; ubuntu-1204;
-# ubuntu-1004; centos5; centos6.
+# return values currently include: windows_msvc; macosx; or any value
+# from _DETERMINE_LINUX_DISTRO.
 MACRO (_DETERMINE_PLATFORM var)
   IF (DEFINED CB_DOWNLOAD_DEPS_PLATFORM)
     SET (_plat ${CB_DOWNLOAD_DEPS_PLATFORM})
@@ -159,7 +159,7 @@ ENDFUNCTION (_DOWNLOAD_DEP)
 
 # Declare a dependency
 FUNCTION (DECLARE_DEP name)
-  PARSE_ARGUMENTS (dep "" "VERSION" "SKIP" ${ARGN})
+  PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION" "SKIP" ${ARGN})
 
   # If this dependency has already been declared, skip it
   SET (_prop_name "CB_DOWNLOADED_DEP_${name}")
@@ -168,6 +168,26 @@ FUNCTION (DECLARE_DEP name)
     MESSAGE (STATUS "Dependency ${name} already declared, skipping...")
     RETURN ()
   ENDIF (_declared)
+
+  # If this dependency declares PLATFORM, ensure that we are running on
+  # one of those platforms.
+  _DETERMINE_PLATFORM (_this_platform)
+  LIST (LENGTH dep_PLATFORMS _num_platforms)
+  IF (_num_platforms GREATER 0)
+    SET (_found_platform 0)
+    FOREACH (_platform ${dep_PLATFORMS})
+      IF ("${_this_platform}" STREQUAL "${_platform}")
+        SET (_found_platform 1)
+        BREAK ()
+      ENDIF ("${_this_platform}" STREQUAL "${_platform}")
+    ENDFOREACH (_platform)
+    IF (NOT _found_platform)
+      MESSAGE (STATUS "Dependency ${name} not declared for platform "
+        "${_this_platform}, skipping...")
+      RETURN ()
+    ENDIF (NOT _found_platform)
+  ENDIF (_num_platforms GREATER 0)
+
   # Remember that this dependency has been declared.
   SET_PROPERTY (GLOBAL PROPERTY ${_prop_name} 1)
 
