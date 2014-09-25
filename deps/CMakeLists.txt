@@ -63,7 +63,7 @@ MACRO (_DETERMINE_PLATFORM var)
 ENDMACRO (_DETERMINE_PLATFORM)
 
 # Returns a simple string describing the current architecture. Possible
-# return values currently include: AMD64, x86_64, x86.
+# return values currently include: amd64, x86_64, x86.
 MACRO (_DETERMINE_ARCH var)
   IF (DEFINED CB_DOWNLOAD_DEPS_ARCH)
     SET (_arch ${CB_DOWNLOAD_DEPS_ARCH})
@@ -73,7 +73,7 @@ MACRO (_DETERMINE_ARCH var)
       # QQQ MacOS 10.7 could be 32-bit; we should catch and abort
       SET (_arch x86_64)
     ELSE (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-      SET (_arch ${CMAKE_SYSTEM_PROCESSOR})
+      STRING (TOLOWER ${CMAKE_SYSTEM_PROCESSOR _arch)
     ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     MESSAGE (STATUS "Set arch to ${_arch} for dependency downloads")
     SET (CB_DOWNLOAD_DEPS_ARCH ${_arch} CACHE STRING
@@ -116,19 +116,22 @@ FUNCTION (_DOWNLOAD_FILE url file)
 ENDFUNCTION (_DOWNLOAD_FILE)
 
 # Downloads a dependency to the cache dir. First checks the cache for
-# an up-to-date copy based on md5.
+# an up-to-date copy based on md5.  Sets the global variable
+# _CB_DOWNLOAD_CACHED_DEP to the downloaded dependency .tgz.
 FUNCTION (_DOWNLOAD_DEP name version)
   _DETERMINE_PLATFORM (_platform)
   _DETERMINE_ARCH (_arch)
 
   # Compute relative paths to dependency, minus extension, on local filesystem
   # and in remote repository
-  SET (_rel_path "${name}-${version}")
+  SET (_rel_path "${name}-${_arch}-${version}")
   SET (_repo_path
     "${CB_DOWNLOAD_DEPS_REPO}/${name}/${version}/${name}-${_platform}-${_arch}-${version}")
 
-  # If download file already exists, compare with md5
   SET (_cache_path "${CB_DOWNLOAD_DEPS_CACHE}/${_rel_path}")
+  SET (_CB_DOWNLOAD_CACHED_DEP "${_cache_path}.tgz")
+
+  # If download file already exists, compare with md5
   IF (EXISTS "${_cache_path}.tgz")
     IF (EXISTS "${_cache_path}.md5")
       _CHECK_MD5 ("${_cache_path}.tgz" "${_cache_path}.md5" _md5equal)
@@ -147,9 +150,9 @@ FUNCTION (_DOWNLOAD_DEP name version)
 
   # File not found in cache or cache corrupt - download new.
   # First download the .md5.
-  MESSAGE (STATUS "Downloading dependency md5: ${name}-${version}")
+  MESSAGE (STATUS "Downloading dependency md5: ${name}-${_arch}-${version}")
   _DOWNLOAD_FILE ("${_repo_path}.md5" "${_cache_path}.md5")
-  MESSAGE (STATUS "Downloading dependency tgz: ${name}-${version}")
+  MESSAGE (STATUS "Downloading dependency tgz: ${name}-${_arch}-${version}")
   _DOWNLOAD_FILE ("${_repo_path}.tgz" "${_cache_path}.tgz")
   _CHECK_MD5 ("${_cache_path}.tgz" "${_cache_path}.md5" _retval)
   IF (NOT _retval)
@@ -210,12 +213,12 @@ FUNCTION (DECLARE_DEP name)
     MESSAGE (STATUS "Dependency '${name}' already downloaded")
   ELSE (IS_DIRECTORY "${_explode_dir}")
     _DOWNLOAD_DEP (${name} ${dep_VERSION})
-    SET (_cache_tgz "${CB_DOWNLOAD_DEPS_CACHE}/${name}-${dep_VERSION}.tgz")
 
     # Explode tgz into build directory.
     MESSAGE (STATUS "Installing dependency: ${name}-${dep_VERSION}...")
     FILE (MAKE_DIRECTORY "${_explode_dir}")
-    EXECUTE_PROCESS (COMMAND "${CMAKE_COMMAND}" -E tar xf "${_cache_tgz}"
+    EXECUTE_PROCESS (COMMAND "${CMAKE_COMMAND}" -E 
+      tar xf "${_CB_DOWNLOAD_CACHED_DEP}"
       WORKING_DIRECTORY "${_explode_dir}")
   ENDIF (IS_DIRECTORY "${_explode_dir}")
 
