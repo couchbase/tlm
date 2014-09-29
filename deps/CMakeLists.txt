@@ -73,7 +73,7 @@ MACRO (_DETERMINE_ARCH var)
       # QQQ MacOS 10.7 could be 32-bit; we should catch and abort
       SET (_arch x86_64)
     ELSE (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-      STRING (TOLOWER ${CMAKE_SYSTEM_PROCESSOR _arch)
+      STRING (TOLOWER ${CMAKE_SYSTEM_PROCESSOR} _arch)
     ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     MESSAGE (STATUS "Set arch to ${_arch} for dependency downloads")
     SET (CB_DOWNLOAD_DEPS_ARCH ${_arch} CACHE STRING
@@ -129,7 +129,7 @@ FUNCTION (_DOWNLOAD_DEP name version)
     "${CB_DOWNLOAD_DEPS_REPO}/${name}/${version}/${name}-${_platform}-${_arch}-${version}")
 
   SET (_cache_path "${CB_DOWNLOAD_DEPS_CACHE}/${_rel_path}")
-  SET (_CB_DOWNLOAD_CACHED_DEP "${_cache_path}.tgz")
+  SET (_CB_DOWNLOAD_CACHED_DEP "${_cache_path}.tgz" PARENT_SCOPE)
 
   # If download file already exists, compare with md5
   IF (EXISTS "${_cache_path}.tgz")
