@@ -229,7 +229,7 @@ FUNCTION (DECLARE_DEP name)
 
 ENDFUNCTION (DECLARE_DEP)
 
-SET (CB_DOWNLOAD_DEPS_REPO "http://packages.northscale.com/deps"
+SET (CB_DOWNLOAD_DEPS_REPO "http://packages.couchbase.com/couchbase-server/deps"
   CACHE STRING "URL of third-party dependency repository")
 
 # Default download cache in user's home directory; may be overridden
