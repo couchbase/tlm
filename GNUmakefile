@@ -7,6 +7,9 @@ all:
 install: all
 	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" install
 
+geocouch-build-for-testing:
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" geocouch-build-for-testing
+
 test:
 	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" test
 

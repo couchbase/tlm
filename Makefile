@@ -64,6 +64,13 @@ analyze:
 	 scan-build --use-analyzer=Xcode $(CMAKE) $(CMAKE_ARGS) .. && \
 	 scan-build --use-analyzer=Xcode -o analyser-results/ $(MAKE) all)
 
+# geocouch needs a special build for running the unit tests
+geocouch-build-for-testing: compile
+	@-mkdir build/geocouch-for-tests
+	(cd build/geocouch-for-tests && \
+	 $(CMAKE) -G "$(MAKETYPE)" -D GEOCOUCH_BUILD_FOR_UNIT_TESTS=1 ../../geocouch && \
+	 $(MAKE))
+
 run-mats:
 	cd testrunner && $(MAKE) simple-test
 
