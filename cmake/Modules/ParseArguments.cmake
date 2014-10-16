@@ -2,7 +2,21 @@
 IF (NOT ParseArguments_INCLUDED)
   SET (ParseArguments_INCLUDED 1)
 
-  # Utility macro to parse CMake-style argument lists
+  # Utility macro to parse CMake-style argument lists. Arguments:
+  # prefix - a common prefix for variables set by this function (see below).
+  # arg_names - arguments that may take multiple values.
+  # onearg_names - arguments that may take a single value.
+  # option_names - arguments that take zero values.
+  #
+  # For each argument specified, this function will set a variable named
+  # ${prefix}_${argname}. The value of this variable will be:
+  #
+  #  - a list of all specified values (arg_names)
+  #  - the single value (onearg_names)
+  #  - 1 or 0, depending on whether the option was specified (option_names)
+  #
+  # This macro has no concept of "required" or "optional" arguments; that logic
+  # must be implemented by the calling code.
   MACRO(PARSE_ARGUMENTS prefix arg_names onearg_names option_names)
     SET(DEFAULT_ARGS)
     FOREACH(arg_name ${arg_names} ${onearg_names})
