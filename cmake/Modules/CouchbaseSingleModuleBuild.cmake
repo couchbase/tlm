@@ -37,3 +37,5 @@ INCLUDE(CouchbaseCompilerOptions)
 INCLUDE(CouchbaseCodeCoverage)
 
 ENABLE_TESTING()
+
+INCLUDE_DIRECTORIES(BEFORE ${CMAKE_BINARY_DIR}/platform/include)
