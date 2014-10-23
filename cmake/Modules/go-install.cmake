@@ -30,3 +30,10 @@ EXECUTE_PROCESS (RESULT_VARIABLE _failure
 IF (_failure)
   MESSAGE (FATAL_ERROR "Failed running go install")
 ENDIF (_failure)
+
+# If OUTPUT is set, rename the final output binary to the desired
+# name.  This messes with "go install"'s incremental build logic, but
+# is unavoidable.
+IF (OUTPUT)
+  FILE (RENAME "${WORKSPACE}/bin/${PKGEXE}" "${WORKSPACE}/bin/${OUTPUT}")
+ENDIF (OUTPUT)

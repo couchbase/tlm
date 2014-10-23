@@ -147,7 +147,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       MESSAGE (FATAL_ERROR "PACKAGE is required!")
     ENDIF (NOT Go_PACKAGE)
 
-    # Hunt for the requested package on GOPATH
+    # Hunt for the requested package on GOPATH (used for installing)
     SET (_found)
     FOREACH (_dir ${Go_GOPATH})
       FILE (TO_NATIVE_PATH "${_dir}/src/${Go_PACKAGE}" _pkgdir)
@@ -161,12 +161,26 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       MESSAGE (FATAL_ERROR "Package ${Go_PACKAGE} not found in any workspace on GOPATH!")
     ENDIF (NOT _found)
 
+    # Extract the binary name from the package, and tweak for Windows.
+    GET_FILENAME_COMPONENT (_pkgexe "${Go_PACKAGE}" NAME)
+    IF (WIN32)
+      SET (_pkgexe "${_pkgexe}.exe")
+    ENDIF (WIN32)
+    IF (Go_OUTPUT)
+      IF (WIN32)
+        SET (Go_OUTPUT "${Go_OUTPUT}.exe")
+      ENDIF (WIN32)
+    ENDIF (Go_OUTPUT)
+
     # Go install target
     ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
       COMMAND "${CMAKE_COMMAND}"
       -D "GO_EXECUTABLE=${GO_EXECUTABLE}"
       -D "GOPATH=${Go_GOPATH}"
+      -D "WORKSPACE=${_workspace}"
+      -D "PKGEXE=${_pkgexe}"
       -D "PACKAGE=${Go_PACKAGE}"
+      -D "OUTPUT=${Go_OUTPUT}"
       -D "CGO_INCLUDE_DIRS=${Go_CGO_INCLUDE_DIRS}"
       -D "CGO_LIBRARY_DIRS=${Go_CGO_LIBRARY_DIRS}"
       -P "${TLM_MODULES_DIR}/go-install.cmake"
@@ -187,22 +201,19 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF (_go_targets)
     SET_PROPERTY (GLOBAL APPEND PROPERTY CB_GO_TARGETS ${Go_TARGET})
 
-    # CMake install directive, with optional output renaming
+    # Tweaks for installing and output renaming. go-install.cmake will
+    # arrange for the workspace's bin directory to contain a file with
+    # the right name (either OUTPUT, or the Go package name if OUTPUT
+    # is not specified). We need to know what that name is so we can
+    # INSTALL() it.
+    IF (Go_OUTPUT)
+      SET (_finalexe "${Go_OUTPUT}")
+    ELSE (Go_OUTPUT)
+      SET (_finalexe "${_pkgexe}")
+    ENDIF (Go_OUTPUT)
     IF (Go_INSTALL_PATH)
-      GET_FILENAME_COMPONENT (_exe "${Go_PACKAGE}" NAME)
-      IF (WIN32)
-        SET (_exe "${_exe}.exe")
-        IF (Go_OUTPUT)
-          SET (Go_OUTPUT "${Go_OUTPUT}.exe")
-        ENDIF (Go_OUTPUT)
-      ENDIF (WIN32)
-      IF (Go_OUTPUT)
-        SET (_rename RENAME "${Go_OUTPUT}")
-      ELSE (Go_OUTPUT)
-        SET (_rename)
-      ENDIF (Go_OUTPUT)
-      INSTALL (PROGRAMS "${_workspace}/bin/${_exe}"
-        DESTINATION "${Go_INSTALL_PATH}" ${_rename})
+      INSTALL (PROGRAMS "${_workspace}/bin/${_finalexe}"
+        DESTINATION "${Go_INSTALL_PATH}")
     ENDIF (Go_INSTALL_PATH)
 
   ENDMACRO (GoInstall)
