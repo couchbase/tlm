@@ -175,6 +175,18 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
     ENDIF (Go_DEPENDS)
 
+    # We expect multiple go targets to be operating over the same
+    # GOPATH.  It seems like the go compiler doesn't like be invoked
+    # in parallel in this case, as would happen if we parallelize the
+    # Couchbase build (eg., 'make -j8'). Since the go compiler itself
+    # does parallel building, we want to serialize all go targets. So,
+    # we make them all depend on any earlier Go targets.
+    GET_PROPERTY (_go_targets GLOBAL PROPERTY CB_GO_TARGETS)
+    IF (_go_targets)
+      ADD_DEPENDENCIES(${Go_TARGET} ${_go_targets})
+    ENDIF (_go_targets)
+    SET_PROPERTY (GLOBAL APPEND PROPERTY CB_GO_TARGETS ${Go_TARGET})
+
     # CMake install directive, with optional output renaming
     IF (Go_INSTALL_PATH)
       GET_FILENAME_COMPONENT (_exe "${Go_PACKAGE}" NAME)
