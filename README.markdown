@@ -15,6 +15,7 @@ building Couchbase on multiple platforms.
 	- [How to build](#user-content-how-to-build-1)
 - [MacOSX](#user-content-macosx)
 - [SmartOS containers](#user-content-smartos)
+	- [CentOS 5](#user-content-centos-5)
 	- [CentOS 6](#user-content-centos-6)
 	- [Ubuntu](#user-content-ubuntu)
 	- [Debian 7](#user-content-debian7)
@@ -180,6 +181,176 @@ various containers hosted by SmartOS. [Joyent][joyent_link] provides a
 variety of datasets for various operating systems (CentOS, Fedora,
 FreeBSD, Debian, SmartOS, ...). This section is not intended to cover
 all of these, but covers a set of configurations known to work.
+
+### CentOS 5
+
+The following descrtiption use the Centos-5.7 image imported by:
+
+    root@smartos~> imgadm import 2539f6de-0b5a-11e2-b647-fb08c3503fb2
+
+The KVM may be created with the following attributes (store in `centos-5.7.json`):
+
+    {
+      "alias": "centos-5.7",
+      "brand": "kvm",
+      "resolvers": [
+        "10.0.0.1",
+        "8.8.4.4"
+      ],
+      "default-gateway": "10.0.0.1",
+      "hostname":"centos",
+      "ram": "8192",
+      "vcpus": "4",
+      "nics": [
+        {
+          "nic_tag": "admin",
+          "ip": "10.0.0.206",
+          "netmask": "255.255.255.0",
+          "gateway": "10.0.0.1",
+          "model": "virtio",
+          "primary": true
+        }
+      ],
+      "disks": [
+        {
+          "image_uuid": "2539f6de-0b5a-11e2-b647-fb08c3503fb2",
+          "boot": true,
+          "model": "virtio",
+          "image_size": 5120
+        },
+        {
+          "model": "virtio",
+          "size": 10240
+        }
+      ],
+    "customer_metadata": {
+        "root_authorized_keys": "< my key >"
+      }
+    }
+
+Create the KVM with:
+
+    root@smartos~> vmadm create -f centos-5.7.json
+
+You should now be able to ssh into the machine and run `yum update` and
+install all of the updates ;-)
+
+The source code in Couchbase server use some features defined in
+C++11, and the compiler provided in CentOS 5.7 doesn't support
+this. In order to be able to build Couchbase we have to install or
+build a newer version of gcc.
+
+    yum install -y gcc gcc-c++
+    export LC_ALL=C
+    cd /data
+    wget ftp://ftp.fu-berlin.de/unix/languages/gcc/releases/gcc-4.9.1/gcc-4.9.1.tar.bz2
+    bunzip2 gcc-4.9.1.tar.bz2
+    tar xf gcc-4.9.1.tar
+    wget https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2
+    bunzip2 gmp-6.0.0a.tar.bz2
+    tar xf gmp-6.0.0a.tar
+    mv gmp-6.0.0 gcc-4.9.1/gmp
+    wget http://www.mpfr.org/mpfr-current/mpfr-3.1.2.tar.bz2
+    bunzip2 mpfr-3.1.2.tar.bz2
+    tar xf mpfr-3.1.2.tar
+    mv mpfr-3.1.2 gcc-4.9.1/mpfr
+    wget ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.2.tar.gz
+    tar xfz mpc-1.0.2.tar.gz
+    mv mpc-1.0.2 gcc-4.9.1/mpc
+    wget ftp://gcc.gnu.org/pub/gcc/infrastructure/isl-0.12.2.tar.bz2
+    bunzip2 isl-0.12.2.tar.bz2
+    tar xf isl-0.12.2.tar
+    mv isl-0.12.2 gcc-4.9.1/isl
+    wget ftp://gcc.gnu.org/pub/gcc/infrastructure/cloog-0.18.1.tar.gz
+    tar xfz cloog-0.18.1.tar.gz
+    mv cloog-0.18.1 gcc-4.9.1/cloog
+    cd gcc-4.9.1
+    ./configure  --prefix=/opt/gcc-4.9.1 --disable-multiarch --disable-multilib --enable-languages=c,c++
+    gmake BOOT_CFLAGS='-O' bootstrap
+    gmake install
+
+Let's set all of our tools in a separate directory:
+
+    mkdir -p /opt/local/bin
+    cd /opt
+    ln -s gcc-4.9.1 gcc
+    cd local/bin
+    for f in ../../gcc/bin/*; do ln -s $f; done
+    ln -s ../../gcc/bin/gcc cc
+    cd /data
+    yum remove -y gcc gcc-c++
+    export PATH=/opt/local/bin:$PATH
+    cd /usr/lib64
+    cp /opt/gcc-4.9.1/lib64/libstdc++.so.6.0.20 .
+    rm libstdc++.so.6
+    ln -s libstdc++.so.6.0.20 libstdc++.so.6
+
+Install as much as possible of the precompiled dependencies with:
+
+    yum install -y libevent-devel libicu-devel \
+                   make ncurses-devel openssl-devel \
+                   expat-devel tcl gettext \
+                   java-1.7.0-openjdk subversion \
+                   bzip2-devel
+
+Unfortunately the YUM repository doesn't include all versions of what
+we need, so you need to install the following from source:
+
+Time to build the other build dependencies
+
+    wget http://curl.haxx.se/download/curl-7.38.0.tar.gz
+    gtar xf curl-7.38.0.tar.gz
+    cd curl-7.38.0
+    ./configure
+    gmake -j 8 all install
+    cd ..
+    wget -Ogit-2.1.2.tar.gz https://github.com/git/git/archive/v2.1.2.tar.gz
+    tar xfz git-2.1.2.tar.gz
+    cd git-2.1.2
+    gmake -j 8 prefix=/opt/local LDFLAGS=-Wl,--rpath,/usr/local/lib install
+    cd ..
+    wget http://www.cmake.org/files/v3.0/cmake-3.0.2.tar.gz
+    tar xfz cmake-3.0.2.tar.gz
+    cd cmake-3.0.2
+    ./configure
+    gmake -j 8 all install
+    cd ..
+    wget https://snappy.googlecode.com/files/snappy-1.1.1.tar.gz
+    tar xfz snappy-1.1.1.tar.gz
+    cd snappy-1.1.1
+    ./configure
+    gmake all install
+    cd ..
+    wget http://www.erlang.org/download/otp_src_R16B03.tar.gz
+    tar xfz otp_src_R16B03.tar.gz
+    cd otp_src_R16B03
+    CFLAGS="-DOPENSSL_NO_EC=1" ./configure --prefix=/opt/erlang-16B03
+    gmake all install
+    cd /opt
+    ln -s erlang-16B03 erlang
+    cd local/bin
+    for f in ../../erlang/bin/*; do ln -s $f; done
+    cd /data
+    wget https://www.python.org/ftp/python/2.6.9/Python-2.6.9.tgz
+    gtar xfz Python-2.6.9.tgz
+    cd Python-2.6.9
+    ./configure  --prefix=/opt/python-2.6.9
+    gmake all install
+    cd /opt
+    ln -s python-2.6.9 python
+    cd local/bin
+    for f in ../../python/bin/*; do ln -s $f; done
+    cd /data
+    git clone git://github.com/trondn/v8
+    cd v8
+    git checkout origin/3.21.17-couchbase
+    gmake dependencies
+    gmake library=shared x64
+    cp out/x64.release/lib.target/libv8.so /usr/local/lib
+    cp include/* /usr/local/include/
+
+[Install Google repo][google_repo_link] and you should be all set to
+start building the code as described above.
 
 ### CentOS 6
 
