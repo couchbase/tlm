@@ -31,6 +31,11 @@ ADD_CUSTOM_TARGET(reset
                   COMMAND repo forall -c "git clean -dfx"
                   VERBATIM)
 
+IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/flatbuffers")
+    SET(FLATBUFFERS_INSTALL OFF CACHE BOOL "Don't install flatbuffers")
+    ADD_SUBDIRECTORY(flatbuffers)
+ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/flatbuffers")
+
 ADD_SUBDIRECTORY(platform)
 ADD_SUBDIRECTORY(memcached)
 ADD_SUBDIRECTORY(couchstore)
