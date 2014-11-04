@@ -24,6 +24,13 @@ ENDMACRO (EXPORT_FLAGS)
 EXPORT_FLAGS (CGO_INCLUDE_DIRS CGO_CPPFLAGS "-I")
 EXPORT_FLAGS (CGO_LIBRARY_DIRS CGO_LDFLAGS "-L")
 
+# QQQ TOTAL HACK to enable CGO binaries to find Couchbase-built shared
+# libraries.  This will clearly only work on Linux ELF-based systems,
+# and only for those libraries which are installed in the correct path
+# relative to the installed location of the Go executable. I'm still
+# trying to figure out how to handle this correctly.
+SET (ENV{LD_RUN_PATH} "$ORIGIN/../lib")
+
 # Execute "go install"
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
   COMMAND "${GO_EXECUTABLE}" install -x "${PACKAGE}")
