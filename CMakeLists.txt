@@ -4,6 +4,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10)
 PROJECT("Couchbase")
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
+SET(COUCHBASE_SERVER_BUILD True CACHE BOOL "Indicating this is a server build")
 
 # Have to add deps first, before any other part of the build tries to
 # FIND anything
