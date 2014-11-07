@@ -407,7 +407,8 @@ Install as much as possible of the precompiled dependencies with:
                                  snappy-devel gcc gcc-c++ libcurl-devel \
                                  make ncurses-devel openssl-devel svn \
                                  expat-devel perl-ExtUtils-CBuilder \
-                                 perl-ExtUtils-MakeMaker tcl gettext
+                                 perl-ExtUtils-MakeMaker tcl gettext \
+                                 mercurial
 
 Unfortunately the YUM repository don't include all (and new enough)
 versions of all we need, so you need to install the following from
@@ -443,7 +444,14 @@ source:
     cp include/* /usr/local/include/
     cd ../otp_src_R16B03
     CFLAGS="-DOPENSSL_NO_EC=1" ./configure && gmake all install
-    cd ..
+    cd /usr/local
+    hg clone -u release https://code.google.com/p/go
+    cd go/src
+    ./all.bash
+    cd ../../bin
+    ln -s ../go/bin/go
+    ln -s ../go/bin/gofmt
+
 
 [Install Google repo][google_repo_link] and you should be all set to
 start building the code as described above.
@@ -502,7 +510,8 @@ Install as much as possible of the precompiled dependencies with:
     root@ubuntu~> apt-get install -y git automake autoconf libtool clang \
                                      clang++ libevent-dev libicu-dev \
                                      libsnappy-dev libunwind7-dev erlang \
-                                     libv8-dev make ccache libcurl4-openssl-dev
+                                     libv8-dev make ccache \
+                                     libcurl4-openssl-dev mercurial
 
 A newer version of cmake and google perftools is needed so we have to compile them from source with:
 
@@ -515,6 +524,13 @@ A newer version of cmake and google perftools is needed so we have to compile th
     tar xfz gperftools-2.1.tar.gz
     cd gperftools-2.1
     ./configure && make && make install
+    cd /usr/local
+    hg clone -u release https://code.google.com/p/go
+    cd go/src
+    ./all.bash
+    cd ../../bin
+    ln -s ../go/bin/go
+    ln -s ../go/bin/gofmt
 
 [Install Google repo][google_repo_link] and you should be all set to
 start building the code as described above.
@@ -573,7 +589,8 @@ Install as much as possible of the precompiled dependencies with:
     root@debian~> apt-get install -y git automake autoconf libtool clang \
                                      libevent-dev libicu-dev \
                                      libsnappy-dev libunwind7-dev erlang \
-                                     libv8-dev make ccache libcurl4-openssl-dev
+                                     libv8-dev make ccache \
+                                     libcurl4-openssl-dev mercurial
 
 
 A newer version of cmake and google perftools is needed so we have to
@@ -588,6 +605,14 @@ compile them from source with:
     tar xfz gperftools-2.1.tar.gz
     cd gperftools-2.1
     ./configure && make && make install
+    cd /usr/local
+    hg clone -u release https://code.google.com/p/go
+    cd go/src
+    ./all.bash
+    cd ../../bin
+    ln -s ../go/bin/go
+    ln -s ../go/bin/gofmt
+
 
 [Install Google repo][google_repo_link] and you should be all set to
 start building the code as described above.
