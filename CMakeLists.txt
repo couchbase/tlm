@@ -100,11 +100,11 @@ IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
   SET (GODEPSDIR "${CMAKE_CURRENT_SOURCE_DIR}/godeps")
   
   ADD_SUBDIRECTORY (goproj/src/github.com/couchbaselabs/tuqtng)
-  ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/goxdcr)
 
   SET (FORESTDB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/forestdb/include")
   GET_PROPERTY (_dir TARGET forestdb PROPERTY LOCATION)
   GET_FILENAME_COMPONENT (FORESTDB_LIBRARY_DIR "${_dir}" PATH)
   SET (FORESTDB_TARGET forestdb)
   ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/indexing)
+  ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/goxdcr)
 ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
