@@ -17,6 +17,7 @@ building Couchbase on multiple platforms.
 - [SmartOS containers](#user-content-smartos)
 	- [CentOS 5](#user-content-centos-5)
 	- [CentOS 6](#user-content-centos-6)
+	- [CentOS 7](#user-content-centos-7)
 	- [Ubuntu](#user-content-ubuntu)
 	- [Debian 7](#user-content-debian7)
 - [Static Analysis](#user-content-static-analysis)
@@ -444,6 +445,132 @@ source:
     cp include/* /usr/local/include/
     cd ../otp_src_R16B03
     CFLAGS="-DOPENSSL_NO_EC=1" ./configure && gmake all install
+    cd /usr/local
+    hg clone -u release https://code.google.com/p/go
+    cd go/src
+    ./all.bash
+    cd ../../bin
+    ln -s ../go/bin/go
+    ln -s ../go/bin/gofmt
+
+
+[Install Google repo][google_repo_link] and you should be all set to
+start building the code as described above.
+
+### CentOS 7
+
+The following descrtiption use the Centos-7 image imported by:
+
+    root@smartos~> imgadm import df81f45e-8f9f-11e3-a819-93fab527c81e
+
+The KVM may be created with the following attributes (store in `centos.json`):
+
+    {
+      "alias": "centos-7",
+      "brand": "kvm",
+      "resolvers": [
+        "10.0.0.1",
+        "8.8.4.4"
+      ],
+      "default-gateway": "10.0.0.1",
+      "hostname":"centos",
+      "ram": "2048",
+      "vcpus": "2",
+      "nics": [
+        {
+          "nic_tag": "admin",
+          "ip": "10.0.0.205",
+          "netmask": "255.255.255.0",
+          "gateway": "10.0.0.1",
+          "model": "virtio",
+          "primary": true
+        }
+      ],
+      "disks": [
+        {
+          "image_uuid": "553da8ba-499e-11e4-8bee-5f8dadc234ce",
+          "boot": true,
+          "model": "virtio",
+          "image_size": 10240
+        },
+       {
+          "model": "virtio",
+          "size": 10240
+        }
+      ],
+    "customer_metadata": {
+        "root_authorized_keys": "<my ssh key>"
+      }
+    }
+
+Create the KVM with:
+
+    root@smartos~> vmadm create -f centos.json
+
+You should now be able to ssh into the machine and run `yum update` and
+install all of the updates ;-)
+
+Install as much as possible of the precompiled dependencies with:
+
+    root@centos~> yum install -y libevent-devel libicu-devel \
+                                 snappy-devel gcc gcc-c++ libcurl-devel \
+                                 make ncurses-devel openssl-devel svn \
+                                 expat-devel perl-ExtUtils-CBuilder \
+                                 perl-ExtUtils-MakeMaker tcl gettext \
+                                 mercurial bzip2-devel redhat-lsb
+
+Unfortunately the YUM repository don't include all (and new enough)
+versions of all we need, so you need to install the following from
+source:
+
+    wget http://www.cmake.org/files/v2.8/cmake-2.8.12.1.tar.gz
+    wget http://download.savannah.gnu.org/releases/libunwind/libunwind-1.1.tar.gz
+    wget https://gperftools.googlecode.com/files/gperftools-2.1.tar.gz
+    wget -Ov1.9.2.tar.gz https://github.com/git/git/archive/v1.9.2.tar.gz
+    wget http://www.erlang.org/download/otp_src_R16B03.tar.gz
+
+    gtar xfz cmake-2.8.12.1.tar.gz
+    gtar xfz libunwind-1.1.tar.gz
+    gtar xfz gperftools-2.1.tar.gz
+    gtar xfz v1.9.2.tar.gz
+    gtar xfz otp_src_R16B03.tar.gz
+
+    cd git-1.9.2
+    gmake prefix=/usr install
+    cd ../cmake-2.8.12.1
+    ./bootstrap && gmake all install
+    cd ../libunwind-1.1
+    ./configure && gmake all install
+    cd ../gperftools-2.1
+    ./configure && gmake all install
+    cd ..
+
+    wget https://www.python.org/ftp/python/2.6.9/Python-2.6.9.tgz
+    gtar xfz Python-2.6.9.tgz
+    cd Python-2.6.9
+    ./configure  --prefix=/opt/python-2.6.9
+    gmake all install
+    cd /opt
+    ln -s python-2.6.9 python
+    mkdir -p local/bin
+    cd local/bin
+    for f in ../../python/bin/*; do ln -s $f; done
+    cd /data
+
+    git clone git://github.com/trondn/v8
+    cd v8
+    git checkout origin/3.21.17-couchbase
+    gmake dependencies
+    gmake library=shared x64
+    cp out/x64.release/lib.target/libv8.so /usr/local/lib
+    cp include/* /usr/local/include/
+    cd ../otp_src_R16B03
+    CFLAGS="-DOPENSSL_NO_EC=1" ./configure --prefix=/opt/erlang-16B03
+    gmake all install
+    cd /opt
+    ln -s erlang-16B03 erlang
+    cd local/bin
+    for f in ../../erlang/bin/*; do ln -s $f; done
     cd /usr/local
     hg clone -u release https://code.google.com/p/go
     cd go/src
