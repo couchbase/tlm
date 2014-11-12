@@ -32,9 +32,9 @@ EXPORT_FLAGS (CGO_LIBRARY_DIRS CGO_LDFLAGS "-L")
 SET (ENV{LD_RUN_PATH} "$ORIGIN/../lib")
 
 # Execute "go install"
-MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install -x ${PACKAGE}")
+MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install -gcflags=${GCFLAGS} -x ${PACKAGE}")
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
-  COMMAND "${GO_EXECUTABLE}" install -x "${PACKAGE}")
+  COMMAND "${GO_EXECUTABLE}" install "-gcflags=${GCFLAGS}" -x "${PACKAGE}")
 IF (_failure)
   MESSAGE (FATAL_ERROR "Failed running go install")
 ENDIF (_failure)

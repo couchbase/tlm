@@ -118,6 +118,9 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   #
   # Optional arguments:
   #
+  # GCFLAGS - flags that will be passed (via -gcflags) to all compile
+  # steps; should be a single string value, with spaces if necessary
+  #
   # DEPENDS - list of other CMake targets on which TARGET will depend
   #
   # INSTALL_PATH - if specified, a CMake INSTALL() directive will be
@@ -138,7 +141,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF (NOT GO_EXECUTABLE)
 
     PARSE_ARGUMENTS (Go "DEPENDS;GOPATH;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
-      "TARGET;PACKAGE;OUTPUT;INSTALL_PATH" "" ${ARGN})
+      "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GCFLAGS" "" ${ARGN})
 
     IF (NOT Go_TARGET)
       MESSAGE (FATAL_ERROR "TARGET is required!")
@@ -178,6 +181,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       -D "GO_EXECUTABLE=${GO_EXECUTABLE}"
       -D "GOPATH=${Go_GOPATH}"
       -D "WORKSPACE=${_workspace}"
+      -D "GCFLAGS=${Go_GCFLAGS}"
       -D "PKGEXE=${_pkgexe}"
       -D "PACKAGE=${Go_PACKAGE}"
       -D "OUTPUT=${Go_OUTPUT}"
@@ -218,6 +222,57 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
   ENDMACRO (GoInstall)
 
+
+  # Adds a target named TARGET which (always) calls "go tool yacc
+  # PATH".
+  #
+  # Note that, unlike GoBuild(), this macro requires using the
+  # Golang compiler, not gccgo. A CMake error will be raised if this
+  # macro is used when only gccgo is detected.
+  #
+  # Required arguments:
+  #
+  # TARGET - name of CMake target to create
+  #
+  # YFILE - Absolute path to .y file.
+  #
+  # Optional arguments:
+  #
+  # DEPENDS - list of other CMake targets on which TARGET will depend
+  #
+  #
+  MACRO (GoYacc)
+    IF (NOT GO_EXECUTABLE)
+      MESSAGE (FATAL_ERROR "Go compiler was not found!")
+    ENDIF (NOT GO_EXECUTABLE)
+
+    PARSE_ARGUMENTS (Go "DEPENDS" "TARGET;YFILE" "" ${ARGN})
+
+    IF (NOT Go_TARGET)
+      MESSAGE (FATAL_ERROR "TARGET is required!")
+    ENDIF (NOT Go_TARGET)
+    IF (NOT Go_YFILE)
+      MESSAGE (FATAL_ERROR "YFILE is required!")
+    ENDIF (NOT Go_YFILE)
+
+    GET_FILENAME_COMPONENT (_ypath "${Go_YFILE}" PATH)
+    GET_FILENAME_COMPONENT (_yname "${Go_YFILE}" NAME)
+
+    ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
+      COMMAND "${CMAKE_COMMAND}" -E echo
+      "-- Executing: ${GO_EXECUTABLE} tool yacc ${_yname}"
+      COMMAND "${GO_EXECUTABLE}" tool yacc "${_yname}"
+      WORKING_DIRECTORY "${_ypath}"
+      VERBATIM)
+
+    IF (Go_DEPENDS)
+      ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
+    ENDIF (Go_DEPENDS)
+
+  ENDMACRO (GoYacc)
+
   SET (FindCouchbaseGo_INCLUDED 1)
 
 ENDIF (NOT FindCouchbaseGo_INCLUDED)
+
+
