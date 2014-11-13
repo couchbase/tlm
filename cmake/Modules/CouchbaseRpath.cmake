@@ -3,12 +3,18 @@ SET(CMAKE_BUILD_WITH_INSTALL_RPATH FALSE)
 
 # If the system supports it we want to add in $ORIGIN
 IF (UNIX)
-   SET(RPATH "\$ORIGIN/../lib:\$ORIGIN/../lib/memcached:")
+   IF(APPLE)
+      SET (ORIGIN @executable_path)
+   ELSE(APPLE)
+      SET (ORIGIN \$ORIGIN)
+   ENDIF(APPLE)
+   SET(RPATH ${ORIGIN}/../lib;${ORIGIN}/../lib/memcached)
 ENDIF()
-SET(RPATH "${RPATH}${CMAKE_INSTALL_PREFIX}/lib:${CMAKE_INSTALL_PREFIX}/lib/memcached")
+
+SET(RPATH "${RPATH};${CMAKE_INSTALL_PREFIX}/lib;${CMAKE_INSTALL_PREFIX}/lib/memcached")
 IF ("${CMAKE_INSTALL_RPATH}" STREQUAL "")
 ELSE()
-  SET(RPATH "${RPATH}:${CMAKE_INSTALL_RPATH}")
+  SET(RPATH "${RPATH};${CMAKE_INSTALL_RPATH}")
 ENDIF()
 SET(CMAKE_INSTALL_RPATH "${RPATH}")
 
