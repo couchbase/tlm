@@ -53,21 +53,6 @@ INCLUDE(CTest)
 
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_BINARY_DIR}/platform/include)
 
-SET(ASTYLE_CFLAGS --recursive
-                  --mode=c
-                  --quiet
-                  --style=1tbs
-                  --indent=spaces=4
-                  --indent-namespaces
-                  --indent-col1-comments
-                  --max-instatement-indent=78
-                  --pad-oper
-                  --pad-header
-                  --add-brackets
-                  --unpad-paren
-                  --align-pointer=name
-                  "*.h" "*.c")
-
 # Add a quick (and safe) way to nuke everything
 ADD_CUSTOM_TARGET(reset
                   COMMAND repo forall -c "git clean -dfx"
