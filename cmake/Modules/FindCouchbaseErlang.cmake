@@ -25,30 +25,16 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
       GET_FILENAME_COMPONENT(ERL_REAL_EXE ${ERL_EXECUTABLE} REALPATH)
       GET_FILENAME_COMPONENT(ERL_LOCATION ${ERL_REAL_EXE} PATH)
 
-      FIND_PATH(ERL_NATIVE_FEATURES_CONFIG_INCLUDE_PATH erl_native_features_config.h
-        HINTS
-        ${ERL_LOCATION}/../usr/include
-        PATHS
-        /usr/lib/erlang/usr/include
-        /usr/local/lib/erlang/usr/include
-        /opt/local/lib/erlang/usr/include
-        /usr/lib64/erlang/usr/include)
-
-      IF (ERL_NATIVE_FEATURES_CONFIG_INCLUDE_PATH)
-         SET(ERLANG_INCLUDE_PATH "${ERL_NATIVE_FEATURES_CONFIG_INCLUDE_PATH}"
-             CACHE STRING "Path to Erlang include files")
-      ELSE (ERL_NATIVE_FEATURES_CONFIG_INCLUDE_PATH)
-         FIND_PATH(ERL_NIF_INCLUDE_PATH erl_nif.h
-                   HINTS
-                   ${ERL_LOCATION}/../usr/include
-                   PATHS
-                   /usr/lib/erlang/usr/include
-                   /usr/local/lib/erlang/usr/include
-                   /opt/local/lib/erlang/usr/include
-                   /usr/lib64/erlang/usr/include)
-         SET(ERLANG_INCLUDE_PATH "${ERL_NIF_INCLUDE_PATH}"
-             CACHE STRING "Path to Erlang include files")
-      ENDIF (ERL_NATIVE_FEATURES_CONFIG_INCLUDE_PATH)
+      FIND_PATH(ERL_NIF_INCLUDE_PATH erl_nif.h
+                HINTS
+                ${ERL_LOCATION}/../usr/include
+                PATHS
+                /usr/lib/erlang/usr/include
+                /usr/local/lib/erlang/usr/include
+                /opt/local/lib/erlang/usr/include
+                /usr/lib64/erlang/usr/include)
+      SET(ERLANG_INCLUDE_PATH "${ERL_NIF_INCLUDE_PATH}"
+          CACHE STRING "Path to Erlang include files")
 
       MESSAGE(STATUS "Erlang runtime and compiler found in ${ERL_EXECUTABLE} and ${ERLC_EXECUTABLE}")
 
