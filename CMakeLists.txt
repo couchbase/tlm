@@ -91,19 +91,26 @@ IF (BUILD_ENTERPRISE)
    ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/enterprise")
 ENDIF (BUILD_ENTERPRISE)
 
-# Preparing for Sherlock!
-IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/forestdb")
-  ADD_SUBDIRECTORY (forestdb)
-ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/forestdb")
-IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
-  SET (GODEPSDIR "${CMAKE_CURRENT_SOURCE_DIR}/godeps")
 
-  ADD_SUBDIRECTORY (goproj/src/github.com/couchbaselabs/query)
+# There is currently a build break for Windows, but we'd still like to build
+# with the sherlock manfest.
 
-  SET (FORESTDB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/forestdb/include")
-  GET_PROPERTY (_dir TARGET forestdb PROPERTY LOCATION)
-  GET_FILENAME_COMPONENT (FORESTDB_LIBRARY_DIR "${_dir}" PATH)
-  SET (FORESTDB_TARGET forestdb)
-  ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/indexing)
-  ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/goxdcr)
-ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
+IF (NOT WIN32)
+   # Preparing for Sherlock!
+   IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/forestdb")
+      ADD_SUBDIRECTORY (forestdb)
+   ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/forestdb")
+
+   IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
+      SET (GODEPSDIR "${CMAKE_CURRENT_SOURCE_DIR}/godeps")
+
+      ADD_SUBDIRECTORY (goproj/src/github.com/couchbaselabs/query)
+
+      SET (FORESTDB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/forestdb/include")
+      GET_PROPERTY (_dir TARGET forestdb PROPERTY LOCATION)
+      GET_FILENAME_COMPONENT (FORESTDB_LIBRARY_DIR "${_dir}" PATH)
+      SET (FORESTDB_TARGET forestdb)
+      ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/indexing)
+      ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/goxdcr)
+   ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
+ENDIF (NOT WIN32)
