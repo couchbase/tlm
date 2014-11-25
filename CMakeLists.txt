@@ -95,7 +95,7 @@ ENDIF (BUILD_ENTERPRISE)
 # There is currently a build break for Windows, but we'd still like to build
 # with the sherlock manfest.
 
-IF (NOT WIN32)
+IF (NOT (WIN32 OR "${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS"))
    # Preparing for Sherlock!
    IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/forestdb")
       ADD_SUBDIRECTORY (forestdb)
@@ -113,4 +113,4 @@ IF (NOT WIN32)
       ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/indexing)
       ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/goxdcr)
    ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
-ENDIF (NOT WIN32)
+ENDIF (NOT (WIN32 OR "${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS"))
