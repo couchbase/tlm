@@ -164,8 +164,13 @@ ENDFUNCTION (_DOWNLOAD_DEP)
 FUNCTION (DECLARE_DEP name)
   PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION" "SKIP" ${ARGN})
 
-  # If this dependency has already been declared, skip it
-  SET (_prop_name "CB_DOWNLOADED_DEP_${name}")
+  # If this dependency(+version) has already been declared, skip it
+  if (dep_VERSION)
+    SET (_prop_name "CB_DOWNLOADED_DEP_${name}_${dep_VERSION}")
+  else (dep_VERSION)
+    SET (_prop_name "CB_DOWNLOADED_DEP_${name}")
+  endif(dep_VERSION)
+
   GET_PROPERTY (_declared GLOBAL PROPERTY ${_prop_name} SET)
   IF (_declared)
     MESSAGE (STATUS "Dependency ${name} already declared, skipping...")
@@ -207,11 +212,17 @@ FUNCTION (DECLARE_DEP name)
   SET (_explode_dir "${CMAKE_CURRENT_BINARY_DIR}/${name}.exploded")
   SET (_binary_dir "${CMAKE_CURRENT_BINARY_DIR}/${name}.binary")
 
-  # See if dependency is already downloaded. We assume the existence of the
-  # exploded dir is sufficient.
-  IF (IS_DIRECTORY "${_explode_dir}")
-    MESSAGE (STATUS "Dependency '${name}' already downloaded")
-  ELSE (IS_DIRECTORY "${_explode_dir}")
+  # See if dependency is already downloaded. We assume the existence of a
+  # VERSION file which matches the current version is sufficient.
+  IF (EXISTS "${_explode_dir}/VERSION.txt")
+    FILE (STRINGS "${_explode_dir}/VERSION.txt" EXPLODED_VERSION)
+  ELSE (EXISTS "${_explode_dir}/VERSION.txt")
+    SET (EXPLODED_VERSION "none")
+  ENDIF (EXISTS "${_explode_dir}/VERSION.txt")
+
+  IF (EXISTING_VERSION STREQUAL ${dep_VERSION})
+      MESSAGE (STATUS "Dependency '${name} (${dep_VERSION})' already downloaded")
+  ELSE (EXISTING_VERSION STREQUAL ${dep_VERSION})
     _DOWNLOAD_DEP (${name} ${dep_VERSION})
 
     # Explode tgz into build directory.
@@ -220,7 +231,8 @@ FUNCTION (DECLARE_DEP name)
     EXECUTE_PROCESS (COMMAND "${CMAKE_COMMAND}" -E 
       tar xf "${_CB_DOWNLOAD_CACHED_DEP}"
       WORKING_DIRECTORY "${_explode_dir}")
-  ENDIF (IS_DIRECTORY "${_explode_dir}")
+    FILE (WRITE ${_explode_dir}/VERSION.txt ${dep_VERSION})
+  ENDIF (EXISTING_VERSION STREQUAL ${dep_VERSION})
 
   # Always add the dep subdir; this will "re-install" the dep every time you
   # run CMake, which might be wasteful, but at least should be safe.
