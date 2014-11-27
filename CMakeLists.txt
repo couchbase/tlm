@@ -3,8 +3,15 @@
 #
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10)
 PROJECT("Couchbase")
+
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
 SET(COUCHBASE_SERVER_BUILD True CACHE BOOL "Indicating this is a server build")
+
+# Try to download the prebuilt 3rd-party dependencies by default
+IF (NOT DEFINED CB_DOWNLOAD_DEPS)
+   SET(CB_DOWNLOAD_DEPS True
+       CACHE BOOL "Download prebuilt dependencies by default")
+ENDIF (NOT DEFINED CB_DOWNLOAD_DEPS)
 
 # Have to add deps first, before any other part of the build tries to
 # FIND anything
