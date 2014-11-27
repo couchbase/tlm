@@ -84,9 +84,7 @@ clean:
 	-$(RM) $(RMOPTS) build $(PREFIX)
 
 clean-xfd: clean
-	cd couchdb && git clean -dfxq
 	cd ns_server && git clean -dfxq
-	cd geocouch && git clean -dfxq
 
 clean-xfd-hard: clean-xfd
 
