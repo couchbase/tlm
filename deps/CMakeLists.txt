@@ -50,6 +50,8 @@ MACRO (_DETERMINE_PLATFORM var)
       SET (_plat "macosx")
     ELSEIF (_plat STREQUAL "Linux")
       _DETERMINE_LINUX_DISTRO (_plat)
+    ELSEIF (_plat STREQUAL "SunOS")
+      SET (_plat "sunos")
     ELSE (_plat STREQUAL "Windows")
       MESSAGE (FATAL_ERROR "Sorry, don't recognize your system ${_plat}. "
         "Please re-run CMake without CB_DOWNLOAD_DEPS.")
