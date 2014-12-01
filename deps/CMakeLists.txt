@@ -18,7 +18,7 @@ ENDMACRO (_LSB_RELEASE)
 
 # Returns a simple string describing the current Linux distribution
 # compatibility. Possible return values currently include:
-# ubuntu14.04, ubuntu12.04, ubuntu10.04, centos5, centos6.
+# ubuntu14.04, ubuntu12.04, ubuntu10.04, centos5, centos6, debian7.
 MACRO (_DETERMINE_LINUX_DISTRO _distro)
   _LSB_RELEASE (id _id)
   _LSB_RELEASE (release _rel)
@@ -32,6 +32,10 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
     ELSE (_rel VERSION_LESS 13)
       SET (_rel 14.04)
     ENDIF (_rel VERSION_LESS 13)
+  ELSEIF (_id STREQUAL "debian")
+    # Just use the major from the Debian identifier - we don't need
+    # different builds for different minor versions.
+    STRING (REGEX MATCH "[0-9]+" _rel "${_rel}")
   ENDIF (_id STREQUAL "linuxmint")
   SET (${_distro} "${_id}${_rel}")
 ENDMACRO (_DETERMINE_LINUX_DISTRO)
