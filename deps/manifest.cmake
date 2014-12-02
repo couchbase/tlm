@@ -12,4 +12,5 @@ DECLARE_DEP (v8 VERSION 3.23.6 PLATFORMS windows_msvc)
 DECLARE_DEP (erlang VERSION R16B03 PLATFORMS windows_msvc)
 DECLARE_DEP (erlang VERSION R16B03-cb2 PLATFORMS macosx)
 
-DECLARE_DEP (jemalloc VERSION 5d9732f-cb2 PLATFORMS macosx ubuntu12.04 ubuntu14.04)
+DECLARE_DEP (jemalloc VERSION 5d9732f-cb2
+                      PLATFORMS macosx ubuntu12.04 ubuntu14.04 debian7)
