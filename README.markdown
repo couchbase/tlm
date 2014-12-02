@@ -291,7 +291,7 @@ Install as much as possible of the precompiled dependencies with:
                    make ncurses-devel openssl-devel \
                    expat-devel tcl gettext \
                    java-1.7.0-openjdk subversion \
-                   bzip2-devel
+                   bzip2-devel redhat-lsb
 
 Unfortunately the YUM repository doesn't include all versions of what
 we need, so you need to install the following from source:
@@ -408,7 +408,7 @@ Install as much as possible of the precompiled dependencies with:
                                  make ncurses-devel openssl-devel svn \
                                  expat-devel perl-ExtUtils-CBuilder \
                                  perl-ExtUtils-MakeMaker tcl gettext \
-                                 mercurial
+                                 mercurial redhat-lsb
 
 Unfortunately the YUM repository don't include all (and new enough)
 versions of all we need, so you need to install the following from
@@ -590,7 +590,8 @@ Install as much as possible of the precompiled dependencies with:
                                      libevent-dev libicu-dev \
                                      libsnappy-dev libunwind7-dev erlang \
                                      libv8-dev make ccache \
-                                     libcurl4-openssl-dev mercurial
+                                     libcurl4-openssl-dev mercurial \
+                                     lsb-release
 
 
 A newer version of cmake and google perftools is needed so we have to
