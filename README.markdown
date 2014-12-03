@@ -172,9 +172,10 @@ Install the following packages from homebrew:
 As of the time of writing the current brew version of v8, 3.25.30, is unsupported. It is recommended that you use the 3.21.17 version which you can install via the following commands:
 
     cd /usr/local/Library
-    git checkout -- 0e4fe7f /usr/local/Library/Formula/v8.rb
+    git checkout 0e4fe7f /usr/local/Library/Formula/v8.rb
     brew install v8
     brew pin v8
+    git checkout -- /usr/local/Library/Formula/v8.rb
 
 You can check the available versions of v8 using: `brew versions v8`.
 
