@@ -84,20 +84,6 @@ ADD_SUBDIRECTORY(couchdb)
 ADD_SUBDIRECTORY(geocouch)
 ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
 
-IF (BUILD_ENTERPRISE)
-   IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/enterprise")
-       SET(root "${CMAKE_CURRENT_SOURCE_DIR}/enterprise")
-       FILE(GLOB dirs RELATIVE "${root}" "${root}/*")
-       FOREACH(dir ${dirs})
-          SET(d "${root}/${dir}")
-          IF(IS_DIRECTORY ${d} AND EXISTS ${d}/CMakeLists.txt)
-             MESSAGE(STATUS "Adding enterprise module ${dir}")
-             ADD_SUBDIRECTORY(${d})
-          ENDIF(IS_DIRECTORY ${d} AND EXISTS ${d}/CMakeLists.txt)
-       ENDFOREACH()
-   ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/enterprise")
-ENDIF (BUILD_ENTERPRISE)
-
 
 # There is currently a build break for Windows, but we'd still like to build
 # with the sherlock manfest.
