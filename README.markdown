@@ -169,6 +169,15 @@ Install the following packages from homebrew:
 
     trond@ok> brew install cmake erlang git icu4c libevent snappy v8
 
+As of the time of writing the current brew version of v8, 3.25.30, is unsupported. It is recommended that you use the 3.21.17 version which you can install via the following commands:
+
+    cd /usr/local/Library
+    git checkout -- 0e4fe7f /usr/local/Library/Formula/v8.rb
+    brew install v8
+    brew pin v8
+
+You can check the available versions of v8 using: `brew versions v8`.
+
 Ensure that your `PATH` variable includes `/usr/local/opt/icu4c/bin`:
 
     trond@ok> export PATH=$PATH:/usr/local/bin:/usr/local/opt/icu4c/bin
