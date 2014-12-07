@@ -32,9 +32,9 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
     ELSE (_rel VERSION_LESS 13)
       SET (_rel 14.04)
     ENDIF (_rel VERSION_LESS 13)
-  ELSEIF (_id STREQUAL "debian")
-    # Just use the major from the Debian identifier - we don't need
-    # different builds for different minor versions.
+  ELSEIF (_id STREQUAL "debian" OR _id STREQUAL "centos" )
+    # Just use the major version from the CentOS/Debian identifier - we don't
+    # need different builds for different minor versions.
     STRING (REGEX MATCH "[0-9]+" _rel "${_rel}")
   ENDIF (_id STREQUAL "linuxmint")
   SET (${_distro} "${_id}${_rel}")
