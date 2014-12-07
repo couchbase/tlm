@@ -125,8 +125,6 @@ The following steps is needed to build Couchbase on Microsoft Windows 2008R2
 * Install [CMake][win_cmake_link] and add to path
 * Install [GO][win_go_link] and add to path
 * Download and install [2008 runtime extensions][win_2008_runtime_ext_link]
-* Create a directory named `c:\tools` and add it to your path.. Copy `environment.bat` and `repo.exe` from the google drive folder into this directory (@todo figure out where to store them)
-* Copy the directory depot from google drive to `c:\` (endind up as: `c:\depot`)
 
 ### Configuration
 
@@ -144,7 +142,8 @@ two additional settings suggested:
 ### How to build
 
 Before you may start to build on Microsoft Windows you have to set up
-the environment.
+the environment. The script `environment.bat` is located in the `win32`
+directory.
 
 Open cmd.com and type in the following (assuming c:\compile\couchbase
 is the directory holding your source):
