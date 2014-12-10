@@ -19,6 +19,8 @@ EXTRA_CMAKE_OPTIONS=
 CHMODCMD=attrib -r
 # Command used for copying files
 CP=copy
+# path separator
+SEPARATOR=\\
 
 CMAKE=cmake
 
@@ -81,7 +83,7 @@ e2eviewtests:
 	cd testrunner && $(MAKE) test-views
 
 clean:
-	-$(RM) $(RMOPTS) build $(PREFIX)
+	-$(RM) $(RMOPTS) build $(PREFIX) godeps$(SEPARATOR)pkg goproj$(SEPARATOR)bin goproj$(SEPARATOR)pkg
 
 clean-xfd: clean
 	cd ns_server && git clean -dfxq

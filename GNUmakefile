@@ -26,10 +26,10 @@ analyze:
 	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" $@
 
 clean:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp RM=rm RMOPTS=-rf clean
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp RM=rm RMOPTS=-rf SEPARATOR=/ clean
 
 clean-xfd:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp RM=rm RMOPTS=-rf clean-xfd
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp RM=rm RMOPTS=-rf SEPARATOR=/ clean-xfd
 
 clean-xfd-hard: clean-xfd
 
