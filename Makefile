@@ -46,15 +46,15 @@ build/Makefile: CMakeLists.txt
 
 CMakeLists.txt: tlm/CMakeLists.txt
 	$(CHMODCMD) CMakeLists.txt
-	$(CP) tlm/CMakeLists.txt CMakeLists.txt
+	$(CP) tlm$(SEPARATOR)CMakeLists.txt CMakeLists.txt
 
 GNUmakefile: tlm/GNUmakefile
 	$(CHMODCMD) GNUmakefile
-	$(CP) tlm/GNUmakefile GNUmakefile
+	$(CP) tlm$(SEPARATOR)GNUmakefile GNUmakefile
 
 Makefile: tlm/Makefile
 	$(CHMODCMD) Makefile
-	$(CP) tlm/Makefile Makefile
+	$(CP) tlm$(SEPARATOR)Makefile Makefile
 
 
 # Invoke static analyser. Requires Clang Static Analyser
