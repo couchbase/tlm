@@ -106,9 +106,5 @@ IF (NOT (WIN32 OR "${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS"))
       ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/indexing)
       ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/goxdcr)
       ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/gometa)
-
-      GoInstall(TARGET saslauthd-port PACKAGE github.com/couchbase/cbauth/cmd/saslauthd-port
-          GOPATH "${CMAKE_CURRENT_SOURCE_DIR}/goproj" "${GODEPSDIR}"
-          INSTALL_PATH bin OUTPUT saslauthd-port)
    ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
 ENDIF (NOT (WIN32 OR "${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS"))
