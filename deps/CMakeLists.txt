@@ -140,9 +140,9 @@ FUNCTION (_DOWNLOAD_DEP name version)
 
   # Compute relative paths to dependency, minus extension, on local filesystem
   # and in remote repository
-  SET (_rel_path "${name}-${_arch}-${version}")
+  SET (_rel_path "${name}-${_platform}-${_arch}-${version}")
   SET (_repo_path
-    "${CB_DOWNLOAD_DEPS_REPO}/${name}/${version}/${name}-${_platform}-${_arch}-${version}")
+    "${CB_DOWNLOAD_DEPS_REPO}/${name}/${version}/${_rel_path}")
 
   SET (_cache_path "${CB_DOWNLOAD_DEPS_CACHE}/${_rel_path}")
   SET (_CB_DOWNLOAD_CACHED_DEP "${_cache_path}.tgz" PARENT_SCOPE)
@@ -166,9 +166,9 @@ FUNCTION (_DOWNLOAD_DEP name version)
 
   # File not found in cache or cache corrupt - download new.
   # First download the .md5.
-  MESSAGE (STATUS "Downloading dependency md5: ${name}-${_arch}-${version}")
+  MESSAGE (STATUS "Downloading dependency md5: ${_rel_path}")
   _DOWNLOAD_FILE ("${_repo_path}.md5" "${_cache_path}.md5")
-  MESSAGE (STATUS "Downloading dependency tgz: ${name}-${_arch}-${version}")
+  MESSAGE (STATUS "Downloading dependency tgz: ${_rel_path}")
   _DOWNLOAD_FILE ("${_repo_path}.tgz" "${_cache_path}.tgz")
   _CHECK_MD5 ("${_cache_path}.tgz" "${_cache_path}.md5" _retval)
   IF (NOT _retval)
