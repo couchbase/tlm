@@ -84,6 +84,10 @@ MACRO (_DETERMINE_ARCH var)
     IF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
       # QQQ MacOS 10.7 could be 32-bit; we should catch and abort
       SET (_arch x86_64)
+    ELSEIF (CMAKE_SYSTEM_NAME STREQUAL "SunOS")
+      execute_process(COMMAND isainfo -k
+                      COMMAND tr -d '\n'
+                      OUTPUT_VARIABLE _arch)
     ELSE (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
       STRING (TOLOWER ${CMAKE_SYSTEM_PROCESSOR} _arch)
     ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
