@@ -2,16 +2,16 @@ PREFIX:=$(shell pwd)/install
 MAKEFLAGS=--no-print-directory
 
 all:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" all
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" SEPARATOR=/ all
 
 install: all
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" install
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" SEPARATOR=/ install
 
 geocouch-build-for-testing:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" geocouch-build-for-testing
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" SEPARATOR=/ geocouch-build-for-testing
 
 test:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" test
+	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" SEPARATOR=/ test
 
 run-mats:
 	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp run-mats
