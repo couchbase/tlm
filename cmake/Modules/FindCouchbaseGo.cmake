@@ -4,6 +4,8 @@
 # This module defines
 #  GO_FOUND, if a compiler was found
 
+SET(GO_MINIMUM_VERSION 1.3)
+
 # Prevent double-definition if two projects use this script
 IF (NOT FindCouchbaseGo_INCLUDED)
 
@@ -12,26 +14,31 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # Have to remember cwd when this find is INCLUDE()d
   SET (TLM_MODULES_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
-  IF (NOT GO_FOUND)
+  # Figure out which Go compiler to use
+  FIND_PROGRAM (GO_EXECUTABLE NAMES go DOC "Go executable")
+  IF (GO_EXECUTABLE)
+    EXECUTE_PROCESS (COMMAND ${GO_EXECUTABLE} version
+                     OUTPUT_VARIABLE GO_VERSION_STRING)
+    STRING (REGEX REPLACE "^go version go([0-9.]+).*$" "\\1" GO_VERSION ${GO_VERSION_STRING})
+    MESSAGE (STATUS "Found Go compiler: ${GO_EXECUTABLE} (${GO_VERSION})")
 
-    # Figure out which Go compiler to use
-    FIND_PROGRAM (GO_EXECUTABLE NAMES go DOC "Go executable")
-    IF (GO_EXECUTABLE)
-      MESSAGE (STATUS "Found Go compiler: ${GO_EXECUTABLE}")
-      SET (GO_COMMAND_LINE "${GO_EXECUTABLE}" build -x)
+    IF(GO_VERSION VERSION_LESS GO_MINIMUM_VERSION)
+      MESSAGE(FATAL_ERROR "Go version of ${GO_MINIMUM_VERSION} or higher required (found version ${GO_VERSION})")
+    ENDIF(GO_VERSION VERSION_LESS GO_MINIMUM_VERSION)
+
+    SET (GO_COMMAND_LINE "${GO_EXECUTABLE}" build -x)
+    SET (GO_FOUND 1 CACHE BOOL "Whether Go compiler was found")
+  ELSE (GO_EXECUTABLE)
+    FIND_PROGRAM (GCCGO_EXECUTABLE NAMES gccgo DOC "gccgo executable")
+    IF (GCCGO_EXECUTABLE)
+      MESSAGE (STATUS "Found gccgo compiler: ${GCCGO_EXECUTABLE}")
+      SET (GO_COMMAND_LINE "${GCCGO_EXECUTABLE}" -Os -g)
       SET (GO_FOUND 1 CACHE BOOL "Whether Go compiler was found")
-    ELSE (GO_EXECUTABLE)
-      FIND_PROGRAM (GCCGO_EXECUTABLE NAMES gccgo DOC "gccgo executable")
-      IF (GCCGO_EXECUTABLE)
-        MESSAGE (STATUS "Found gccgo compiler: ${GCCGO_EXECUTABLE}")
-        SET (GO_COMMAND_LINE "${GCCGO_EXECUTABLE}" -Os -g)
-        SET (GO_FOUND 1 CACHE BOOL "Whether Go compiler was found")
-      ELSE (GCCGO_EXECUTABLE)
-        SET (GO_FOUND 0)
-      ENDIF (GCCGO_EXECUTABLE)
-    ENDIF (GO_EXECUTABLE)
+    ELSE (GCCGO_EXECUTABLE)
+      SET (GO_FOUND 0)
+    ENDIF (GCCGO_EXECUTABLE)
+  ENDIF (GO_EXECUTABLE)
 
-  ENDIF (NOT GO_FOUND)
 
   # Adds a target named TARGET which produces an output executable
   # named OUTPUT in the current binary directory, based on a set of
