@@ -19,3 +19,5 @@ DECLARE_DEP (jemalloc VERSION 5d9732f-cb2
                       PLATFORMS macosx ubuntu12.04 ubuntu14.04 debian7 sunos)
 DECLARE_DEP (jemalloc VERSION 5d9732f-cb3 PLATFORMS centos6)
 DECLARE_DEP (v8 VERSION e24973a-cb1 PLATFORMS macosx sunos)
+DECLARE_DEP (breakpad VERSION 6fa2f26-cb1
+                      PLATFORMS centos6 macosx ubuntu12.04 ubuntu14.04)
