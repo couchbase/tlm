@@ -22,3 +22,4 @@ DECLARE_DEP (jemalloc VERSION 5d9732f-cb2
 DECLARE_DEP (jemalloc VERSION 5d9732f-cb3 PLATFORMS centos6)
 DECLARE_DEP (breakpad VERSION 6fa2f26-cb1
                       PLATFORMS centos6 macosx ubuntu12.04 ubuntu14.04)
+DECLARE_DEP (libstdcxx VERSION 4.9.2-cb1 PLATFORMS ubuntu12.04)
