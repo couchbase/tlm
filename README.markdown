@@ -14,6 +14,7 @@ building Couchbase on multiple platforms.
 		- [git](#user-content-git)
 	- [How to build](#user-content-how-to-build-1)
 - [MacOSX](#user-content-macosx)
+- [Ubuntu 14.04][#user-content-ubuntu-14.04]
 - [SmartOS containers](#user-content-smartos)
 	- [CentOS 5](#user-content-centos-5)
 	- [CentOS 6](#user-content-centos-6)
@@ -173,6 +174,26 @@ Ensure that your `PATH` variable includes `/usr/local/opt/icu4c/bin`:
     trond@ok> export PATH=$PATH:/usr/local/bin:/usr/local/opt/icu4c/bin
 
 You should be all set to start compile the server as described above.
+
+## Ubuntu 14.04
+
+The steps below may work on other versions of Ubuntu as well, but this
+procedure is verified with a clean installation of Ununtu 14.04.1
+
+    sudo su -
+    wget https://storage.googleapis.com/git-repo-downloads/repo
+    chmod a+x repo
+    mv repo /usr/local/bin
+    apt-get install -y git gcc g++ ccache cmake libssl-dev libicu-dev \
+                       erlang mercurial
+    cd /usr/local
+    hg clone -u release https://code.google.com/p/go
+    cd go/src
+    ./all.bash
+    cd ../../bin
+    ln -s ../go/bin/go
+    ln -s ../go/bin/gofmt
+
 
 ## SmartOS
 
