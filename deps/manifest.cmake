@@ -7,6 +7,7 @@ DECLARE_DEP (openssl VERSION 1.0.1h PLATFORMS windows_msvc)
 DECLARE_DEP (python-snappy VERSION c97d633 PLATFORMS windows_msvc)
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc)
 DECLARE_DEP (v8 VERSION 3.23.6 PLATFORMS windows_msvc)
+DECLARE_DEP (v8 VERSION e24973a-cb1 PLATFORMS macosx sunos)
 
 # Erlang - R16B03-cb2 contains OSX-specific packaging changes;
 #          Windows isn't affected hence still uses R16B03.
@@ -19,6 +20,5 @@ DECLARE_DEP (erlang VERSION R16B03-cb2 PLATFORMS macosx)
 DECLARE_DEP (jemalloc VERSION 5d9732f-cb2
                       PLATFORMS macosx ubuntu12.04 ubuntu14.04 debian7 sunos)
 DECLARE_DEP (jemalloc VERSION 5d9732f-cb3 PLATFORMS centos6)
-DECLARE_DEP (v8 VERSION e24973a-cb1 PLATFORMS macosx sunos)
 DECLARE_DEP (breakpad VERSION 6fa2f26-cb1
                       PLATFORMS centos6 macosx ubuntu12.04 ubuntu14.04)
