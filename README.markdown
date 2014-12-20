@@ -15,6 +15,7 @@ building Couchbase on multiple platforms.
 	- [How to build](#user-content-how-to-build-1)
 - [MacOSX](#user-content-macosx)
 - [Ubuntu 14.04][#user-content-ubuntu-14.04]
+- [Fedora 21][#user-content-fedora-21]
 - [SmartOS containers](#user-content-smartos)
 	- [CentOS 5](#user-content-centos-5)
 	- [CentOS 6](#user-content-centos-6)
@@ -194,6 +195,24 @@ procedure is verified with a clean installation of Ununtu 14.04.1
     ln -s ../go/bin/go
     ln -s ../go/bin/gofmt
 
+## Fedora 21
+
+The steps below may work on other versions of Fedora as well, but this
+procedure is verified with a clean installation of Fedora 21
+
+    sudo su -
+    wget https://storage.googleapis.com/git-repo-downloads/repo
+    chmod a+x repo
+    mv repo /usr/local/bin
+    yum install -y gcc gcc-c++ git cmake ccache redhat-lsb-core \
+                   erlang mercurial openssl-devel libicu-devel
+    cd /usr/local
+    hg clone -u release https://code.google.com/p/go
+    cd go/src
+    ./all.bash
+    cd ../../bin
+    ln -s ../go/bin/go
+    ln -s ../go/bin/gofmt
 
 ## SmartOS
 
