@@ -36,6 +36,9 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
     # Just use the major version from the CentOS/Debian identifier - we don't
     # need different builds for different minor versions.
     STRING (REGEX MATCH "[0-9]+" _rel "${_rel}")
+  ELSEIF (_id STREQUAL "fedora")
+    SET (_id "centos")
+    SET (_rel "7")
   ENDIF (_id STREQUAL "linuxmint")
   SET (${_distro} "${_id}${_rel}")
 ENDMACRO (_DETERMINE_LINUX_DISTRO)
