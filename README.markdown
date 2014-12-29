@@ -166,7 +166,7 @@ Mavericks.
 
 Install the following packages from homebrew:
 
-    trond@ok> brew install cmake git icu4c libevent snappy
+    trond@ok> brew install cmake git icu4c libevent snappy go
 
 Ensure that your `PATH` variable includes `/usr/local/opt/icu4c/bin`:
 
