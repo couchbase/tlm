@@ -86,10 +86,8 @@ ADD_SUBDIRECTORY(geocouch)
 ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
 
 
-# There is currently a build break for Windows, but we'd still like to build
-# with the sherlock manfest.
-
-IF (NOT (WIN32 OR "${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS"))
+# Skip Sherlock stuff on Solaris for now
+IF (NOT ("${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS"))
    # Preparing for Sherlock!
    IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/forestdb")
       ADD_SUBDIRECTORY (forestdb)
@@ -112,4 +110,4 @@ IF (NOT (WIN32 OR "${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS"))
           GOPATH "${CMAKE_CURRENT_SOURCE_DIR}/goproj" "${GODEPSDIR}"
           INSTALL_PATH bin OUTPUT saslauthd-port)
    ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
-ENDIF (NOT (WIN32 OR "${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS"))
+ENDIF (NOT ("${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS"))
