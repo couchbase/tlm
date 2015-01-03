@@ -17,6 +17,7 @@ building Couchbase on multiple platforms.
 - [Ubuntu 14.04](#user-content-ubuntu-1404)
 - [Fedora 21](#user-content-fedora-21)
 - [SmartOS containers](#user-content-smartos)
+        - [SmartOS](#user-content-smartos-container)
 	- [CentOS 5](#user-content-centos-5)
 	- [CentOS 6](#user-content-centos-6)
 	- [CentOS 7](#user-content-centos-7)
@@ -221,6 +222,53 @@ various containers hosted by SmartOS. [Joyent][joyent_link] provides a
 variety of datasets for various operating systems (CentOS, Fedora,
 FreeBSD, Debian, SmartOS, ...). This section is not intended to cover
 all of these, but covers a set of configurations known to work.
+
+### SmartOS container
+
+The following descrtiption use the standard64 (14.2.1) image imported by:
+
+    root@smartos~> imgadm import 3f57ffe8-47da-11e4-aa8b-dfb50a06586a
+
+The KVM may be created with the following attributes (store in `smartos.json`):
+
+    {
+      "alias" : "compilesrv",
+      "autoboot": true,
+      "brand": "joyent",
+      "dns_domain" : "norbye.org",
+      "resolvers" : [ "8.8.4.4" ],
+      "image_uuid" : "3f57ffe8-47da-11e4-aa8b-dfb50a06586a",
+      "hostname" : "compilesrv",
+      "filesystems" : [
+       {
+          "type" : "lofs",
+          "source" : "/zones/home",
+          "target" : "/home",
+          "options" : "nodevices"
+        }
+      ],
+      "max_physical_memory": 4096,
+      "nics": [
+         {
+          "nic_tag": "admin",
+          "ip": "10.0.0.207",
+          "netmask": "255.255.255.0",
+          "gateway": "10.0.0.1"
+        }
+      ]
+    }
+
+Create the KVM with:
+
+    root@smartos~> vmadm create -f smartos.json
+
+Log into the newly created zone and install the following packages:
+
+    root@compilesrv~> pkgin update
+    root@compilesrv~> pkgin -y in py27-expat-2.7.7 icu-53.1 erlang-16.1.2nb3 go-1.3
+
+[Install Google repo][google_repo_link] and you should be all set to
+start building the code as described above.
 
 ### CentOS 5
 
