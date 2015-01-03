@@ -14,8 +14,8 @@ building Couchbase on multiple platforms.
 		- [git](#user-content-git)
 	- [How to build](#user-content-how-to-build-1)
 - [MacOSX](#user-content-macosx)
-- [Ubuntu 14.04][#user-content-ubuntu-14.04]
-- [Fedora 21][#user-content-fedora-21]
+- [Ubuntu 14.04](#user-content-ubuntu-1404)
+- [Fedora 21](#user-content-fedora-21)
 - [SmartOS containers](#user-content-smartos)
 	- [CentOS 5](#user-content-centos-5)
 	- [CentOS 6](#user-content-centos-6)
