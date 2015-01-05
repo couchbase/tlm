@@ -18,9 +18,12 @@ DECLARE_DEP (icu4c VERSION 53.1.0 PLATFORMS windows_msvc)
 # Jemalloc - cb1 was incorrectly uploaded as cb2 for centos6; so cb3 created
 #            just for CentOS6; which contains the same changes as per cb2 for
 #            the other platforms (je_ prefix on symbols).
+#            cb4 disables tls for sunos due to gcc using malloc functions
+#                to implement the tls stuff (causing a recursive death)
 DECLARE_DEP (jemalloc VERSION 5d9732f-cb2
-                      PLATFORMS macosx ubuntu12.04 ubuntu14.04 debian7 sunos)
+                      PLATFORMS macosx ubuntu12.04 ubuntu14.04 debian7)
 DECLARE_DEP (jemalloc VERSION 5d9732f-cb3 PLATFORMS centos6 centos7)
+DECLARE_DEP (jemalloc VERSION 5d9732f-cb4 PLATFORMS sunos)
 DECLARE_DEP (libevent VERSION 2.1.4-alpha-dev PLATFORMS windows_msvc)
 DECLARE_DEP (libevent VERSION 2.0.21-cb1
                       PLATFORMS centos7 macosx sunos ubuntu14.04)
