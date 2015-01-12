@@ -5,8 +5,8 @@
 # DECLARE_DEP (name VERSION version-revision PLATFORMS platform1 platform2)
 #
 
-DECLARE_DEP (breakpad VERSION 369ec25-cb3
-                      PLATFORMS centos6 centos7 ubuntu12.04 ubuntu14.04)
+DECLARE_DEP (breakpad VERSION 1e455b5-cb4
+                      PLATFORMS centos6 centos7 ubuntu12.04 ubuntu14.04 windows_msvc)
 DECLARE_DEP (curl VERSION 7.35.0 PLATFORMS windows_msvc)
 DECLARE_DEP (curl VERSION 7.39.0-cb1 PLATFORMS centos7 sunos ubuntu14.04)
 # Erlang - R16B03-cb2 contains OSX-specific packaging changes;
