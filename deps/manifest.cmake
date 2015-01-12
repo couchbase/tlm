@@ -26,7 +26,7 @@ DECLARE_DEP (jemalloc VERSION 5d9732f-cb3 PLATFORMS centos6 centos7)
 DECLARE_DEP (jemalloc VERSION 5d9732f-cb4 PLATFORMS sunos)
 DECLARE_DEP (libevent VERSION 2.1.4-alpha-dev PLATFORMS windows_msvc)
 DECLARE_DEP (libevent VERSION 2.0.21-cb1
-                      PLATFORMS centos7 macosx sunos ubuntu14.04)
+                      PLATFORMS centos6 centos7 macosx sunos ubuntu12.04 ubuntu14.04)
 DECLARE_DEP (libstdcxx VERSION 4.9.2-cb1 PLATFORMS ubuntu12.04)
 DECLARE_DEP (openssl VERSION 1.0.1h PLATFORMS windows_msvc)
 DECLARE_DEP (python-snappy VERSION c97d633 PLATFORMS windows_msvc)
