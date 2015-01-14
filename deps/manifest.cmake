@@ -5,8 +5,12 @@
 # DECLARE_DEP (name VERSION version-revision PLATFORMS platform1 platform2)
 #
 
+# Breakpad - cb4 & cb5 identical apart from windows-specific packaging bug
+#            which was fixed in cb5.
 DECLARE_DEP (breakpad VERSION 1e455b5-cb4
-                      PLATFORMS centos6 centos7 ubuntu12.04 ubuntu14.04 windows_msvc)
+                      PLATFORMS centos6 centos7 ubuntu12.04 ubuntu14.04)
+DECLARE_DEP (breakpad VERSION 1e455b5-cb5
+                      PLATFORMS windows_msvc)
 DECLARE_DEP (curl VERSION 7.35.0 PLATFORMS windows_msvc)
 DECLARE_DEP (curl VERSION 7.39.0-cb1
                   PLATFORMS centos6 centos7 debian7 sunos ubuntu12.04 ubuntu14.04)
