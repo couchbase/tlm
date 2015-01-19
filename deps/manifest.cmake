@@ -37,6 +37,7 @@ DECLARE_DEP (libstdcxx VERSION 4.9.2-cb1 PLATFORMS ubuntu12.04)
 DECLARE_DEP (openssl VERSION 1.0.1h PLATFORMS windows_msvc)
 DECLARE_DEP (python-snappy VERSION c97d633 PLATFORMS windows_msvc)
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc)
-DECLARE_DEP (snappy VERSION 1.1.1-cb1 PLATFORMS centos7 sunos ubuntu14.04)
+DECLARE_DEP (snappy VERSION 1.1.1-cb1
+                    PLATFORMS centos6 centos7 sunos ubuntu12.04 ubuntu14.04)
 DECLARE_DEP (v8 VERSION 3.23.6 PLATFORMS windows_msvc)
 DECLARE_DEP (v8 VERSION e24973a-cb1 PLATFORMS centos7 macosx sunos ubuntu14.04)
