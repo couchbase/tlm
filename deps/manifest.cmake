@@ -18,6 +18,7 @@ DECLARE_DEP (curl VERSION 7.39.0-cb1
 #          Windows isn't affected hence still uses R16B03.
 DECLARE_DEP (erlang VERSION R16B03 PLATFORMS windows_msvc)
 DECLARE_DEP (erlang VERSION R16B03-cb2 PLATFORMS macosx)
+DECLARE_DEP (erlang VERSION mb11917-cb3 PLATFORMS centos6 ubuntu12.04)
 DECLARE_DEP (gperftools VERSION 2.2 PLATFORMS windows_msvc)
 DECLARE_DEP (icu4c VERSION 263593-cb1 PLATFORMS centos6 ubuntu12.04)
 DECLARE_DEP (icu4c VERSION 53.1.0 PLATFORMS windows_msvc)
