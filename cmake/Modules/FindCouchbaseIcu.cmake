@@ -4,13 +4,6 @@
 #  ICU_LIBRARIES, Library path and libs
 #  ICU_INCLUDE_DIR, where to find the ICU headers
 
-# First check in ${CMAKE_INSTALL_PREFIX} to pickup cbdeps
-# before any system packages, fallback to default paths if not found.
-FIND_PROGRAM(ICU_CONFIG_EXECUTABLE
-             NAMES icu-config
-             PATHS ${CMAKE_INSTALL_PREFIX}/bin
-             NO_DEFAULT_PATH
-             DOC "icu-config executable")
 FIND_PROGRAM(ICU_CONFIG_EXECUTABLE
              NAMES icu-config
              PATHS
@@ -21,7 +14,6 @@ FIND_PROGRAM(ICU_CONFIG_EXECUTABLE
 MARK_AS_ADVANCED(ICU_CONFIG_EXECUTABLE)
 
 IF (ICU_CONFIG_EXECUTABLE)
-  MESSAGE(STATUS "Found icu-config in ${ICU_CONFIG_EXECUTABLE}")
   EXECUTE_PROCESS(COMMAND ${ICU_CONFIG_EXECUTABLE} --cppflags-searchpath
                   OUTPUT_VARIABLE ICU_INCLUDE_DIR
                   ERROR_QUIET)
