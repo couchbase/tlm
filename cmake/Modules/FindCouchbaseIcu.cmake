@@ -6,6 +6,7 @@
 
 FIND_PROGRAM(ICU_CONFIG_EXECUTABLE
              NAMES icu-config
+             HINTS ${CMAKE_INSTALL_PREFIX}/bin
              PATHS
                 /usr/bin
                 /usr/local/bin
@@ -14,6 +15,7 @@ FIND_PROGRAM(ICU_CONFIG_EXECUTABLE
 MARK_AS_ADVANCED(ICU_CONFIG_EXECUTABLE)
 
 IF (ICU_CONFIG_EXECUTABLE)
+  MESSAGE(STATUS "Found icu-config in ${ICU_CONFIG_EXECUTABLE}")
   EXECUTE_PROCESS(COMMAND ${ICU_CONFIG_EXECUTABLE} --cppflags-searchpath
                   OUTPUT_VARIABLE ICU_INCLUDE_DIR
                   ERROR_QUIET)

@@ -21,6 +21,7 @@ DECLARE_DEP (erlang VERSION R16B03-cb2 PLATFORMS macosx)
 DECLARE_DEP (erlang VERSION mb11917-cb5 PLATFORMS centos6 ubuntu12.04)
 DECLARE_DEP (gperftools VERSION 2.2 PLATFORMS windows_msvc)
 DECLARE_DEP (icu4c VERSION 53.1.0 PLATFORMS windows_msvc)
+DECLARE_DEP (icu4c VERSION 263593-cb3 PLATFORMS centos6 ubuntu12.04)
 # Jemalloc - cb1 was incorrectly uploaded as cb2 for centos6; so cb3 created
 #            just for CentOS6; which contains the same changes as per cb2 for
 #            the other platforms (je_ prefix on symbols).
