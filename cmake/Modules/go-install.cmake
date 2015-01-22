@@ -36,6 +36,11 @@ MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install -gcflags=${GCFLAGS} -x ${PA
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
   COMMAND "${GO_EXECUTABLE}" install "-gcflags=${GCFLAGS}" -x "${PACKAGE}")
 IF (_failure)
+  MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+  MESSAGE (STATUS "@ 'go install' failed! Re-running as 'go build' to help debug...")
+  MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+  # Easier to debug
+  EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" build "-gcflags=${GCFLAGS}" -x "${PACKAGE}")
   MESSAGE (FATAL_ERROR "Failed running go install")
 ENDIF (_failure)
 
