@@ -70,7 +70,7 @@ analyze:
 geocouch-build-for-testing: compile
 	@-mkdir build/geocouch-for-tests
 	(cd build/geocouch-for-tests && \
-	 $(CMAKE) -G "$(MAKETYPE)" -D GEOCOUCH_BUILD_FOR_UNIT_TESTS=1 ../../geocouch && \
+        $(CMAKE) $(CMAKE_ARGS) -D GEOCOUCH_BUILD_FOR_UNIT_TESTS=1 ../../geocouch && \
 	 $(MAKE))
 
 run-mats:
