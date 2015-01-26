@@ -211,7 +211,7 @@ FUNCTION (DECLARE_DEP name)
       ENDIF ("${_this_platform}" STREQUAL "${_platform}")
     ENDFOREACH (_platform)
     IF (NOT _found_platform)
-      MESSAGE (STATUS "Dependency ${name} not declared for platform "
+      MESSAGE (STATUS "Dependency ${name} (${dep_VERSION}) not declared for platform "
         "${_this_platform}, skipping...")
       RETURN ()
     ENDIF (NOT _found_platform)
@@ -264,6 +264,10 @@ ENDFUNCTION (DECLARE_DEP)
 
 SET (CB_DOWNLOAD_DEPS_REPO "http://packages.couchbase.com/couchbase-server/deps"
   CACHE STRING "URL of third-party dependency repository")
+
+MESSAGE (STATUS "*** Installing binary dependencies ***")
+_DETERMINE_PLATFORM (cbcache_platform)
+_DETERMINE_ARCH (cbcache_arch)
 
 # Default download cache in user's home directory; may be overridden
 # by CB_DOWNLOAD_DEPS_CACHE environment variable or by
