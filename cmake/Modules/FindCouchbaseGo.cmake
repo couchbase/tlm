@@ -28,6 +28,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
     SET (GO_COMMAND_LINE "${GO_EXECUTABLE}" build -x)
     SET (GO_FOUND 1 CACHE BOOL "Whether Go compiler was found")
+
+    IF (DEFINED ENV{GOBIN})
+      MESSAGE(WARNING "The environment variable GOBIN is set and MAY cause your build to fail")
+    ENDIF (DEFINED ENV{GOBIN})
   ELSE (GO_EXECUTABLE)
     FIND_PROGRAM (GCCGO_EXECUTABLE NAMES gccgo DOC "gccgo executable")
     IF (GCCGO_EXECUTABLE)
