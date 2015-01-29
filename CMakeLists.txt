@@ -19,9 +19,15 @@ ADD_SUBDIRECTORY(tlm/deps)
 
 INCLUDE(CouchbaseDefaultValues)
 
+IF ("" STREQUAL "${BUILD_ENTERPRISE}")
+   SET(CB_BUILD_TYPE "Community Edition")
+ELSE ("" STREQUAL "${BUILD_ENTERPRISE}")
+   SET(CB_BUILD_TYPE "Enterprise Edition")
+ENDIF ("" STREQUAL "${BUILD_ENTERPRISE}")
+
 MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
-MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE} (${CB_BUILD_TYPE})")
 
 INCLUDE(CouchbaseMemoryAllocator)
 
