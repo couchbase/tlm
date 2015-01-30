@@ -4,6 +4,21 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10)
 PROJECT("Couchbase")
 
+# RPATH is more or less "broken" on MacOSX in cmake < 3.x
+IF (APPLE)
+   IF (${CMAKE_MAJOR_VERSION} LESS 3)
+      MESSAGE(STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+      MESSAGE(STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+      MESSAGE(STATUS "@@@ The version of cmake you're using  @@@")
+      MESSAGE(STATUS "@@@ does not properly handle $RPATH    @@@")
+      MESSAGE(STATUS "@@@ RPATH for macosx was introduced in @@@")
+      MESSAGE(STATUS "@@@ cmake 3.0.0                        @@@")
+      MESSAGE(STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+      MESSAGE(STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+      MESSAGE(FATAL_ERROR "Please upgrade cmake")
+   ENDIF (${CMAKE_MAJOR_VERSION} LESS 3)
+ENDIF(APPLE)
+
 SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
 SET(COUCHBASE_SERVER_BUILD True CACHE BOOL "Indicating this is a server build")
 
