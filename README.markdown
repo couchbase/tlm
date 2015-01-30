@@ -16,6 +16,7 @@ building Couchbase on multiple platforms.
 - [MacOSX](#user-content-macosx)
 - [Ubuntu 14.04](#user-content-ubuntu-1404)
 - [Fedora 21](#user-content-fedora-21)
+- [OpenSUSE](#opensuse)
 - [SmartOS containers](#user-content-smartos)
 	- [SmartOS](#user-content-smartos-container)
 	- [CentOS 5](#user-content-centos-5)
@@ -214,6 +215,39 @@ procedure is verified with a clean installation of Fedora 21
     cd ../../bin
     ln -s ../go/bin/go
     ln -s ../go/bin/gofmt
+
+## OpenSUSE
+
+I tested this on a clean install of OpenSUSE 13.2 by choosing the
+defaults during the installer except choosing gnome desktop and enable
+ssh access.
+
+    sudo zypper install gcc gcc-c++ autoconf automake ncurses-devel \
+                        git go ccache libopenssl-devel cmake
+
+Open a new terminal to ensure you get an updated environment (the
+package install modifies some of the environement variables)
+
+    curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
+    chmod a+x ~/bin/repo
+    sudo mkdir /opt/couchbase
+    sudo chown `whoami` /opt/couchbase
+    mkdir -p compile/couchbase
+    cd compile/couchbase
+    repo init -u git://github.com/couchbase/manifest -m sherlock.xml -g default,build
+    repo sync
+    repo start opensuse --all
+    mkdir cbdeps && cd cbdeps
+    ../cbbuild/cbdeps/build-all-sherlock.sh
+    export CB_DOWNLOAD_DEPS_CACHE=`pwd`/output
+    export CB_DOWNLOAD_DEPS_MANIFEST=`pwd`/output/manifest.cmake
+    unset GOBIN
+    cd ..
+    gmake PREFIX=/opt/couchbase
+
+You should be able to start the server by running
+
+    /opt/couchbase/bin/couchbase-server start
 
 ## SmartOS
 
