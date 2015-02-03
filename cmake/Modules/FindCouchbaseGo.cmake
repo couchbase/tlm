@@ -197,7 +197,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       SET (_ldflags "-H windowsgui ${Go_LDFLAGS}")
     ELSE (WIN32 AND ${Go_NOCONSOLE})
       SET (_ldflags "${Go_LDFLAGS}")
-    ENDIF (WIN32)
+    ENDIF (WIN32  AND ${Go_NOCONSOLE})
 
     # Go install target
     ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
