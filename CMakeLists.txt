@@ -107,28 +107,24 @@ ADD_SUBDIRECTORY(geocouch)
 ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
 
 
-# Skip Sherlock stuff on Solaris for now
-IF (NOT ("${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS"))
-   # Preparing for Sherlock!
-   IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/forestdb")
-      ADD_SUBDIRECTORY (forestdb)
-   ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/forestdb")
+IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/forestdb")
+   ADD_SUBDIRECTORY (forestdb)
+ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/forestdb")
 
-   IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
-      SET (GODEPSDIR "${CMAKE_CURRENT_SOURCE_DIR}/godeps")
+IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
+   SET (GODEPSDIR "${CMAKE_CURRENT_SOURCE_DIR}/godeps")
 
-      ADD_SUBDIRECTORY (goproj/src/github.com/couchbaselabs/query)
+   ADD_SUBDIRECTORY (goproj/src/github.com/couchbaselabs/query)
 
-      SET (FORESTDB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/forestdb/include")
-      GET_PROPERTY (_dir TARGET forestdb PROPERTY LOCATION)
-      GET_FILENAME_COMPONENT (FORESTDB_LIBRARY_DIR "${_dir}" PATH)
-      SET (FORESTDB_TARGET forestdb)
-      ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/indexing)
-      ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/goxdcr)
-      ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/gometa)
+   SET (FORESTDB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/forestdb/include")
+   GET_PROPERTY (_dir TARGET forestdb PROPERTY LOCATION)
+   GET_FILENAME_COMPONENT (FORESTDB_LIBRARY_DIR "${_dir}" PATH)
+   SET (FORESTDB_TARGET forestdb)
+   ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/indexing)
+   ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/goxdcr)
+   ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/gometa)
 
-      GoInstall(TARGET saslauthd-port PACKAGE github.com/couchbase/cbauth/cmd/saslauthd-port
-          GOPATH "${CMAKE_CURRENT_SOURCE_DIR}/goproj" "${GODEPSDIR}"
-          INSTALL_PATH bin OUTPUT saslauthd-port)
-   ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
-ENDIF (NOT ("${CMAKE_SYSTEM_NAME}" STREQUAL "SunOS"))
+   GoInstall(TARGET saslauthd-port PACKAGE github.com/couchbase/cbauth/cmd/saslauthd-port
+             GOPATH "${CMAKE_CURRENT_SOURCE_DIR}/goproj" "${GODEPSDIR}"
+             INSTALL_PATH bin OUTPUT saslauthd-port)
+ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
