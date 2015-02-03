@@ -32,15 +32,15 @@ EXPORT_FLAGS (CGO_LIBRARY_DIRS CGO_LDFLAGS "-L")
 SET (ENV{LD_RUN_PATH} "$ORIGIN/../lib")
 
 # Execute "go install"
-MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install -gcflags=${GCFLAGS} -x ${PACKAGE}")
+MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" -x ${PACKAGE}")
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
-  COMMAND "${GO_EXECUTABLE}" install "-gcflags=${GCFLAGS}" -x "${PACKAGE}")
+  COMMAND "${GO_EXECUTABLE}" install "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" -x "${PACKAGE}")
 IF (_failure)
   MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
   MESSAGE (STATUS "@ 'go install' failed! Re-running as 'go build' to help debug...")
   MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
   # Easier to debug
-  EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" build "-gcflags=${GCFLAGS}" -x "${PACKAGE}")
+  EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" build "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" -x "${PACKAGE}")
   MESSAGE (FATAL_ERROR "Failed running go install")
 ENDIF (_failure)
 

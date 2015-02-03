@@ -132,6 +132,12 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # GCFLAGS - flags that will be passed (via -gcflags) to all compile
   # steps; should be a single string value, with spaces if necessary
   #
+  # LDFLAGS - flags that will be passed (via -ldflags) to all compile
+  # steps; should be a single string value, with spaces if necessary
+  #
+  # NOCONSOLE - for targets that should not launch a console at runtime
+  # (on Windows - silently ignored on other platforms)
+  #
   # DEPENDS - list of other CMake targets on which TARGET will depend
   #
   # INSTALL_PATH - if specified, a CMake INSTALL() directive will be
@@ -152,7 +158,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF (NOT GO_EXECUTABLE)
 
     PARSE_ARGUMENTS (Go "DEPENDS;GOPATH;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
-      "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GCFLAGS" "" ${ARGN})
+      "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GCFLAGS;LDFLAGS" "NOCONSOLE" ${ARGN})
 
     IF (NOT Go_TARGET)
       MESSAGE (FATAL_ERROR "TARGET is required!")
@@ -186,6 +192,13 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       ENDIF (WIN32)
     ENDIF (Go_OUTPUT)
 
+    # Concatenate NOCONSOLE with LDFLAGS
+    IF (WIN32 AND ${Go_NOCONSOLE})
+      SET (_ldflags "-H windowsgui ${Go_LDFLAGS}")
+    ELSE (WIN32 AND ${Go_NOCONSOLE})
+      SET (_ldflags "${Go_LDFLAGS}")
+    ENDIF (WIN32)
+
     # Go install target
     ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
       COMMAND "${CMAKE_COMMAND}"
@@ -193,6 +206,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       -D "GOPATH=${Go_GOPATH}"
       -D "WORKSPACE=${_workspace}"
       -D "GCFLAGS=${Go_GCFLAGS}"
+      -D "LDFLAGS=${_ldflags}"
       -D "PKGEXE=${_pkgexe}"
       -D "PACKAGE=${Go_PACKAGE}"
       -D "OUTPUT=${Go_OUTPUT}"
