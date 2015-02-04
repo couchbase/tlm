@@ -32,6 +32,7 @@ DECLARE_DEP (libevent VERSION 2.0.21-cb1 PLATFORMS centos6 centos7 macosx sunos 
 DECLARE_DEP (libstdcxx VERSION 4.9.2-cb1 PLATFORMS ubuntu12.04)
 DECLARE_DEP (openssl VERSION 1.0.1h PLATFORMS windows_msvc)
 DECLARE_DEP (python-snappy VERSION c97d633 PLATFORMS windows_msvc)
+DECLARE_DEP (python-snappy VERSION c97d633-cb1 PLATFORMS centos6 centos7 macosx ubuntu12.04 ubuntu14.04 debian7)
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc)
 DECLARE_DEP (snappy VERSION 1.1.1-cb1 PLATFORMS sunos)
 DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS centos6 centos7 macosx ubuntu12.04 ubuntu14.04 debian7)
