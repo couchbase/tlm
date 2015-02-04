@@ -18,8 +18,9 @@ CMAKE_MINIMUM_REQUIRED (VERSION 2.8)
 
 LIST (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../../cmake/Modules")
 INCLUDE (PlatformIntrospection)
+INCLUDE (CBDownloadDeps)
 
-### Generate the .md5 file ####################################################
+# Generate a .md5 file
 MACRO (_GENERATE_MD5_FILE sourcefile md5file target)
   ADD_CUSTOM_COMMAND (TARGET ${target} POST_BUILD
     COMMAND "${CMAKE_COMMAND}"
@@ -106,3 +107,4 @@ ENDIF (NOT LIBTOOLIZE)
 # And here is the set of "latest" dependencies.
 #
 _ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 2)
+_ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 1)
