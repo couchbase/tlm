@@ -102,6 +102,11 @@ IF (NOT LIBTOOLIZE)
    ENDIF (GLIBTOOLIZE)
    MESSAGE(FATAL_ERROR "Building packages requires libtoolize")
 ENDIF (NOT LIBTOOLIZE)
+FIND_PROGRAM(AUTORECONF autoreconf)
+IF (NOT AUTORECONF)
+   MESSAGE(FATAL_ERROR "Building packages requires autoreconf")
+ENDIF (NOT AUTORECONF)
+
 
 #
 # And here is the set of "latest" dependencies.
@@ -109,3 +114,4 @@ ENDIF (NOT LIBTOOLIZE)
 _ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 2)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 1)
 _ADD_DEP_PACKAGE(icu4c 263593 263593 1)
+_ADD_DEP_PACKAGE(libevent 2.0.22 release-2.0.22-stable 1)
