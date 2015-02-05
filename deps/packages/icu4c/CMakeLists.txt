@@ -16,7 +16,7 @@ ExternalProject_Add(icu4c
 
   BUILD_COMMAND make -j4 all
 
-  INSTALL_DIR ${CMAKE_BINARY_DIR}/install
+  INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND make install
           COMMAND ${CMAKE_COMMAND} -E remove -f <INSTALL_DIR>/bin/derb
                                                 <INSTALL_DIR>/bin/genbrk
@@ -32,7 +32,8 @@ ExternalProject_Add(icu4c
           COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/share
 
   # Need to configure icu-config to use the prefix it's been installed into.
-  COMMAND ${CMAKE_COMMAND} -E echo "CONFIGURE_FILE(bin/icu-config \${CMAKE_INSTALL_PREFIX}/bin @ONLY)" > <INSTALL_DIR>/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E echo "FILE(MAKE_DIRECTORY \${CMAKE_INSTALL_PREFIX}/bin)" > <INSTALL_DIR>/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E echo "CONFIGURE_FILE(bin/icu-config \${CMAKE_INSTALL_PREFIX}/bin @ONLY)" >> <INSTALL_DIR>/CMakeLists.txt
   COMMAND ${CMAKE_COMMAND} -E echo "FILE(COPY include lib DESTINATION \${CMAKE_INSTALL_PREFIX})" >> <INSTALL_DIR>/CMakeLists.txt
 )
 
