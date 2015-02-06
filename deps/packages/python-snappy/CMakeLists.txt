@@ -10,7 +10,7 @@ SET (CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 
 include(ExternalProject)
 
-### Download, configure and build snappy ####################################
+### Download, configure and build python-snappy ####################################
 ExternalProject_Add(python-snappy
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
@@ -21,7 +21,7 @@ ExternalProject_Add(python-snappy
                 -I "${_snappy_install}/include" -L "${_snappy_install}/lib"
   BUILD_IN_SOURCE 1
 
-  INSTALL_DIR ${CMAKE_BINARY_DIR}/install
+  INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND python setup.py install --install-lib <INSTALL_DIR>/lib/python/pysnappy2
 
   COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
