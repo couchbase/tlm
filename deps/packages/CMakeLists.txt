@@ -59,7 +59,7 @@ ENDMACRO (_ADD_PACKAGE_STEP)
 #   cb_release - a numeric index, which should be advanced whenever we
 #      need to re-package a given dependency while maintaining the same
 #      upstream_ver.
-#   
+#
 MACRO (_ADD_DEP_PACKAGE package upstream_ver cb_branch cb_release)
   SET (_output_dir "${CMAKE_BINARY_DIR}/deps/${package}/${upstream_ver}-cb${cb_release}")
   SET (_output_file "${_output_dir}/${package}-${PLATFORM}-${HOST_ARCH}-${upstream_ver}-cb${cb_release}")
@@ -115,3 +115,5 @@ _ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 2)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 1)
 _ADD_DEP_PACKAGE(icu4c 263593 263593 1)
 _ADD_DEP_PACKAGE(libevent 2.0.22 release-2.0.22-stable 1)
+_ADD_DEP_PACKAGE(v8 e24973a e24973a 2)
+_ADD_DEP_PACKAGE(jemalloc 5d9732f 5d9732f 5)
