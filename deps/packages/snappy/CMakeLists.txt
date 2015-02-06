@@ -17,8 +17,8 @@ ExternalProject_Add(snappy
 
   INSTALL_DIR ${CMAKE_BINARY_DIR}/install
   INSTALL_COMMAND make install
-          COMMAND rm -r <INSTALL_DIR>/share
-          COMMAND rm <INSTALL_DIR>/lib/libsnappy.la
+          COMMAND rm -rf <INSTALL_DIR>/share
+          COMMAND rm -f <INSTALL_DIR>/lib/libsnappy.la
 
   COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib include DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
 )
