@@ -40,7 +40,7 @@ ExternalProject_Add(icu4c
 # Modify icu-config to replace the hardcoded prefix with a variable, which
 # will be expanded at cbdeps install time.
 ExternalProject_Add_Step(icu4c change_icu_config_prefix
-  COMMAND sed -i -E "s/default_prefix=\"[^\"]+\"/default_prefix=\\\@CMAKE_INSTALL_PREFIX\\\@/"
+  COMMAND sed -i -E "s/^default_prefix=.*/default_prefix=\"\\\@CMAKE_INSTALL_PREFIX\\\@\"/"
           config/icu-config
   DEPENDEES build
   DEPENDERS install
