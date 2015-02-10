@@ -1,5 +1,11 @@
 # -*- Mode: makefile -*-
 
+# PLEASE NOTE: This Makefile is provided as a convenience for those
+# who do not wish to interact with CMake. It is NOT SUPPORTED by the
+# Couchbase build team, and the production builds do NOT make use of
+# it, so bugs filed against it will need to be handled by those devs
+# who care to use it.
+
 # The default destination for installing. CMake will also search for
 # dependencies in this directory, so you may pre-build dependencies
 # that you wish to ship with your compiled Couchbase into this
@@ -12,7 +18,7 @@ RM=rmdir
 # Options passed to the command to nuke directories
 RMOPTS=/Q /S
 # The kind of build type: Debug, Release, RelWithDebInfo or MinSizeRel
-BUILD_TYPE=Debug
+BUILD_TYPE=RelWithDebInfo
 # Other options you would like to pass to cmake
 EXTRA_CMAKE_OPTIONS=
 # Command used to remove read only flag for files

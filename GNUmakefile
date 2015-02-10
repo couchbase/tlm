@@ -1,3 +1,9 @@
+# PLEASE NOTE: This Makefile is provided as a convenience for those
+# who do not wish to interact with CMake. It is NOT SUPPORTED by the
+# Couchbase build team, and the production builds do NOT make use of
+# it, so bugs filed against it will need to be handled by those devs
+# who care to use it.
+
 PREFIX:=$(shell pwd)/install
 MAKEFLAGS=--no-print-directory
 
