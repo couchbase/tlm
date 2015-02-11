@@ -75,9 +75,7 @@ IF (WIN32)
                                                        <INSTALL_DIR>/include/google_breakpad/common/
 
     # Actual CMakeLists.txt file to copy the correct libs into our install directory.
-            COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY include DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
-            COMMAND ${CMAKE_COMMAND} -E echo FILE "(GLOB _breakpad_libs lib/\${CMAKE_BUILD_TYPE}/*)" >> <INSTALL_DIR>/CMakeLists.txt
-            COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY \${_breakpad_libs} DESTINATION \"\${CMAKE_INSTALL_PREFIX}/lib\")" >> <INSTALL_DIR>/CMakeLists.txt
+            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_for_install.txt <INSTALL_DIR>/CMakeLists.txt
   )
 
 ELSE (WIN32)

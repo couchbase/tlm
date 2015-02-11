@@ -1,0 +1,16 @@
+#
+# CMakeList used at cbdeps install time (i.e. after extracting the tar.gz)
+#
+
+FILE(COPY include DESTINATION "${CMAKE_INSTALL_PREFIX}")
+
+# Note: RelWithDebInfo & MinSizeRel should use the Release libraries, otherwise use
+#       the same directory as the build type.
+IF(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+  SET(_build_type "Release")
+ELSE(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+  SET(_build_type ${CMAKE_BUILD_TYPE})
+ENDIF(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+
+FILE(GLOB _breakpad_libs lib/${_build_type}/*)
+FILE(COPY ${_breakpad_libs} DESTINATION "${CMAKE_INSTALL_PREFIX}/lib")

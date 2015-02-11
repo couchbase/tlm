@@ -71,13 +71,6 @@ ENDMACRO (_ADD_DEP_PACKAGE)
 
 
 #
-# So far this packages codebase is pretty Unix-centric.
-#
-IF (WIN32)
-  MESSAGE (FATAL_ERROR "Sorry, cbdeps packaging isn't for Windows, yet...")
-ENDIF (WIN32)
-
-#
 # Standard code run on include to perform common checks and setup useful vars
 #
 _DETERMINE_ARCH(HOST_ARCH)
@@ -86,34 +79,35 @@ _DETERMINE_PLATFORM(PLATFORM)
 #
 # Check for autotools stuff, as many of the deps require them.
 #
-FIND_PROGRAM(AUTOMAKE automake)
-IF (NOT AUTOMAKE)
-   MESSAGE(FATAL_ERROR "Building packages requires automake")
-ENDIF (NOT AUTOMAKE)
-FIND_PROGRAM(AUTOCONF autoconf)
-IF (NOT AUTOCONF)
-   MESSAGE(FATAL_ERROR "Building packages requires autoconf")
-ENDIF (NOT AUTOCONF)
-FIND_PROGRAM(LIBTOOLIZE libtoolize)
-IF (NOT LIBTOOLIZE)
-   FIND_PROGRAM(GLIBTOOLIZE glibtoolize)
-   IF (GLIBTOOLIZE)
-      MESSAGE(FATAL_ERROR "No libtoolize found, but there is a glibtoolize. You should try to create a symbolic link")
-   ENDIF (GLIBTOOLIZE)
-   MESSAGE(FATAL_ERROR "Building packages requires libtoolize")
-ENDIF (NOT LIBTOOLIZE)
-FIND_PROGRAM(AUTORECONF autoreconf)
-IF (NOT AUTORECONF)
-   MESSAGE(FATAL_ERROR "Building packages requires autoreconf")
-ENDIF (NOT AUTORECONF)
-
+IF (NOT WIN32)
+   FIND_PROGRAM(AUTOMAKE automake)
+   IF (NOT AUTOMAKE)
+      MESSAGE(FATAL_ERROR "Building packages requires automake")
+   ENDIF (NOT AUTOMAKE)
+   FIND_PROGRAM(AUTOCONF autoconf)
+   IF (NOT AUTOCONF)
+       MESSAGE(FATAL_ERROR "Building packages requires autoconf")
+   ENDIF (NOT AUTOCONF)
+   FIND_PROGRAM(LIBTOOLIZE libtoolize)
+   IF (NOT LIBTOOLIZE)
+       FIND_PROGRAM(GLIBTOOLIZE glibtoolize)
+       IF (GLIBTOOLIZE)
+           MESSAGE(FATAL_ERROR "No libtoolize found, but there is a glibtoolize. You should try to create a symbolic link")
+       ENDIF (GLIBTOOLIZE)
+       MESSAGE(FATAL_ERROR "Building packages requires libtoolize")
+   ENDIF (NOT LIBTOOLIZE)
+   FIND_PROGRAM(AUTORECONF autoreconf)
+   IF (NOT AUTORECONF)
+       MESSAGE(FATAL_ERROR "Building packages requires autoreconf")
+   ENDIF (NOT AUTORECONF)
+ENDIF (NOT WIN32)
 
 #
 # And here is the set of "latest" dependencies.
 #
 
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
-   _ADD_DEP_PACKAGE(breakpad 1e455b5 1e455b5 6)
+   _ADD_DEP_PACKAGE(breakpad 1e455b5 1e455b5 7)
 ELSE (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
    MESSAGE(STATUS "Skipping breakpad for ${CMAKE_SYSTEM_NAME}")
 ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
