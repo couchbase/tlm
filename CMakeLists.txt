@@ -126,5 +126,5 @@ IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
 
    GoInstall(TARGET saslauthd-port PACKAGE github.com/couchbase/cbauth/cmd/saslauthd-port
              GOPATH "${CMAKE_CURRENT_SOURCE_DIR}/goproj" "${GODEPSDIR}"
-             INSTALL_PATH bin OUTPUT saslauthd-port)
+             INSTALL_PATH bin)
 ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
