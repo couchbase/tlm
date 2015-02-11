@@ -2,11 +2,11 @@
 
 include(ExternalProject)
 
-### Download, configure and build otp ####################################
+### Download, configure and build erlang ####################################
 
 SET(ERL_CFLAGS "-fno-strict-aliasing -O3 -ggdb3 -DOPENSSL_NO_EC=1")
 
-ExternalProject_Add(otp
+ExternalProject_Add(erlang
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
 
