@@ -50,13 +50,25 @@ ExternalProject_Add_Step(icu4c change_icu_config_prefix
 # OS X-only: Custom post-build step to set the shared library install name.
 if (APPLE)
   ExternalProject_Add_Step(icu4c install_name
-
-    COMMAND install_name_tool -id @rpath/libicudata.44.0.dylib <BINARY_DIR>/lib/libicudata.44.0.dylib
-    COMMAND install_name_tool -id @rpath/libicui18n.44.0.dylib <BINARY_DIR>/lib/libicui18n.44.0.dylib
-    COMMAND install_name_tool -id @rpath/libicuio.44.0.dylib <BINARY_DIR>/lib/libicuio.44.0.dylib
-    COMMAND install_name_tool -id @rpath/libicutu.44.0.dylib <BINARY_DIR>/lib/libicutu.44.0.dylib
-    COMMAND install_name_tool -id @rpath/libicuuc.44.0.dylib <BINARY_DIR>/lib/libicuuc.44.0.dylib
-
+    # Fixup all libraries
+    COMMAND install_name_tool -id @rpath/libicudata.44.0.dylib lib/libicudata.44.0.dylib
+    COMMAND install_name_tool -id @rpath/libicui18n.44.0.dylib
+                              -change libicuuc.44.dylib @loader_path/libicuuc.44.dylib
+                              -change libicudata.44.dylib @loader_path/libicudata.44.dylib
+                              lib/libicui18n.44.0.dylib
+    COMMAND install_name_tool -id @rpath/libicuio.44.0.dylib
+                              -change libicuuc.44.dylib @loader_path/libicuuc.44.dylib
+                              -change ../lib/libicudata.44.0.dylib @loader_path/libicudata.44.0.dylib
+                              -change libicui18n.44.dylib @loader_path/ibicui18n.44.dylib
+                              lib/libicuio.44.0.dylib
+    COMMAND install_name_tool -id @rpath/libicutu.44.0.dylib
+                              -change libicui18n.44.dylib @loader_path/libicui18n.44.dylib
+                              -change libicuuc.44.dylib @loader_path/libicuuc.44.dylib
+                              -change libicudata.44.dylib @loader_path/libicudata.44.dylib
+                              lib/libicutu.44.0.dylib
+    COMMAND install_name_tool -id @rpath/libicuuc.44.0.dylib
+                              -change libicudata.44.dylib @loader_path/libicudata.44.dylib
+                              lib/libicuuc.44.0.dylib
     DEPENDEES build
     DEPENDERS install
     WORKING_DIRECTORY <BINARY_DIR>
