@@ -13,11 +13,15 @@ goto eof
 :setup_x86
 echo Setting up Visual Studio environment for x86
 call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" x86
+set PATH=c:\tools\go-x86\go\bin;%PATH%
+set GOROOT=c:\tools\go-x86\go
 goto setup_environment
 
 :setup_amd64
 echo Setting up Visual Studio environment for amd64
 call "C:\Program Files (x86)\Microsoft Visual Studio 12.0\VC\vcvarsall.bat" amd64
+set PATH=c:\tools\go-amd64\go\bin;%PATH%
+set GOROOT=c:\tools\go-amd64\go
 goto setup_environment
 
 :setup_environment
