@@ -20,6 +20,12 @@ LIST (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../../cmake/Modules")
 INCLUDE (PlatformIntrospection)
 INCLUDE (CBDownloadDeps)
 
+_DETERMINE_PLATFORM (cbcache_platform)
+_DETERMINE_ARCH (cbcache_arch)
+
+MESSAGE (STATUS "Set platform to ${cbcache_platform} for dependency downloads")
+MESSAGE (STATUS "Set arch to ${cbcache_arch} for dependency downloads")
+
 # Generate a .md5 file
 MACRO (_GENERATE_MD5_FILE sourcefile md5file target)
   ADD_CUSTOM_COMMAND (TARGET ${target} POST_BUILD

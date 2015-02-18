@@ -10,6 +10,9 @@ MESSAGE (STATUS "*** Installing binary dependencies ***")
 _DETERMINE_PLATFORM (cbcache_platform)
 _DETERMINE_ARCH (cbcache_arch)
 
+MESSAGE (STATUS "Set platform to ${cbcache_platform} for dependency downloads")
+MESSAGE (STATUS "Set arch to ${cbcache_arch} for dependency downloads")
+
 # Default personal override manifest is in user's home directory; may
 # be overridden by CB_DOWNLOAD_DEPS_MANIFEST environment variable or
 # by -DCB_DOWNLOAD_DEPS_MANIFEST on the CMake line.
@@ -38,4 +41,3 @@ MESSAGE (STATUS "Reading global third-party dependencies manifest...")
 INCLUDE (manifest.cmake)
 MESSAGE (STATUS "Global third-party dependencies manifest complete")
 MESSAGE (STATUS "-----------------------------------------")
-
