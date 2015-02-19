@@ -153,7 +153,7 @@ Open cmd.com and type in the following (assuming c:\compile\couchbase
 is the directory holding your source):
 
     C:\> set source_root=c:\compile\couchbase
-    C:\> set target_platform=amd64
+    C:\> set target_arch=amd64
     C:\> environment
 
 You may now follow the build description outlined in [How to

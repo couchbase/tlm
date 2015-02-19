@@ -6,6 +6,10 @@
 MACRO (_DETERMINE_ARCH var)
   IF (DEFINED CB_DOWNLOAD_DEPS_ARCH)
     SET (_arch ${CB_DOWNLOAD_DEPS_ARCH})
+  ELSEIF (DEFINED ENV{target_arch})
+    # target_arch is used by environment.bat to represent the desired
+    # target architecture, so use that value first if set.
+    STRING (TOLOWER "$ENV{target_arch}" _arch)
   ELSE (DEFINED CB_DOWNLOAD_DEPS_ARCH)
     # We tweak MacOS, which for some reason claims to be i386
     IF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
@@ -16,6 +20,10 @@ MACRO (_DETERMINE_ARCH var)
         COMMAND tr -d '\n'
         OUTPUT_VARIABLE _arch)
     ELSEIF (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+      # If user didn't specify the arch via target_arch or
+      # CB_DOWNLOAD_DEPS_ARCH, assume that the target is the same as
+      # the current host architecture and derive that from
+      # Windows-provided environment variables.
       IF (DEFINED ENV{PROCESSOR_ARCHITEW6432})
         STRING (TOLOWER "$ENV{PROCESSOR_ARCHITEW6432}" _arch)
       ELSE ()

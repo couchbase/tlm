@@ -1,12 +1,12 @@
 @echo off
 
 if not defined source_root goto missing_root
-if not defined target_platform goto missing_target_platform
+if not defined target_arch goto missing_target_arch
 
-if "%target_platform%" == "amd64" goto setup_amd64
-if "%target_platform%" == "x86" goto setup_x86
+if "%target_arch%" == "amd64" goto setup_amd64
+if "%target_arch%" == "x86" goto setup_x86
 
-echo Unknown platform: %target_platform%. Must be amd64 or x86
+echo Unknown architecture: %target_arch%. Must be amd64 or x86
 set ERRORLEVEL=1
 goto eof
 
@@ -42,7 +42,7 @@ set PATH=%MODULEPATH%;%PATH%;%SOURCE_ROOT%\install\bin
 set OBJDIR=
 SET MODULEPATH=
 cd %SOURCE_ROOT%
-if "%target_platform%" == "amd64" set PATH=%PATH%;%SOURCE_ROOT%\install\x86\bin
+if "%target_arch%" == "amd64" set PATH=%PATH%;%SOURCE_ROOT%\install\x86\bin
 goto eof
 
 :missing_root
@@ -50,8 +50,8 @@ echo source_root should be set in the source root
 set ERRORLEVEL=1
 goto eof
 
-:missing_target_platform
-echo target_platform must be set in environment to x86 or amd64
+:missing_target_arch
+echo target_arch must be set in environment to x86 or amd64
 set ERRORLEVEL=1
 goto eof
 
