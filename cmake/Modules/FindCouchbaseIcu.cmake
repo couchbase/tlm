@@ -28,22 +28,33 @@ IF (ICU_CONFIG_EXECUTABLE)
 
   IF (NOT WIN32)
       EXECUTE_PROCESS(COMMAND ${ICU_CONFIG_EXECUTABLE} --ldflags-libsonly
-                      OUTPUT_VARIABLE ICU_LIBRARIES
+                      OUTPUT_VARIABLE _icu_libraries
                       ERROR_QUIET)
-      IF (ICU_LIBRARIES)
-          STRING(STRIP ${ICU_LIBRARIES} ICU_LIBRARIES)
-          STRING(STRIP ${ICU_LIB_SEARCHPATH} ICU_LIB_SEARCHPATH)
-          SET(ICU_LIB_SEARCHPATH "${ICU_LIB_SEARCHPATH} ${ICU_LIBRARIES}")
-	  SET(ICU_LIBRARIES ${ICU_LIB_SEARCHPATH})
-      ENDIF(ICU_LIBRARIES)
-  ENDIF(NOT WIN32)
 
+      IF (_icu_libraries)
+          STRING(STRIP ${_icu_libraries} icu_libraries)
+          STRING(REPLACE "-l" "" _icu_libraries ${icu_libraries})
+          STRING(REPLACE " " ";" _icu_libraries ${_icu_libraries})
+
+          FOREACH(_mylib ${_icu_libraries})
+             UNSET(_the_lib CACHE)
+             FIND_LIBRARY(_the_lib
+                          NAMES ${_mylib}
+                          HINTS ${ICU_LIB_HINT_DIR})
+             IF (_the_lib)
+                LIST(APPEND ICU_LIBRARIES ${_the_lib})
+             ELSE (_the_lib)
+                MESSAGE(FATAL_ERROR "Failed to locate ${_mylib}")
+             ENDIF (_the_lib)
+          ENDFOREACH(_mylib)
+      ENDIF(_icu_libraries)
+  ENDIF(NOT WIN32)
 ELSE (ICU_CONFIG_EXECUTABLE)
   # Mostly for Windows, where icu-config is not common
-  FIND_PATH (ICU_INCLUDE_DIR
-    NAMES unicode/utypes.h utypes.h
-    PATH_SUFFIXES include
-    DOC "Include directories for ICU")
+  FIND_PATH(ICU_INCLUDE_DIR
+            NAMES unicode/utypes.h utypes.h
+            PATH_SUFFIXES include
+            DOC "Include directories for ICU")
   # Don't set ICU_LIB_HINT_DIR; depend on FIND_LIBRARY() calls below
 ENDIF(ICU_CONFIG_EXECUTABLE)
 
@@ -53,55 +64,16 @@ IF (ICU_INCLUDE_DIR)
   STRING(STRIP "${ICU_LIB_HINT_DIR}" ICU_LIB_HINT_DIR)
 
   IF (NOT ICU_LIBRARIES)
-      FIND_LIBRARY(ICU_ICUUC_LIBRARY
-                   NAMES icuuc
-                   HINTS
-                       ENV LUA_DIR
-                       ${ICU_LIB_HINT_DIR})
-
-      FIND_LIBRARY(ICU_ICUDATA_LIBRARY
-                   NAMES icudata
-                   HINTS
-                       ENV LUA_DIR
-                       ${ICU_LIB_HINT_DIR})
-
-      FIND_LIBRARY(ICU_ICUI18N_LIBRARY
-                   NAMES icui18n
-                   HINTS
-                       ENV LUA_DIR
-                       ${ICU_LIB_HINT_DIR})
-
-      FIND_LIBRARY(ICU_ICUCDT_LIBRARY
-                   NAMES icucdt
-                   HINTS
-                       ENV LUA_DIR
-                       ${ICU_LIB_HINT_DIR})
-
-      FIND_LIBRARY(ICU_ICUIN_LIBRARY
-                   NAMES icuin
-                   HINTS
-                       ENV LUA_DIR
-                       ${ICU_LIB_HINT_DIR})
-
-      IF (ICU_ICUUC_LIBRARY)
-          SET(ICU_LIBRARIES ${ICU_LIBRARIES} ${ICU_ICUUC_LIBRARY})
-      ENDIF()
-
-      IF(ICU_ICUDATA_LIBRARY)
-          SET(ICU_LIBRARIES ${ICU_LIBRARIES} ${ICU_ICUDATA_LIBRARY})
-      ENDIF()
-
-      IF(ICU_ICUI18N_LIBRARY)
-          SET(ICU_LIBRARIES ${ICU_LIBRARIES} ${ICU_ICUI18N_LIBRARY})
-      ENDIF()
-
-      IF(ICU_ICUCDT_LIBRARY)
-          SET(ICU_LIBRARIES ${ICU_LIBRARIES} ${ICU_ICUCDT_LIBRARY})
-      ENDIF()
-
-      IF(ICU_ICUIN_LIBRARY)
-          SET(ICU_LIBRARIES ${ICU_LIBRARIES} ${ICU_ICUIN_LIBRARY})
-      ENDIF()
+      SET(_icu_libraries "icuuc;icudata;icui18n;icucdt;icuin")
+      FOREACH(_mylib ${_icu_libraries})
+         UNSET(_the_lib CACHE)
+         FIND_LIBRARY(_the_lib
+                      NAMES ${_mylib}
+                      HINTS ${ICU_LIB_HINT_DIR})
+         IF (_the_lib)
+            list(APPEND ICU_LIBRARIES ${_the_lib})
+         ENDIF (_the_lib)
+      ENDFOREACH(_mylib)
   ENDIF(NOT ICU_LIBRARIES)
 
   MESSAGE(STATUS "Found ICU headers in ${ICU_INCLUDE_DIR}")
