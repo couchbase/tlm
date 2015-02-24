@@ -37,10 +37,18 @@ ExternalProject_Add(icu4c
   COMMAND ${CMAKE_COMMAND} -E echo "FILE(COPY include lib DESTINATION \${CMAKE_INSTALL_PREFIX})" >> <INSTALL_DIR>/CMakeLists.txt
 )
 
+# We probably don't need -E on most (all?) Linux platforms, but the only
+# one we know for sure we CAN'T have it is openSUSE.
+if (cbcache_arch STREQUAL "suse")
+  SET (sed_args "-i")
+else (cbcache_arch STREQUAL "suse")
+  SET (sed_args "-i -E")
+endif (cbcache_arch STREQUAL "suse")
+
 # Modify icu-config to replace the hardcoded prefix with a variable, which
 # will be expanded at cbdeps install time.
 ExternalProject_Add_Step(icu4c change_icu_config_prefix
-  COMMAND sed -i -E "s/^default_prefix=.*/default_prefix=\"\\\@CMAKE_INSTALL_PREFIX\\\@\"/"
+  COMMAND sed ${sed_args} "s/^default_prefix=.*/default_prefix=\"\\\@CMAKE_INSTALL_PREFIX\\\@\"/"
           config/icu-config
   DEPENDEES build
   DEPENDERS install
