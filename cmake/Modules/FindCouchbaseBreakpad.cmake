@@ -11,25 +11,31 @@ IF (${LCASE_SYSTEM} STREQUAL "sunos")
   SET(LCASE_SYSTEM "solaris")
 ENDIF (${LCASE_SYSTEM} STREQUAL "sunos")
 
+SET(_breakpad_exploded ${CMAKE_BINARY_DIR}/tlm/deps/breakpad.exploded)
+
 FIND_PATH(BREAKPAD_INCLUDE_DIR client/${LCASE_SYSTEM}/handler/exception_handler.h
-          SUFFIX_PATH breakpad
-          HINTS
-               ENV BREAKPAD_DIR)
+          PATHS ${_breakpad_exploded}/include/breakpad)
 IF (WIN32)
+
+  # RelWithDebInfo & MinSizeRel should use the Release libraries, otherwise use
+  # the same directory as the build type.
+  IF(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+    SET(_build_type "Release")
+  ELSE(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+    SET(_build_type ${CMAKE_BUILD_TYPE})
+  ENDIF(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+
   FIND_LIBRARY(BREAKPAD_EXCEPTION_HANDLER_LIBRARY
                NAMES exception_handler
-               HINTS
-                   ENV BREAKPAD_DIR)
+               PATHS ${_breakpad_exploded}/lib/${_build_type})
 
   FIND_LIBRARY(BREAKPAD_CRASH_GENERATION_LIBRARY
                NAMES crash_generation_client
-               HINTS
-                   ENV BREAKPAD_DIR)
+               PATHS ${_breakpad_exploded}/lib/${_build_type})
 
   FIND_LIBRARY(BREAKPAD_COMMON_LIBRARY
                NAMES common
-               HINTS
-                   ENV BREAKPAD_DIR)
+               PATHS ${_breakpad_exploded}/lib/${_build_type})
 
   SET(BREAKPAD_LIBRARIES ${BREAKPAD_EXCEPTION_HANDLER_LIBRARY} ${BREAKPAD_CRASH_GENERATION_LIBRARY} ${BREAKPAD_COMMON_LIBRARY})
 
@@ -39,8 +45,8 @@ IF (WIN32)
 ELSE (WIN32)
   FIND_LIBRARY(BREAKPAD_LIBRARIES
                NAMES breakpad_client
-               HINTS
-                  ENV BREAKPAD_DIR)
+               PATHS ${_breakpad_exploded}/lib)
+
   FIND_PROGRAM(MINIDUMP2CORE minidump-2-core)
   IF (MINIDUMP2CORE)
      MESSAGE(STATUS "Found minidump-2-core: ${MINIDUMP2CORE}")
