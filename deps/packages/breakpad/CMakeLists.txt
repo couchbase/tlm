@@ -74,8 +74,9 @@ IF (WIN32)
             COMMAND ${CMAKE_COMMAND} -E copy_directory src/google_breakpad/common/
                                                        <INSTALL_DIR>/include/google_breakpad/common/
 
-    # Actual CMakeLists.txt file to copy the correct libs into our install directory.
-            COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_for_install.txt <INSTALL_DIR>/CMakeLists.txt
+    # On WIN32 don't actually need to package any breakpad files - everything used is statically
+    # linked into our files.
+            COMMAND ${CMAKE_COMMAND} -E echo "" > <INSTALL_DIR>/CMakeLists.txt
   )
 
 ELSE (WIN32)
@@ -93,8 +94,7 @@ ELSE (WIN32)
 
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
     INSTALL_COMMAND make install
-    COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib include DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
-    COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY bin/minidump-2-core DESTINATION \"\${CMAKE_INSTALL_PREFIX}/bin\")" >> <INSTALL_DIR>/CMakeLists.txt
+    COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY bin/minidump-2-core DESTINATION \"\${CMAKE_INSTALL_PREFIX}/bin\")" > <INSTALL_DIR>/CMakeLists.txt
   )
 ENDIF(WIN32)
 
