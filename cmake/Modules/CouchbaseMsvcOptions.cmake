@@ -7,6 +7,11 @@ IF ("${ENABLE_WERROR}" STREQUAL "YES")
    SET(CB_MSVC_WERROR "")
 ENDIF()
 
+# We want the RelWithDebInfo to have the same optimization level, only
+# differing if debugging information is enabled.
+SET(CMAKE_C_FLAGS_RELEASE        "/MD /O2 /Ob2 /D NDEBUG")
+SET(CMAKE_C_FLAGS_RELWITHDEBINFO "/MD /O2 /Ob2 /D NDEBUG /Zi")
+
 SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CB_MSVC_DEBUG} ${CB_MSVC_WARNINGS} ${CB_MSVC_VISIBILITY} ${CB_MSVC_THREAD} ${CB_MSVC_WERROR}")
 SET(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} ${CB_MSVC_LDFLAGS}")
 
