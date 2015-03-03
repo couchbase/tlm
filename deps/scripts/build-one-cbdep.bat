@@ -1,25 +1,30 @@
+cd deps\packages
+
+rem Make the output directory that the job expects
+mkdir build\deps
+
 rem Build amd64 first
 
 set target_arch=amd64
-cd deps/packages
-mkdir build
-cd build
+mkdir winbuild
+cd winbuild
 cmake .. || goto error
 cmake --build . --target %PACKAGE% || goto error
+cd ..
+xcopy winbuild\deps build\deps /s /e /y
 
 rem Clean up
-
-cd ..
-rmdir /s /q build
+rmdir /s /q winbuild
 
 rem Build again for x86
 
 set target_arch=x86
-cd deps/packages
-mkdir build
-cd build
+mkdir winbuild
+cd winbuild
 cmake .. || goto error
 cmake --build . --target %PACKAGE% || goto error
+cd ..
+xcopy winbuild\deps build\deps /s /e /y
 
 goto eof
 
