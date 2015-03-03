@@ -5,7 +5,8 @@
 SET (_snappy_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
 SET (_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 SET (CMAKE_INSTALL_PREFIX "${_snappy_install}")
-DECLARE_DEP (snappy VERSION 1.1.1-cb2)
+DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc)
+DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS centos6 centos7 debian7 macosx sunos suse11.3 ubuntu12.04 ubuntu14.04)
 SET (CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 
 include(ExternalProject)
