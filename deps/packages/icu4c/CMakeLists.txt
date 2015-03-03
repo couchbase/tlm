@@ -14,10 +14,10 @@ ExternalProject_Add(icu4c
                                                   --disable-tests
                                                   --disable-samples
 
-  BUILD_COMMAND make -j4 all
+  BUILD_COMMAND $(MAKE) -j4 all
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-  INSTALL_COMMAND make install
+  INSTALL_COMMAND $(MAKE) install
           COMMAND ${CMAKE_COMMAND} -E remove -f <INSTALL_DIR>/bin/derb
                                                 <INSTALL_DIR>/bin/genbrk
                                                 <INSTALL_DIR>/bin/gencfu

@@ -22,10 +22,10 @@ ExternalProject_Add(erlang
                                            CFLAGS=${ERL_CFLAGS}
 
   BUILD_IN_SOURCE 1
-  BUILD_COMMAND make -j8
+  BUILD_COMMAND $(MAKE) -j8
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-  INSTALL_COMMAND make install
+  INSTALL_COMMAND $(MAKE) install
           COMMAND ${CMAKE_COMMAND} -E echo "FILE(COPY bin lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
   # Invoke Erlang 'Install' to update the Erlang ROOTDIR
           COMMAND ${CMAKE_COMMAND} -E echo "EXECUTE_PROCESS(COMMAND \${CMAKE_INSTALL_PREFIX}/lib/erlang/Install -minimal \${CMAKE_INSTALL_PREFIX}/lib/erlang)" >> <INSTALL_DIR>/CMakeLists.txt

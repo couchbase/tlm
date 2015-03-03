@@ -8,7 +8,7 @@ ExternalProject_Add(flatbuffers
   GIT_TAG ${_git_rev}
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install -D FLATBUFFERS_BUILD_TESTS=OFF
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-  INSTALL_COMMAND make install
+  INSTALL_COMMAND $(MAKE) install
           COMMAND ${CMAKE_COMMAND} -E echo "" > <INSTALL_DIR>/CMakeLists.txt
 )
 

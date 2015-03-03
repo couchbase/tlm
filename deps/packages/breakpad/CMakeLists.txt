@@ -90,10 +90,10 @@ ELSE (WIN32)
 
     # Build in source so breakpad correctly detects it git version.
     BUILD_IN_SOURCE 1
-    BUILD_COMMAND make
+    BUILD_COMMAND $(MAKE)
 
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-    INSTALL_COMMAND make install
+    INSTALL_COMMAND $(MAKE) install
     COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY bin/minidump-2-core DESTINATION \"\${CMAKE_INSTALL_PREFIX}/bin\")" > <INSTALL_DIR>/CMakeLists.txt
   )
 ENDIF(WIN32)

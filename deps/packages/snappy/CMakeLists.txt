@@ -13,10 +13,10 @@ ExternalProject_Add(snappy
                                            --disable-dependency-tracking
                                            --disable-gtest
 
-  BUILD_COMMAND make all
+  BUILD_COMMAND $(MAKE) all
 
   INSTALL_DIR ${CMAKE_BINARY_DIR}/install
-  INSTALL_COMMAND make install
+  INSTALL_COMMAND $(MAKE) install
           COMMAND rm -rf <INSTALL_DIR>/share
           COMMAND rm -f <INSTALL_DIR>/lib/libsnappy.la
 

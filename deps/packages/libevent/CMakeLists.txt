@@ -17,10 +17,10 @@ ExternalProject_Add(libevent
                                            --enable-shared
                                            --disable-static
 
-  BUILD_COMMAND make all
+  BUILD_COMMAND $(MAKE) all
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-  INSTALL_COMMAND make install
+  INSTALL_COMMAND $(MAKE) install
           COMMAND rm -rf <INSTALL_DIR>/bin/event_rpcgen.py
           COMMAND rm -rf <INSTALL_DIR>/lib/pkgconfig
           COMMAND rm -f <INSTALL_DIR>/lib/libevent.la

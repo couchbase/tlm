@@ -16,7 +16,7 @@ ExternalProject_Add(v8
 
   CONFIGURE_COMMAND cd <SOURCE_DIR>/build && git clone git://github.com/couchbasedeps/gyp -b couchbase-v8-3.21.17
             COMMAND cd <SOURCE_DIR> && git clone git://github.com/couchbasedeps/icu46 third_party/icu && cd third_party/icu && git checkout 73170776491a3e38f68ab0367f3121256a3cc289
-  BUILD_COMMAND make -j 8 library=shared x64
+  BUILD_COMMAND $(MAKE) -j 8 library=shared x64
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
 

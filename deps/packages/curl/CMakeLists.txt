@@ -20,10 +20,10 @@ ExternalProject_Add(curl
                                            --without-gnutls
                                            --without-libssh2
 
-  BUILD_COMMAND make all
+  BUILD_COMMAND $(MAKE) all
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-  INSTALL_COMMAND make install
+  INSTALL_COMMAND $(MAKE) install
           COMMAND rm -rf <INSTALL_DIR>/bin
           COMMAND rm -rf <INSTALL_DIR>/lib/pkgconfig
           COMMAND rm -rf <INSTALL_DIR>/share

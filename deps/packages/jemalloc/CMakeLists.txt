@@ -18,10 +18,10 @@ ExternalProject_Add(jemalloc
                                                     --with-jemalloc-prefix=je_
                                                     ${EXTRA_CONFIGURE_OPTIONS}
 
-  BUILD_COMMAND make build_lib_shared
+  BUILD_COMMAND $(MAKE) build_lib_shared
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-  INSTALL_COMMAND make install_lib_shared install_include
+  INSTALL_COMMAND $(MAKE) install_lib_shared install_include
 
   COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib include DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
 )
