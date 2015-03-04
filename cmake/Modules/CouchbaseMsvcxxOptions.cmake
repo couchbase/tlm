@@ -7,8 +7,8 @@ IF ("${ENABLE_WERROR}" STREQUAL "YES")
    SET(CB_MSVCXX_WERROR "")
 ENDIF()
 
-# We want the RelWithDebInfo to have the same optimization level, only
-# differing if debugging information is enabled.
+# We want RelWithDebInfo to have the same optimization level as
+# Release, only differing in whether debugging information is enabled.
 SET(CMAKE_CXX_FLAGS_RELEASE        "/MD /O2 /Ob2 /D NDEBUG")
 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MD /O2 /Ob2 /D NDEBUG /Zi")
 

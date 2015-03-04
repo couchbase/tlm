@@ -4,6 +4,11 @@ SET(CB_GNU_VISIBILITY "-fvisibility=hidden")
 SET(CB_GNU_THREAD "-pthread")
 SET(CB_GNU_LANG_VER "-std=gnu99")
 
+# We want RelWithDebInfo to have the same optimization level as
+# Release, only differing in whether debugging information is enabled.
+SET(CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG")
+SET(CMAKE_C_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g")
+
 IF ("${ENABLE_WERROR}" STREQUAL "YES")
    SET(CB_GNU_WERROR "-Werror")
 ENDIF()

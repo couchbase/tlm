@@ -3,6 +3,11 @@ SET(CB_CLANGXX_WARNINGS "-Qunused-arguments -Wall -pedantic -Wredundant-decls -f
 SET(CB_CLANGXX_VISIBILITY "-fvisibility=hidden")
 SET(CB_CLANGXX_THREAD "-pthread")
 
+# We want RelWithDebInfo to have the same optimization level as
+# Release, only differing in whether debugging information is enabled.
+SET(CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
+SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g")
+
 IF ("${ENABLE_WERROR}" STREQUAL "YES")
    SET(CB_CLANGXX_WERROR "-Werror")
 ENDIF()
