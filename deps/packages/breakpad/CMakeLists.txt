@@ -81,12 +81,14 @@ IF (WIN32)
 
 ELSE (WIN32)
 
+  SET(BREAKPAD_LDFLAGS -Wl,-rpath=\\$$ORIGIN/../lib)
+
   ExternalProject_Add(breakpad
     GIT_REPOSITORY ${_git_repo}
     GIT_TAG ${_git_rev}
 
     CONFIGURE_COMMAND autoreconf -i
-              COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>
+              COMMAND <SOURCE_DIR>/configure LDFLAGS=${BREAKPAD_LDFLAGS} --prefix=<INSTALL_DIR>
 
     # Build in source so breakpad correctly detects it git version.
     BUILD_IN_SOURCE 1
