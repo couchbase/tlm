@@ -16,7 +16,6 @@ DECLARE_DEP (icu4c VERSION 263593-cb5 PLATFORMS centos6 centos7 debian7 macosx s
 DECLARE_DEP (jemalloc VERSION 5d9732f-cb5 PLATFORMS centos6 centos7 debian7 macosx sunos suse11.3 ubuntu12.04 ubuntu14.04)
 DECLARE_DEP (libevent VERSION 2.1.4-alpha-dev PLATFORMS windows_msvc)
 DECLARE_DEP (libevent VERSION 2.0.22-cb1 PLATFORMS centos6 centos7 debian7 macosx sunos suse11.3 ubuntu12.04 ubuntu14.04)
-DECLARE_DEP (libstdcxx VERSION 4.9.2-cb1 PLATFORMS ubuntu12.04)
 DECLARE_DEP (openssl VERSION 1.0.1h PLATFORMS windows_msvc)
 DECLARE_DEP (pysqlite2 VERSION 0ff6e32-cb1 PLATFORMS centos6 centos7 debian7 macosx sunos suse11.3 ubuntu12.04 ubuntu14.04)
 DECLARE_DEP (python-snappy VERSION c97d633 PLATFORMS windows_msvc)
