@@ -94,11 +94,6 @@ ADD_CUSTOM_TARGET(reset
                   COMMAND repo forall -c "git clean -dfx"
                   VERBATIM)
 
-IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/flatbuffers")
-    SET(FLATBUFFERS_INSTALL OFF CACHE BOOL "Don't install flatbuffers")
-    ADD_SUBDIRECTORY(flatbuffers)
-ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/flatbuffers")
-
 ADD_SUBDIRECTORY(platform)
 ADD_SUBDIRECTORY(memcached)
 ADD_SUBDIRECTORY(couchstore)
@@ -112,26 +107,16 @@ ADD_SUBDIRECTORY(moxi)
 ADD_SUBDIRECTORY(couchdb)
 ADD_SUBDIRECTORY(geocouch)
 ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
+ADD_SUBDIRECTORY(forestdb)
 
+SET (GODEPSDIR "${CMAKE_CURRENT_SOURCE_DIR}/godeps")
+ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/query)
 
-IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/forestdb")
-   ADD_SUBDIRECTORY (forestdb)
-ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/forestdb")
-
-IF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
-   SET (GODEPSDIR "${CMAKE_CURRENT_SOURCE_DIR}/godeps")
-
-   ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/query)
-
-   SET (FORESTDB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/forestdb/include")
-   GET_PROPERTY (_dir TARGET forestdb PROPERTY LOCATION)
-   GET_FILENAME_COMPONENT (FORESTDB_LIBRARY_DIR "${_dir}" PATH)
-   SET (FORESTDB_TARGET forestdb)
-   ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/indexing)
-   ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/goxdcr)
-   ADD_SUBDIRECTORY (goproj/src/github.com/couchbase/gometa)
-
-   GoInstall(TARGET saslauthd-port PACKAGE github.com/couchbase/cbauth/cmd/saslauthd-port
-             GOPATH "${CMAKE_CURRENT_SOURCE_DIR}/goproj" "${GODEPSDIR}"
-             INSTALL_PATH bin)
-ENDIF (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/goproj")
+SET (FORESTDB_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/forestdb/include")
+GET_PROPERTY (_dir TARGET forestdb PROPERTY LOCATION)
+GET_FILENAME_COMPONENT (FORESTDB_LIBRARY_DIR "${_dir}" PATH)
+SET (FORESTDB_TARGET forestdb)
+ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/indexing)
+ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/goxdcr)
+ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/gometa)
+ADD_SUBDIRECTORY(godeps/src/github.com/couchbase/cbauth)
