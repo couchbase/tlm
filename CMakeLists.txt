@@ -118,7 +118,4 @@ SET (FORESTDB_TARGET forestdb)
 ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/indexing)
 ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/goxdcr)
 ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/gometa)
-
-GoInstall(TARGET saslauthd-port PACKAGE github.com/couchbase/cbauth/cmd/saslauthd-port
-          GOPATH "${CMAKE_CURRENT_SOURCE_DIR}/goproj" "${GODEPSDIR}"
-          INSTALL_PATH bin)
+ADD_SUBDIRECTORY(godeps/src/github.com/couchbase/cbauth)
