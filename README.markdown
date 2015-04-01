@@ -19,8 +19,6 @@ building Couchbase on multiple platforms.
 - [OpenSUSE](#opensuse)
 - [SmartOS containers](#user-content-smartos)
 	- [SmartOS](#user-content-smartos-container)
-	- [CentOS 5](#user-content-centos-5)
-	- [CentOS 6](#user-content-centos-6)
 	- [CentOS 7](#user-content-centos-7)
 	- [Ubuntu](#user-content-ubuntu)
 	- [Debian 7](#user-content-debian7)
@@ -304,285 +302,11 @@ Log into the newly created zone and install the following packages:
 [Install Google repo][google_repo_link] and you should be all set to
 start building the code as described above.
 
-### CentOS 5
-
-The following descrtiption use the Centos-5.7 image imported by:
-
-    root@smartos~> imgadm import 2539f6de-0b5a-11e2-b647-fb08c3503fb2
-
-The KVM may be created with the following attributes (store in `centos-5.7.json`):
-
-    {
-      "alias": "centos-5.7",
-      "brand": "kvm",
-      "resolvers": [
-        "10.0.0.1",
-        "8.8.4.4"
-      ],
-      "default-gateway": "10.0.0.1",
-      "hostname":"centos",
-      "ram": "8192",
-      "vcpus": "4",
-      "nics": [
-        {
-          "nic_tag": "admin",
-          "ip": "10.0.0.206",
-          "netmask": "255.255.255.0",
-          "gateway": "10.0.0.1",
-          "model": "virtio",
-          "primary": true
-        }
-      ],
-      "disks": [
-        {
-          "image_uuid": "2539f6de-0b5a-11e2-b647-fb08c3503fb2",
-          "boot": true,
-          "model": "virtio",
-          "image_size": 5120
-        },
-        {
-          "model": "virtio",
-          "size": 10240
-        }
-      ],
-    "customer_metadata": {
-        "root_authorized_keys": "< my key >"
-      }
-    }
-
-Create the KVM with:
-
-    root@smartos~> vmadm create -f centos-5.7.json
-
-You should now be able to ssh into the machine and run `yum update` and
-install all of the updates ;-)
-
-The source code in Couchbase server use some features defined in
-C++11, and the compiler provided in CentOS 5.7 doesn't support
-this. In order to be able to build Couchbase we have to install or
-build a newer version of gcc.
-
-    yum install -y gcc gcc-c++
-    export LC_ALL=C
-    cd /data
-    wget ftp://ftp.fu-berlin.de/unix/languages/gcc/releases/gcc-4.9.1/gcc-4.9.1.tar.bz2
-    bunzip2 gcc-4.9.1.tar.bz2
-    tar xf gcc-4.9.1.tar
-    wget https://gmplib.org/download/gmp/gmp-6.0.0a.tar.bz2
-    bunzip2 gmp-6.0.0a.tar.bz2
-    tar xf gmp-6.0.0a.tar
-    mv gmp-6.0.0 gcc-4.9.1/gmp
-    wget http://www.mpfr.org/mpfr-current/mpfr-3.1.2.tar.bz2
-    bunzip2 mpfr-3.1.2.tar.bz2
-    tar xf mpfr-3.1.2.tar
-    mv mpfr-3.1.2 gcc-4.9.1/mpfr
-    wget ftp://ftp.gnu.org/gnu/mpc/mpc-1.0.2.tar.gz
-    tar xfz mpc-1.0.2.tar.gz
-    mv mpc-1.0.2 gcc-4.9.1/mpc
-    wget ftp://gcc.gnu.org/pub/gcc/infrastructure/isl-0.12.2.tar.bz2
-    bunzip2 isl-0.12.2.tar.bz2
-    tar xf isl-0.12.2.tar
-    mv isl-0.12.2 gcc-4.9.1/isl
-    wget ftp://gcc.gnu.org/pub/gcc/infrastructure/cloog-0.18.1.tar.gz
-    tar xfz cloog-0.18.1.tar.gz
-    mv cloog-0.18.1 gcc-4.9.1/cloog
-    cd gcc-4.9.1
-    ./configure  --prefix=/opt/gcc-4.9.1 --disable-multiarch --disable-multilib --enable-languages=c,c++
-    gmake BOOT_CFLAGS='-O' bootstrap
-    gmake install
-
-Let's set all of our tools in a separate directory:
-
-    mkdir -p /opt/local/bin
-    cd /opt
-    ln -s gcc-4.9.1 gcc
-    cd local/bin
-    for f in ../../gcc/bin/*; do ln -s $f; done
-    ln -s ../../gcc/bin/gcc cc
-    cd /data
-    yum remove -y gcc gcc-c++
-    export PATH=/opt/local/bin:$PATH
-    cd /usr/lib64
-    cp /opt/gcc-4.9.1/lib64/libstdc++.so.6.0.20 .
-    rm libstdc++.so.6
-    ln -s libstdc++.so.6.0.20 libstdc++.so.6
-
-Install as much as possible of the precompiled dependencies with:
-
-    yum install -y libevent-devel libicu-devel \
-                   make ncurses-devel openssl-devel \
-                   expat-devel tcl gettext \
-                   java-1.7.0-openjdk subversion \
-                   bzip2-devel redhat-lsb
-
-Unfortunately the YUM repository doesn't include all versions of what
-we need, so you need to install the following from source:
-
-Time to build the other build dependencies
-
-    wget http://curl.haxx.se/download/curl-7.38.0.tar.gz
-    gtar xf curl-7.38.0.tar.gz
-    cd curl-7.38.0
-    ./configure
-    gmake -j 8 all install
-    cd ..
-    wget -Ogit-2.1.2.tar.gz https://github.com/git/git/archive/v2.1.2.tar.gz
-    tar xfz git-2.1.2.tar.gz
-    cd git-2.1.2
-    gmake -j 8 prefix=/opt/local LDFLAGS=-Wl,--rpath,/usr/local/lib install
-    cd ..
-    wget http://www.cmake.org/files/v3.0/cmake-3.0.2.tar.gz
-    tar xfz cmake-3.0.2.tar.gz
-    cd cmake-3.0.2
-    ./configure
-    gmake -j 8 all install
-    cd ..
-    wget https://snappy.googlecode.com/files/snappy-1.1.1.tar.gz
-    tar xfz snappy-1.1.1.tar.gz
-    cd snappy-1.1.1
-    ./configure
-    gmake all install
-    cd ..
-    wget http://www.erlang.org/download/otp_src_R16B03.tar.gz
-    tar xfz otp_src_R16B03.tar.gz
-    cd otp_src_R16B03
-    CFLAGS="-DOPENSSL_NO_EC=1" ./configure --prefix=/opt/erlang-16B03
-    gmake all install
-    cd /opt
-    ln -s erlang-16B03 erlang
-    cd local/bin
-    for f in ../../erlang/bin/*; do ln -s $f; done
-    cd /data
-    wget https://www.python.org/ftp/python/2.6.9/Python-2.6.9.tgz
-    gtar xfz Python-2.6.9.tgz
-    cd Python-2.6.9
-    ./configure  --prefix=/opt/python-2.6.9
-    gmake all install
-    cd /opt
-    ln -s python-2.6.9 python
-    cd local/bin
-    for f in ../../python/bin/*; do ln -s $f; done
-    cd /data
-    git clone git://github.com/trondn/v8
-    cd v8
-    git checkout origin/3.21.17-couchbase
-    gmake dependencies
-    gmake library=shared x64
-    cp out/x64.release/lib.target/libv8.so /usr/local/lib
-    cp include/* /usr/local/include/
-
-[Install Google repo][google_repo_link] and you should be all set to
-start building the code as described above.
-
-### CentOS 6
-
-The following descrtiption use the Centos-6 image imported by:
-
-    root@smartos~> imgadm import df81f45e-8f9f-11e3-a819-93fab527c81e
-
-The KVM may be created with the following attributes (store in `centos.json`):
-
-    {
-      "alias": "centos-6",
-      "brand": "kvm",
-      "resolvers": [
-        "10.0.0.1",
-        "8.8.4.4"
-      ],
-      "default-gateway": "10.0.0.1",
-      "hostname": "centos",
-      "ram": "2048",
-      "vcpus": "2",
-      "nics": [
-        {
-          "nic_tag": "admin",
-          "ip": "10.0.0.201",
-          "netmask": "255.255.255.0",
-          "gateway": "10.0.0.1",
-          "model": "virtio",
-          "primary": true
-        }
-      ],
-      "disks": [
-        {
-          "image_uuid": "325dbc5e-2b90-11e3-8a3e-bfdcb1582a8d",
-          "boot": true,
-          "model": "virtio",
-          "image_size": 10240
-        }
-      ],
-      "customer_metadata": {
-        "root_authorized_keys": "ssh-rsa <my-personal-public-key>"
-      }
-    }
-
-Create the KVM with:
-
-    root@smartos~> vmadm create -f centos.json
-
-You should now be able to ssh into the machine and run `yum update` and
-install all of the updates ;-)
-
-Install as much as possible of the precompiled dependencies with:
-
-    root@centos~> yum install -y libevent-devel libicu-devel \
-                                 snappy-devel gcc gcc-c++ libcurl-devel \
-                                 make ncurses-devel openssl-devel svn \
-                                 expat-devel perl-ExtUtils-CBuilder \
-                                 perl-ExtUtils-MakeMaker tcl gettext \
-                                 mercurial redhat-lsb
-
-Unfortunately the YUM repository don't include all (and new enough)
-versions of all we need, so you need to install the following from
-source:
-
-    wget http://www.cmake.org/files/v2.8/cmake-2.8.12.1.tar.gz
-    wget http://download.savannah.gnu.org/releases/libunwind/libunwind-1.1.tar.gz
-    wget https://gperftools.googlecode.com/files/gperftools-2.1.tar.gz
-    wget -Ov1.9.2.tar.gz https://github.com/git/git/archive/v1.9.2.tar.gz
-    wget --no-check-certificate -Ov8.tar.gz \
-         https://github.com/v8/v8/archive/3.19.0.tar.gz
-    wget http://www.erlang.org/download/otp_src_R16B03.tar.gz
-
-    gtar xfz cmake-2.8.12.1.tar.gz
-    gtar xfz libunwind-1.1.tar.gz
-    gtar xfz gperftools-2.1.tar.gz
-    gtar xfz v1.9.2.tar.gz
-    gtar xfz v8.tar.gz
-    gtar xfz otp_src_R16B03.tar.gz
-
-    cd git-1.9.2
-    gmake prefix=/usr install
-    cd ../cmake-2.8.12.1
-    ./bootstrap && gmake all install
-    cd ../libunwind-1.1
-    ./configure && gmake all install
-    cd ../gperftools-2.1
-    ./configure && gmake all install
-    cd ../v8-3.19.0
-    gmake dependencies
-    gmake x64 library=shared -j 4
-    cp out/x64.release/lib.target/libv8.so /usr/local/lib
-    cp include/* /usr/local/include/
-    cd ../otp_src_R16B03
-    CFLAGS="-DOPENSSL_NO_EC=1" ./configure && gmake all install
-    cd /usr/local
-    hg clone -u release https://code.google.com/p/go
-    cd go/src
-    ./all.bash
-    cd ../../bin
-    ln -s ../go/bin/go
-    ln -s ../go/bin/gofmt
-
-
-[Install Google repo][google_repo_link] and you should be all set to
-start building the code as described above.
-
 ### CentOS 7
 
 The following descrtiption use the Centos-7 image imported by:
 
-    root@smartos~> imgadm import df81f45e-8f9f-11e3-a819-93fab527c81e
+    root@smartos~> imgadm import 553da8ba-499e-11e4-8bee-5f8dadc234ce
 
 The KVM may be created with the following attributes (store in `centos.json`):
 
@@ -595,12 +319,12 @@ The KVM may be created with the following attributes (store in `centos.json`):
       ],
       "default-gateway": "10.0.0.1",
       "hostname":"centos",
-      "ram": "2048",
+      "ram": "6144",
       "vcpus": "2",
       "nics": [
         {
           "nic_tag": "admin",
-          "ip": "10.0.0.205",
+          "ip": "10.0.0.201",
           "netmask": "255.255.255.0",
           "gateway": "10.0.0.1",
           "model": "virtio",
@@ -633,87 +357,39 @@ install all of the updates ;-)
 
 Install as much as possible of the precompiled dependencies with:
 
-    root@centos~> yum install -y libevent-devel libicu-devel \
-                                 snappy-devel gcc gcc-c++ libcurl-devel \
-                                 make ncurses-devel openssl-devel svn \
-                                 expat-devel perl-ExtUtils-CBuilder \
-                                 perl-ExtUtils-MakeMaker tcl gettext \
-                                 mercurial bzip2-devel redhat-lsb
+    yum install -y gcc gcc-c++ make redhat-lsb git openssl-devel
 
-Unfortunately the YUM repository don't include all (and new enough)
-versions of all we need, so you need to install the following from
-source:
+A newer version of cmake, go and repo is needed so we have to compile
+it from source with:
 
-    wget http://www.cmake.org/files/v2.8/cmake-2.8.12.1.tar.gz
-    wget http://download.savannah.gnu.org/releases/libunwind/libunwind-1.1.tar.gz
-    wget https://gperftools.googlecode.com/files/gperftools-2.1.tar.gz
-    wget -Ov1.9.2.tar.gz https://github.com/git/git/archive/v1.9.2.tar.gz
-    wget http://www.erlang.org/download/otp_src_R16B03.tar.gz
-
-    gtar xfz cmake-2.8.12.1.tar.gz
-    gtar xfz libunwind-1.1.tar.gz
-    gtar xfz gperftools-2.1.tar.gz
-    gtar xfz v1.9.2.tar.gz
-    gtar xfz otp_src_R16B03.tar.gz
-
-    cd git-1.9.2
-    gmake prefix=/usr install
-    cd ../cmake-2.8.12.1
-    ./bootstrap && gmake all install
-    cd ../libunwind-1.1
-    ./configure && gmake all install
-    cd ../gperftools-2.1
-    ./configure && gmake all install
-    cd ..
-
-    wget https://www.python.org/ftp/python/2.6.9/Python-2.6.9.tgz
-    gtar xfz Python-2.6.9.tgz
-    cd Python-2.6.9
-    ./configure  --prefix=/opt/python-2.6.9
-    gmake all install
-    cd /opt
-    ln -s python-2.6.9 python
-    mkdir -p local/bin
-    cd local/bin
-    for f in ../../python/bin/*; do ln -s $f; done
-    cd /data
-
-    git clone git://github.com/trondn/v8
-    cd v8
-    git checkout origin/3.21.17-couchbase
-    gmake dependencies
-    gmake library=shared x64
-    cp out/x64.release/lib.target/libv8.so /usr/local/lib
-    cp include/* /usr/local/include/
-    cd ../otp_src_R16B03
-    CFLAGS="-DOPENSSL_NO_EC=1" ./configure --prefix=/opt/erlang-16B03
-    gmake all install
-    cd /opt
-    ln -s erlang-16B03 erlang
-    cd local/bin
-    for f in ../../erlang/bin/*; do ln -s $f; done
+    wget http://www.cmake.org/files/v3.2/cmake-3.2.1.tar.gz
+    tar xfz cmake-3.2.1.tar.gz
+    cd cmake-3.2.1
+    ./bootstrap && make && make install
     cd /usr/local
-    hg clone -u release https://code.google.com/p/go
-    cd go/src
+    git clone https://go.googlesource.com/go
+    cd go
+    git checkout -b go1.4.2 go1.4.2
+    cd src
     ./all.bash
     cd ../../bin
     ln -s ../go/bin/go
     ln -s ../go/bin/gofmt
+    curl https://storage.googleapis.com/git-repo-downloads/repo > repo
+    chmod a+x repo
 
-
-[Install Google repo][google_repo_link] and you should be all set to
-start building the code as described above.
+And you should be all set to start building the code as described above.
 
 ### Ubuntu
 
-The following descrtiption use the Ubuntu image imported by:
+The following descrtiption use the Ubuntu 14.04 image imported by:
 
-    root@smartos~> imgadm import d2ba0f30-bbe8-11e2-a9a2-6bc116856d85
+    root@smartos~> imgadm import c864f104-624c-43d2-835e-b49a39709b6b
 
 The KVM may be created with the following attributes (store in `ubuntu.json`):
 
     {
-      "alias": "ubuntu",
+      "alias": "ubuntu-1404",
       "brand": "kvm",
       "resolvers": [
         "10.0.0.1",
@@ -721,28 +397,32 @@ The KVM may be created with the following attributes (store in `ubuntu.json`):
       ],
       "default-gateway": "10.0.0.1",
       "hostname":"ubuntu",
-      "ram": "2048",
+      "ram": "6144",
       "vcpus": "2",
       "nics": [
         {
           "nic_tag": "admin",
-          "ip": "10.0.0.202",
+          "ip": "10.0.0.203",
           "netmask": "255.255.255.0",
           "gateway": "10.0.0.1",
           "model": "virtio",
           "primary": true
-       }
+        }
       ],
       "disks": [
         {
-          "image_uuid": "d2ba0f30-bbe8-11e2-a9a2-6bc116856d85",
+          "image_uuid": "c864f104-624c-43d2-835e-b49a39709b6b",
           "boot": true,
           "model": "virtio",
-          "image_size": 16384
+          "image_size": 10240
+        },
+       {
+          "model": "virtio",
+          "size": 20480
         }
       ],
-      "customer_metadata": {
-        "root_authorized_keys": "ssh-rsa <my-personal-public-key>"
+    "customer_metadata": {
+        "root_authorized_keys": "<my ssh key>"
       }
     }
 
@@ -755,39 +435,31 @@ install all of the updates ;-)
 
 Install as much as possible of the precompiled dependencies with:
 
-    root@ubuntu~> apt-get install -y git automake autoconf libtool clang \
-                                     clang++ libevent-dev libicu-dev \
-                                     libsnappy-dev libunwind7-dev erlang \
-                                     libv8-dev make ccache \
-                                     libcurl4-openssl-dev mercurial
+    apt-get update --fix-missing
+    apt-get install -y git gcc g++ make ccache lsb-release libssl-dev cmake
 
-A newer version of cmake and google perftools is needed so we have to compile them from source with:
+A newer version of go and repo is needed so we have to compile
+it from source with:
 
-    wget http://www.cmake.org/files/v2.8/cmake-2.8.12.1.tar.gz
-    tar xfz cmake-2.8.12.1.tar.gz
-    cd cmake-2.8.12.1
-    ./bootstrap && make && make install
-    cd ..
-    wget https://gperftools.googlecode.com/files/gperftools-2.1.tar.gz
-    tar xfz gperftools-2.1.tar.gz
-    cd gperftools-2.1
-    ./configure && make && make install
     cd /usr/local
-    hg clone -u release https://code.google.com/p/go
-    cd go/src
+    git clone https://go.googlesource.com/go
+    cd go
+    git checkout -b go1.4.2 go1.4.2
+    cd src
     ./all.bash
     cd ../../bin
     ln -s ../go/bin/go
     ln -s ../go/bin/gofmt
+    curl https://storage.googleapis.com/git-repo-downloads/repo > repo
+    chmod a+x repo
 
-[Install Google repo][google_repo_link] and you should be all set to
-start building the code as described above.
+And you should be all set to start building the code as described above.
 
 ### Debian7
 
 The following descrtiption use the Debian image imported by:
 
-    root@smartos~> imgadm import b9c27838-1730-11e4-adbd-43d91422294f
+    root@smartos~> imgadm import 5f41692e-a70d-11e4-8c2d-afc6735144dc
 
 The KVM may be created with the following attributes (store in `debian7.json`):
 
@@ -800,12 +472,12 @@ The KVM may be created with the following attributes (store in `debian7.json`):
       ],
       "default-gateway": "10.0.0.1",
       "hostname":"debian",
-      "ram": "1027",
+      "ram": "6144",
       "vcpus": "2",
       "nics": [
         {
           "nic_tag": "admin",
-          "ip": "10.0.0.204",
+          "ip": "10.0.0.200",
           "netmask": "255.255.255.0",
           "gateway": "10.0.0.1",
           "model": "virtio",
@@ -814,7 +486,7 @@ The KVM may be created with the following attributes (store in `debian7.json`):
       ],
       "disks": [
         {
-          "image_uuid": "b9c27838-1730-11e4-adbd-43d91422294f",
+          "image_uuid": "5f41692e-a70d-11e4-8c2d-afc6735144dc",
           "boot": true,
           "model": "virtio",
           "image_size": 10240
@@ -834,37 +506,29 @@ install all of the updates ;-)
 
 Install as much as possible of the precompiled dependencies with:
 
-    root@debian~> apt-get install -y git automake autoconf libtool clang \
-                                     libevent-dev libicu-dev \
-                                     libsnappy-dev libunwind7-dev erlang \
-                                     libv8-dev make ccache \
-                                     libcurl4-openssl-dev mercurial \
-                                     lsb-release
+    apt-get update --fix-missing
+    apt-get install -y git gcc g++ make ccache lsb-release libssl-dev
 
+A newer version of cmake, go and repo is needed so we have to compile
+it from source with:
 
-A newer version of cmake and google perftools is needed so we have to
-compile them from source with:
-
-    wget http://www.cmake.org/files/v2.8/cmake-2.8.12.1.tar.gz
-    tar xfz cmake-2.8.12.1.tar.gz
-    cd cmake-2.8.12.1
+    wget http://www.cmake.org/files/v3.2/cmake-3.2.1.tar.gz
+    tar xfz cmake-3.2.1.tar.gz
+    cd cmake-3.2.1
     ./bootstrap && make && make install
-    cd ..
-    wget https://gperftools.googlecode.com/files/gperftools-2.1.tar.gz
-    tar xfz gperftools-2.1.tar.gz
-    cd gperftools-2.1
-    ./configure && make && make install
     cd /usr/local
-    hg clone -u release https://code.google.com/p/go
-    cd go/src
+    git clone https://go.googlesource.com/go
+    cd go
+    git checkout -b go1.4.2 go1.4.2
+    cd src
     ./all.bash
     cd ../../bin
     ln -s ../go/bin/go
     ln -s ../go/bin/gofmt
+    curl https://storage.googleapis.com/git-repo-downloads/repo > repo
+    chmod a+x repo
 
-
-[Install Google repo][google_repo_link] and you should be all set to
-start building the code as described above.
+And you should be all set to start building the code as described above.
 
 ## Static Analysis
 

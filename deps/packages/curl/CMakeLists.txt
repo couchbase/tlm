@@ -16,20 +16,18 @@ ExternalProject_Add(curl
                                            --disable-curldebug
                                            --enable-shared
                                            --disable-static
-                                           --without-ssl
-                                           --without-gnutls
                                            --without-libssh2
 
   BUILD_COMMAND $(MAKE) all
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND $(MAKE) install
-          COMMAND rm -rf <INSTALL_DIR>/bin
+          COMMAND rm -rf <INSTALL_DIR>/bin/curl-config
           COMMAND rm -rf <INSTALL_DIR>/lib/pkgconfig
           COMMAND rm -rf <INSTALL_DIR>/share
           COMMAND rm -f <INSTALL_DIR>/lib/libcurl.la
 
-  COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib include DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY bin lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
 )
 
 # OS X-only: Custom post-build step to set the shared library install name.
