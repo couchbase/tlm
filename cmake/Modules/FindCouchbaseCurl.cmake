@@ -7,11 +7,15 @@
 # I didn't use the one provided with CMake
 # because it didn't work with the curl I downloaded
 # for windows..
+
+# Use include files directly from cbdeps exploded download
+SET (_curl_exploded "${CMAKE_BINARY_DIR}/tlm/deps/curl.exploded")
 FIND_PATH(CURL_INCLUDE_DIR curl/curl.h
           HINTS
                ENV CURL_DIR
           PATH_SUFFIXES include
           PATHS
+               "${_curl_exploded}/include"
                ~/Library/Frameworks
                /Library/Frameworks
                /opt/local
