@@ -91,6 +91,7 @@ ADD_CUSTOM_TARGET(reset
                   VERBATIM)
 
 ADD_SUBDIRECTORY(platform)
+ADD_SUBDIRECTORY(subjson)
 ADD_SUBDIRECTORY(memcached)
 ADD_SUBDIRECTORY(couchstore)
 ADD_SUBDIRECTORY(forestdb)
