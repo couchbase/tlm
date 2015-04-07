@@ -65,6 +65,7 @@ INCLUDE(FindCouchbaseDtrace)
 INCLUDE(FindCouchbaseGo)
 INCLUDE(FindCouchbaseBreakpad)
 INCLUDE(FindCouchbaseFlatbuffers)
+INCLUDE(FindCouchbaseValgrind)
 
 IF (WIN32)
    SET(COUCHBASE_NETWORK_LIBS "Ws2_32")
@@ -81,11 +82,6 @@ INCLUDE(CouchbaseCompilerOptions)
 INCLUDE(CouchbaseCodeCoverage)
 
 ENABLE_TESTING()
-# When performing memory checking with ctest we need to include the CTest
-# module to ensure CMake variables to define the memory checker
-# (e.g. MEMORYCHECK_COMMAND) are propogated to CTest.
-INCLUDE(CTest)
-
 
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_BINARY_DIR}/platform/include)
 
