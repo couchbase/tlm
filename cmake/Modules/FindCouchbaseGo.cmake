@@ -43,78 +43,13 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF (GCCGO_EXECUTABLE)
   ENDIF (GO_EXECUTABLE)
 
-
-  # Adds a target named TARGET which produces an output executable
-  # named OUTPUT in the current binary directory, based on a set of
-  # Go source files.
-  #
-  # This command is somewhat deprecated; when possible, use GoInstall(),
-  # which interacts more cleanly with the Go compiler and has better
-  # incremental build semantics.
-  #
-  # Required arguments:
-  #
-  # TARGET - name of CMake target to create
-  #
-  # OUTPUT - name of executable to create (.exe will be appended on Windows)
-  #
-  # SOURCES - A list of .go files. They will be passed as-is to the
-  # go compiler, and also TARGET will depend on them (so it will be
-  # re-invoked only if these .go files change). These files may be
-  # relative paths as the go compiler will be invoked with the
-  # working directory set to the current CMakeLists directory.
-  #
-  # Optional arguments:
-  #
-  # DEPENDS - list of other CMake targets on which TARGET will depend
-  #
-  # INSTALL_PATH - if specified, a CMake INSTALL() directive will be
-  # created to install the output into the named path
-  MACRO (GoBuild)
-    IF (NOT GO_FOUND)
-      MESSAGE (FATAL_ERROR "No go compiler was found!")
-    ENDIF (NOT GO_FOUND)
-
-    PARSE_ARGUMENTS (Go "DEPENDS;SOURCES" "TARGET;OUTPUT;INSTALL_PATH"
-      "" ${ARGN})
-
-    IF (NOT Go_TARGET)
-      MESSAGE (FATAL_ERROR "TARGET is required!")
-    ENDIF (NOT Go_TARGET)
-    IF (NOT Go_OUTPUT)
-      MESSAGE (FATAL_ERROR "OUTPUT is required!")
-    ENDIF (NOT Go_OUTPUT)
-
-    IF (WIN32)
-      SET (Go_OUTPUT "${Go_OUTPUT}.exe")
-    ENDIF (WIN32)
-    SET (Go_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}/${Go_OUTPUT}")
-    ADD_CUSTOM_COMMAND (OUTPUT "${Go_OUTPUT_PATH}"
-      COMMAND ${GO_COMMAND_LINE} -o ${Go_OUTPUT_PATH} ${Go_SOURCES}
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      DEPENDS ${Go_SOURCES} VERBATIM)
-    ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
-      DEPENDS "${Go_OUTPUT_PATH}" SOURCES ${Go_SOURCES})
-    SET_TARGET_PROPERTIES ("${Go_TARGET}" PROPERTIES
-      RUNTIME_OUTPUT_NAME "${Go_OUTPUT}"
-      RUNTIME_OUTPUT_PATH "${CMAKE_CURRENT_BINARY_DIR}")
-
-    IF (Go_DEPENDS)
-      ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
-    ENDIF (Go_DEPENDS)
-
-    IF (Go_INSTALL_PATH)
-      INSTALL (PROGRAMS "${Go_OUTPUT_PATH}" DESTINATION "${Go_INSTALL_PATH}")
-    ENDIF (Go_INSTALL_PATH)
-  ENDMACRO (GoBuild)
-
   # Adds a target named TARGET which (always) calls "go install
   # PACKAGE".  This delegates incremental-build responsibilities to
   # the go compiler, which is generally what you want.
   #
-  # Note that, unlike GoBuild(), this macro requires using the
-  # Golang compiler, not gccgo. A CMake error will be raised if this
-  # macro is used when only gccgo is detected.
+  # Note that this macro requires using the Golang compiler, not
+  # gccgo. A CMake error will be raised if this macro is used when
+  # only gccgo is detected.
   #
   # Required arguments:
   #
@@ -251,9 +186,9 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # Adds a target named TARGET which (always) calls "go tool yacc
   # PATH".
   #
-  # Note that, unlike GoBuild(), this macro requires using the
-  # Golang compiler, not gccgo. A CMake error will be raised if this
-  # macro is used when only gccgo is detected.
+  # Note that this macro requires using the Golang compiler, not
+  # gccgo. A CMake error will be raised if this macro is used when
+  # only gccgo is detected.
   #
   # Required arguments:
   #

@@ -31,10 +31,15 @@ EXPORT_FLAGS (CGO_LIBRARY_DIRS CGO_LDFLAGS "-L")
 # trying to figure out how to handle this correctly.
 SET (ENV{LD_RUN_PATH} "$ORIGIN/../lib")
 
+# Always use -x if CB_GO_DEBUG is set
+IF ($ENV{CB_GO_DEBUG})
+  SET (_go_debug "-x")
+ENDIF ($ENV{CB_GO_DEBUG})
+
 # Execute "go install"
-MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" -x ${PACKAGE}")
+MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${PACKAGE}")
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
-  COMMAND "${GO_EXECUTABLE}" install "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" -x "${PACKAGE}")
+  COMMAND "${GO_EXECUTABLE}" install "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} "${PACKAGE}")
 IF (_failure)
   MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
   MESSAGE (STATUS "@ 'go install' failed! Re-running as 'go build' to help debug...")
