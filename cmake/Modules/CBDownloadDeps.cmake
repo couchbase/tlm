@@ -138,19 +138,25 @@ IF (NOT CBDownloadDeps_INCLUDED)
       SET (EXPLODED_VERSION "none")
     ENDIF (EXISTS "${_explode_dir}/VERSION.txt")
 
-    IF (EXISTING_VERSION STREQUAL ${dep_VERSION})
+    MESSAGE (STATUS "Checking exploded version ${EXPLODED_VERSION} against ${dep_VERSION}")
+    IF (EXPLODED_VERSION STREQUAL ${dep_VERSION})
       MESSAGE (STATUS "Dependency '${name} (${dep_VERSION})' already downloaded")
-    ELSE (EXISTING_VERSION STREQUAL ${dep_VERSION})
+    ELSE (EXPLODED_VERSION STREQUAL ${dep_VERSION})
       _DOWNLOAD_DEP (${name} ${dep_VERSION})
 
       # Explode tgz into build directory.
       MESSAGE (STATUS "Installing dependency: ${name}-${dep_VERSION}...")
       FILE (MAKE_DIRECTORY "${_explode_dir}")
-      EXECUTE_PROCESS (COMMAND "${CMAKE_COMMAND}" -E 
+      EXECUTE_PROCESS (COMMAND "${CMAKE_COMMAND}" -E
         tar xf "${_CB_DOWNLOAD_CACHED_DEP}"
-        WORKING_DIRECTORY "${_explode_dir}")
+        WORKING_DIRECTORY "${_explode_dir}"
+        RESULT_VARIABLE _explode_result
+        ERROR_VARIABLE _explode_stderr)
+      IF(_explode_result)
+        MESSAGE (FATAL_ERROR "Failed to extract dependency ${name}-${dep_VERSION} - ${_explode_stderr}")
+      ENDIF(_explode_result)
       FILE (WRITE ${_explode_dir}/VERSION.txt ${dep_VERSION})
-    ENDIF (EXISTING_VERSION STREQUAL ${dep_VERSION})
+    ENDIF (EXPLODED_VERSION STREQUAL ${dep_VERSION})
 
     # Always add the dep subdir; this will "re-install" the dep every time you
     # run CMake, which might be wasteful, but at least should be safe.
