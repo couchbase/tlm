@@ -218,12 +218,17 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     GET_FILENAME_COMPONENT (_ypath "${Go_YFILE}" PATH)
     GET_FILENAME_COMPONENT (_yname "${Go_YFILE}" NAME)
 
-    ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
-      COMMAND "${CMAKE_COMMAND}" -E echo
-      "-- Executing: ${GO_EXECUTABLE} tool yacc ${_yname}"
-      COMMAND "${GO_EXECUTABLE}" tool yacc "${_yname}"
-      WORKING_DIRECTORY "${_ypath}"
-      VERBATIM)
+    SET(Go_OUTPUT "${_ypath}/y.go")
+
+    ADD_CUSTOM_COMMAND(OUTPUT "${Go_OUTPUT}"
+                       COMMAND "${GO_EXECUTABLE}" tool yacc "${_yname}"
+                       COMMENT "Executing: ${GO_EXECUTABLE} tool yacc ${_yname}"
+                       DEPENDS ${Go_YFILE}
+                       WORKING_DIRECTORY "${_ypath}"
+                       VERBATIM)
+
+    ADD_CUSTOM_TARGET ("${Go_TARGET}"
+                       DEPENDS "${Go_OUTPUT}")
 
     IF (Go_DEPENDS)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
@@ -234,5 +239,3 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   SET (FindCouchbaseGo_INCLUDED 1)
 
 ENDIF (NOT FindCouchbaseGo_INCLUDED)
-
-
