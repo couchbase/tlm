@@ -91,6 +91,7 @@ ADD_CUSTOM_TARGET(reset
                   VERBATIM)
 
 ADD_SUBDIRECTORY(platform)
+SET (gtest_force_shared_crt ON)
 ADD_SUBDIRECTORY(gtest)
 ADD_SUBDIRECTORY(subjson)
 ADD_SUBDIRECTORY(memcached)
