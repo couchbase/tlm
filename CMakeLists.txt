@@ -91,7 +91,8 @@ ADD_CUSTOM_TARGET(reset
                   VERBATIM)
 
 ADD_SUBDIRECTORY(platform)
-SET (gtest_force_shared_crt ON)
+SET (gtest_force_shared_crt ON CACHE BOOL
+     "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
 ADD_SUBDIRECTORY(gtest)
 ADD_SUBDIRECTORY(subjson)
 ADD_SUBDIRECTORY(memcached)
