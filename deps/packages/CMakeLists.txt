@@ -111,6 +111,9 @@ ENDIF (NOT WIN32)
 #
 # And here is the set of "latest" dependencies.
 #
+IF (WIN32)
+    _ADD_DEP_PACKAGE(gperftools 2.4 gperftools-2.4-cb1 1)
+ENDIF (WIN32)
 
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
    _ADD_DEP_PACKAGE(breakpad 1e455b5 1e455b5 9)
