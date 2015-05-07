@@ -41,29 +41,29 @@ IF (WIN32)
     # like the Unix-style directory seperators which CMake uses, and CMake's
     # builtin copy / copy_directory commands don't support wildcards so we
     # end up with quite a long, explicit list...
-            COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/client/windows/common
+            COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/breakpad/client/windows/common
             COMMAND ${CMAKE_COMMAND} -E copy src/client/windows/common/ipc_protocol.h
-                                             <INSTALL_DIR>/include/client/windows/common/
+                                             <INSTALL_DIR>/include/breakpad/client/windows/common/
 
-            COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/client/windows/crash_generation
+            COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/breakpad/client/windows/crash_generation
             COMMAND ${CMAKE_COMMAND} -E copy src/client/windows/crash_generation/crash_generation_client.h
-                                             <INSTALL_DIR>/include/client/windows/crash_generation
+                                             <INSTALL_DIR>/include/breakpad/client/windows/crash_generation
 
-            COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/client/windows/handler
+            COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/breakpad/client/windows/handler
             COMMAND ${CMAKE_COMMAND} -E copy src/client/windows/handler/exception_handler.h
-			                                 <INSTALL_DIR>/include/client/windows/handler/
+			                                 <INSTALL_DIR>/include/breakpad/client/windows/handler/
 
-            COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/common
+            COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/breakpad/common
             COMMAND ${CMAKE_COMMAND} -E copy src/common/scoped_ptr.h
-                                             <INSTALL_DIR>/include/common/
+                                             <INSTALL_DIR>/include/breakpad/common/
 
-            COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/common/windows
+            COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/breakpad/common/windows
             COMMAND ${CMAKE_COMMAND} -E copy src/common/windows/string_utils-inl.h
-                                             <INSTALL_DIR>/include/common/windows/
+                                             <INSTALL_DIR>/include/breakpad/common/windows/
 
-            COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/google_breakpad/common
+            COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/include/breakpad/google_breakpad/common
             COMMAND ${CMAKE_COMMAND} -E copy_directory src/google_breakpad/common/
-                                                       <INSTALL_DIR>/include/google_breakpad/common/
+                                                       <INSTALL_DIR>/include/breakpad/google_breakpad/common/
 
     # On WIN32 don't actually need to package any breakpad files - everything used is statically
     # linked into our files.
