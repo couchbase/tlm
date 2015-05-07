@@ -1,15 +1,6 @@
 include(ExternalProject)
 
-IF (WIN32)
-  # msbuild uses a different names for architecture (compared to HOST_ARCH)
-  if(HOST_ARCH STREQUAL "amd64")
-    SET(MSBUILD_ARCH "x64")
-  elseif(HOST_ARCH STREQUAL "x86")
-    SET(MSBUILD_ARCH "Win32")
-  else(HOST_ARCH STREQUAL "amd64")
-    SET(MSBUILD_ARCH ${HOST_ARCH})
-  endif(HOST_ARCH STREQUAL "amd64")
-
+if (WIN32)
   ExternalProject_Add(gperftools
     GIT_REPOSITORY ${_git_repo}
     GIT_TAG ${_git_rev}
@@ -51,4 +42,5 @@ IF (WIN32)
 
   # cbdeps boilerplate
   _ADD_PACKAGE_STEP()
-ENDIF(WIN32)
+
+endif(WIN32)

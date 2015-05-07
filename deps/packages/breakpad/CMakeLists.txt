@@ -5,15 +5,6 @@ include(ExternalProject)
 ### Download, configure and build breakpad ####################################
 
 IF (WIN32)
-  # msbuild uses a different names for architecture (compared to HOST_ARCH)
-  if(HOST_ARCH STREQUAL "amd64")
-    SET(MSBUILD_ARCH "x64")
-  elseif(HOST_ARCH STREQUAL "x86")
-    SET(MSBUILD_ARCH "Win32")
-  else(HOST_ARCH STREQUAL "amd64")
-    SET(MSBUILD_ARCH ${HOST_ARCH})
-  endif(HOST_ARCH STREQUAL "amd64")
-
   ExternalProject_Add(breakpad
     GIT_REPOSITORY ${_git_repo}
     GIT_TAG ${_git_rev}

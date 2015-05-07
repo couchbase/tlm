@@ -108,6 +108,17 @@ IF (NOT WIN32)
    ENDIF (NOT AUTORECONF)
 ENDIF (NOT WIN32)
 
+# msbuild uses a different names for architecture (compared to HOST_ARCH)
+if (WIN32)
+  if(HOST_ARCH STREQUAL "amd64")
+    SET(MSBUILD_ARCH "x64")
+  elseif(HOST_ARCH STREQUAL "x86")
+    SET(MSBUILD_ARCH "Win32")
+  else(HOST_ARCH STREQUAL "amd64")
+    SET(MSBUILD_ARCH ${HOST_ARCH})
+  endif(HOST_ARCH STREQUAL "amd64")
+endif(WIN32)
+
 #
 # And here is the set of "latest" dependencies.
 #
