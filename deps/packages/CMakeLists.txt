@@ -108,12 +108,25 @@ IF (NOT WIN32)
    ENDIF (NOT AUTORECONF)
 ENDIF (NOT WIN32)
 
+# msbuild uses a different names for architecture (compared to HOST_ARCH)
+if (WIN32)
+  if(HOST_ARCH STREQUAL "amd64")
+    SET(MSBUILD_ARCH "x64")
+  elseif(HOST_ARCH STREQUAL "x86")
+    SET(MSBUILD_ARCH "Win32")
+  else(HOST_ARCH STREQUAL "amd64")
+    SET(MSBUILD_ARCH ${HOST_ARCH})
+  endif(HOST_ARCH STREQUAL "amd64")
+endif(WIN32)
+
 #
 # And here is the set of "latest" dependencies.
 #
 
+_ADD_DEP_PACKAGE(gperftools 2.4 gperftools-2.4-cb3 3)
+
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
-   _ADD_DEP_PACKAGE(breakpad 1e455b5 1e455b5 9)
+   _ADD_DEP_PACKAGE(breakpad 1e455b5 1e455b5 10)
 ELSE (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
    MESSAGE(STATUS "Skipping breakpad for ${CMAKE_SYSTEM_NAME}")
 ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")

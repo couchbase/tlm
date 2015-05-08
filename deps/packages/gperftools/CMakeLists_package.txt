@@ -1,0 +1,12 @@
+FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
+   FILE (COPY lib/Debug/libtcmalloc_minimal-debug.dll
+         DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
+   FILE (COPY lib/Debug/libtcmalloc_minimal.pdb
+         DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
+ELSE (CMAKE_BUILD_TYPE STREQUAL "Debug")
+   FILE (COPY lib/Release/libtcmalloc_minimal.dll
+         DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
+   FILE (COPY lib/Release/libtcmalloc_minimal.pdb
+         DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
+ENDIF (CMAKE_BUILD_TYPE STREQUAL "Debug")
