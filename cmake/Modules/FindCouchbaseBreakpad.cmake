@@ -14,7 +14,8 @@ ENDIF (${LCASE_SYSTEM} STREQUAL "sunos")
 SET(_breakpad_exploded ${CMAKE_BINARY_DIR}/tlm/deps/breakpad.exploded)
 
 FIND_PATH(BREAKPAD_INCLUDE_DIR client/${LCASE_SYSTEM}/handler/exception_handler.h
-          PATHS ${_breakpad_exploded}/include/breakpad)
+          PATHS ${_breakpad_exploded}/include
+          PATH_SUFFIXES breakpad)
 IF (WIN32)
 
   # RelWithDebInfo & MinSizeRel should use the Release libraries, otherwise use
