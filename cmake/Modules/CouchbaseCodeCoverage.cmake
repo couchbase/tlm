@@ -40,20 +40,19 @@ FUNCTION(ENABLE_CODE_COVERAGE_REPORT)
 
       ADD_CUSTOM_TARGET(coverage-zero-counters
                         COMMAND find . -name *.gcda -exec rm {} \;
-                        COMMAND find . -name *.gcno -exec rm {} \;
                         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                         COMMENT "Zeroing coverage counters for objects in ${CMAKE_CURRENT_BINARY_DIR}"
                         VERBATIM)
 
       ADD_CUSTOM_TARGET(coverage-report-html
+                        COMMAND ${CMAKE_COMMAND} -E remove_directory coverage
                         COMMAND ${CMAKE_COMMAND} -E make_directory coverage
-                        COMMAND ${GCOVR_PATH} --object-directory=${CMAKE_CURRENT_BINARY_DIR} --root=${CMAKE_SOURCE_DIR} --html --html-details -o coverage/index.html
+                        COMMAND ${GCOVR_PATH} --root=${CMAKE_SOURCE_DIR} --filter="${CMAKE_CURRENT_SOURCE_DIR}/.*" --html --html-details -o coverage/index.html
                         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                         COMMENT "Generating code coverage report for ${PROJECT_NAME} to ${CMAKE_CURRENT_BINARY_DIR}/coverage/index.html")
 
       ADD_CUSTOM_TARGET(coverage-report-xml
-                        COMMAND ${CMAKE_COMMAND} -E make_directory coverage
-                        COMMAND ${GCOVR_PATH} --object-directory=${CMAKE_CURRENT_BINARY_DIR} --root=${CMAKE_SOURCE_DIR} --xml -o coverage.xml
+                        COMMAND ${GCOVR_PATH} --root=${CMAKE_SOURCE_DIR} --filter="${CMAKE_CURRENT_SOURCE_DIR}/.*" --xml -o coverage.xml
                         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                         COMMENT "Generating code coverage report for ${PROJECT_NAME} to ${CMAKE_CURRENT_BINARY_DIR}/coverage.xml")
    ENDIF (CB_CODE_COVERAGE)
