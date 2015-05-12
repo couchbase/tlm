@@ -1,44 +1,60 @@
-FIND_PROGRAM(GCOV_PATH gcov)
-FIND_PROGRAM(LCOV_PATH lcov)
-FIND_PROGRAM(GENHTML_PATH genhtml)
+# Support for running code coverage reporting.
+#
+# Usage:
+# 1). Add a call to ADD_COVERAGE_REPORT() to the module(s) you wish to
+#     obtain code coverage reports on.
+# 2). Enable the option CB_CODE_COVERAGE (e.g. pass -DCB_CODE_COVERAGE=ON to cmake).
+# 3). Build as normal.
+# 4). Run unit test(s) to exercise the codebase.
+# 5). Run `make coverage-report-html` and/or `coverage-report-xml`
+#     (from the selected module subdirectory) to generate the reports.
+# 6) (Optional) to zero coverage counters before a re-run run `make coverage-zero-counters`.
 
-SET(CB_CODE_COVERAGE TRUE)
 
-IF (NOT GCOV_PATH)
-    MESSAGE(STATUS "gcov not found, code coverage disabled")
-    SET(CB_CODE_COVERAGE FALSE)
-ENDIF (NOT GCOV_PATH)
+OPTION(CB_CODE_COVERAGE "Enable code coverage testing."
+       OFF)
 
-IF (NOT LCOV_PATH)
-    MESSAGE(STATUS "lcov not found, code coverage disabled")
-    SET(CB_CODE_COVERAGE FALSE)
-ENDIF (NOT LCOV_PATH)
+IF (CB_CODE_COVERAGE)
+    FIND_PROGRAM(GCOV_PATH gcov)
+    FIND_PROGRAM(GCOVR_PATH gcovr)
 
-IF (NOT GENHTML_PATH)
-    MESSAGE(STATUS "genhtml not found, code coverage disabled")
-    SET(CB_CODE_COVERAGE FALSE)
-ENDIF (NOT GENHTML_PATH)
+    IF (NOT GCOV_PATH)
+        MESSAGE(STATUS "gcov not found.")
+    ENDIF (NOT GCOV_PATH)
 
-FUNCTION(SETUP_COVERAGE_TARGET _target _test _output)
-   IF (${CB_CODE_COVERAGE})
-       MESSAGE(STATUS "Setting up ${_target}")
-       SET_TARGET_PROPERTIES(${_test} PROPERTIES COMPILE_FLAGS "-g -O0 -fprofile-arcs -ftest-coverage")
-       SET_TARGET_PROPERTIES(${_test} PROPERTIES LINK_FLAGS "-fprofile-arcs -ftest-coverage")
+    IF (NOT GCOVR_PATH)
+        MESSAGE(STATUS "gcovr [www.gcovr.com] not found.")
+    ENDIF ()
 
-       ADD_CUSTOM_TARGET(${_target}
-                      COMMAND ${LCOV_PATH} --directory ${_test} --zerocounters
-                      COMMAND ${_test}
-                      COMMAND ${LCOV_PATH} --directory CMakeFiles/${_test}.dir --capture --output-file ${_output}.info
-                      COMMAND ${LCOV_PATH} --remove ${_output}.info 'tests/*' '/usr/*' --output-file ${_output}.info.cleaned
-                      COMMAND ${GENHTML_PATH} -o ${_output} ${_output}.info.cleaned
-                      COMMAND ${CMAKE_COMMAND} -E remove ${_output}.info ${_output}.info.cleaned
-                      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
-                      COMMENT "Resetting code coverage counters to zero.\nProcessing code coverage counters and generating report.")
-       # Show info where to find the report
-       ADD_CUSTOM_COMMAND(TARGET ${_target} POST_BUILD
-                          COMMAND ;
-                          COMMENT "Open ./${_output}/index.html in your browser to view the coverage report.")
-   ELSE (${CB_CODE_COVERAGE})
-      MESSAGE(STATUS "Missing tools for code coverage. Ignoring ${_target}")
-   ENDIF (${CB_CODE_COVERAGE})
+    IF (NOT GCOV_PATH OR NOT GCOVR_PATH)
+       MESSAGE(FATAL_ERROR "CB_CODE_COVERAGE enabled but one of more required tools not found - cannot continue.")
+    ENDIF()
+ENDIF(CB_CODE_COVERAGE)
+
+# Defines a coverage report for the current module. If CB_CODE_COVERAGE is enabled,
+# collate all code coverage results belonging to the current module and generate
+# coverage reports.
+FUNCTION(ENABLE_CODE_COVERAGE_REPORT)
+   IF (CB_CODE_COVERAGE)
+      MESSAGE(STATUS "Setting up code coverage for ${PROJECT_NAME}")
+
+      ADD_CUSTOM_TARGET(coverage-zero-counters
+                        COMMAND find . -name *.gcda -exec rm {} \;
+                        COMMAND find . -name *.gcno -exec rm {} \;
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                        COMMENT "Zeroing coverage counters for objects in ${CMAKE_CURRENT_BINARY_DIR}"
+                        VERBATIM)
+
+      ADD_CUSTOM_TARGET(coverage-report-html
+                        COMMAND ${CMAKE_COMMAND} -E make_directory coverage
+                        COMMAND ${GCOVR_PATH} --object-directory=${CMAKE_CURRENT_BINARY_DIR} --root=${CMAKE_SOURCE_DIR} --html --html-details -o coverage/index.html
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                        COMMENT "Generating code coverage report for ${PROJECT_NAME} to ${CMAKE_CURRENT_BINARY_DIR}/coverage/index.html")
+
+      ADD_CUSTOM_TARGET(coverage-report-xml
+                        COMMAND ${CMAKE_COMMAND} -E make_directory coverage
+                        COMMAND ${GCOVR_PATH} --object-directory=${CMAKE_CURRENT_BINARY_DIR} --root=${CMAKE_SOURCE_DIR} --xml -o coverage.xml
+                        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                        COMMENT "Generating code coverage report for ${PROJECT_NAME} to ${CMAKE_CURRENT_BINARY_DIR}/coverage.xml")
+   ENDIF (CB_CODE_COVERAGE)
 ENDFUNCTION()
