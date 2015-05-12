@@ -118,3 +118,27 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
   ENDIF (_id STREQUAL "linuxmint")
   SET (${_distro} "${_id}${_rel}")
 ENDMACRO (_DETERMINE_LINUX_DISTRO)
+
+
+# Sets _platform to the name of the current platform if it is a supported
+# production platform.
+# _platform is in the same format as _DETERMINE_PLATFORM().
+MACRO (GET_SUPPORTED_PRODUCTION_PLATFORM _supported_platform)
+  # First get the current platform
+  _DETERMINE_PLATFORM(_platform)
+
+  # .. and check it against the list, returning it if found.
+  SET (_supported_prod_platforms
+       "centos6"
+       "centos7"
+       "debian7"
+       "suse11.3"
+       "ubuntu12.04"
+       "ubuntu14.04"
+       "windows")
+
+  LIST (FIND "${_supported_prod_platforms}" ${_platform} _index)
+  IF (_index GREATER "-1")
+    SET(${_supported_platform} ${_platform})
+  ENDIF (_index GREATER "-1")
+ENDMACRO (GET_SUPPORTED_PRODUCTION_PLATFORM _supported_platform)
