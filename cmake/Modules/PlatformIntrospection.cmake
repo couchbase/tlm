@@ -128,16 +128,13 @@ MACRO (GET_SUPPORTED_PRODUCTION_PLATFORM _supported_platform)
   _DETERMINE_PLATFORM(_platform)
 
   # .. and check it against the list, returning it if found.
-  SET (_supported_prod_platforms
-       "centos6"
-       "centos7"
+  LIST(APPEND _supported_prod_platforms
+       "centos6" "centos7"
        "debian7"
        "suse11.3"
-       "ubuntu12.04"
-       "ubuntu14.04"
+       "ubuntu12.04" "ubuntu14.04"
        "windows")
-
-  LIST (FIND "${_supported_prod_platforms}" ${_platform} _index)
+  LIST (FIND _supported_prod_platforms ${_platform} _index)
   IF (_index GREATER "-1")
     SET(${_supported_platform} ${_platform})
   ENDIF (_index GREATER "-1")
@@ -145,10 +142,12 @@ ENDMACRO (GET_SUPPORTED_PRODUCTION_PLATFORM _supported_platform)
 
 MACRO (GET_SUPPORTED_DEVELOPMENT_PLATFORM _supported_platform)
   GET_SUPPORTED_PRODUCTION_PLATFORM(_prod_platform)
-  IF (NOT _prod_platform)
-      _DETERMINE_PLATFORM(_platform)
-      IF (APPLE)
-         SET(${_supported_platform} ${_platform})
-      ENDIF (APPLE)
-  ENDIF (NOT _prod_platform)
+  IF (_prod_platform)
+    SET(${_supported_platform} ${_prod_platform})
+  ELSE (_prod_platform)
+    _DETERMINE_PLATFORM(_platform)
+    IF (APPLE)
+      SET(${_supported_platform} ${_platform})
+    ENDIF (APPLE)
+  ENDIF (_prod_platform)
 ENDMACRO (GET_SUPPORTED_DEVELOPMENT_PLATFORM _supported_platform)
