@@ -13,6 +13,13 @@ _DETERMINE_ARCH (cbcache_arch)
 MESSAGE (STATUS "Set platform to ${cbcache_platform} for dependency downloads")
 MESSAGE (STATUS "Set arch to ${cbcache_arch} for dependency downloads")
 
+GET_SUPPORTED_DEVELOPMENT_PLATFORM(_supported_platform)
+IF (NOT _supported_platform)
+  MESSAGE(STATUS "NOTE: The dependencies for unsupported platforms may not be available.")
+  MESSAGE(STATUS "      Downloads may fail. You may build dependencies from from")
+  MESSAGE(STATUS "      tlm/deps/packages and store then in ~/.cbdepscache")
+ENDIF (NOT _supported_platform)
+
 # Default personal override manifest is in user's home directory; may
 # be overridden by CB_DOWNLOAD_DEPS_MANIFEST environment variable or
 # by -DCB_DOWNLOAD_DEPS_MANIFEST on the CMake line.
