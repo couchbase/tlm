@@ -20,10 +20,19 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     EXECUTE_PROCESS (COMMAND ${GO_EXECUTABLE} version
                      OUTPUT_VARIABLE GO_VERSION_STRING)
     STRING (REGEX REPLACE "^go version go([0-9.]+).*$" "\\1" GO_VERSION ${GO_VERSION_STRING})
+    # I've seen cases where the version contains a trailing newline
+    STRING(STRIP "${GO_VERSION}" GO_VERSION)
     MESSAGE (STATUS "Found Go compiler: ${GO_EXECUTABLE} (${GO_VERSION})")
 
     IF(GO_VERSION VERSION_LESS GO_MINIMUM_VERSION)
-      MESSAGE(FATAL_ERROR "Go version of ${GO_MINIMUM_VERSION} or higher required (found version ${GO_VERSION})")
+      STRING(REGEX MATCH "^go version devel .*" go_dev_version "${GO_VERSION}")
+      IF (go_dev_version)
+          MESSAGE(STATUS "WARNING: You are using a development version of go")
+          MESSAGE(STATUS "         Go version of ${GO_MINIMUM_VERSION} or higher required")
+          MESSAGE(STATUS "         You may experience problems caused by this")
+      ELSE(go_dev_version)
+          MESSAGE(FATAL_ERROR "Go version of ${GO_MINIMUM_VERSION} or higher required (found version ${GO_VERSION})")
+      ENDIF(go_dev_version)
     ENDIF(GO_VERSION VERSION_LESS GO_MINIMUM_VERSION)
 
     SET (GO_COMMAND_LINE "${GO_EXECUTABLE}" build -x)
