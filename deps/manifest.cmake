@@ -34,5 +34,5 @@ DECLARE_DEP (python-snappy VERSION c97d633-cb1 PLATFORMS centos6 centos7 debian7
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc)
 DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS centos6 centos7 debian7 freebsd macosx sunos suse11.3 ubuntu12.04 ubuntu14.04)
 DECLARE_DEP (v8 VERSION 3.23.6 PLATFORMS windows_msvc)
-DECLARE_DEP (v8 VERSION e24973a-cb2 PLATFORMS centos6 centos7 debian7 macosx sunos suse11.3 ubuntu12.04 ubuntu14.04)
-DECLARE_DEP (v8 VERSION b08066f-cb1 PLATFORMS freebsd)
+DECLARE_DEP (v8 VERSION e24973a-cb2 PLATFORMS centos6 centos7 debian7 macosx suse11.3 ubuntu12.04 ubuntu14.04)
+DECLARE_DEP (v8 VERSION b08066f-cb1 PLATFORMS freebsd sunos)
