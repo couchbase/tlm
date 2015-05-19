@@ -1,4 +1,4 @@
 # Locate and configure Valgrind for memory checking.
 
 find_program( MEMORYCHECK_COMMAND valgrind )
-set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full --show-leak-kinds=all --partial-loads-ok=yes --xml=yes --xml-file=memcheck.%p.xml" )
+set( MEMORYCHECK_COMMAND_OPTIONS "--trace-children=yes --leak-check=full --show-leak-kinds=all --partial-loads-ok=yes --suppressions=${CMAKE_SOURCE_DIR}/tlm/valgrind.supp --xml=yes --xml-file=memcheck.%p.xml" )
