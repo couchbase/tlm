@@ -129,7 +129,7 @@ MACRO (GET_SUPPORTED_PRODUCTION_PLATFORM _supported_platform)
   LIST(APPEND _supported_prod_platforms
        "centos6" "centos7"
        "debian7"
-       "suse11.3"
+       "suse11.2"
        "ubuntu12.04" "ubuntu14.04"
        "windows")
   LIST (FIND _supported_prod_platforms ${_platform} _index)
