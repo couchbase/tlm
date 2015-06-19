@@ -50,6 +50,7 @@ MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
 MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE} (${CB_BUILD_TYPE})")
 
+INCLUDE(CouchbaseThreadSanitizer)
 INCLUDE(CouchbaseMemoryAllocator)
 
 INCLUDE(FindCouchbaseOpenSSL)
