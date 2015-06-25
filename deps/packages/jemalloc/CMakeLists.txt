@@ -14,7 +14,8 @@ ExternalProject_Add(jemalloc
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND autoconf <SOURCE_DIR>/configure.ac > <SOURCE_DIR>/configure
                     COMMAND chmod u+x <SOURCE_DIR>/configure
-                    COMMAND  <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>
+                    COMMAND CPPFLAGS=-I/usr/local/include <SOURCE_DIR>/configure
+                                                    --prefix=<INSTALL_DIR>
                                                     --with-jemalloc-prefix=je_
                                                     ${EXTRA_CONFIGURE_OPTIONS}
 
