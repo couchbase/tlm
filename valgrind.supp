@@ -10,3 +10,12 @@
    obj:/lib/x86_64-linux-gnu/ld-2.15.so
    ...
 }
+
+{
+   Ignore dlopen bug http://stackoverflow.com/questions/1542457/memory-leak-reported-by-valgrind-in-dlopen
+   Memcheck:Leak
+   ...
+   fun:_dlerror_run
+   fun:dlopen@@GLIBC_2.2.5
+   ...
+}
