@@ -2,8 +2,9 @@
    libstdc++6_Memory_leak_in_pool_constructor/https://gcc.gnu.org/bugzilla/show_bug.cgi?id=65434
    Memcheck:Leak
    match-leak-kinds: reachable
+   ...
    fun:malloc
-   obj:/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21
+   obj:*/libstdc++.so*
    fun:call_init.part.0
    fun:call_init
    fun:_dl_init
