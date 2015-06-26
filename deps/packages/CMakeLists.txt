@@ -42,6 +42,7 @@ MACRO (_ADD_PACKAGE_STEP)
   ExternalProject_Add_Step(${_dep_package} package
     COMMAND ${CMAKE_COMMAND} -E make_directory ${_output_dir}
     COMMAND ${CMAKE_COMMAND} -E tar czf ${_output_file}.tgz .
+    COMMENT "Perforing packaging step for '${_dep_package}' - writing artifacts to ${_output_dir}"
     DEPENDEES install
     WORKING_DIRECTORY <INSTALL_DIR>
     )
