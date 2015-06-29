@@ -20,3 +20,44 @@
    fun:dlopen@@GLIBC_2.2.5
    ...
 }
+
+# The following suppressions are for memcached background threads
+# which are not cleanly 'joined' on shutdown; hence they have some
+# allocations which are still reachable. Given there's no easy way to
+# signal to these threads that the process has terminated (and they
+# arn't actual "leaks") we choose suppress them.
+{
+   memcached_parent_monitor_thread_name
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:je_malloc
+   fun:malloc
+   fun:strdup
+   fun:cb_create_named_thread
+   fun:setup_parent_monitor
+   fun:main
+}
+{
+   memcached_parent_monitor_thread_context
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:je_malloc
+   fun:malloc
+   fun:cb_create_named_thread
+   fun:setup_parent_monitor
+   fun:main
+}
+{
+   memcached_parent_monitor_thread_stack
+   Memcheck:Leak
+   match-leak-kinds: possible
+   fun:je_calloc
+   fun:calloc
+   fun:allocate_dtv
+   fun:_dl_allocate_tls
+   fun:allocate_stack
+   fun:pthread_create@@GLIBC_2.2.5
+   fun:cb_create_named_thread
+   fun:setup_parent_monitor
+   fun:main
+}
