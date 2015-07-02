@@ -20,6 +20,15 @@
    fun:dlopen@@GLIBC_2.2.5
    ...
 }
+{
+   Ignore dlopen bug (2) http://stackoverflow.com/questions/1542457/memory-leak-reported-by-valgrind-in-dlopen
+   Memcheck:Leak
+   ...
+   fun:_dlerror_run
+   fun:dlclose
+   ...
+}
+
 
 # The following suppressions are for memcached background threads
 # which are not cleanly 'joined' on shutdown; hence they have some
