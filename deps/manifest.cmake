@@ -1,5 +1,5 @@
 DECLARE_DEP (curl VERSION 7.35.0 PLATFORMS windows_msvc)
-DECLARE_DEP (gperftools VERSION 2.2-cb3 PLATFORMS windows_msvc)
+DECLARE_DEP (gperftools VERSION 2.4-cb3 PLATFORMS windows_msvc)
 DECLARE_DEP (icu4c VERSION 53.1.0 PLATFORMS windows_msvc)
 DECLARE_DEP (libevent VERSION 2.1.4-alpha-dev PLATFORMS windows_msvc)
 DECLARE_DEP (openssl VERSION 1.0.1h PLATFORMS windows_msvc)
