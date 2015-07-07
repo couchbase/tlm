@@ -107,7 +107,13 @@ ADD_SUBDIRECTORY(sigar)
 ADD_SUBDIRECTORY(moxi)
 ADD_SUBDIRECTORY(couchdb)
 ADD_SUBDIRECTORY(geocouch)
-ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
+
+IF (NOT DEFINED JETBRAINS_CLION_IDE)
+  # The CLion IDE from JetBrains don't support building "in source",
+  # so let's just skip ns_server in that configuration (we don't use
+  # CLion for Erlang development anyway...
+  ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
+ENDIF (NOT DEFINED JETBRAINS_CLION_IDE)
 
 SET (GODEPSDIR "${CMAKE_CURRENT_SOURCE_DIR}/godeps")
 ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/query)
