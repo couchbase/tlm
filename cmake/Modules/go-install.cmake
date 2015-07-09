@@ -24,6 +24,16 @@ ENDMACRO (EXPORT_FLAGS)
 EXPORT_FLAGS (CGO_INCLUDE_DIRS CGO_CPPFLAGS "-I")
 EXPORT_FLAGS (CGO_LIBRARY_DIRS CGO_LDFLAGS "-L")
 
+IF (CGO_LDFLAGS)
+   SET (ENV{CGO_LDFLAGS} "$ENV{CGO_LDFLAGS} ${CGO_LDFLAGS}")
+ENDIF ()
+
+IF (NOT WIN32)
+  # Only use the CMAKE C compiler for cgo on non-Windows platforms; on Windows
+  # we use a different compiler (gcc) for cgo than for the main build MSVC).
+  SET (ENV{CC} "${CMAKE_C_COMPILER}")
+ENDIF()
+
 # QQQ TOTAL HACK to enable CGO binaries to find Couchbase-built shared
 # libraries.  This will clearly only work on Linux ELF-based systems,
 # and only for those libraries which are installed in the correct path

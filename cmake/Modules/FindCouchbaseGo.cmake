@@ -147,8 +147,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
       COMMAND "${CMAKE_COMMAND}"
       -D "GO_EXECUTABLE=${GO_EXECUTABLE}"
+      -D CMAKE_C_COMPILER=${CMAKE_C_COMPILER}
       -D "GOPATH=${Go_GOPATH}"
       -D "WORKSPACE=${_workspace}"
+      -D "CGO_LDFLAGS=${CMAKE_CGO_LDFLAGS}"
       -D "GCFLAGS=${Go_GCFLAGS}"
       -D "LDFLAGS=${_ldflags}"
       -D "PKGEXE=${_pkgexe}"
@@ -157,6 +159,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       -D "CGO_INCLUDE_DIRS=${Go_CGO_INCLUDE_DIRS}"
       -D "CGO_LIBRARY_DIRS=${Go_CGO_LIBRARY_DIRS}"
       -P "${TLM_MODULES_DIR}/go-install.cmake"
+      COMMENT "Building Go target ${Go_PACKAGE}"
       VERBATIM)
     IF (Go_DEPENDS)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})

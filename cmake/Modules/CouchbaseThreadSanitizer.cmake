@@ -20,8 +20,9 @@ IF (CB_THREADSANITIZER)
 
         SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${THREAD_SANITIZER_FLAG}")
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${THREAD_SANITIZER_FLAG}")
+        SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${THREAD_SANITIZER_FLAG}")
 
-        # TC/jemalloc are incompatible with ThreasSanitizer - force
+        # TC/jemalloc are incompatible with ThreadSanitizer - force
         # the use of the system allocator.
         SET(COUCHBASE_MEMORY_ALLOCATOR system CACHE STRING "Memory allocator to use")
 
