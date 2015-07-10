@@ -28,7 +28,21 @@
    fun:dlclose
    ...
 }
-
+{
+   Ignore dlopen bug - related to handling of static initialisers.
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_dl_map_object
+   fun:openaux
+   fun:_dl_catch_error
+   fun:_dl_map_object_deps
+   fun:dl_open_worker
+   fun:_dl_catch_error
+   fun:_dl_open
+   fun:dlopen_doit
+   ...
+}
 
 # The following suppressions are for memcached background threads
 # which are not cleanly 'joined' on shutdown; hence they have some
