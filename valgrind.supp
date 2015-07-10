@@ -84,3 +84,16 @@
    fun:setup_parent_monitor
    fun:main
 }
+
+# The following suppresion is for V8 - it doesn't free all memory
+# allocated via dlopen() when the dll is unloaded.
+{
+   libv8 v8::internal::Isolate::EnsureDefaultIsolate reachable
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   ...
+   fun:_ZN2v88internal7Isolate20EnsureDefaultIsolateEv
+   ...
+   fun:_dl_init
+   ...
+}
