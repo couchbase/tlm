@@ -61,6 +61,15 @@ INCLUDE(CouchbaseDefinitions)
 # Setup the RPATH
 INCLUDE(CouchbaseRpath)
 
+# Check function attibute availability
+# - warn_used_result
+INCLUDE(CheckCCompilerFlag)
+CHECK_C_SOURCE_COMPILES("int main() {
+      return 0;
+}
+int foo() __attribute__((warn_unused_result));" HAVE_ATTR_WARN_UNUSED_RESULT)
+
+
 IF (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
    FIND_PROGRAM(CCACHE ccache)
    IF (CCACHE)
