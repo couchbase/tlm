@@ -38,15 +38,15 @@ CMAKE_ARGS=-G "$(MAKETYPE)" -D CMAKE_INSTALL_PREFIX="$(PREFIX)" \
                             $(EXTRA_CMAKE_OPTIONS)
 
 
-all: CMakeLists.txt Makefile GNUmakefile build/Makefile compile
+all: CMakeLists.txt Makefile GNUmakefile build/CMakeCache.txt compile
 
-compile: build/Makefile
-	(cd build && $(MAKE) all install)
+compile: build/CMakeCache.txt
+	cmake --build build --target install
 
 test: all
-	(cd build && $(MAKE) test)
+	cmake --build build --target test
 
-build/Makefile: CMakeLists.txt
+build/CMakeCache.txt: CMakeLists.txt
 	@-mkdir build
 	(cd build && $(CMAKE) $(CMAKE_ARGS) ..)
 
