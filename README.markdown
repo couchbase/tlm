@@ -64,7 +64,6 @@ configuration, you may use the Makefile we've supplied for your
 convenience:
 
     trond@ok > mkdir source
-    trond@ok > mkdir build
     trond@ok > cd source
     trond@ok source> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
     trond@ok source> repo sync
