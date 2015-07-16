@@ -29,9 +29,12 @@ IF (CGO_LDFLAGS)
 ENDIF ()
 
 IF (NOT WIN32)
-  # Only use the CMAKE C compiler for cgo on non-Windows platforms; on Windows
-  # we use a different compiler (gcc) for cgo than for the main build MSVC).
-  SET (ENV{CC} "${CMAKE_C_COMPILER}")
+  IF (DEFINED CB_THREADSANITIZER)
+    # Only use the CMAKE C compiler for cgo on non-Windows platforms;
+    # on Windows we use a different compiler (gcc) for cgo than for
+    # the main build MSVC).
+    SET (ENV{CC} "${CMAKE_C_COMPILER}")
+  ENDIF (DEFINED CB_THREADSANITIZER)
 ENDIF()
 
 # QQQ TOTAL HACK to enable CGO binaries to find Couchbase-built shared
