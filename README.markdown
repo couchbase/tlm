@@ -571,7 +571,7 @@ There are pre-canned build rules to allow you to build with [ThreadSanitizer][th
 ### Prerequities
 
 * A compiler which supports ThreadSantizier. Recent version of Clang
-  (3.2+) or GCC (4.8+) are claimed to work, however only Clang has
+  (3.2+) or GCC (4.8+) are claimed to work, however only Clang (3.5+) has
   been tested.
 
 ### Running
