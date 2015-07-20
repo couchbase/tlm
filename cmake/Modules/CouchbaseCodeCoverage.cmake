@@ -32,26 +32,36 @@ IF (CB_CODE_COVERAGE)
 ENDIF(CB_CODE_COVERAGE)
 
 # Defines a coverage report for the current module. If CB_CODE_COVERAGE is enabled,
-# collate all code coverage results belonging to the current module and generate
-# coverage reports.
+# adds three new targets to that module:
+#   <project>-coverage-zero-counters: Zeros the code coverage counters for the module.
+#   <project>-coverage-report-html:   Generates a code coverage report in HTML.
+#   <project>-coverage-report-xml:    Generates a code coverage report in XML.
+# Usage:
+# 1) `make <project>-coverage-zero-counters` to clear any counters from
+#    previously-executed programs.
+# 2) Run whatever programs to excercise the code (unit tests, etc).
+# 3) `make <project>-coverage-report-{html,xml}` to generate a report.
+#
 FUNCTION(ENABLE_CODE_COVERAGE_REPORT)
+   GET_FILENAME_COMPONENT(_cc_project ${CMAKE_CURRENT_BINARY_DIR} NAME)
+
    IF (CB_CODE_COVERAGE)
       MESSAGE(STATUS "Setting up code coverage for ${PROJECT_NAME}")
 
-      ADD_CUSTOM_TARGET(coverage-zero-counters
+      ADD_CUSTOM_TARGET(${_cc_project}-coverage-zero-counters
                         COMMAND find . -name *.gcda -exec rm {} \;
                         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                         COMMENT "Zeroing coverage counters for objects in ${CMAKE_CURRENT_BINARY_DIR}"
                         VERBATIM)
 
-      ADD_CUSTOM_TARGET(coverage-report-html
+      ADD_CUSTOM_TARGET(${_cc_project}-coverage-report-html
                         COMMAND ${CMAKE_COMMAND} -E remove_directory coverage
                         COMMAND ${CMAKE_COMMAND} -E make_directory coverage
                         COMMAND ${GCOVR_PATH} --root=${CMAKE_SOURCE_DIR} --filter="${CMAKE_CURRENT_SOURCE_DIR}/.*" --html --html-details -o coverage/index.html
                         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                         COMMENT "Generating code coverage report for ${PROJECT_NAME} to ${CMAKE_CURRENT_BINARY_DIR}/coverage/index.html")
 
-      ADD_CUSTOM_TARGET(coverage-report-xml
+      ADD_CUSTOM_TARGET(${_cc_project}-coverage-report-xml
                         COMMAND ${GCOVR_PATH} --root=${CMAKE_SOURCE_DIR} --filter="${CMAKE_CURRENT_SOURCE_DIR}/.*" --xml -o coverage.xml
                         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
                         COMMENT "Generating code coverage report for ${PROJECT_NAME} to ${CMAKE_CURRENT_BINARY_DIR}/coverage.xml")
