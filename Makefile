@@ -89,7 +89,11 @@ e2eviewtests:
 	cd testrunner && $(MAKE) test-views
 
 clean:
-	-$(RM) $(RMOPTS) build $(PREFIX) godeps$(SEPARATOR)pkg goproj$(SEPARATOR)bin goproj$(SEPARATOR)pkg
+	-(cd build && $(MAKE) realclean)
+	-$(RM) $(RMOPTS) build $(PREFIX) godeps$(SEPARATOR)pkg goproj$(SEPARATOR)bin goproj$(SEPARATOR)pkg ns_server$(SEPARATOR)/build
+
+reset:
+	(cd build && $(MAKE) reset)
 
 clean-xfd: clean
 	cd ns_server && git clean -dfxq

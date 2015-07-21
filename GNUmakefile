@@ -7,39 +7,14 @@
 PREFIX:=$(shell pwd)/install
 MAKEFLAGS=--no-print-directory
 
-all:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" SEPARATOR=/ all
+PASSTHRU_TARGETS=all analyze clean clean-all clean-xfd clean-xfd-hard \
+  e2etest e2eviewtests geocouch-build-for-testing install reset run-mats test
 
-install: all
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" SEPARATOR=/ install
-
-geocouch-build-for-testing:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" SEPARATOR=/ geocouch-build-for-testing
-
-test:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" SEPARATOR=/ test
-
-run-mats:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp run-mats
-
-e2etest:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp e2etest
-
-e2eviewtests:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp e2eviewtests
-
-analyze:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp MAKETYPE="Unix Makefiles" $@
-
-clean:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp RM=rm RMOPTS=-rf SEPARATOR=/ clean
-
-clean-xfd:
-	@$(MAKE) -f Makefile PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp RM=rm RMOPTS=-rf SEPARATOR=/ clean-xfd
-
-clean-xfd-hard: clean-xfd
-
-clean-all: clean-xfd
+$(PASSTHRU_TARGETS):
+	@$(MAKE) -f Makefile \
+            MAKETYPE="Unix Makefiles" \
+            PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp \
+            SEPARATOR=/ RM=rm RMOPTS=-rf $@
 
 ICU_OPT=
 UNAME := $(shell uname -s)
