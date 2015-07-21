@@ -66,14 +66,19 @@ ENDMACRO (_ADD_PACKAGE_STEP)
 #   cb_release - a numeric index, which should be advanced whenever we
 #      need to re-package a given dependency while maintaining the same
 #      upstream_ver.
+# If the CMake variable 'PACKAGE' is defined but not equal to package,
+# this macro will do nothing. This allows incremental building of packages
+# on a new platform.
 #
 MACRO (_ADD_DEP_PACKAGE package upstream_ver cb_branch cb_release)
-  SET (_output_dir "${CMAKE_BINARY_DIR}/deps/${package}/${upstream_ver}-cb${cb_release}")
-  SET (_output_file "${_output_dir}/${package}-${PLATFORM}-${HOST_ARCH}-${upstream_ver}-cb${cb_release}")
-  SET (_git_repo "git://github.com/couchbasedeps/${package}.git")
-  SET (_git_rev ${cb_branch})
-  SET (_dep_package ${package})
-  ADD_SUBDIRECTORY (${package})
+  IF (NOT DEFINED PACKAGE OR "${PACKAGE}" STREQUAL "${package}")
+    SET (_output_dir "${CMAKE_BINARY_DIR}/deps/${package}/${upstream_ver}-cb${cb_release}")
+    SET (_output_file "${_output_dir}/${package}-${PLATFORM}-${HOST_ARCH}-${upstream_ver}-cb${cb_release}")
+    SET (_git_repo "git://github.com/couchbasedeps/${package}.git")
+    SET (_git_rev ${cb_branch})
+    SET (_dep_package ${package})
+    ADD_SUBDIRECTORY (${package})
+  ENDIF (NOT DEFINED PACKAGE OR "${PACKAGE}" STREQUAL "${package}")
 ENDMACRO (_ADD_DEP_PACKAGE)
 
 
@@ -138,7 +143,7 @@ _ADD_DEP_PACKAGE(libevent 2.0.22 release-2.0.22-stable 1)
 _ADD_DEP_PACKAGE(v8 b08066f b08066f 1)
 _ADD_DEP_PACKAGE(jemalloc c002a5c c002a5c 7)
 _ADD_DEP_PACKAGE(curl 7.40.0 curl-7_40_0 2)
-_ADD_DEP_PACKAGE(erlang R16B03-1 mb11917 1)
+_ADD_DEP_PACKAGE(erlang 62b74b5 mb11917 1)
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 _ADD_DEP_PACKAGE(pysqlite2 0ff6e32 0ff6e32 1)
 _ADD_DEP_PACKAGE(flatbuffers 1.1.0 v1.1.0 1)
