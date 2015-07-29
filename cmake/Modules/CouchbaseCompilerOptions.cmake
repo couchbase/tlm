@@ -69,6 +69,13 @@ CHECK_C_SOURCE_COMPILES("int main() {
 }
 int foo() __attribute__((warn_unused_result));" HAVE_ATTR_WARN_UNUSED_RESULT)
 
+# - printf-style format checking
+INCLUDE(CheckCCompilerFlag)
+CHECK_C_SOURCE_COMPILES("int main() {
+      return 0;
+}
+int my_printf(const char* fmt, ...) __attribute__((format (printf, 1, 2)));" HAVE_ATTR_FORMAT)
+
 
 IF (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
    FIND_PROGRAM(CCACHE ccache)
