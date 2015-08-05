@@ -76,6 +76,20 @@ CHECK_C_SOURCE_COMPILES("int main() {
 }
 int my_printf(const char* fmt, ...) __attribute__((format (printf, 1, 2)));" HAVE_ATTR_FORMAT)
 
+# - noreturn for functions not returning
+INCLUDE(CheckCCompilerFlag)
+CHECK_C_SOURCE_COMPILES("int main() {
+      return 0;
+}
+int foo(void) __attribute__((noreturn));" HAVE_ATTR_NORETURN)
+
+# - nonnull parameters that can't be null
+INCLUDE(CheckCCompilerFlag)
+CHECK_C_SOURCE_COMPILES("int main() {
+      return 0;
+}
+int foo(void* foo) __attribute__((nonnull(1)));" HAVE_ATTR_NONNULL)
+
 
 IF (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
    FIND_PROGRAM(CCACHE ccache)
