@@ -76,6 +76,9 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # GCFLAGS - flags that will be passed (via -gcflags) to all compile
   # steps; should be a single string value, with spaces if necessary
   #
+  # GOTAGS - tags that will be passed (viga -tags) to all compile
+  # steps; should be a single string value, with spaces as necessary
+  #
   # LDFLAGS - flags that will be passed (via -ldflags) to all compile
   # steps; should be a single string value, with spaces if necessary
   #
@@ -102,7 +105,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF (NOT GO_EXECUTABLE)
 
     PARSE_ARGUMENTS (Go "DEPENDS;GOPATH;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
-      "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GCFLAGS;LDFLAGS" "NOCONSOLE" ${ARGN})
+      "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GCFLAGS;GOTAGS;LDFLAGS" "NOCONSOLE" ${ARGN})
 
     IF (NOT Go_TARGET)
       MESSAGE (FATAL_ERROR "TARGET is required!")
@@ -152,6 +155,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       -D "WORKSPACE=${_workspace}"
       -D "CGO_LDFLAGS=${CMAKE_CGO_LDFLAGS}"
       -D "GCFLAGS=${Go_GCFLAGS}"
+      -D "GOTAGS=${Go_GOTAGS}"
       -D "LDFLAGS=${_ldflags}"
       -D "PKGEXE=${_pkgexe}"
       -D "PACKAGE=${Go_PACKAGE}"

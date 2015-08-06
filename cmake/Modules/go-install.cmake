@@ -50,15 +50,15 @@ IF ($ENV{CB_GO_DEBUG})
 ENDIF ($ENV{CB_GO_DEBUG})
 
 # Execute "go install"
-MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${PACKAGE}")
+MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install -tags=\"${GOTAGS}\" -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${PACKAGE}")
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
-  COMMAND "${GO_EXECUTABLE}" install "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} "${PACKAGE}")
+  COMMAND "${GO_EXECUTABLE}" install "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} "${PACKAGE}")
 IF (_failure)
   MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
   MESSAGE (STATUS "@ 'go install' failed! Re-running as 'go build' to help debug...")
   MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
   # Easier to debug
-  EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" build "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" -x "${PACKAGE}")
+  EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" build "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" -x "${PACKAGE}")
   MESSAGE (FATAL_ERROR "Failed running go install")
 ENDIF (_failure)
 
