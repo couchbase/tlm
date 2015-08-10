@@ -4,6 +4,16 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.10)
 PROJECT("Couchbase")
 
+IF (DEFINED JETBRAINS_CLION_IDE)
+   # CLion tries to autodetect all of the different configuration
+   # types and generate projects for them. That cause a race condition
+   # with the population pf the precompiled binaries we've got
+   # making an incomplete configuration. To work around that,
+   # let's just remove all of the other configurations and just
+   # build a debug build
+   SET(CMAKE_CONFIGURATION_TYPES Debug CACHE STRING "" FORCE)
+ENDIF (DEFINED JETBRAINS_CLION_IDE)
+
 # RPATH is more or less "broken" on MacOSX in cmake < 3.x
 IF (APPLE)
    IF (${CMAKE_MAJOR_VERSION} LESS 3)
