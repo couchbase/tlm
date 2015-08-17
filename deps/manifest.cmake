@@ -25,7 +25,7 @@ DECLARE_DEP (flatbuffers VERSION 1.1.0-cb1 PLATFORMS centos6 centos7 debian7 fre
 DECLARE_DEP (gperftools VERSION 2.4-cb3 PLATFORMS windows_msvc)
 DECLARE_DEP (icu4c VERSION 53.1.0 PLATFORMS windows_msvc)
 DECLARE_DEP (icu4c VERSION 263593-cb5 PLATFORMS centos6 centos7 debian7 freebsd macosx sunos suse11.2 ubuntu12.04 ubuntu14.04)
-DECLARE_DEP (jemalloc VERSION c002a5c-cb7 PLATFORMS centos6 centos7 debian7 freebsd macosx sunos suse11.2 ubuntu12.04 ubuntu14.04)
+DECLARE_DEP (jemalloc VERSION c002a5c-cb7 PLATFORMS centos6 centos7 debian7 freebsd macosx suse11.2 ubuntu12.04 ubuntu14.04)
 DECLARE_DEP (libevent VERSION 2.1.4-alpha-dev PLATFORMS windows_msvc)
 DECLARE_DEP (libevent VERSION 2.0.22-cb1 PLATFORMS centos6 centos7 debian7 freebsd macosx sunos suse11.2 ubuntu12.04 ubuntu14.04)
 DECLARE_DEP (openssl VERSION 1.0.1h PLATFORMS windows_msvc)
