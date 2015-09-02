@@ -10,6 +10,10 @@ SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g")
 
 IF ("${ENABLE_WERROR}" STREQUAL "YES")
    SET(CB_CLANGXX_WERROR "-Werror")
+ELSE()
+   # We've fixed all occurrences for the following warnings and don't want
+   # any new ones to appear
+   SET(CB_CLANGXX_WERROR "-Werror=switch")
 ENDIF()
 
 if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 3.1)
