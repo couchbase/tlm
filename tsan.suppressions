@@ -11,3 +11,7 @@ race:connection_stats
 # detect anything wrong and ThreadSanitizer is known to have issues with exceptions
 # so I'm pretty sure this a false positive.
 race:TestCrashRecoveryGarbeledDate
+
+# memcached ISOTime::generatetimestamp is using libc mktime which updates
+# the TZ env-variable through tzset (_internal). This shows up as a data-race.
+race:tzset_internal
