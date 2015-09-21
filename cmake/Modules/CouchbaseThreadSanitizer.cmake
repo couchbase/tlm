@@ -29,6 +29,8 @@ IF (CB_THREADSANITIZER)
         # Configure CTest's MemCheck to ThreadSanitizer.
         SET(MEMORYCHECK_TYPE ThreadSanitizer)
 
+        ADD_DEFINITIONS(-DTHREAD_SANITIZER)
+
         # Override the normal ADD_TEST macro to set the TSAN_OPTIONS
         # environment variable - this allows us to specify the
         # suppressions file to use.
