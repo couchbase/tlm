@@ -7,6 +7,7 @@ SET(CB_GXX_THREAD "-pthread")
 # Release, only differing in whether debugging information is enabled.
 SET(CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g")
+SET(CMAKE_CXX_FLAGS_DEBUG           -O0 -g)
 
 IF ("${ENABLE_WERROR}" STREQUAL "YES")
    SET(CB_GXX_WERROR "-Werror")
