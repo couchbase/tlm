@@ -13,6 +13,8 @@ SET(CMAKE_CXX_FLAGS_RELEASE        "/MD /O2 /Ob2 /D NDEBUG")
 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "/MD /O2 /Ob2 /D NDEBUG /Zi")
 SET(CMAKE_CXX_FLAGS_DEBUG          "/MD /Od /Ob0 /Zi")
 
+SET(CB_CXX_FLAGS_NO_OPTIMIZE       /Od /Ob0)
+
 # C++11 support has gradually increased in MSVC starting with 2010 (v16), but
 # we declare that at least VS 2013 (v18) is needed for std::atomic / C99.
 IF (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 17)

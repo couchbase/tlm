@@ -30,6 +30,10 @@ Descriptions of specific variables of interest:
   this variable to selectively force Debug flags (i.e. optimization
   off) for selected targets, such as unit tests.
 
+* CB_C_FLAGS_NO_OPTIMIZE / CB_CXX_FLAGS_NO_OPTIMIZE: Compiler flags to
+  disable optimization. This allows us to use this variable to
+  selectively force optimization off for selected targets, such as
+  unit tests.
 
 ## FindCouchbaseXXX.cmake files
 
