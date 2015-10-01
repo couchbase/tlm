@@ -17,8 +17,6 @@ MAKETYPE=NMake Makefiles
 RM=rmdir
 # Options passed to the command to nuke directories
 RMOPTS=/Q /S
-# The kind of build type: Debug, Release, RelWithDebInfo or MinSizeRel
-BUILD_TYPE=RelWithDebInfo
 # Other options you would like to pass to cmake
 EXTRA_CMAKE_OPTIONS=
 # Command used to remove read only flag for files
@@ -30,11 +28,8 @@ SEPARATOR=\\
 
 CMAKE=cmake
 
-CMAKE_ARGS=-G "$(MAKETYPE)" -D CMAKE_INSTALL_PREFIX="$(PREFIX)" \
-                            -D CMAKE_PREFIX_PATH="$(CMAKE_PREFIX_PATH);$(PREFIX)" \
-                            -D PRODUCT_VERSION=$(PRODUCT_VERSION) \
+CMAKE_ARGS=-G "$(MAKETYPE)" -D PRODUCT_VERSION=$(PRODUCT_VERSION) \
                             -D BUILD_ENTERPRISE=$(BUILD_ENTERPRISE) \
-                            -D CMAKE_BUILD_TYPE=$(BUILD_TYPE) \
                             $(EXTRA_CMAKE_OPTIONS)
 
 

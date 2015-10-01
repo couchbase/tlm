@@ -2,6 +2,15 @@
 # This is the toplevel CMakeLists.txt that is used to build Couchbase
 #
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
+
+# The PROJECT() macro sets it's own default build type, so need to specify
+# ours first.
+IF (NOT DEFINED CMAKE_BUILD_TYPE)
+   SET(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING
+       "Choose the type of build, options are: Debug Release RelWithDebInfo MinSizeRel."
+       FORCE)
+ENDIF ()
+
 PROJECT("Couchbase")
 
 IF (DEFINED JETBRAINS_CLION_IDE)
