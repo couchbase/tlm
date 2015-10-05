@@ -15,9 +15,8 @@ FIND_PATH(OPENSSL_INCLUDE_DIR openssl/ssl.h
                /opt/local
                /opt/csw
                /opt/openssl
-               /opt)
-
-
+               /opt
+               /usr/local/opt/openssl)
 
 FIND_LIBRARY(OPENSSL_SSL_LIBRARY
              NAMES ssl libssl32 ssleay32
@@ -30,7 +29,8 @@ FIND_LIBRARY(OPENSSL_SSL_LIBRARY
                  /opt/local
                  /opt/csw
                  /opt/openssl
-                 /opt)
+                 /opt
+                 /usr/local/opt/openssl/lib)
 
 FIND_LIBRARY(OPENSSL_CRYPT_LIBRARY
              NAMES crypto libeay32
@@ -44,7 +44,8 @@ FIND_LIBRARY(OPENSSL_CRYPT_LIBRARY
                  /opt/local
                  /opt/csw
                  /opt/openssl
-                 /opt)
+                 /opt
+                 /usr/local/opt/openssl/lib)
 
 
 IF (OPENSSL_SSL_LIBRARY AND OPENSSL_CRYPT_LIBRARY)
