@@ -1,5 +1,5 @@
 # ThreadSanitizer suppressions file for Couchbase
-# https://code.google.com/p/thread-sanitizer/wiki/Flags
+# https://github.com/google/sanitizers/wiki/ThreadSanitizerSuppressions
 
 # In memcached we choose to ignore accesses to the conn structs from
 # other threads when printing connection statistics. We accept the
@@ -15,3 +15,12 @@ race:TestCrashRecoveryGarbeledDate
 # memcached ISOTime::generatetimestamp is using libc mktime which updates
 # the TZ env-variable through tzset (_internal). This shows up as a data-race.
 race:tzset_internal
+
+# ThreadSanitizer appears to report a false positive data race in
+# operator delete via std::string::assign for std::string when using
+# libstdc++ - see discussion at
+# https://groups.google.com/forum/#!msg/thread-sanitizer/dZ3QiQE49ns/j7rKGHg08foJ
+# Running with LLVM's own C++ library (libc++) makes the warning go
+# away, so would seem to be either a bug in libstdc++, or a bug in
+# ThreadSanitizer.
+race:^std::string::assign(std::string const&)
