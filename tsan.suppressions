@@ -24,3 +24,10 @@ race:tzset_internal
 # away, so would seem to be either a bug in libstdc++, or a bug in
 # ThreadSanitizer.
 race:^std::string::assign(std::string const&)
+
+# In forestdb plock_lock is invoked from a lock structure that is sure to not
+# overlap with that of another thread by use of is_overlapped() test.
+# However since this function is not trusted by ThreadSanitizer it reports
+# a lock inversion since the locks in the race are from the same struct definition
+# but different memory addresses. This is hence a false positive.
+race:plock_lock
