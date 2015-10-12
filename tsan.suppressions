@@ -30,4 +30,4 @@ race:^std::string::assign(std::string const&)
 # However since this function is not trusted by ThreadSanitizer it reports
 # a lock inversion since the locks in the race are from the same struct definition
 # but different memory addresses. This is hence a false positive.
-race:plock_lock
+deadlock:plock_lock
