@@ -52,34 +52,8 @@
 {
    memcached_parent_monitor_thread_name
    Memcheck:Leak
-   match-leak-kinds: reachable
-   fun:je_malloc
-   fun:malloc
-   fun:strdup
-   fun:cb_create_named_thread
-   fun:setup_parent_monitor
-   fun:main
-}
-{
-   memcached_parent_monitor_thread_context
-   Memcheck:Leak
-   match-leak-kinds: reachable
-   fun:je_malloc
-   fun:malloc
-   fun:cb_create_named_thread
-   fun:setup_parent_monitor
-   fun:main
-}
-{
-   memcached_parent_monitor_thread_stack
-   Memcheck:Leak
-   match-leak-kinds: possible
-   fun:je_calloc
-   fun:calloc
-   fun:allocate_dtv
-   fun:_dl_allocate_tls
-   fun:allocate_stack
-   fun:pthread_create@@GLIBC_2.2.5
+   match-leak-kinds: all
+   ...
    fun:cb_create_named_thread
    fun:setup_parent_monitor
    fun:main
