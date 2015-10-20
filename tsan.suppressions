@@ -25,6 +25,13 @@ race:tzset_internal
 # ThreadSanitizer.
 race:^std::string::assign(std::string const&)
 
+# ThreadSanitizer appears to report a data race in GCC's basic_string
+# implementation on _M_refcount: specifically on operator delete via
+# std::string::_Rep::_M_dispose for std::string when using libstdc++ -
+# report at: https://gcc.gnu.org/ml/libstdc++/2015-09/msg00000.html
+# Suppressing this for now.
+race:^std::string::_Rep::_M_dispose(std::allocator<char> const&)
+
 # In forestdb plock_lock is invoked from a lock structure that is sure to not
 # overlap with that of another thread by use of is_overlapped() test.
 # However since this function is not trusted by ThreadSanitizer it reports
