@@ -155,3 +155,7 @@ ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/gometa)
 ADD_SUBDIRECTORY(godeps/src/github.com/couchbase/cbauth)
 
 ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbft)
+
+IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
+  ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/backup)
+ENDIF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
