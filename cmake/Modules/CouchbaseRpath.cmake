@@ -8,7 +8,7 @@ IF (UNIX)
    ELSE(APPLE)
       SET (ORIGIN \$ORIGIN)
    ENDIF(APPLE)
-   SET(RPATH ${ORIGIN}/../lib;${ORIGIN}/../lib/memcached)
+   SET(RPATH ${ORIGIN}/../lib)
 ENDIF()
 
 SET(RPATH "${RPATH};${CMAKE_INSTALL_PREFIX}/lib;${CMAKE_INSTALL_PREFIX}/lib/memcached")
