@@ -13,6 +13,17 @@
 }
 
 {
+   libstdc++ (GCC 4.9.0) implementation of std::regex has a memory leak: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=58737
+   Memcheck:Leak
+   match-leak-kinds: all
+   ...
+   fun:malloc
+   ...
+   fun:basic_regex<char const*>
+   ...
+}
+
+{
    Ignore dlopen bug http://stackoverflow.com/questions/1542457/memory-leak-reported-by-valgrind-in-dlopen
    Memcheck:Leak
    ...
