@@ -90,6 +90,13 @@ CHECK_C_SOURCE_COMPILES("int main() {
 }
 int foo(void* foo) __attribute__((nonnull(1)));" HAVE_ATTR_NONNULL)
 
+# - deprecated
+INCLUDE(CheckCCompilerFlag)
+CHECK_C_SOURCE_COMPILES("int main() {
+      return 0;
+}
+int foo(void* foo) __attribute__((deprecated));" HAVE_ATTR_DEPRECATED)
+
 
 IF (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
    FIND_PROGRAM(CCACHE ccache)
