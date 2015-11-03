@@ -24,7 +24,7 @@ ExternalProject_Add(jemalloc
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND $(MAKE) install_lib_shared install_include
 
-  COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib include DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
 )
 
 # OS X-only: Custom post-build step to set the shared library install name.

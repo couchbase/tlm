@@ -6,11 +6,14 @@
 INCLUDE (CMakePushCheckState)
 INCLUDE (CheckSymbolExists)
 
+SET(_jemalloc_exploded ${CMAKE_BINARY_DIR}/tlm/deps/jemalloc.exploded)
+
 FIND_PATH(JEMALLOC_INCLUDE_DIR jemalloc/jemalloc.h
           HINTS
                ENV JEMALLOC_DIR
           PATH_SUFFIXES include
           PATHS
+               ${_jemalloc_exploded}
                ~/Library/Frameworks
                /Library/Frameworks
                /opt/local
