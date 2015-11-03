@@ -4,7 +4,7 @@
 # This module defines
 #  GO_FOUND, if a compiler was found
 
-SET(GO_MINIMUM_VERSION 1.4)
+SET(GO_MINIMUM_VERSION 1.5.1)
 
 # Prevent double-definition if two projects use this script
 IF (NOT FindCouchbaseGo_INCLUDED)
