@@ -14,6 +14,7 @@ FIND_PATH(V8_INCLUDE_DIR v8.h
                /opt/local
                /opt/csw
                /opt/v8
+               /opt/v8/include
                /opt)
 
 FIND_LIBRARY(V8_LIBRARIES
@@ -26,6 +27,7 @@ FIND_LIBRARY(V8_LIBRARIES
                  /opt/local
                  /opt/csw
                  /opt/v8
+                 /opt/v8/lib
                  /opt)
 
 IF (V8_LIBRARIES)
