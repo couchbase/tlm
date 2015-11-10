@@ -38,3 +38,11 @@ race:^std::string::_Rep::_M_dispose(std::allocator<char> const&)
 # a lock inversion since the locks in the race are from the same struct definition
 # but different memory addresses. This is hence a false positive.
 deadlock:plock_lock
+
+# The memcached unit test 'memcached_logger_emfile_test' deliberately
+# consumes all file descriptors during it's run. This has the
+# consequence of preventing thread sanitizer's external symbol lookup
+# from failing. In turn this means that it cannot check for
+# symbol-based suppressions (e.g. the tzset_internal one above).
+# Therefore just suppress anything for this unit test.
+race:memcached_logger_emfile_test
