@@ -42,7 +42,7 @@ IF (CB_THREADSANITIZER)
             ENDIF()
             _ADD_TEST(${ARGV})
             SET_TESTS_PROPERTIES(${_name} PROPERTIES ENVIRONMENT
-                                 "TSAN_OPTIONS=suppressions=${CMAKE_SOURCE_DIR}/tlm/tsan.suppressions")
+                                 "TSAN_OPTIONS=suppressions=${CMAKE_SOURCE_DIR}/tlm/tsan.suppressions second_deadlock_stack=1")
         ENDFUNCTION()
 
         MESSAGE(STATUS "ThreadSanitizer enabled - forcing use of 'system' memory allocator.")
