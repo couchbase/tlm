@@ -11,7 +11,7 @@ ENDIF()
 # Release, only differing in whether debugging information is enabled.
 SET(CMAKE_C_FLAGS_RELEASE        "/MD /O2 /Ob2 /D NDEBUG")
 SET(CMAKE_C_FLAGS_RELWITHDEBINFO "/MD /O2 /Ob2 /D NDEBUG /Zi")
-SET(CMAKE_C_FLAGS_DEBUG          "/MD /Od /Ob0 /Zi")
+SET(CMAKE_C_FLAGS_DEBUG          "/MDd /Od /Ob0 /Zi")
 
 SET(CB_C_FLAGS_NO_OPTIMIZE       /Od /Ob0)
 
