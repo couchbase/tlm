@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PREFIX="@PREFIX@"
+PREFIX="${CMAKE_INSTALL_PREFIX}"
 
 if [ "x$MEMCACHED_UMEM" = "xyes" ]
 then

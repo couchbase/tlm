@@ -159,3 +159,8 @@ ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbft)
 IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
   ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/backup)
 ENDIF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
+
+IF (NOT WIN32)
+   CONFIGURE_FILE(tlm/memcached-wrapper.in ${CMAKE_BINARY_DIR}/tlm/memcached-wrapper)
+   CONFIGURE_FILE(tlm/moxi-wrapper.in ${CMAKE_BINARY_DIR}/tlm/moxi-wrapper)
+ENDIF (NOT WIN32)
