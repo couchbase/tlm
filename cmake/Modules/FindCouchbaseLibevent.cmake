@@ -4,34 +4,35 @@
 #  LIBEVENT_LIBRARIES, Library path and libs
 #  LIBEVENT_INCLUDE_DIR, where to find the ICU headers
 
-FIND_PATH(LIBEVENT_INCLUDE_DIR evutil.h
-          HINTS
-               ENV LIBEVENT_DIR
-          PATH_SUFFIXES include
-          PATHS
-               ~/Library/Frameworks
-               /Library/Frameworks
-               /opt/local
-               /opt/csw
-               /opt/libevent
-               /opt)
+SET(_libevent_exploded ${CMAKE_BINARY_DIR}/tlm/deps/libevent.exploded)
 
-FIND_LIBRARY(LIBEVENT_LIBRARIES
+FIND_PATH(LIBEVENT_INCLUDE_DIR event2/event.h
+          PATHS ${_libevent_exploded}/include)
+
+FIND_LIBRARY(LIBEVENT_CORE_LIB
              NAMES event_core libevent_core
-             HINTS
-                 ENV LIBEVENT_DIR
-             PATHS
-                 ~/Library/Frameworks
-                 /Library/Frameworks
-                 /opt/local
-                 /opt/csw
-                 /opt/libevent
-                 /opt)
+             PATHS ${CMAKE_INSTALL_PATH}/lib)
 
-IF (LIBEVENT_LIBRARIES)
-  MESSAGE(STATUS "Found libevent in ${LIBEVENT_INCLUDE_DIR} : ${LIBEVENT_LIBRARIES}")
-ELSE (LIBEVENT_LIBRARIES)
+FIND_LIBRARY(LIBEVENT_THREAD_LIB
+             NAMES event_pthreads
+             PATHS ${CMAKE_INSTALL_PATH}/lib)
+
+FIND_LIBRARY(LIBEVENT_EXTRA_LIB
+             NAMES event_extra
+             PATHS ${CMAKE_INSTALL_PATH}/lib)
+
+IF (LIBEVENT_INCLUDE_DIR AND LIBEVENT_CORE_LIB)
+  MESSAGE(STATUS "Found libevent headers in: ${LIBEVENT_INCLUDE_DIR}")
+  MESSAGE(STATUS "                     core: ${LIBEVENT_CORE_LIB}")
+  MESSAGE(STATUS "                   thread: ${LIBEVENT_THREAD_LIB}")
+  MESSAGE(STATUS "                    extra: ${LIBEVENT_EXTRA_LIB}")
+ELSE (LIBEVENT_INCLUDE_DIR AND LIBEVENT_CORE_LIB)
   MESSAGE(FATAL_ERROR "Can't build Couchbase without libevent'")
-ENDIF (LIBEVENT_LIBRARIES)
+ENDIF (LIBEVENT_INCLUDE_DIR AND LIBEVENT_CORE_LIB)
 
-MARK_AS_ADVANCED(LIBEVENT_INCLUDE_DIR LIBEVENT_LIBRARIES)
+SET(LIBEVENT_LIBRARIES "${LIBEVENT_CORE_LIB}")
+MARK_AS_ADVANCED(LIBEVENT_INCLUDE_DIR
+  LIBEVENT_LIBRARIES
+  LIBEVENT_CORE_LIB
+  LIBEVENT_THREAD_LIB
+  LIBEVENT_EXTRA_LIB)
