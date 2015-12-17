@@ -134,6 +134,7 @@ ADD_SUBDIRECTORY(sigar)
 ADD_SUBDIRECTORY(moxi)
 ADD_SUBDIRECTORY(couchdb)
 ADD_SUBDIRECTORY(geocouch)
+ADD_SUBDIRECTORY(query-ui)
 
 IF (NOT DEFINED JETBRAINS_CLION_IDE)
   # The CLion IDE from JetBrains don't support building "in source",
