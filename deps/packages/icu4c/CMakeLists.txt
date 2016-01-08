@@ -18,65 +18,35 @@ ExternalProject_Add(icu4c
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND $(MAKE) install
-          COMMAND ${CMAKE_COMMAND} -E remove -f <INSTALL_DIR>/bin/derb
-                                                <INSTALL_DIR>/bin/genbrk
-                                                <INSTALL_DIR>/bin/gencfu
-                                                <INSTALL_DIR>/bin/gencnval
-                                                <INSTALL_DIR>/bin/genctd
-                                                <INSTALL_DIR>/bin/genrb
-                                                <INSTALL_DIR>/bin/icuinfo
-                                                <INSTALL_DIR>/bin/makeconv
-                                                <INSTALL_DIR>/bin/pkgdata
-                                                <INSTALL_DIR>/bin/uconv
+          COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/bin
           COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/sbin
           COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/share
 
-  # Need to configure icu-config to use the prefix it's been installed into.
-  COMMAND ${CMAKE_COMMAND} -E echo "FILE(MAKE_DIRECTORY \${CMAKE_INSTALL_PREFIX}/bin)" > <INSTALL_DIR>/CMakeLists.txt
-  COMMAND ${CMAKE_COMMAND} -E echo "CONFIGURE_FILE(bin/icu-config \${CMAKE_INSTALL_PREFIX}/bin @ONLY)" >> <INSTALL_DIR>/CMakeLists.txt
-  COMMAND ${CMAKE_COMMAND} -E echo "FILE(COPY include lib DESTINATION \${CMAKE_INSTALL_PREFIX})" >> <INSTALL_DIR>/CMakeLists.txt
-)
-
-# We probably don't need -E on most (all?) Linux platforms, but the only
-# one we know for sure we CAN'T have it is openSUSE.
-if (cbcache_arch STREQUAL "suse")
-  SET (sed_args "-i")
-else (cbcache_arch STREQUAL "suse")
-  SET (sed_args "-i -E")
-endif (cbcache_arch STREQUAL "suse")
-
-# Modify icu-config to replace the hardcoded prefix with a variable, which
-# will be expanded at cbdeps install time.
-ExternalProject_Add_Step(icu4c change_icu_config_prefix
-  COMMAND sed ${sed_args} "s/^default_prefix=.*/default_prefix=\"\\\@CMAKE_INSTALL_PREFIX\\\@\"/"
-          config/icu-config
-  DEPENDEES build
-  DEPENDERS install
-  WORKING_DIRECTORY <BINARY_DIR>
+  COMMAND ${CMAKE_COMMAND} -E echo "FILE(COPY lib DESTINATION \${CMAKE_INSTALL_PREFIX})" >> <INSTALL_DIR>/CMakeLists.txt
 )
 
 # OS X-only: Custom post-build step to set the shared library install name.
 if (APPLE)
   ExternalProject_Add_Step(icu4c install_name
     # Fixup all libraries
-    COMMAND install_name_tool -id @rpath/libicudata.44.0.dylib lib/libicudata.44.0.dylib
-    COMMAND install_name_tool -id @rpath/libicui18n.44.0.dylib
-                              -change libicuuc.44.dylib @loader_path/libicuuc.44.dylib
-                              -change libicudata.44.dylib @loader_path/libicudata.44.dylib
-                              lib/libicui18n.44.0.dylib
-    COMMAND install_name_tool -id @rpath/libicuio.44.0.dylib
-                              -change libicuuc.44.dylib @loader_path/libicuuc.44.dylib
-                              -change ../lib/libicudata.44.0.dylib @loader_path/libicudata.44.0.dylib
-                              -change libicui18n.44.dylib @loader_path/ibicui18n.44.dylib
-                              lib/libicuio.44.0.dylib
-    COMMAND install_name_tool -id @rpath/libicutu.44.0.dylib
-                              -change libicui18n.44.dylib @loader_path/libicui18n.44.dylib
-                              -change libicuuc.44.dylib @loader_path/libicuuc.44.dylib
-                              -change libicudata.44.dylib @loader_path/libicudata.44.dylib
-                              lib/libicutu.44.0.dylib
-    COMMAND install_name_tool -id @rpath/libicuuc.44.0.dylib
-                              -change libicudata.44.dylib @loader_path/libicudata.44.dylib
-                              lib/libicuuc.44.0.dylib
+    COMMAND install_name_tool -id @rpath/libicudata.54.1.dylib lib/libicudata.54.1.dylib
+    COMMAND install_name_tool -id @rpath/libicui18n.54.1.dylib
+                              -change libicuuc.54.dylib @loader_path/libicuuc.54.dylib
+                              -change libicudata.54.dylib @loader_path/libicudata.54.dylib
+                              lib/libicui18n.54.1.dylib
+    COMMAND install_name_tool -id @rpath/libicuio.54.1.dylib
+                              -change libicuuc.54.dylib @loader_path/libicuuc.54.dylib
+                              -change ../lib/libicudata.54.1.dylib @loader_path/libicudata.54.1.dylib
+                              -change libicui18n.54.dylib @loader_path/ibicui18n.54.dylib
+                              lib/libicuio.54.1.dylib
+    COMMAND install_name_tool -id @rpath/libicutu.54.1.dylib
+                              -change libicui18n.54.dylib @loader_path/libicui18n.54.dylib
+                              -change libicuuc.54.dylib @loader_path/libicuuc.54.dylib
+                              -change libicudata.54.dylib @loader_path/libicudata.54.dylib
+                              lib/libicutu.54.1.dylib
+    COMMAND install_name_tool -id @rpath/libicuuc.54.1.dylib
+                              -change libicudata.54.dylib @loader_path/libicudata.54.dylib
+                              lib/libicuuc.54.1.dylib
     DEPENDEES build
     DEPENDERS install
     WORKING_DIRECTORY <BINARY_DIR>

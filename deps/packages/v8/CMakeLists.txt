@@ -8,30 +8,27 @@ else (APPLE)
    SET(V8_LIBRARY_FILE "<SOURCE_DIR>/out/x64.release/lib.target/libv8.so")
 endif (APPLE)
 
+SET(V8_PLATFORM_FILE "<SOURCE_DIR>/out/x64.release/obj.target/tools/gyp/libv8_libplatform.a")
+
 ### Download, configure and build v8 ####################################
 ExternalProject_Add(v8
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
   BUILD_IN_SOURCE 1
 
-  CONFIGURE_COMMAND cd <SOURCE_DIR>/build && git clone git://github.com/couchbasedeps/gyp -b couchbase-v8-3.21.17
-            COMMAND cd <SOURCE_DIR> && git clone git://github.com/couchbasedeps/icu46 third_party/icu && cd third_party/icu && git checkout 73170776491a3e38f68ab0367f3121256a3cc289
-  BUILD_COMMAND $(MAKE) -j 8 library=shared x64.release
+  CONFIGURE_COMMAND cd <SOURCE_DIR>/build
+
+  BUILD_COMMAND $(MAKE) -j 8 library=shared snapshot=off x64.release
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
 
-  INSTALL_COMMAND mkdir -p <INSTALL_DIR>/lib <INSTALL_DIR>/include
-          COMMAND cp ${V8_LIBRARY_FILE} <INSTALL_DIR>/lib
-          COMMAND cp <SOURCE_DIR>/include/v8-debug.h <INSTALL_DIR>/include
-          COMMAND cp <SOURCE_DIR>/include/v8-preparser.h <INSTALL_DIR>/include
-          COMMAND cp <SOURCE_DIR>/include/v8-profiler.h <INSTALL_DIR>/include
-          COMMAND cp <SOURCE_DIR>/include/v8-testing.h <INSTALL_DIR>/include
-          COMMAND cp <SOURCE_DIR>/include/v8.h <INSTALL_DIR>/include
-          COMMAND cp <SOURCE_DIR>/include/v8config.h <INSTALL_DIR>/include
-          COMMAND cp <SOURCE_DIR>/include/v8stdint.h <INSTALL_DIR>/include
-          COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib include DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
+  INSTALL_COMMAND mkdir -p <INSTALL_DIR>/lib <INSTALL_DIR>/archive <INSTALL_DIR>/include
+  COMMAND ${CMAKE_COMMAND} -E copy ${V8_LIBRARY_FILE} <INSTALL_DIR>/lib
+  COMMAND ${CMAKE_COMMAND} -E copy ${V8_PLATFORM_FILE} <INSTALL_DIR>/archive
+  COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include <INSTALL_DIR>/include
+  COMMAND ${CMAKE_COMMAND} -E remove -f <INSTALL_DIR>/include/OWNERS
 
-  COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib include DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
 )
 
 # OS X-only: Custom post-build step to set the shared library install name.

@@ -42,7 +42,7 @@ MACRO (_ADD_PACKAGE_STEP)
   ExternalProject_Add_Step(${_dep_package} package
     COMMAND ${CMAKE_COMMAND} -E make_directory ${_output_dir}
     COMMAND ${CMAKE_COMMAND} -E tar czf ${_output_file}.tgz .
-    COMMENT "Perforing packaging step for '${_dep_package}' - writing artifacts to ${_output_dir}"
+    COMMENT "Performing packaging step for '${_dep_package}' - writing artifacts to ${_output_dir}"
     DEPENDEES install
     WORKING_DIRECTORY <INSTALL_DIR>
     )
@@ -138,9 +138,9 @@ ELSE (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows"
 ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
 _ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 2)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 1)
-_ADD_DEP_PACKAGE(icu4c 263593 263593 5)
+_ADD_DEP_PACKAGE(icu4c 54.1 r54.1 7)
 _ADD_DEP_PACKAGE(libevent 2.0.22 release-2.0.22-stable 2)
-_ADD_DEP_PACKAGE(v8 b08066f b08066f 1)
+_ADD_DEP_PACKAGE(v8 4.7 4.7-couchbase 1)
 _ADD_DEP_PACKAGE(jemalloc 4.0.4 4.0.4 1)
 _ADD_DEP_PACKAGE(curl 7.40.0 curl-7_40_0 2)
 _ADD_DEP_PACKAGE(erlang 62b74b5 mb11917 1)
