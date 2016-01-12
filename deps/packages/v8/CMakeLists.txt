@@ -4,11 +4,13 @@ include(ExternalProject)
 
 if (APPLE)
    SET(V8_LIBRARY_FILE "<SOURCE_DIR>/out/x64.release/libv8.dylib")
+   SET(V8_PLATFORM_FILE "<SOURCE_DIR>/out/x64.release/libv8_libplatform.a")
+   SET(GYP_FLAGS "-Dcomponent=shared_library -Dv8_enable_backtrace=1 -Dv8_use_snapshot='false' -Dv8_use_external_startup_data=0 -Dv8_enable_i18n_support=1")
 else (APPLE)
    SET(V8_LIBRARY_FILE "<SOURCE_DIR>/out/x64.release/lib.target/libv8.so")
+   SET(V8_PLATFORM_FILE "<SOURCE_DIR>/out/x64.release/obj.target/tools/gyp/libv8_libplatform.a")
+   SET(GYP_FLAGS "-Dcomponent=shared_library -Dv8_enable_backtrace=1 -Dv8_use_snapshot='false' -Dclang=0 -Dv8_use_external_startup_data=0 -Dv8_enable_i18n_support=1")
 endif (APPLE)
-
-SET(V8_PLATFORM_FILE "<SOURCE_DIR>/out/x64.release/obj.target/tools/gyp/libv8_libplatform.a")
 
 ### Download, configure and build v8 ####################################
 ExternalProject_Add(v8
@@ -17,8 +19,9 @@ ExternalProject_Add(v8
   BUILD_IN_SOURCE 1
 
   CONFIGURE_COMMAND cd <SOURCE_DIR>/build
+  COMMAND pip install --user argparse
 
-  BUILD_COMMAND $(MAKE) -j 8 library=shared snapshot=off x64.release
+  BUILD_COMMAND $(MAKE) -j4 x64.release GYPFLAGS+=${GYP_FLAGS}
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
 
