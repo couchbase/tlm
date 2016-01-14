@@ -20,7 +20,7 @@ ExternalProject_Add(v8
 
   CONFIGURE_COMMAND cd <SOURCE_DIR>/build
 
-  BUILD_COMMAND $(MAKE) -j4 x64.release GYPFLAGS+=${GYP_FLAGS}
+  BUILD_COMMAND $(MAKE) -j4 x64.release GYPFLAGS+=${GYP_FLAGS} PYTHONPATH=<SOURCE_DIR>/third_party/argparse-1.4.0
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
 
@@ -33,15 +33,14 @@ ExternalProject_Add(v8
   COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
 )
 
-ExternalProject_Add_Step(v8 add_argparse
-  COMMAND python setup.py install --user
-  WORKING_DIRECTORY <SOURCE_DIR>/third_party/argparse-1.4.0
-  DEPENDEES configure
-  DEPENDERS build
-)
-
 # OS X-only: Custom post-build step to set the shared library install name.
+# We also need to copy clang to a special location.
 if (APPLE)
+  ExternalProject_Add_Step(v8 move_clang
+    COMMAND cp -a /usr/bin/clang <SOURCE_DIR>/third_party/llvm-build/Release+Asserts/bin
+    DEPENDEES configure
+    DEPENDERS build
+  )
   ExternalProject_Add_Step(v8 install_name
     COMMAND install_name_tool -id @rpath/libv8.dylib out/x64.release/libv8.dylib
     DEPENDEES build
