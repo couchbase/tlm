@@ -36,6 +36,7 @@ ExternalProject_Add(v8
 ExternalProject_Add_Step(v8 add_argparse
   COMMAND python setup.py install --user
   WORKING_DIRECTORY <SOURCE_DIR>/third_party/argparse-1.4.0
+  DEPENDEES configure
   DEPENDERS build
 )
 
