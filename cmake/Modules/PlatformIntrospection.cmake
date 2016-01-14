@@ -92,7 +92,7 @@ ENDMACRO (_DETERMINE_PLATFORM)
 
 # Returns a simple string describing the current Linux distribution
 # compatibility. Possible return values currently include:
-# ubuntu14.04, ubuntu12.04, ubuntu10.04, centos5, centos6, debian7.
+# ubuntu14.04, ubuntu12.04, ubuntu10.04, centos5, centos6, debian7, debian8.
 MACRO (_DETERMINE_LINUX_DISTRO _distro)
   _LSB_RELEASE (id _id)
   _LSB_RELEASE (release _rel)
@@ -130,7 +130,7 @@ MACRO (GET_SUPPORTED_PRODUCTION_PLATFORM _supported_platform)
   # .. and check it against the list, returning it if found.
   LIST(APPEND _supported_prod_platforms
        "centos6" "centos7"
-       "debian7"
+       "debian7" "debian8"
        "suse11.2"
        "ubuntu12.04" "ubuntu14.04"
        "windows")
