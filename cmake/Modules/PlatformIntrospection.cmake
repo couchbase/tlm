@@ -110,11 +110,6 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
     # Just use the major version from the CentOS/Debian identifier - we don't
     # need different builds for different minor versions.
     STRING (REGEX MATCH "[0-9]+" _rel "${_rel}")
-    IF (_id STREQUAL "debian" AND _rel VERSION_EQUAL 8)
-      MESSAGE(WARNING "Build support on Debian8 is not implemented yet. "
-	"Using binaries build on Debian7. This _MIGHT_ lead to problems...")
-       SET(_rel 7)
-    ENDIF (_id STREQUAL "debian" AND _rel VERSION_EQUAL 8)
   ELSEIF (_id STREQUAL "fedora")
     SET (_id "centos")
     SET (_rel "7")
