@@ -160,18 +160,14 @@ on windows is named `nmake`.
 ## MacOSX
 
 Multiple versions of Mac OSX may work, but this list is verified with
-Mavericks.
+El Capitan
 
-* Install XCode 5.1
+* Install XCode 7.2
 * Install [Homebrew][homebrew_link]
 
 Install the following packages from homebrew:
 
-    trond@ok> brew install cmake git icu4c libevent snappy go
-
-Ensure that your `PATH` variable includes `/usr/local/opt/icu4c/bin`:
-
-    trond@ok> export PATH=$PATH:/usr/local/bin:/usr/local/opt/icu4c/bin
+    trond@ok> brew install cmake git go ccache openssl
 
 You should be all set to start compile the server as described above.
 
