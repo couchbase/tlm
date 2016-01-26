@@ -47,6 +47,7 @@ endif ("${cbcache_platform}" MATCHES "^suse.*")
 if (APPLE)
   ExternalProject_Add_Step(v8 move_clang
     COMMAND cp -a /usr/bin/clang <SOURCE_DIR>/third_party/llvm-build/Release+Asserts/bin
+    COMMAND cp -a /usr/bin/clang++ <SOURCE_DIR>/third_party/llvm-build/Release+Asserts/bin
     DEPENDEES configure
     DEPENDERS build
   )
