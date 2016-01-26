@@ -33,6 +33,15 @@ ExternalProject_Add(v8
   COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
 )
 
+# SUSE only: Custom pre-build step to copy in correct local version of nm.
+if ("${cbcache_platform}" MATCHES "^suse.*")
+  ExternalProject_Add_Step(v8 move_nm
+  COMMAND cp -a /usr/bin/nm <SOURCE_DIR>/third_party/binutils/Linux_x64/Release/bin
+  DEPENDEES configure
+  DEPENDERS build
+  )
+endif ("${cbcache_platform}" MATCHES "^suse.*")
+
 # OS X-only: Custom post-build step to set the shared library install name.
 # We also need to copy clang to a special location.
 if (APPLE)
