@@ -5,15 +5,28 @@ set tools_version=12.0
 
 :tools_set
 echo Using tools from: C:\Program Files (x86)\Microsoft Visual Studio %tools_version%
-if not defined source_root goto missing_root
-if not defined target_arch goto missing_target_arch
+if not defined source_root goto default_source_root
 
-if "%target_arch%" == "amd64" goto setup_amd64
-if "%target_arch%" == "x86" goto setup_x86
+:target_arch
+if not defined target_arch goto default_target_arch
+
+:setup_arch
+if /i "%target_arch%" == "amd64" goto setup_amd64
+if /i "%target_arch%" == "x86" goto setup_x86
 
 echo Unknown architecture: %target_arch%. Must be amd64 or x86
 set ERRORLEVEL=1
 goto eof
+
+:default_source_root
+set source_root=%CD%
+echo source_root not set. It was automatically set to the current directory %source_root%.
+goto target_arch
+
+:default_target_arch
+set target_arch=amd64
+echo target_arch is not set. It was automatically set to %target_arch%.
+goto setup_arch
 
 :setup_x86
 echo Setting up Visual Studio environment for x86
