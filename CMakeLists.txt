@@ -3,6 +3,17 @@
 #
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
+STRING(REGEX REPLACE "[ ]" "a" modified_source_dir "${CMAKE_SOURCE_DIR}")
+IF (NOT modified_source_dir STREQUAL CMAKE_SOURCE_DIR)
+  MESSAGE(FATAL_ERROR "Couchbase cannot be built in a source directory containing a space character")
+ENDIF (NOT modified_source_dir STREQUAL CMAKE_SOURCE_DIR)
+
+STRING(REGEX REPLACE "[ ]" "a" modified_binary_dir "${CMAKE_BINARY_DIR}")
+IF (NOT modified_binary_dir STREQUAL CMAKE_BINARY_DIR)
+  MESSAGE(FATAL_ERROR "Couchbase cannot be built in a build directory containing a space character")
+ENDIF (NOT modified_binary_dir STREQUAL CMAKE_BINARY_DIR)
+
+
 # The PROJECT() macro sets it's own default build type, so need to specify
 # ours first.
 IF (NOT DEFINED CMAKE_BUILD_TYPE)
