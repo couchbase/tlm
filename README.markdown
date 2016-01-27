@@ -167,7 +167,7 @@ El Capitan
 
 Install the following packages from homebrew:
 
-    trond@ok> brew install cmake git go ccache openssl
+    trond@ok> brew install cmake git go ccache openssl repo
 
 You should be all set to start compile the server as described above.
 
