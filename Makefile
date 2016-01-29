@@ -92,7 +92,9 @@ reset:
 	(cd build && $(MAKE) reset)
 
 clean-xfd: clean
-	cd ns_server && git clean -dfxq
+	if [[ -d ns_server ]]; then \
+	    cd ns_server && git clean -dfxq; \
+	fi
 
 clean-xfd-hard: clean-xfd
 
