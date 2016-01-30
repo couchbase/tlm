@@ -46,19 +46,32 @@ SET (ENV{LD_RUN_PATH} "$ORIGIN/../lib")
 
 # Always use -x if CB_GO_DEBUG is set
 IF ($ENV{CB_GO_DEBUG})
-  SET (_go_debug "-x")
+  SET (_go_debug -x)
 ENDIF ($ENV{CB_GO_DEBUG})
 
-# Execute "go install"
-MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install -tags=\"${GOTAGS}\" -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${PACKAGE}")
+# Set GOROOT environment
+SET (ENV{GOROOT} "${GOROOT}")
+SET (GO_EXECUTABLE "${GOROOT}/bin/go")
+
+# For Go 1.5 or better, use -pkgdir to separate the compiled bits out
+# of the source directories - separate directories per Go version, to
+# prevent conflicts.
+SET (_bits)
+IF ("${GOVERSION}" VERSION_GREATER 1.4.9)
+  SET (_bits -pkgdir "${GO_BINARY_DIR}")
+  STRING (REPLACE ";" " " _bits_str "${_bits}")
+ENDIF ()
+
+# Execute "go install".
+MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install ${_bits_str} -tags=\"${GOTAGS}\" -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${PACKAGE}")
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
-  COMMAND "${GO_EXECUTABLE}" install "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} "${PACKAGE}")
+  COMMAND "${GO_EXECUTABLE}" install ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} "${PACKAGE}")
 IF (_failure)
   MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
   MESSAGE (STATUS "@ 'go install' failed! Re-running as 'go build' to help debug...")
   MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
   # Easier to debug
-  EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" build "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" -x "${PACKAGE}")
+  EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" build ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" -x "${PACKAGE}")
   MESSAGE (FATAL_ERROR "Failed running go install")
 ENDIF (_failure)
 
@@ -66,5 +79,6 @@ ENDIF (_failure)
 # name.  This messes with "go install"'s incremental build logic, but
 # is unavoidable.
 IF (OUTPUT)
-  FILE (RENAME "${WORKSPACE}/bin/${PKGEXE}" "${WORKSPACE}/bin/${OUTPUT}")
+  EXECUTE_PROCESS (COMMAND "${CMAKE_COMMAND}" -E copy_if_different
+  "${WORKSPACE}/bin/${PKGEXE}" "${WORKSPACE}/bin/${OUTPUT}")
 ENDIF (OUTPUT)

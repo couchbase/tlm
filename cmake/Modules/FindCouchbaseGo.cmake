@@ -1,10 +1,39 @@
-# This module provides facilities for building Go code using either golang
-# (preferred) or gccgo.
+# This module provides facilities for building Go code.
 #
-# This module defines
-#  GO_FOUND, if a compiler was found
+# The Couchbase build utilizes several different versions of the Go compiler
+# in the production builds. The GoInstall() and GoYacc() macros have an
+# option GOVERSION argument which allows individual targets to specify the
+# version of Go they request / require.
+#
+# The build can work in two modes: a "multi-go" mode or a "single-go" mode.
+#
+# MULTI-GO MODE
+# In "multi-go" mode, the build will download exactly the required versions of
+# the Go compiler (there is a GO_DEFAULT_VERSION variable which is used for
+# any targets that do not specify GOVERSION). The build will fail if the exact
+# Go versions cannot be obtained, and it will not search for Go anywhere else.
+# This is how the production builds work.
+#
+#   NOTE: the build can only support a single Go 1.4.x version safely due to
+#   limitations in the Go compiler's ability to specify where to output
+#   compiled artifacts. To ensure that all components throughout the build
+#   that need Go 1.4 use the same version, you should specify
+#   "GOVERSION 1.4.x". The specific version this corresponds to is defined
+#   in this file by the variable GO_14x_VERSION. Any attempt to specify
+#   a specific 1.4 version will raise an error.
+#
+# SINGLE-GO MODE
+# In "single-go" mode, the build only expects to find a single Go compiler
+# on the PATH, CMAKE_PREFIX_PATH, or similar. In this case, there is a global
+# GO_MINIMUM_VERSION which is checked at configuration time against the
+# actual compiler which was found. Also, if a target specifies a GOVERSION
+# argument that is *higher* than the version found, the build will also fail.
+# In this mode, an exact match for GOVERSION is not required.
+#
+# Multi-go is enabled by default. To disable it, set the CMake variable
+# CB_MULTI_GO to any false value (or set the same-named environment variable).
 
-SET(GO_MINIMUM_VERSION 1.4)
+
 
 # Prevent double-definition if two projects use this script
 IF (NOT FindCouchbaseGo_INCLUDED)
@@ -14,51 +43,132 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # Have to remember cwd when this find is INCLUDE()d
   SET (TLM_MODULES_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
-  # Figure out which Go compiler to use
-  FIND_PROGRAM (GO_EXECUTABLE NAMES go DOC "Go executable")
-  IF (GO_EXECUTABLE)
-    EXECUTE_PROCESS (COMMAND ${GO_EXECUTABLE} version
-                     OUTPUT_VARIABLE GO_VERSION_STRING)
-    STRING (REGEX REPLACE "^go version go([0-9.]+).*$" "\\1" GO_VERSION ${GO_VERSION_STRING})
-    # I've seen cases where the version contains a trailing newline
-    STRING(STRIP "${GO_VERSION}" GO_VERSION)
-    MESSAGE (STATUS "Found Go compiler: ${GO_EXECUTABLE} (${GO_VERSION})")
+  # This macro is called if Multi-Go mode is not enabled is not set. It will
+  # find a single version of Go on the PATH and sets GO_SINGLE_EXECUTABLE and
+  # GO_SINGLE_ROOT.
+  MACRO (FIND_SINGLE_GO)
 
-    IF(GO_VERSION VERSION_LESS GO_MINIMUM_VERSION)
-      STRING(REGEX MATCH "^go version devel .*" go_dev_version "${GO_VERSION}")
-      IF (go_dev_version)
+    # This is actually not accurate - Go 1.5 is required for some components.
+    # But we can't bump this up until all production builds are off Sherlock-
+    # class build slaves.
+    SET(GO_MINIMUM_VERSION 1.4)
+
+    # Find go compiler on the PATH
+    FIND_PROGRAM (GO_SINGLE_EXECUTABLE NAMES go DOC "Go executable")
+    IF (GO_SINGLE_EXECUTABLE)
+      EXECUTE_PROCESS (COMMAND ${GO_SINGLE_EXECUTABLE} version
+                       OUTPUT_VARIABLE GO_VERSION_STRING)
+      STRING (REGEX REPLACE "^go version go([0-9.]+).*$" "\\1" GO_VERSION ${GO_VERSION_STRING})
+      # I've seen cases where the version contains a trailing newline
+      STRING(STRIP "${GO_VERSION}" GO_VERSION)
+      MESSAGE (STATUS "Found Go compiler: ${GO_SINGLE_EXECUTABLE} (${GO_VERSION})")
+
+      IF (GO_VERSION VERSION_LESS GO_MINIMUM_VERSION)
+        STRING (REGEX MATCH "^go version devel .*" go_dev_version "${GO_VERSION}")
+        IF (go_dev_version)
           MESSAGE(STATUS "WARNING: You are using a development version of go")
           MESSAGE(STATUS "         Go version of ${GO_MINIMUM_VERSION} or higher required")
           MESSAGE(STATUS "         You may experience problems caused by this")
-      ELSE(go_dev_version)
-          MESSAGE(FATAL_ERROR "Go version of ${GO_MINIMUM_VERSION} or higher required (found version ${GO_VERSION})")
-      ENDIF(go_dev_version)
-    ENDIF(GO_VERSION VERSION_LESS GO_MINIMUM_VERSION)
+        ELSE (go_dev_version)
+          MESSAGE (FATAL_ERROR "Go version of ${GO_MINIMUM_VERSION} or higher required (found version ${GO_VERSION})")
+        ENDIF (go_dev_version)
+      ENDIF(GO_VERSION VERSION_LESS GO_MINIMUM_VERSION)
 
-    SET (GO_COMMAND_LINE "${GO_EXECUTABLE}" build -x)
-    SET (GO_FOUND 1 CACHE BOOL "Whether Go compiler was found")
+      IF (DEFINED ENV{GOBIN})
+        MESSAGE (WARNING "The environment variable GOBIN is set and MAY cause your build to fail")
+      ENDIF (DEFINED ENV{GOBIN})
 
-    IF (DEFINED ENV{GOBIN})
-      MESSAGE(WARNING "The environment variable GOBIN is set and MAY cause your build to fail")
-    ENDIF (DEFINED ENV{GOBIN})
-  ELSE (GO_EXECUTABLE)
-    FIND_PROGRAM (GCCGO_EXECUTABLE NAMES gccgo DOC "gccgo executable")
-    IF (GCCGO_EXECUTABLE)
-      MESSAGE (STATUS "Found gccgo compiler: ${GCCGO_EXECUTABLE}")
-      SET (GO_COMMAND_LINE "${GCCGO_EXECUTABLE}" -Os -g)
-      SET (GO_FOUND 1 CACHE BOOL "Whether Go compiler was found")
-    ELSE (GCCGO_EXECUTABLE)
-      SET (GO_FOUND 0)
-    ENDIF (GCCGO_EXECUTABLE)
-  ENDIF (GO_EXECUTABLE)
+      EXECUTE_PROCESS (COMMAND "${GO_SINGLE_EXECUTABLE}" env GOROOT
+        OUTPUT_VARIABLE GO_SINGLE_ROOT OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+    ELSE (GO_SINGLE_EXECUTABLE)
+      MESSAGE (FATAL_ERROR "Go compiler not found!")
+    ENDIF (GO_SINGLE_EXECUTABLE)
+  ENDMACRO (FIND_SINGLE_GO)
+
+  # This macro is called if Multi-Go mode is selected.
+  MACRO (ENABLE_MULTI_GO)
+    MESSAGE (STATUS "Multi-Go mode enabled; all desired Go compiler versions "
+      "will be downloaded for the build")
+    INCLUDE (CBDownloadDeps)
+    SET (GO_DEFAULT_VERSION 1.5.2)
+    SET (GO_14x_VERSION 1.4.2)
+
+    # No compiler yet
+    SET (GO_SINGLE_EXECUTABLE)
+    SET (GO_SINGLE_ROOT)
+  ENDMACRO (ENABLE_MULTI_GO)
+
+  # This macro is called by GoInstall() / GoYacc() / etc. to find the
+  # appropriate Go compiler to use, based on whether or not Multi-Go mode
+  # is enabled and the requested version. It will set the variable named by
+  # "var" to the full path of the corresponding GOROOT, or raise an error
+  # if the requested version cannot be found. It will set the variable named
+  # by "ver" to the actual version of Go used.
+  MACRO (GET_GOROOT VERSION var ver)
+    IF (CB_MULTI_GO)
+      IF (NOT "${VERSION}" STREQUAL "")
+        SET (_version ${VERSION})
+      ELSE ()
+        SET (_version ${GO_DEFAULT_VERSION})
+      ENDIF ()
+
+      # Ensure no attempt to use a specific 1.4.
+      IF ("${_version}" MATCHES "^1.4.[0-9]+$")
+        MESSAGE (FATAL_ERROR "Cannot specify GOVERSION ${_version}; "
+          "use only '1.4.x'")
+      ENDIF ()
+
+      # Map '1.4.x' special version to global default
+      IF ("${_version}" STREQUAL "1.4.x")
+        SET (_version "${GO_14x_VERSION}")
+      ENDIF ()
+
+      GET_GO_VERSION ("${_version}" ${var})
+      SET (${ver} ${_version})
+
+    ELSE (CB_MULTI_GO)
+      # QQQ For now just ignore the requested Go version since only one is
+      # available. We should do a version check compared to the Go version
+      # which was found to ensure it is equal or greater than the requested
+      # version.
+
+      # Return the constant values.
+      SET (${var} "${GO_SINGLE_ROOT}")
+      SET (${ver} "${GO_VERSION}")
+    ENDIF (CB_MULTI_GO)
+  ENDMACRO (GET_GOROOT)
+
+  # Switch here between two types of find-go behaviour (see file header
+  # comment)
+  IF (DEFINED ENV{CB_MULTI_GO})
+    SET (_multi_go $ENV{CB_MULTI_GO})
+  ELSE ()
+    SET (_multi_go 1)
+  ENDIF ()
+  SET (CB_MULTI_GO "${_multi_go}" CACHE BOOL "CB Multi-go behaviour")
+  IF (CB_MULTI_GO)
+    ENABLE_MULTI_GO ()
+  ELSE ()
+    FIND_SINGLE_GO ()
+  ENDIF ()
+
+  # Set up clean targets. Note: the hardcoded godeps and goproj is kind of
+  # a hack; it should build that up from the GOPATHs passed to GoInstall.
+  # Also, the pkg directories are only necessary for Go 1.4.x support since
+  # all 1.5+ go artifacts are redirected to GO_BINARY_DIR.
+  SET (GO_BINARY_DIR "${CMAKE_BINARY_DIR}/gopkg")
+  ADD_CUSTOM_TARGET (go_realclean
+    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${GO_BINARY_DIR}"
+    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_SOURCE_DIR}/godeps/pkg"
+    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_SOURCE_DIR}/godeps/bin"
+    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_SOURCE_DIR}/goproj/pkg"
+    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_SOURCE_DIR}/goproj/bin")
+  ADD_DEPENDENCIES (realclean go_realclean)
 
   # Adds a target named TARGET which (always) calls "go install
   # PACKAGE".  This delegates incremental-build responsibilities to
   # the go compiler, which is generally what you want.
-  #
-  # Note that this macro requires using the Golang compiler, not
-  # gccgo. A CMake error will be raised if this macro is used when
-  # only gccgo is detected.
   #
   # Required arguments:
   #
@@ -72,6 +182,9 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # environment variable before invoking the compiler.
   #
   # Optional arguments:
+  #
+  # GOVERSION - the version of the Go compiler required for this target.
+  # See file header comment.
   #
   # GCFLAGS - flags that will be passed (via -gcflags) to all compile
   # steps; should be a single string value, with spaces if necessary
@@ -100,12 +213,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # CGO_LIBRARY_DIRS - path(s) to libraries to search for C link libraries
   #
   MACRO (GoInstall)
-    IF (NOT GO_EXECUTABLE)
-      MESSAGE (FATAL_ERROR "Go compiler was not found!")
-    ENDIF (NOT GO_EXECUTABLE)
 
     PARSE_ARGUMENTS (Go "DEPENDS;GOPATH;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
-      "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GCFLAGS;GOTAGS;LDFLAGS" "NOCONSOLE" ${ARGN})
+      "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GOVERSION;GCFLAGS;GOTAGS;LDFLAGS"
+      "NOCONSOLE" ${ARGN})
 
     IF (NOT Go_TARGET)
       MESSAGE (FATAL_ERROR "TARGET is required!")
@@ -146,11 +257,16 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       SET (_ldflags "${Go_LDFLAGS}")
     ENDIF (WIN32  AND ${Go_NOCONSOLE})
 
+    # Compute path to Go compiler, depending on the Go mode (single or multi)
+    GET_GOROOT ("${Go_GOVERSION}" _goroot _gover)
+
     # Go install target
     ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
       COMMAND "${CMAKE_COMMAND}"
-      -D "GO_EXECUTABLE=${GO_EXECUTABLE}"
-      -D CMAKE_C_COMPILER=${CMAKE_C_COMPILER}
+      -D "GOROOT=${_goroot}"
+      -D "GOVERSION=${_gover}"
+      -D "GO_BINARY_DIR=${GO_BINARY_DIR}/go-${_gover}"
+      -D "CMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
       -D "GOPATH=${Go_GOPATH}"
       -D "WORKSPACE=${_workspace}"
       -D "CGO_LDFLAGS=${CMAKE_CGO_LDFLAGS}"
@@ -163,11 +279,12 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       -D "CGO_INCLUDE_DIRS=${Go_CGO_INCLUDE_DIRS}"
       -D "CGO_LIBRARY_DIRS=${Go_CGO_LIBRARY_DIRS}"
       -P "${TLM_MODULES_DIR}/go-install.cmake"
-      COMMENT "Building Go target ${Go_PACKAGE}"
+      COMMENT "Building Go target ${Go_TARGET} using Go ${_ver}"
       VERBATIM)
     IF (Go_DEPENDS)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
     ENDIF (Go_DEPENDS)
+    MESSAGE (STATUS "Added Go build target '${Go_TARGET}' using Go ${_gover}")
 
     # We expect multiple go targets to be operating over the same
     # GOPATH.  It seems like the go compiler doesn't like be invoked
@@ -202,10 +319,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # Adds a target named TARGET which (always) calls "go tool yacc
   # PATH".
   #
-  # Note that this macro requires using the Golang compiler, not
-  # gccgo. A CMake error will be raised if this macro is used when
-  # only gccgo is detected.
-  #
   # Required arguments:
   #
   # TARGET - name of CMake target to create
@@ -216,13 +329,12 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   #
   # DEPENDS - list of other CMake targets on which TARGET will depend
   #
+  # GOVERSION - the version of the Go compiler required for this target.
+  # See file header comment.
   #
   MACRO (GoYacc)
-    IF (NOT GO_EXECUTABLE)
-      MESSAGE (FATAL_ERROR "Go compiler was not found!")
-    ENDIF (NOT GO_EXECUTABLE)
 
-    PARSE_ARGUMENTS (Go "DEPENDS" "TARGET;YFILE" "" ${ARGN})
+    PARSE_ARGUMENTS (Go "DEPENDS" "TARGET;YFILE;GOVERSION" "" ${ARGN})
 
     IF (NOT Go_TARGET)
       MESSAGE (FATAL_ERROR "TARGET is required!")
@@ -232,19 +344,26 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF (NOT Go_YFILE)
 
     GET_FILENAME_COMPONENT (_ypath "${Go_YFILE}" PATH)
-    GET_FILENAME_COMPONENT (_yname "${Go_YFILE}" NAME)
+    GET_FILENAME_COMPONENT (_yfile "${Go_YFILE}" NAME)
 
     SET(Go_OUTPUT "${_ypath}/y.go")
 
+    # Compute path to Go compiler, depending on the Go mode (single or multi)
+    GET_GOROOT ("${Go_GOVERSION}" _goroot _gover)
+
     ADD_CUSTOM_COMMAND(OUTPUT "${Go_OUTPUT}"
-                       COMMAND "${GO_EXECUTABLE}" tool yacc "${_yname}"
-                       COMMENT "Executing: ${GO_EXECUTABLE} tool yacc ${_yname}"
+                       COMMAND "${CMAKE_COMMAND}"
+                       -D "GOROOT=${_goroot}"
+                       -D "YFILE=${_yfile}"
+                       -P "${TLM_MODULES_DIR}/go-yacc.cmake"
                        DEPENDS ${Go_YFILE}
                        WORKING_DIRECTORY "${_ypath}"
+                       COMMENT "Build Go yacc target ${Go_TARGET} using Go ${_gover}"
                        VERBATIM)
 
     ADD_CUSTOM_TARGET ("${Go_TARGET}"
                        DEPENDS "${Go_OUTPUT}")
+    MESSAGE (STATUS "Added Go yacc target '${Go_TARGET}' using Go ${_gover}")
 
     IF (Go_DEPENDS)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})

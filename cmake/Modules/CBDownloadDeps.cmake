@@ -33,50 +33,86 @@ IF (NOT CBDownloadDeps_INCLUDED)
     ENDIF (_retval)
   ENDFUNCTION (_DOWNLOAD_FILE)
 
+  # Downloads a specific URL to a file with the same name in the cache dir.
+  # First checks the cache for an up-to-date copy based on md5.
+  # Sets the variable named by "var" to the locally-cached path.
+  FUNCTION (_DOWNLOAD_URL_TO_CACHE url var)
+    # Compute local name for cache.
+    GET_FILENAME_COMPONENT (_file "${url}" NAME)
+    SET (_md5file "${_file}.md5")
+
+    # Compute local full paths to cached files.
+    SET (_cache_file_path "${CB_DOWNLOAD_DEPS_CACHE}/${_file}")
+    SET (_cache_md5file_path "${CB_DOWNLOAD_DEPS_CACHE}/${_md5file}")
+
+    # "Return" the cached file path.
+    SET (${var} "${_cache_file_path}" PARENT_SCOPE)
+
+    # If download file already exists, compare with md5
+    IF (EXISTS "${_cache_file_path}")
+      IF (EXISTS "${_cache_md5file_path}")
+        _CHECK_MD5 ("${_cache_file_path}" "${_cache_md5file_path}" _md5equal)
+        IF (_md5equal)
+          MESSAGE (STATUS "Dependency '${_file}' found in cache")
+          RETURN ()
+        ELSE (_md5equal)
+          MESSAGE (WARNING "Cached download for dependency '${_file}' has "
+            "incorrect MD5! Will re-download!")
+        ENDIF (_md5equal)
+      ELSE (EXISTS "${_cache_md5file_path}")
+        MESSAGE (WARNING "Cached download for dependency '${_file}' is missing "
+          "md5 file! Will re-download!")
+      ENDIF (EXISTS "${_cache_md5file_path}")
+    ENDIF (EXISTS "${_cache_file_path}")
+
+    # File not found in cache or cache corrupt - download new.
+
+    # First compute the URL for the .md5 and download it. For historical
+    # reasons, if the url's extension is ".tgz", the MD5 url will be same as
+    # the url with ".tgz" replaced by ".md5". Otherwise, the MD5 url will
+    # simply be the url with an additional ".md5" extension.
+    IF (url MATCHES "\\.tgz$")
+      STRING (REGEX REPLACE "\\.tgz$" ".md5" _md5url "${url}")
+    ELSE ()
+      SET (_md5url "${_url}.md5")
+    ENDIF ()
+    MESSAGE (STATUS "Downloading dependency md5: ${_md5file}")
+    _DOWNLOAD_FILE ("${_md5url}" "${_cache_md5file_path}")
+    MESSAGE (STATUS "Downloading dependency: ${_file}")
+    _DOWNLOAD_FILE ("${url}" "${_cache_file_path}")
+    _CHECK_MD5 ("${_cache_file_path}" "${_cache_md5file_path}" _md5equal)
+    IF (NOT _md5equal)
+      MESSAGE (FATAL_ERROR "Downloaded file ${_cache_file_path} failed md5 sum check!")
+    ENDIF ()
+  ENDFUNCTION (_DOWNLOAD_URL_TO_CACHE)
+
   # Downloads a dependency to the cache dir. First checks the cache for
-  # an up-to-date copy based on md5.  Sets the global variable
-  # _CB_DOWNLOAD_CACHED_DEP to the downloaded dependency .tgz.
-  FUNCTION (_DOWNLOAD_DEP name version)
+  # an up-to-date copy based on md5.  Sets the variable named by 'var'
+  # to the downloaded dependency .tgz.
+  FUNCTION (_DOWNLOAD_DEP name version var)
     _DETERMINE_PLATFORM (_platform)
     _DETERMINE_ARCH (_arch)
 
-    # Compute relative paths to dependency, minus extension, on local filesystem
+    # Compute relative paths to dependency on local filesystem
     # and in remote repository
-    SET (_rel_path "${name}-${_platform}-${_arch}-${version}")
-    SET (_repo_path
-      "${CB_DOWNLOAD_DEPS_REPO}/${name}/${version}/${_rel_path}")
-
-    SET (_cache_path "${CB_DOWNLOAD_DEPS_CACHE}/${_rel_path}")
-    SET (_CB_DOWNLOAD_CACHED_DEP "${_cache_path}.tgz" PARENT_SCOPE)
-
-    # If download file already exists, compare with md5
-    IF (EXISTS "${_cache_path}.tgz")
-      IF (EXISTS "${_cache_path}.md5")
-        _CHECK_MD5 ("${_cache_path}.tgz" "${_cache_path}.md5" _md5equal)
-        IF (_md5equal)
-          MESSAGE (STATUS "Dependency '${name}' found in cache")
-          RETURN ()
-        ELSE (_md5equal)
-          MESSAGE (WARNING "Cached download for dependency '${name}' has "
-            "incorrect MD5! Will re-download!")
-        ENDIF (_md5equal)
-      ELSE (EXISTS "${_cache_path}.md5")
-        MESSAGE (WARNING "Cached download for dependency '${name}' is missing "
-          "md5 file! Will re-download!")
-      ENDIF (EXISTS "${_cache_path}.md5")
-    ENDIF (EXISTS "${_cache_path}.tgz")
-
-    # File not found in cache or cache corrupt - download new.
-    # First download the .md5.
-    MESSAGE (STATUS "Downloading dependency md5: ${_rel_path}")
-    _DOWNLOAD_FILE ("${_repo_path}.md5" "${_cache_path}.md5")
-    MESSAGE (STATUS "Downloading dependency tgz: ${_rel_path}")
-    _DOWNLOAD_FILE ("${_repo_path}.tgz" "${_cache_path}.tgz")
-    _CHECK_MD5 ("${_cache_path}.tgz" "${_cache_path}.md5" _retval)
-    IF (NOT _retval)
-      MESSAGE (FATAL_ERROR "Downloaded file ${_cache_path}.tgz failed md5 sum check!")
-    ENDIF (NOT _retval)
+    SET (_rel_path "${name}-${_platform}-${_arch}-${version}.tgz")
+    SET (_repo_url "${CB_DOWNLOAD_DEPS_REPO}/${name}/${version}/${_rel_path}")
+    _DOWNLOAD_URL_TO_CACHE ("${_repo_url}" _cachefile)
+    SET (${var} "${_cachefile}" PARENT_SCOPE)
   ENDFUNCTION (_DOWNLOAD_DEP)
+
+  # Unpack an archive file into a directory, with error checking.
+  FUNCTION (EXPLODE_ARCHIVE file dir)
+    FILE (MAKE_DIRECTORY "${dir}")
+    EXECUTE_PROCESS (COMMAND "${CMAKE_COMMAND}" -E
+      tar xf "${file}"
+      WORKING_DIRECTORY "${dir}"
+      RESULT_VARIABLE _explode_result
+      ERROR_VARIABLE _explode_stderr)
+    IF(_explode_result)
+      MESSAGE (FATAL_ERROR "Failed to extract dependency ${file} - ${_explode_stderr}")
+    ENDIF(_explode_result)
+  ENDFUNCTION (EXPLODE_ARCHIVE)
 
   # Declare a dependency
   FUNCTION (DECLARE_DEP name)
@@ -138,24 +174,16 @@ IF (NOT CBDownloadDeps_INCLUDED)
       SET (EXPLODED_VERSION "none")
     ENDIF (EXISTS "${_explode_dir}/VERSION.txt")
 
-    MESSAGE (STATUS "Checking exploded version ${EXPLODED_VERSION} against ${dep_VERSION}")
+    MESSAGE (STATUS "Checking exploded version ${EXPLODED_VERSION} againsmaket ${dep_VERSION}")
     IF (EXPLODED_VERSION STREQUAL ${dep_VERSION})
       MESSAGE (STATUS "Dependency '${name} (${dep_VERSION})' already downloaded")
     ELSE (EXPLODED_VERSION STREQUAL ${dep_VERSION})
-      _DOWNLOAD_DEP (${name} ${dep_VERSION})
+      _DOWNLOAD_DEP (${name} ${dep_VERSION} _cachedep)
 
       # Explode tgz into build directory.
       MESSAGE (STATUS "Installing dependency: ${name}-${dep_VERSION}...")
-      FILE (MAKE_DIRECTORY "${_explode_dir}")
-      EXECUTE_PROCESS (COMMAND "${CMAKE_COMMAND}" -E
-        tar xf "${_CB_DOWNLOAD_CACHED_DEP}"
-        WORKING_DIRECTORY "${_explode_dir}"
-        RESULT_VARIABLE _explode_result
-        ERROR_VARIABLE _explode_stderr)
-      IF(_explode_result)
-        MESSAGE (FATAL_ERROR "Failed to extract dependency ${name}-${dep_VERSION} - ${_explode_stderr}")
-      ENDIF(_explode_result)
-      FILE (WRITE ${_explode_dir}/VERSION.txt ${dep_VERSION})
+      EXPLODE_ARCHIVE ("${_cachedep}" "${_explode_dir}")
+      FILE (WRITE "${_explode_dir}/VERSION.txt" ${dep_VERSION})
     ENDIF (EXPLODED_VERSION STREQUAL ${dep_VERSION})
 
     # Always add the dep subdir; this will "re-install" the dep every time you
@@ -165,8 +193,60 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
   ENDFUNCTION (DECLARE_DEP)
 
+  # Download and cache a specific version of Go, and explode it into the
+  # *cache* directory. Sets the variable named by "var" to point to
+  # the GOROOT in the exploded directory.
+  FUNCTION (GET_GO_VERSION GOVERSION var)
+    # Unlike DOWNLOAD_DEP(), we explode Go downloads into the cache directory,
+    # not the binary directory. This means we don't need to re-explode it
+    # every time we clean the binary directory. We could do the same for
+    # other downloaded deps (and probably should), but we have less control
+    # other whether any parts of the build do naughty things like modify the
+    # exploded dep contents.
+    _DETERMINE_ARCH (_arch)
+    SET (_explode_dir "${CB_DOWNLOAD_DEPS_CACHE}/exploded/${_arch}/go-${GOVERSION}")
+    SET (_goroot "${_explode_dir}/go")
+    SET (_goexe "${_goroot}/bin/go")
+    SET (${var} "${_goroot}" PARENT_SCOPE)
+
+    # We assume the go binary existing is sufficient to say that the requested
+    # go version has been downloaded successfully.
+    IF (EXISTS "${_goexe}")
+      RETURN ()
+    ENDIF ()
+
+    # Otherwise, download the correct version for the current platform.
+    _DETERMINE_PLATFORM (_platform)
+    IF (_platform STREQUAL "macos")
+      SET (_gofile "go${GOVERSION}.darwin-amd64.tar.gz")
+    ELSEIF (_platform STREQUAL "windows_msvc")
+      IF (_arch STREQUAL "x86")
+        SET (_arch "386")
+      ENDIF ()
+      SET (_gofile "go${GOVERSION}.windows-${_arch}.zip")
+    ELSE ()
+      # Presumed Linux
+      SET (_gofile "go${GOVERSION}.linux-amd64.tar.gz")
+    ENDIF ()
+    SET (_cachefile "${CB_DOWNLOAD_DEPS_CACHE}/${_gofile}")
+    IF (NOT EXISTS "${_cachefile}")
+      MESSAGE (STATUS "Golang version ${GOVERSION} not found in cache, "
+        "downloading...")
+      _DOWNLOAD_FILE ("${GO_DOWNLOAD_REPO}/${_gofile}" "${_cachefile}")
+    ENDIF ()
+    MESSAGE (STATUS "Installing Golang version ${GOVERSION} in cache...")
+    EXPLODE_ARCHIVE ("${_cachefile}" "${_explode_dir}")
+
+    IF (NOT EXISTS "${_goexe}")
+      MESSAGE (FATAL_ERROR "Downloaded go archive ${_gofile}"
+        " failed to unpack correctly - ${_goexe} does not exist!")
+    ENDIF ()
+  ENDFUNCTION (GET_GO_VERSION)
+
   SET (CB_DOWNLOAD_DEPS_REPO "http://packages.couchbase.com/couchbase-server/deps"
     CACHE STRING "URL of third-party dependency repository")
+  SET (GO_DOWNLOAD_REPO "https://storage.googleapis.com/golang"
+    CACHE STRING "URL of Golang downloads repository")
 
   # Default download cache in user's home directory; may be overridden
   # by CB_DOWNLOAD_DEPS_CACHE environment variable or by

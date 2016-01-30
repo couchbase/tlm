@@ -86,7 +86,7 @@ e2eviewtests:
 
 clean:
 	-(cd build && $(MAKE) realclean)
-	-$(RM) $(RMOPTS) build $(PREFIX) godeps$(SEPARATOR)pkg goproj$(SEPARATOR)bin goproj$(SEPARATOR)pkg ns_server$(SEPARATOR)/build
+	-$(RM) $(RMOPTS) build ns_server$(SEPARATOR)build
 
 reset:
 	(cd build && $(MAKE) reset)
