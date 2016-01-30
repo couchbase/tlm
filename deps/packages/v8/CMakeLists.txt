@@ -5,11 +5,11 @@ include(ExternalProject)
 if (APPLE)
    SET(V8_LIBRARY_FILE "<SOURCE_DIR>/out/x64.release/libv8.dylib")
    SET(V8_PLATFORM_FILE "<SOURCE_DIR>/out/x64.release/libv8_libplatform.a")
-   SET(GYP_FLAGS "-Dcomponent=shared_library -Dv8_enable_backtrace=1 -Dv8_use_snapshot='false' -Dv8_use_external_startup_data=0 -Dv8_enable_i18n_support=1")
+   SET(GYP_FLAGS "-Dcomponent=shared_library -Dv8_enable_backtrace=1 -Dv8_use_snapshot='false' -Dv8_use_external_startup_data=0 -Dv8_enable_i18n_support=1 -Dtest_isolation_mode=noop")
 else (APPLE)
    SET(V8_LIBRARY_FILE "<SOURCE_DIR>/out/x64.release/lib.target/libv8.so")
    SET(V8_PLATFORM_FILE "<SOURCE_DIR>/out/x64.release/obj.target/tools/gyp/libv8_libplatform.a")
-   SET(GYP_FLAGS "-Dcomponent=shared_library -Dv8_enable_backtrace=1 -Dv8_use_snapshot='false' -Dclang=0 -Dv8_use_external_startup_data=0 -Dv8_enable_i18n_support=1")
+   SET(GYP_FLAGS "-Dcomponent=shared_library -Dv8_enable_backtrace=1 -Dv8_use_snapshot='false' -Dclang=0 -Dv8_use_external_startup_data=0 -Dv8_enable_i18n_support=1 -Dtest_isolation_mode=noop")
 endif (APPLE)
 
 ### Download, configure and build v8 ####################################
@@ -33,12 +33,22 @@ ExternalProject_Add(v8
   COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
 )
 
-# SUSE only: Custom pre-build step to copy in correct local version of nm.
-if ("${cbcache_platform}" MATCHES "^suse.*")
-  ExternalProject_Add_Step(v8 move_nm
-  COMMAND cp -a /usr/bin/nm <SOURCE_DIR>/third_party/binutils/Linux_x64/Release/bin
+# Add icu from couchbasedps/icu4c.git
+ExternalProject_Add_Step(v8 get_icu
+  COMMAND cd <SOURCE_DIR>/third_party/icu && git clone git://github.com/couchbasedeps/icu4c.git -b r54.1
+  COMMAND ${CMAKE_COMMAND} -E make_directory <SOURCE_DIR>/third_party/icu/source
+  COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/third_party/icu/icu4c/source <SOURCE_DIR>/third_party/icu/source
+  COMMAND ${CMAKE_COMMAND} -E remove_directory <SOURCE_DIR>/third_party/icu/icu4c
   DEPENDEES configure
   DEPENDERS build
+)
+
+#SUSE only: Custom pre-build step to copy in correct local version of nm.
+if ("${cbcache_platform}" MATCHES "^suse.*")
+  ExternalProject_Add_Step(v8 move_nm
+    COMMAND cp -a /usr/bin/nm <SOURCE_DIR>/third_party/binutils/Linux_x64/Release/bin
+    DEPENDEES configure
+    DEPENDERS build
   )
 endif ("${cbcache_platform}" MATCHES "^suse.*")
 
