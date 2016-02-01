@@ -221,7 +221,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
     # Otherwise, download the correct version for the current platform.
     _DETERMINE_PLATFORM (_platform)
-    IF (_platform STREQUAL "macos")
+    IF (_platform STREQUAL "macosx")
       SET (_gofile "go${GOVERSION}.darwin-amd64.tar.gz")
     ELSEIF (_platform STREQUAL "windows_msvc")
       IF (_arch STREQUAL "x86")
