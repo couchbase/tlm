@@ -245,7 +245,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
   SET (CB_DOWNLOAD_DEPS_REPO "http://packages.couchbase.com/couchbase-server/deps"
     CACHE STRING "URL of third-party dependency repository")
-  SET (GO_DOWNLOAD_REPO "https://storage.googleapis.com/golang"
+  SET (GO_DOWNLOAD_REPO "http://storage.googleapis.com/golang"
     CACHE STRING "URL of Golang downloads repository")
 
   # Default download cache in user's home directory; may be overridden
