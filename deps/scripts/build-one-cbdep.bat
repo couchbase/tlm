@@ -6,6 +6,7 @@ mkdir build\deps
 rem Build amd64 first
 
 set target_arch=amd64
+call ..\..\win32\environment.bat
 mkdir winbuild
 cd winbuild
 cmake .. || goto error
@@ -19,6 +20,7 @@ rmdir /s /q winbuild
 rem Build again for x86
 
 set target_arch=x86
+call ..\..\win32\environment.bat
 mkdir winbuild
 cd winbuild
 cmake .. || goto error
