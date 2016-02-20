@@ -4,11 +4,9 @@ include(ExternalProject)
 
 if (APPLE)
    SET(V8_LIBRARY_FILE "<SOURCE_DIR>/out/x64.release/libv8.dylib")
-   SET(V8_PLATFORM_FILE "<SOURCE_DIR>/out/x64.release/libv8_libplatform.a")
    SET(GYP_FLAGS "-Dcomponent=shared_library -Dv8_enable_backtrace=1 -Dv8_use_snapshot='false' -Dv8_use_external_startup_data=0 -Dv8_enable_i18n_support=1 -Dtest_isolation_mode=noop")
 else (APPLE)
    SET(V8_LIBRARY_FILE "<SOURCE_DIR>/out/x64.release/lib.target/libv8.so")
-   SET(V8_PLATFORM_FILE "<SOURCE_DIR>/out/x64.release/obj.target/tools/gyp/libv8_libplatform.a")
    SET(GYP_FLAGS "-Dcomponent=shared_library -Dv8_enable_backtrace=1 -Dv8_use_snapshot='false' -Dclang=0 -Dv8_use_external_startup_data=0 -Dv8_enable_i18n_support=1 -Dtest_isolation_mode=noop")
 endif (APPLE)
 
@@ -94,9 +92,8 @@ ELSE (WIN32)
 
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
 
-    INSTALL_COMMAND mkdir -p <INSTALL_DIR>/lib <INSTALL_DIR>/archive <INSTALL_DIR>/include
+    INSTALL_COMMAND mkdir -p <INSTALL_DIR>/lib <INSTALL_DIR>/include
     COMMAND ${CMAKE_COMMAND} -E copy ${V8_LIBRARY_FILE} <INSTALL_DIR>/lib
-    COMMAND ${CMAKE_COMMAND} -E copy ${V8_PLATFORM_FILE} <INSTALL_DIR>/archive
     COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include <INSTALL_DIR>/include
     COMMAND ${CMAKE_COMMAND} -E remove -f <INSTALL_DIR>/include/OWNERS
 
@@ -111,7 +108,8 @@ ExternalProject_Add_Step(v8 get_icu
   COMMAND ${CMAKE_COMMAND} -E make_directory <SOURCE_DIR>/third_party/icu/source
   COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/third_party/icu/icu4c/source <SOURCE_DIR>/third_party/icu/source
   COMMAND ${CMAKE_COMMAND} -E remove_directory <SOURCE_DIR>/third_party/icu/icu4c
-  DEPENDERS configure
+  DEPENDEES configure
+  DEPENDERS build
 )
 
 #SUSE only: Custom pre-build step to copy in correct local version of nm.
