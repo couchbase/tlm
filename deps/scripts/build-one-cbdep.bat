@@ -3,6 +3,9 @@ cd deps\packages
 rem Make the output directory that the job expects
 mkdir build\deps
 
+rem When compiling V8, Gyp expects the TMP variable to be set
+set TMP=C:\Windows\Temp
+
 rem Build amd64 first
 
 set target_arch=amd64
