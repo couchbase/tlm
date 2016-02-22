@@ -14,8 +14,10 @@ endif (APPLE)
 IF (WIN32)
   IF (${MSBUILD_ARCH} STREQUAL "x64")
     SET(_arch_suffix "_x64")
+    SET(V8_TARGET_ARCH "x64")
   ELSEIF (${MSBUILD_ARCH} STREQUAL "Win32")
     SET(_arch_suffix "")
+    SET(V8_TARGET_ARCH "ia32")
   ENDIF ()
   SET(V8_BUILD_DIR_RELEASE "out\\Release${_arch_suffix}")
   SET(V8_BUILD_DIR_DEBUG "out\\Debug${_arch_suffix}")
@@ -29,7 +31,7 @@ IF (WIN32)
     GIT_TAG ${_git_rev}
     BUILD_IN_SOURCE 1
 
-    CONFIGURE_COMMAND ${CMAKE_COMMAND} -DMSBUILD_ARCH=${MSBUILD_ARCH} -P ${CMAKE_CURRENT_SOURCE_DIR}/v8win.cmake
+    CONFIGURE_COMMAND ${CMAKE_COMMAND} -DV8_TARGET_ARCH=${V8_TARGET_ARCH} -P ${CMAKE_CURRENT_SOURCE_DIR}/v8win.cmake
     BUILD_COMMAND "ninja" "-C" ${V8_BUILD_DIR_RELEASE} "v8" "v8_libplatform"
           COMMAND "ninja" "-C" ${V8_BUILD_DIR_DEBUG} "v8" "v8_libplatform"
 
