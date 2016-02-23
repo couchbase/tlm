@@ -17,6 +17,7 @@ ExternalProject_Add(jemalloc
                     COMMAND CPPFLAGS=-I/usr/local/include <SOURCE_DIR>/configure
                                                     --prefix=<INSTALL_DIR>
                                                     --with-jemalloc-prefix=je_
+                                                    --disable-cache-oblivious
                                                     ${EXTRA_CONFIGURE_OPTIONS}
 
   BUILD_COMMAND $(MAKE) build_lib_shared
