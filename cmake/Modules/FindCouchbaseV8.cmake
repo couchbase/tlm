@@ -10,10 +10,9 @@ SET(_v8_exploded ${CMAKE_BINARY_DIR}/tlm/deps/v8.exploded)
 # `#include <include/v8-platform.h>`. To allow this inclusion we are setting
 # V8_INCLUDE_DIR path up until include directory
 FIND_PATH(V8_INCLUDE_DIR include/v8.h
-          HINTS
-               ENV V8_DIR
-          PATHS
-               ${_v8_exploded})
+          HINTS ${_v8_exploded}
+          NO_CMAKE_PATH
+          NO_CMAKE_ENVIRONMENT_PATH)
 
 IF (WIN32)
   # RelWithDebInfo & MinSizeRel should use the Release libraries, otherwise use
@@ -26,19 +25,18 @@ IF (WIN32)
 
   FIND_LIBRARY(V8_SHAREDLIB
                NAMES v8.dll
-               PATHS ${_v8_exploded}/lib/${_build_type})
+               HINTS ${_v8_exploded}/lib/${_build_type})
   FIND_LIBRARY(V8_PLATFORMLIB
                NAMES v8_libplatform
-               PATHS ${_v8_exploded}/archive/${_build_type})
+               HINTS ${_v8_exploded}/archive/${_build_type})
   FIND_LIBRARY(V8_BASELIB
                NAMES v8_libbase
-               PATHS ${_v8_exploded}/archive/${_build_type})
+               HINTS ${_v8_exploded}/archive/${_build_type})
   SET(V8_LIBRARIES ${V8_SHAREDLIB} ${V8_PLATFORMLIB} ${V8_BASELIB} winmm)
 ELSE (WIN32)
   FIND_LIBRARY(V8_LIBRARIES
                NAMES v8
-               HINTS
-                   ENV V8_DIR)
+               HINTS ${CMAKE_INSTALL_PREFIX}/lib)
 ENDIF (WIN32)
 
 IF (V8_LIBRARIES)
