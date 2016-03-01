@@ -3,6 +3,10 @@
 #
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
+IF (NOT(${CMAKE_MAJOR_VERSION} LESS 3))
+  CMAKE_POLICY(SET CMP0026 OLD)
+ENDIF (NOT(${CMAKE_MAJOR_VERSION} LESS 3))
+
 STRING(REGEX REPLACE "[ ]" "a" modified_source_dir "${CMAKE_SOURCE_DIR}")
 IF (NOT modified_source_dir STREQUAL CMAKE_SOURCE_DIR)
   MESSAGE(FATAL_ERROR "Couchbase cannot be built in a source directory containing a space character")
