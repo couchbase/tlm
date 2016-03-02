@@ -67,7 +67,7 @@
    ...
    fun:cb_create_named_thread
    fun:setup_parent_monitor
-   fun:main
+   ...
 }
 
 # The following suppresion is for V8 - it doesn't free all memory
