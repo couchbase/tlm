@@ -22,7 +22,9 @@ IF (ICU_INCLUDE_DIR)
          UNSET(_the_lib CACHE)
          FIND_LIBRARY(_the_lib
                       NAMES ${_mylib}
-                      HINTS ${CMAKE_INSTALL_PREFIX}/lib)
+                      HINTS
+                          ${ICU_LIB_HINT_DIR}
+                          ${CMAKE_INSTALL_PREFIX}/lib)
          IF (_the_lib)
             list(APPEND ICU_LIBRARIES ${_the_lib})
          ENDIF (_the_lib)
