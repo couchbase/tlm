@@ -36,6 +36,7 @@ IF (DEFINED JETBRAINS_CLION_IDE)
    # let's just remove all of the other configurations and just
    # build a debug build
    SET(CMAKE_CONFIGURATION_TYPES Debug CACHE STRING "" FORCE)
+   ADD_DEFINITIONS(-DJETBRAINS_CLION_IDE)
 ENDIF (DEFINED JETBRAINS_CLION_IDE)
 
 # RPATH is more or less "broken" on MacOSX in cmake < 3.x
