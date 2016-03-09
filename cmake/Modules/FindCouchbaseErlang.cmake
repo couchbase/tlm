@@ -133,8 +133,10 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
   ENDMACRO(ADD_ERLANG_INCLUDE_DIR)
 
   # macro to compile erlang files
-  MACRO (ERL_BUILD AppName)
+  MACRO (ERL_BUILD)
+    PARSE_ARGUMENTS (Erl "SOURCES;DEPENDS" "APPNAME" "" ${ARGN})
     SET(outfiles)
+    SET(AppName ${Erl_APPNAME})
     GET_FILENAME_COMPONENT(EBIN_DIR "${CMAKE_CURRENT_SOURCE_DIR}/ebin" ABSOLUTE)
     IF (IS_DIRECTORY ${EBIN_DIR})
       SET(${AppName}_ebin ${EBIN_DIR})
@@ -151,7 +153,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
     #Set application modules
     SET(${AppName}_module_list)
 
-    FOREACH (it ${ARGN})
+    FOREACH (it ${Erl_SOURCES})
       GET_FILENAME_COMPONENT(outfile ${it} NAME_WE)
       GET_FILENAME_COMPONENT(outfile_ext ${it} EXT)
       SET(${AppName}_module_list ${${AppName}_module_list} "'${outfile}'")
@@ -170,15 +172,15 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
       ADD_CUSTOM_COMMAND(
         OUTPUT ${outfile}
         COMMAND ${ERLC_EXECUTABLE} -o ${${AppName}_ebin} ${ERLANG_INCLUDES} ${ERLANG_COMPILE_FLAGS} ${it}
-        DEPENDS ${it}
+        DEPENDS ${it} ${Erl_DEPENDS}
         VERBATIM)
     ENDFOREACH(it)
     ADD_CUSTOM_TARGET(${AppName} ALL DEPENDS ${outfiles})
   ENDMACRO (ERL_BUILD)
 
   MACRO (ERL_BUILD_OTP)
-    PARSE_ARGUMENTS (Otp "HEADERS;SOURCES" "APPNAME;VERSION;INSTALL_PATH" ""
-      ${ARGN})
+    PARSE_ARGUMENTS (Otp
+      "HEADERS;SOURCES;DEPENDS" "APPNAME;VERSION;INSTALL_PATH" "" ${ARGN})
 
     SET(outfiles)
     SET(AppName ${Otp_APPNAME})
@@ -225,7 +227,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
       ADD_CUSTOM_COMMAND(
         OUTPUT ${outfile}
         COMMAND ${ERLC_EXECUTABLE} -o ${${AppName}_ebin} ${ERLANG_INCLUDES} ${ERLANG_COMPILE_FLAGS} ${it}
-        DEPENDS ${it}
+        DEPENDS ${it} ${Otp_DEPENDS}
         VERBATIM)
     ENDFOREACH(it)
     ADD_CUSTOM_TARGET(${AppName} ALL DEPENDS ${outfiles})
