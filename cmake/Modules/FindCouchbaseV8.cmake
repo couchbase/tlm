@@ -11,6 +11,14 @@ SET(_v8_exploded ${CMAKE_BINARY_DIR}/tlm/deps/v8.exploded)
 # V8_INCLUDE_DIR path up until include directory
 FIND_PATH(V8_INCLUDE_DIR include/v8.h
           HINTS ${_v8_exploded}
+          PATHS
+              ~/Library/Frameworks
+              /Library/Frameworks
+              /opt/local
+              /opt/csw
+              /opt/v8
+              /opt/v8/include
+              /opt
           NO_CMAKE_PATH
           NO_CMAKE_ENVIRONMENT_PATH)
 
@@ -36,7 +44,15 @@ IF (WIN32)
 ELSE (WIN32)
   FIND_LIBRARY(V8_LIBRARIES
                NAMES v8
-               HINTS ${CMAKE_INSTALL_PREFIX}/lib)
+               HINTS ${CMAKE_INSTALL_PREFIX}/lib
+               PATHS
+                   ~/Library/Frameworks
+                   /Library/Frameworks
+                   /opt/local
+                   /opt/csw
+                   /opt/v8
+                   /opt/v8/lib
+                   /opt)
 ENDIF (WIN32)
 
 IF (V8_LIBRARIES)

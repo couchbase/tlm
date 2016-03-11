@@ -3,6 +3,10 @@
 #
 CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 
+IF (NOT(${CMAKE_MAJOR_VERSION} LESS 3))
+  CMAKE_POLICY(SET CMP0026 OLD)
+ENDIF (NOT(${CMAKE_MAJOR_VERSION} LESS 3))
+
 STRING(REGEX REPLACE "[ ]" "a" modified_source_dir "${CMAKE_SOURCE_DIR}")
 IF (NOT modified_source_dir STREQUAL CMAKE_SOURCE_DIR)
   MESSAGE(FATAL_ERROR "Couchbase cannot be built in a source directory containing a space character")
@@ -32,6 +36,7 @@ IF (DEFINED JETBRAINS_CLION_IDE)
    # let's just remove all of the other configurations and just
    # build a debug build
    SET(CMAKE_CONFIGURATION_TYPES Debug CACHE STRING "" FORCE)
+   ADD_DEFINITIONS(-DJETBRAINS_CLION_IDE)
 ENDIF (DEFINED JETBRAINS_CLION_IDE)
 
 # RPATH is more or less "broken" on MacOSX in cmake < 3.x
@@ -130,7 +135,7 @@ ADD_CUSTOM_TARGET(reset
 
 SET (gtest_force_shared_crt ON CACHE BOOL
      "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
-ADD_SUBDIRECTORY(gtest)
+ADD_SUBDIRECTORY(googletest)
 
 ADD_SUBDIRECTORY(platform)
 ADD_SUBDIRECTORY(subjson)
