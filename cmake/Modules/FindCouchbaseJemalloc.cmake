@@ -27,6 +27,7 @@ FIND_LIBRARY(JEMALLOC_LIBRARIES
                  ENV JEMALLOC_DIR
              PATH_SUFFIXES lib
              PATHS
+                 ${_jemalloc_exploded}
                  ~/Library/Frameworks
                  /Library/Frameworks
                  /opt/local
@@ -39,6 +40,9 @@ IF (JEMALLOC_INCLUDE_DIR AND JEMALLOC_LIBRARIES)
   CMAKE_PUSH_CHECK_STATE(RESET)
   SET(CMAKE_REQUIRED_LIBRARIES ${JEMALLOC_LIBRARIES})
   SET(CMAKE_REQUIRED_INCLUDES ${JEMALLOC_INCLUDE_DIR})
+  IF(WIN32)
+    LIST(APPEND CMAKE_REQUIRED_INCLUDES ${JEMALLOC_INCLUDE_DIR}/msvc_compat)
+  ENDIF(WIN32)
   CHECK_SYMBOL_EXISTS(je_malloc "stdbool.h;jemalloc/jemalloc.h" HAVE_JE_SYMBOLS)
   CMAKE_POP_CHECK_STATE()
 
