@@ -279,7 +279,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       -D "CGO_INCLUDE_DIRS=${Go_CGO_INCLUDE_DIRS}"
       -D "CGO_LIBRARY_DIRS=${Go_CGO_LIBRARY_DIRS}"
       -P "${TLM_MODULES_DIR}/go-install.cmake"
-      COMMENT "Building Go target ${Go_TARGET} using Go ${_ver}"
+      COMMENT "Building Go target ${Go_TARGET} using Go ${_gover}"
       VERBATIM)
     IF (Go_DEPENDS)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
