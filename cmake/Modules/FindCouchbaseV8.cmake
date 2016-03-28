@@ -42,7 +42,7 @@ IF (WIN32)
                HINTS ${_v8_exploded}/archive/${_build_type})
   SET(V8_LIBRARIES ${V8_SHAREDLIB} ${V8_PLATFORMLIB} ${V8_BASELIB} winmm)
 ELSE (WIN32)
-  FIND_LIBRARY(V8_LIBRARIES
+  FIND_LIBRARY(V8_SHAREDLIB
                NAMES v8
                HINTS ${CMAKE_INSTALL_PREFIX}/lib
                PATHS
@@ -53,6 +53,30 @@ ELSE (WIN32)
                    /opt/v8
                    /opt/v8/lib
                    /opt)
+  FIND_LIBRARY(V8_PLATFORMLIB
+               NAMES v8_libplatform
+               PATHS
+                   ~/Library/Frameworks
+                   /Library/Frameworks
+                   /opt/local
+                   /opt/csw
+                   /opt/v8
+                   /opt/v8/lib
+                   /opt)
+  FIND_LIBRARY(V8_BASELIB
+               NAMES v8_libbase
+               PATHS
+                   ~/Library/Frameworks
+                   /Library/Frameworks
+                   /opt/local
+                   /opt/csw
+                   /opt/v8
+                   /opt/v8/lib
+                   /opt)
+  SET(V8_LIBRARIES ${V8_SHAREDLIB})
+  IF (V8_PLATFORMLIB AND V8_BASELIB)
+    SET(V8_LIBRARIES ${V8_LIBRARIES} ${V8_PLATFORMLIB} ${V8_BASELIB})
+  ENDIF (V8_PLATFORMLIB AND V8_BASELIB)
 ENDIF (WIN32)
 
 IF (V8_LIBRARIES)
