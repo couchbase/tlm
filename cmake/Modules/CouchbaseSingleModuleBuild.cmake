@@ -8,6 +8,7 @@ INCLUDE(CouchbaseDefaultValues)
 MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
 
+INCLUDE(CouchbaseThreadSanitizer)
 INCLUDE(CouchbaseMemoryAllocator)
 
 INCLUDE(FindCouchbaseOpenSSL)

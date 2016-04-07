@@ -456,6 +456,40 @@ platforms which Clang/LLVM is available, however this isn't tested.
         scan-build: 31 bugs found.
         scan-build: Run 'scan-view /source/build-analyzer/analyser-results/2014-06-05-173247-52416-1' to examine bug reports.
 
+## Thread Sanitizer
+
+There are pre-canned build rules to allow you to build with [ThreadSanitizer][thread_sanitizer_link], to detect threading issues.
+
+### Prerequities
+
+* A compiler which supports ThreadSantizier. Recent version of Clang
+  (3.2+) or GCC (4.8+) are claimed to work, however only Clang has
+  been tested.
+
+### Running
+
+* Ensure that the compiler supporting ThreadSanitizer is chosen by
+  CMake. If it's the system default compiler there is nothing to do;
+  otherwise you will need to set both `CC` and `CXX` environment
+  variables to point to the C / C++ compiler before calling the build
+  system.
+
+* Pass the variable `CB_THREADSANITIZER=1` to CMake.
+
+One liner for a Ubuntu-based system where Clang isn't the default system compiler:
+
+        CC=clang CXX=clang++ make EXTRA_CMAKE_OPTIONS="-D CB_THREADSANITIZER=1"
+
+* Run one or more tests. Any issues will be reported (to stderr by default).
+
+### Customizating ThreadSanitizer
+
+See `cmake/Modules/CouchbaseThreadSanitizer.cmake` CMake fragment for
+how ThreadSanizer is configured.
+
+See the `TSAN_OPTIONS` environment variable (documented on the
+ThreadSanitizer [Flags][thread_sanitizer_flags] wiki page) for more
+information on configuring.
 
 
 [win_visual_studio_link]: http://hub.internal.couchbase.com/confluence/download/attachments/7242678/en_visual_studio_professional_2013_x86_web_installer_3175305.exe?version=1&modificationDate=1389383332000
@@ -469,3 +503,5 @@ platforms which Clang/LLVM is available, however this isn't tested.
 [homebrew_link]: http://brew.sh/
 [cmake_link]: http://www.cmake.org/cmake/
 [clang_static_analyzer_link]: http://clang-analyzer.llvm.org
+[thread_sanitizer_link]: https://code.google.com/p/thread-sanitizer/wiki/CppManual
+[thread_sanitizer_flags]: https://code.google.com/p/thread-sanitizer/wiki/Flags

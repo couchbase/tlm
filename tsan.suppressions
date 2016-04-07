@@ -1,0 +1,48 @@
+# ThreadSanitizer suppressions file for Couchbase
+# https://github.com/google/sanitizers/wiki/ThreadSanitizerSuppressions
+
+# In memcached we choose to ignore accesses to the conn structs from
+# other threads when printing connection statistics. We accept the
+# possible stale / outdated information as we don't want to add
+# additional locking overhead / complexity in the common case.
+race:connection_stats
+
+# The auditd unit tests trigger a heap-use-after-free error, however Valgrind doesn't
+# detect anything wrong and ThreadSanitizer is known to have issues with exceptions
+# so I'm pretty sure this a false positive.
+race:TestCrashRecoveryGarbeledDate
+
+# memcached ISOTime::generatetimestamp is using libc mktime which updates
+# the TZ env-variable through tzset (_internal). This shows up as a data-race.
+race:tzset_internal
+
+# ThreadSanitizer appears to report a false positive data race in
+# operator delete via std::string::assign for std::string when using
+# libstdc++ - see discussion at
+# https://groups.google.com/forum/#!msg/thread-sanitizer/dZ3QiQE49ns/j7rKGHg08foJ
+# Running with LLVM's own C++ library (libc++) makes the warning go
+# away, so would seem to be either a bug in libstdc++, or a bug in
+# ThreadSanitizer.
+race:^std::string::assign(std::string const&)
+
+# ThreadSanitizer appears to report a data race in GCC's basic_string
+# implementation on _M_refcount: specifically on operator delete via
+# std::string::_Rep::_M_dispose for std::string when using libstdc++ -
+# report at: https://gcc.gnu.org/ml/libstdc++/2015-09/msg00000.html
+# Suppressing this for now.
+race:^std::string::_Rep::_M_dispose(std::allocator<char> const&)
+
+# In forestdb plock_lock is invoked from a lock structure that is sure to not
+# overlap with that of another thread by use of is_overlapped() test.
+# However since this function is not trusted by ThreadSanitizer it reports
+# a lock inversion since the locks in the race are from the same struct definition
+# but different memory addresses. This is hence a false positive.
+deadlock:plock_lock
+
+# The memcached unit test 'memcached_logger_emfile_test' deliberately
+# consumes all file descriptors during it's run. This has the
+# consequence of preventing thread sanitizer's external symbol lookup
+# from failing. In turn this means that it cannot check for
+# symbol-based suppressions (e.g. the tzset_internal one above).
+# Therefore just suppress anything for this unit test.
+race:memcached_logger_emfile_test

@@ -22,12 +22,17 @@ IF (COUCHBASE_MEMORY_ALLOCATOR)
       MESSAGE(FATAL_ERROR "Unknow memory allocator specified")
    ENDIF ("${COUCHBASE_MEMORY_ALLOCATOR}" STREQUAL "tcmalloc")
 ELSE (COUCHBASE_MEMORY_ALLOCATOR)
+   # If the user didn't specify an allocator, we default to the first
+   # of {tcmalloc,jemalloc} which can be found. If neither is found
+   # then we error, as *all* production builds use one of the two.
    IF (TCMALLOC_FOUND)
       SET(MEMORY_ALLOCATOR tcmalloc)
    ELSEIF (JEMALLOC_FOUND)
       SET(MEMORY_ALLOCATOR jemalloc)
    ELSE (TCMALLOC_FOUND)
-      SET(MEMORY_ALLOCATOR false)
+      MESSAGE(FATAL_ERROR "Unable to find either TCMalloc or jemalloc for memory allocator - cowardly refusing to continue.
+If you really want to build without a specialised allocator, explicitly set COUCHBASE_MEMORY_ALLOCATOR=system
+")
    ENDIF (TCMALLOC_FOUND)
 ENDIF (COUCHBASE_MEMORY_ALLOCATOR)
 
