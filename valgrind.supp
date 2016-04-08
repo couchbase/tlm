@@ -82,3 +82,49 @@
    fun:_dl_init
    ...
 }
+
+# The following suppressions are for claimed 'invalid read/write'
+# errors which intermittantly are reported from Valgrind 3.10.1,
+# however they cannot be reproduced on demand and do not show up with
+# other leak checking tools (AddressSanitizer), therefore I strongly
+# believe they are false positives.
+{
+   mb19089 memcached Configuration::addStats invalid 1
+   Memcheck:Addr1
+   fun:__printf_fp
+   fun:vfprintf
+   fun:vsnprintf
+   obj:/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.21
+   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE15_M_insert_floatIdEES3_S3_RSt8ios_baseccT_
+   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE6do_putES3_RSt8ios_basecd
+   fun:_ZNSo9_M_insertIdEERSoT_
+   fun:operator<<
+   fun:_ZNK13Configuration8addStatsEPFvPKctS1_jPKvES3_
+}
+{
+   mb19089 memcached Configuration::addStats invalid 4
+   Memcheck:Addr4
+   fun:__printf_fp
+   fun:vfprintf
+   fun:vsnprintf
+   ...
+   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE15_M_insert_floatIdEES3_S3_RSt8ios_baseccT_
+   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE6do_putES3_RSt8ios_basecd
+   fun:_ZNSo9_M_insertIdEERSoT_
+   fun:operator<<
+   fun:_ZNK13Configuration8addStatsEPFvPKctS1_jPKvES3_
+}
+{
+   mb19089 memcached Configuration::addStats invalid 8
+   Memcheck:Addr8
+   ...
+   fun:__printf_fp
+   fun:vfprintf
+   fun:vsnprintf
+   ...
+   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE15_M_insert_floatIdEES3_S3_RSt8ios_baseccT_
+   fun:_ZNKSt7num_putIcSt19ostreambuf_iteratorIcSt11char_traitsIcEEE6do_putES3_RSt8ios_basecd
+   fun:_ZNSo9_M_insertIdEERSoT_
+   fun:operator<<
+   fun:_ZNK13Configuration8addStatsEPFvPKctS1_jPKvES3_
+}
