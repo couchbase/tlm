@@ -38,6 +38,11 @@
 # Prevent double-definition if two projects use this script
 IF (NOT FindCouchbaseGo_INCLUDED)
 
+  IF (DEFINED ENV{GOBIN})
+    MESSAGE (FATAL_ERROR "The environment variable GOBIN is set. "
+      "This will break the Couchbase build. Please unset it and re-build.")
+  ENDIF (DEFINED ENV{GOBIN})
+
   INCLUDE (ParseArguments)
 
   # Have to remember cwd when this find is INCLUDE()d
@@ -73,10 +78,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
           MESSAGE (FATAL_ERROR "Go version of ${GO_MINIMUM_VERSION} or higher required (found version ${GO_VERSION})")
         ENDIF (go_dev_version)
       ENDIF(GO_VERSION VERSION_LESS GO_MINIMUM_VERSION)
-
-      IF (DEFINED ENV{GOBIN})
-        MESSAGE (WARNING "The environment variable GOBIN is set and MAY cause your build to fail")
-      ENDIF (DEFINED ENV{GOBIN})
 
       EXECUTE_PROCESS (COMMAND "${GO_SINGLE_EXECUTABLE}" env GOROOT
         OUTPUT_VARIABLE GO_SINGLE_ROOT OUTPUT_STRIP_TRAILING_WHITESPACE)
