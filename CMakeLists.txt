@@ -104,6 +104,7 @@ INCLUDE(FindCouchbaseFlatbuffers)
 INCLUDE(FindCouchbaseValgrind)
 INCLUDE(CouchbaseCompilerOptions)
 INCLUDE(FindCouchbaseV8)
+INCLUDE(FindCouchbaseNlohmannJson)
 
 IF (WIN32)
    SET(COUCHBASE_NETWORK_LIBS "Ws2_32")
@@ -128,6 +129,7 @@ ENDIF(WORDS_BIG_ENDIAN)
 ENABLE_TESTING()
 
 INCLUDE_DIRECTORIES(BEFORE ${CMAKE_BINARY_DIR}/platform/include)
+INCLUDE_DIRECTORIES(AFTER ${NLOHMANN_JSON_INCLUDE_DIR})
 
 # Add a quick (and safe) way to nuke everything
 ADD_CUSTOM_TARGET(reset
