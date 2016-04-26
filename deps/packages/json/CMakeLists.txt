@@ -7,7 +7,8 @@ include(ExternalProject)
 if (CMAKE_MAJOR_VERSION GREATER 2)
   # make_directory appeared in 3.0
   ExternalProject_Add(json
-    URL http://github.com/nlohmann/json/archive/v1.1.0.tar.gz
+    GIT_REPOSITORY ${_git_repo}
+    GIT_TAG ${_git_rev}
     CONFIGURE_COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/install/include
     BUILD_COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/install/include/nlohmann
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/src/json.hpp ${CMAKE_CURRENT_BINARY_DIR}/install/include/nlohmann
@@ -16,7 +17,8 @@ if (CMAKE_MAJOR_VERSION GREATER 2)
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install)
 else()
   ExternalProject_Add(json
-    URL http://github.com/nlohmann/json/archive/v1.1.0.tar.gz
+    GIT_REPOSITORY ${_git_repo}
+    GIT_TAG ${_git_rev}
     CONFIGURE_COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/install/include
     BUILD_COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/install/include/nlohmann
     INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/src/json.hpp ${CMAKE_CURRENT_BINARY_DIR}/install/include/nlohmann
