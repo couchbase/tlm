@@ -114,7 +114,7 @@ locations. Ex:
 
 ## Microsoft Windows 2008R2
 
-The following steps is needed to build Couchbase on Microsoft Windows 2008R2
+The following steps are needed to build Couchbase on Microsoft Windows 2008R2:
 
 * Install OS, activate and run Windows Update and install all updates
 * Install Google Chrome (optional, but makes your life easier)
@@ -124,8 +124,13 @@ The following steps is needed to build Couchbase on Microsoft Windows 2008R2
 * Install [Python 2.7][win_python_link] and add c:\python27 to path (manually)
 * Install [7-ZIP][win_7zip_link] and add the installation to path (manually)
 * Install [CMake][win_cmake_link] and add to path
-* Install [GO][win_go_link] and add to path
+* Install [MinGW][mingw_link] and add to path
 * Download and install [2008 runtime extensions][win_2008_runtime_ext_link]
+
+Note: Significant portions of Couchbase Server are written in Go. Go itself
+is automatically downloaded as part of the build, but Go requires gcc (and
+not Visual Studio) in order to interface with C libraries. Our builds are
+tested with MinGW 4.8.3.
 
 ### Configuration
 
@@ -167,28 +172,21 @@ El Capitan
 
 Install the following packages from homebrew:
 
-    trond@ok> brew install cmake git go ccache openssl
+    trond@ok> brew install cmake git ccache openssl
 
 You should be all set to start compile the server as described above.
 
 ## Ubuntu 14.04
 
 The steps below may work on other versions of Ubuntu as well, but this
-procedure is verified with a clean installation of Ununtu 14.04.1
+procedure is verified with a clean installation of Ubuntu 14.04.1
 
     sudo su -
     wget https://storage.googleapis.com/git-repo-downloads/repo
     chmod a+x repo
     mv repo /usr/local/bin
     apt-get install -y git gcc g++ ccache cmake libssl-dev libicu-dev \
-                       erlang mercurial
-    cd /usr/local
-    hg clone -u release https://code.google.com/p/go
-    cd go/src
-    ./all.bash
-    cd ../../bin
-    ln -s ../go/bin/go
-    ln -s ../go/bin/gofmt
+                       erlang
 
 ## Fedora 21
 
@@ -200,14 +198,7 @@ procedure is verified with a clean installation of Fedora 21
     chmod a+x repo
     mv repo /usr/local/bin
     yum install -y gcc gcc-c++ git cmake ccache redhat-lsb-core \
-                   erlang mercurial openssl-devel libicu-devel
-    cd /usr/local
-    hg clone -u release https://code.google.com/p/go
-    cd go/src
-    ./all.bash
-    cd ../../bin
-    ln -s ../go/bin/go
-    ln -s ../go/bin/gofmt
+                   erlang openssl-devel libicu-devel
 
 ## OpenSUSE
 
@@ -216,7 +207,7 @@ defaults during the installer except choosing gnome desktop and enable
 ssh access.
 
     sudo zypper install gcc gcc-c++ autoconf automake ncurses-devel \
-                        git go ccache libopenssl-devel cmake
+                        git ccache libopenssl-devel cmake
 
 Open a new terminal to ensure you get an updated environment (the
 package install modifies some of the environement variables)
@@ -227,7 +218,7 @@ package install modifies some of the environement variables)
     sudo chown `whoami` /opt/couchbase
     mkdir -p compile/couchbase
     cd compile/couchbase
-    repo init -u git://github.com/couchbase/manifest -m sherlock.xml -g default,build
+    repo init -u git://github.com/couchbase/manifest -m branch-master.xml -g default,build
     repo sync
     repo start opensuse --all
     mkdir cbdeps && cd cbdeps
@@ -237,6 +228,9 @@ package install modifies some of the environement variables)
     unset GOBIN
     cd ..
     gmake PREFIX=/opt/couchbase
+
+Note: Unfortunately the build-all-sherlock.sh script mentioned above is
+likely out of date for Couchbase Server builds later than 4.1.
 
 You should be able to start the server by running
 
@@ -354,22 +348,14 @@ Install as much as possible of the precompiled dependencies with:
 
     yum install -y gcc gcc-c++ make redhat-lsb git openssl-devel
 
-A newer version of cmake, go and repo is needed so we have to compile
-it from source with:
+A newer version of cmake and repo is needed so we have to compile
+them from source with:
 
     wget http://www.cmake.org/files/v3.2/cmake-3.2.1.tar.gz
     tar xfz cmake-3.2.1.tar.gz
     cd cmake-3.2.1
     ./bootstrap && make && make install
-    cd /usr/local
-    git clone https://go.googlesource.com/go
-    cd go
-    git checkout -b go1.4.2 go1.4.2
-    cd src
-    ./all.bash
-    cd ../../bin
-    ln -s ../go/bin/go
-    ln -s ../go/bin/gofmt
+    cd /usr/local/bin
     curl https://storage.googleapis.com/git-repo-downloads/repo > repo
     chmod a+x repo
 
@@ -433,18 +419,9 @@ Install as much as possible of the precompiled dependencies with:
     apt-get update --fix-missing
     apt-get install -y git gcc g++ make ccache lsb-release libssl-dev cmake
 
-A newer version of go and repo is needed so we have to compile
-it from source with:
+A newer version of repo is needed:
 
-    cd /usr/local
-    git clone https://go.googlesource.com/go
-    cd go
-    git checkout -b go1.4.2 go1.4.2
-    cd src
-    ./all.bash
-    cd ../../bin
-    ln -s ../go/bin/go
-    ln -s ../go/bin/gofmt
+    cd /usr/local/bin
     curl https://storage.googleapis.com/git-repo-downloads/repo > repo
     chmod a+x repo
 
@@ -504,22 +481,14 @@ Install as much as possible of the precompiled dependencies with:
     apt-get update --fix-missing
     apt-get install -y git gcc g++ make ccache lsb-release libssl-dev
 
-A newer version of cmake, go and repo is needed so we have to compile
+A newer version of cmake and repo is needed so we have to compile
 it from source with:
 
     wget http://www.cmake.org/files/v3.2/cmake-3.2.1.tar.gz
     tar xfz cmake-3.2.1.tar.gz
     cd cmake-3.2.1
     ./bootstrap && make && make install
-    cd /usr/local
-    git clone https://go.googlesource.com/go
-    cd go
-    git checkout -b go1.4.2 go1.4.2
-    cd src
-    ./all.bash
-    cd ../../bin
-    ln -s ../go/bin/go
-    ln -s ../go/bin/gofmt
+    cd /usr/local/bin
     curl https://storage.googleapis.com/git-repo-downloads/repo > repo
     chmod a+x repo
 
@@ -614,7 +583,7 @@ details..
 [win_python_link]: http://www.python.org/download/releases/2.7/
 [win_7zip_link]: http://downloads.sourceforge.net/sevenzip/7z920-x64.msi
 [win_cmake_link]: http://www.cmake.org/cmake/resources/software.html
-[win_go_link]: https://code.google.com/p/go/downloads/list
+[win_mingw_link]: http://www.mingw.org/
 [win_2008_runtime_ext_link]: http://www.microsoft.com/en-us/download/confirmation.aspx?id=15336
 [google_repo_link]: http://source.android.com/source/downloading.html#installing-repo
 [homebrew_link]: http://brew.sh/
