@@ -28,8 +28,9 @@ IF (NOT CBDownloadDeps_INCLUDED)
       IF (EXISTS "${file}")
         FILE (REMOVE "${file}")
       ENDIF (EXISTS "${file}")
+      LIST (GET _stat 0 _errcode)
       LIST (GET _stat 1 _message)
-      MESSAGE (FATAL_ERROR "Error downloading ${url}: ${_message}")
+      MESSAGE (FATAL_ERROR "Error downloading ${url}: ${_message} (${_errcode})")
     ENDIF (_retval)
   ENDFUNCTION (_DOWNLOAD_FILE)
 
@@ -110,7 +111,10 @@ IF (NOT CBDownloadDeps_INCLUDED)
       RESULT_VARIABLE _explode_result
       ERROR_VARIABLE _explode_stderr)
     IF(_explode_result)
-      MESSAGE (FATAL_ERROR "Failed to extract dependency ${file} - ${_explode_stderr}")
+      FILE (REMOVE_RECURSE "${dir}")
+      FILE (REMOVE "${file}")
+      MESSAGE (FATAL_ERROR "Failed to extract dependency ${file} - file corrupt? "
+        "It has been deleted, please try again.\n ${_explode_stderr}")
     ENDIF(_explode_result)
   ENDFUNCTION (EXPLODE_ARCHIVE)
 
