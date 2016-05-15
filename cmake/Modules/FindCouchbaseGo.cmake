@@ -38,6 +38,9 @@
 # Prevent double-definition if two projects use this script
 IF (NOT FindCouchbaseGo_INCLUDED)
 
+  SET (CB_GO_CODE_COVERAGE 0 CACHE BOOL "Whether to use Go code coverage")
+  SET (CB_GO_RACE_DETECTOR 0 CACHE BOOL "Whether to add race detector flag while generating go binaries")
+
   IF (DEFINED ENV{GOBIN})
     MESSAGE (FATAL_ERROR "The environment variable GOBIN is set. "
       "This will break the Couchbase build. Please unset it and re-build.")
@@ -279,6 +282,8 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       -D "OUTPUT=${Go_OUTPUT}"
       -D "CGO_INCLUDE_DIRS=${Go_CGO_INCLUDE_DIRS}"
       -D "CGO_LIBRARY_DIRS=${Go_CGO_LIBRARY_DIRS}"
+      -D "CB_GO_CODE_COVERAGE=${CB_GO_CODE_COVERAGE}"
+      -D "CB_GO_RACE_DETECTOR=${CB_GO_RACE_DETECTOR}"
       -P "${TLM_MODULES_DIR}/go-install.cmake"
       COMMENT "Building Go target ${Go_TARGET} using Go ${_gover}"
       VERBATIM)

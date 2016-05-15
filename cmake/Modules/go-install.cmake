@@ -49,6 +49,11 @@ IF ($ENV{CB_GO_DEBUG})
   SET (_go_debug -x)
 ENDIF ($ENV{CB_GO_DEBUG})
 
+# check if race detector flag is set
+IF (CB_GO_RACE_DETECTOR)
+  SET (_go_race -race)
+ENDIF (CB_GO_RACE_DETECTOR)
+
 # Set GOROOT environment
 SET (ENV{GOROOT} "${GOROOT}")
 SET (GO_EXECUTABLE "${GOROOT}/bin/go")
@@ -63,9 +68,13 @@ IF ("${GOVERSION}" VERSION_GREATER 1.4.9)
 ENDIF ()
 
 # Execute "go install".
-MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install ${_bits_str} -tags=\"${GOTAGS}\" -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${PACKAGE}")
+MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install ${_bits_str} -tags=\"${GOTAGS}\" -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${_go_race} ${PACKAGE}")
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
-  COMMAND "${GO_EXECUTABLE}" install ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} "${PACKAGE}")
+  COMMAND "${GO_EXECUTABLE}" install ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} ${_go_race} "${PACKAGE}")
+  IF (CB_GO_CODE_COVERAGE)
+    MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} test -c -cover -covermode=count -coverpkg ${PACKAGE} -tags=${GOTAGS} -gcflags=${GCFLAGS} -ldflags=${LDFLAGS} ${_go_debug} ${PACKAGE}")
+    EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" test -c -cover -covermode=count -coverpkg ${PACKAGE} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} "${PACKAGE}")
+  ENDIF ()
 IF (_failure)
   MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
   MESSAGE (STATUS "@ 'go install' failed! Re-running as 'go build' to help debug...")
