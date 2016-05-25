@@ -23,11 +23,11 @@ IF (CB_CODE_COVERAGE)
     ENDIF (NOT GCOV_PATH)
 
     IF (NOT GCOVR_PATH)
-        MESSAGE(STATUS "gcovr [www.gcovr.com] not found.")
+        MESSAGE(STATUS "gcovr [www.gcovr.com] not found. HTML / XML coverage report rules will not be available")
     ENDIF ()
 
-    IF (NOT GCOV_PATH OR NOT GCOVR_PATH)
-       MESSAGE(FATAL_ERROR "CB_CODE_COVERAGE enabled but one of more required tools not found - cannot continue.")
+    IF (NOT GCOV_PATH)
+       MESSAGE(FATAL_ERROR "CB_CODE_COVERAGE enabled but a required tool (gcov) was not found - cannot continue.")
     ENDIF()
 ENDIF(CB_CODE_COVERAGE)
 
@@ -36,6 +36,9 @@ ENDIF(CB_CODE_COVERAGE)
 #   <project>-coverage-zero-counters: Zeros the code coverage counters for the module.
 #   <project>-coverage-report-html:   Generates a code coverage report in HTML.
 #   <project>-coverage-report-xml:    Generates a code coverage report in XML.
+#
+# Note: The html and xml report targets are not added if gcovr is not found
+#
 # Usage:
 # 1) `make <project>-coverage-zero-counters` to clear any counters from
 #    previously-executed programs.
@@ -54,16 +57,18 @@ FUNCTION(ENABLE_CODE_COVERAGE_REPORT)
                         COMMENT "Zeroing coverage counters for objects in ${CMAKE_CURRENT_BINARY_DIR}"
                         VERBATIM)
 
-      ADD_CUSTOM_TARGET(${_cc_project}-coverage-report-html
-                        COMMAND ${CMAKE_COMMAND} -E remove_directory coverage
-                        COMMAND ${CMAKE_COMMAND} -E make_directory coverage
-                        COMMAND ${GCOVR_PATH} --root=${CMAKE_SOURCE_DIR} --filter="${CMAKE_CURRENT_SOURCE_DIR}/.*" --html --html-details -o coverage/index.html
-                        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                        COMMENT "Generating code coverage report for ${PROJECT_NAME} to ${CMAKE_CURRENT_BINARY_DIR}/coverage/index.html")
+      IF (GCOVR_PATH)
+          ADD_CUSTOM_TARGET(${_cc_project}-coverage-report-html
+                            COMMAND ${CMAKE_COMMAND} -E remove_directory coverage
+                            COMMAND ${CMAKE_COMMAND} -E make_directory coverage
+                            COMMAND ${GCOVR_PATH} --root=${CMAKE_SOURCE_DIR} --filter="${CMAKE_CURRENT_SOURCE_DIR}/.*" --html --html-details -o coverage/index.html
+                            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                            COMMENT "Generating code coverage report for ${PROJECT_NAME} to ${CMAKE_CURRENT_BINARY_DIR}/coverage/index.html")
 
-      ADD_CUSTOM_TARGET(${_cc_project}-coverage-report-xml
-                        COMMAND ${GCOVR_PATH} --root=${CMAKE_SOURCE_DIR} --filter="${CMAKE_CURRENT_SOURCE_DIR}/.*" --xml -o coverage.xml
-                        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-                        COMMENT "Generating code coverage report for ${PROJECT_NAME} to ${CMAKE_CURRENT_BINARY_DIR}/coverage.xml")
+          ADD_CUSTOM_TARGET(${_cc_project}-coverage-report-xml
+                            COMMAND ${GCOVR_PATH} --root=${CMAKE_SOURCE_DIR} --filter="${CMAKE_CURRENT_SOURCE_DIR}/.*" --xml -o coverage.xml
+                            WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+                            COMMENT "Generating code coverage report for ${PROJECT_NAME} to ${CMAKE_CURRENT_BINARY_DIR}/coverage.xml")
+      ENDIF (GCOVR_PATH)
    ENDIF (CB_CODE_COVERAGE)
 ENDFUNCTION()
