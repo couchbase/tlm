@@ -153,6 +153,7 @@ SET (gtest_force_shared_crt ON CACHE BOOL
      "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
 ADD_SUBDIRECTORY(googletest EXCLUDE_FROM_ALL)
 
+ADD_SUBDIRECTORY(phosphor)
 ADD_SUBDIRECTORY(platform)
 ADD_SUBDIRECTORY(subjson)
 ADD_SUBDIRECTORY(memcached)
