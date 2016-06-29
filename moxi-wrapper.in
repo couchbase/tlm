@@ -1,5 +1,0 @@
-#!/bin/bash
-
-PREFIX="${CMAKE_INSTALL_PREFIX}"
-
-"$PREFIX/bin/moxi" -u `whoami` "$@" 2>&1 | tee "$PREFIX"/../moxi.$BASHPID.log
