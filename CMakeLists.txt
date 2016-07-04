@@ -28,6 +28,10 @@ ENDIF ()
 
 PROJECT("Couchbase")
 
+IF ($ENV{JETBRAINS_IDE})
+   SET(JETBRAINS_CLION_IDE True CACHE BOOL "Build Couchbase under CLion")
+ENDIF ($ENV{JETBRAINS_IDE})
+
 IF (DEFINED JETBRAINS_CLION_IDE)
    # CLion tries to autodetect all of the different configuration
    # types and generate projects for them. That cause a race condition
