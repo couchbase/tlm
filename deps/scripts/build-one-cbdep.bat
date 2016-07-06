@@ -20,17 +20,6 @@ xcopy winbuild\deps build\deps /s /e /y
 rem Clean up
 rmdir /s /q winbuild
 
-rem Build again for x86
-
-set target_arch=x86
-call ..\..\win32\environment.bat
-mkdir winbuild
-cd winbuild
-cmake .. -G "NMake Makefiles" -DPACKAGE=%PACKAGE% || goto error
-cmake --build . --target %PACKAGE% || goto error
-cd ..
-xcopy winbuild\deps build\deps /s /e /y
-
 goto eof
 
 :error
