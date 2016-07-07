@@ -23,8 +23,8 @@ IF (WIN32)
   SET(V8_BUILD_DIR_DEBUG "out\\Debug${_arch_suffix}")
   SET(V8_LIBRARY_DIR_RELEASE "<SOURCE_DIR>/out/Release${_arch_suffix}")
   SET(V8_LIBRARY_DIR_DEBUG "<SOURCE_DIR>/out/Debug${_arch_suffix}")
-  SET(V8_STATIC_DIR_RELEASE "<SOURCE_DIR>/out/Release${_arch_suffix}/obj/tools/gyp")
-  SET(V8_STATIC_DIR_DEBUG "<SOURCE_DIR>/out/Debug${_arch_suffix}/obj/tools/gyp")
+  SET(V8_STATIC_DIR_RELEASE "<SOURCE_DIR>/out/Release${_arch_suffix}/obj/src")
+  SET(V8_STATIC_DIR_DEBUG "<SOURCE_DIR>/out/Debug${_arch_suffix}/obj/src")
 
   ExternalProject_Add(v8
     GIT_REPOSITORY ${_git_repo}
