@@ -13,6 +13,10 @@ SET(CB_CXX_FLAGS_NO_OPTIMIZE       -O0)
 
 IF ("${ENABLE_WERROR}" STREQUAL "YES")
    SET(CB_GXX_WERROR "-Werror")
+ELSE()
+   # We've fixed all occurrences for the following warnings and don't want
+   # any new ones to appear
+   SET(CB_GXX_WERROR "-Werror=switch")
 ENDIF()
 
 if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 4.7)
