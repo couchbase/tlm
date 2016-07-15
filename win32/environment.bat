@@ -1,7 +1,11 @@
 @echo off
 
 if defined tools_version goto tools_set
-set tools_version=12.0
+if exist "C:\Program Files (x86)\Microsoft Visual Studio 14.0" (
+  set tools_version=14.0
+) else (
+  set tools_version=12.0
+)
 
 :tools_set
 echo Using tools from: C:\Program Files (x86)\Microsoft Visual Studio %tools_version%

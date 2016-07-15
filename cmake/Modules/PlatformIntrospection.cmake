@@ -55,15 +55,19 @@ ENDMACRO (_LSB_RELEASE)
 
 
 # Returns a simple string describing the current platform. Possible
-# return values currently include: windows_msvc; macosx; or any value
-# from _DETERMINE_LINUX_DISTRO.
+# return values currently include: windows_msvc2015; windows_msvc (implies
+# MSVC 2013); macosx; or any value from _DETERMINE_LINUX_DISTRO.
 MACRO (_DETERMINE_PLATFORM var)
   IF (DEFINED CB_DOWNLOAD_DEPS_PLATFORM)
     SET (_plat ${CB_DOWNLOAD_DEPS_PLATFORM})
   ELSE (DEFINED CB_DOWNLOAD_DEPS_PLATFORM)
     SET (_plat ${CMAKE_SYSTEM_NAME})
     IF (_plat STREQUAL "Windows")
-      SET (_plat "windows_msvc")
+      IF (${MSVC_VERSION} EQUAL 1900)
+        SET (_plat "windows_msvc2015")
+      ELSE ()
+        SET (_plat "windows_msvc")
+      ENDIF ()
     ELSEIF (_plat STREQUAL "Darwin")
       SET (_plat "macosx")
     ELSEIF (_plat STREQUAL "Linux")
@@ -138,7 +142,7 @@ MACRO (GET_SUPPORTED_PRODUCTION_PLATFORM _supported_platform)
        "debian7" "debian8"
        "suse11.2"
        "ubuntu12.04" "ubuntu14.04"
-       "windows")
+       "windows" "windows_msvc2015")
   LIST (FIND _supported_prod_platforms ${_platform} _index)
   IF (_index GREATER "-1")
     SET(${_supported_platform} ${_platform})
