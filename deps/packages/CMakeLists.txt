@@ -145,9 +145,10 @@ _ADD_DEP_PACKAGE(jemalloc 4.0.4 4.0.4 2)
 _ADD_DEP_PACKAGE(curl 7.40.0 curl-7_40_0 2)
 
 # erlang R16B03-couchbase / branch: couchbase-watson
-# - SHA 96430ba for cb1 release
-# - SHA 00852da for cb2 release
-_ADD_DEP_PACKAGE(erlang R16B03-couchbase couchbase-watson 2)
+# - SHA 96430ba for R16B03-couchbase-cb1 release
+# - SHA 00852da for R16B03-couchbase-cb2 release
+# - SHA 1f768b7 for R16B03-1-couchbase-cb2 release
+_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase-watson 2)
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 _ADD_DEP_PACKAGE(pysqlite2 0ff6e32 0ff6e32 1)
 _ADD_DEP_PACKAGE(flatbuffers 1.2.0 v1.2.0 1)
