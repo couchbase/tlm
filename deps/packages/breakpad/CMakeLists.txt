@@ -17,7 +17,6 @@ IF (WIN32)
                       --no-circular-check
                       -D win_release_RuntimeLibrary=2
                       -D win_debug_RuntimeLibrary=3
-                      -D BREAKPAD_NO_TERMINATE_THREAD=1
 
     # Build in source required for msbuild.
     BUILD_IN_SOURCE 1
