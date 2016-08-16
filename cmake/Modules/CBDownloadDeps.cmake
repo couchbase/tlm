@@ -237,6 +237,8 @@ IF (NOT CBDownloadDeps_INCLUDED)
         SET (_arch "386")
       ENDIF ()
       SET (_gofile "go${GOVERSION}.windows-${_arch}.zip")
+    ELSEIF (_platform STREQUAL "freebsd")
+      SET (_gofile "go${GOVERSION}.freebsd-amd64.tar.gz")
     ELSE ()
       # Presumed Linux
       SET (_gofile "go${GOVERSION}.linux-amd64.tar.gz")

@@ -97,6 +97,11 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     INCLUDE (CBDownloadDeps)
     SET (GO_DEFAULT_VERSION 1.5.2)
     SET (GO_14x_VERSION 1.4.2)
+    IF (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
+      # 1.4.2 is not available for FreeBSD, but 1.4.3 is.
+      # 1.4.3 cannot be default, because darwin build is missing.
+      SET (GO_14x_VERSION 1.4.3)
+    ENDIF ()
 
     # No compiler yet
     SET (GO_SINGLE_EXECUTABLE)
