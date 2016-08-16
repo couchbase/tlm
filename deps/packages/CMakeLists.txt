@@ -140,13 +140,9 @@ _ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 2)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 1)
 _ADD_DEP_PACKAGE(icu4c 54.1 r54.1 7)
 _ADD_DEP_PACKAGE(libevent 2.0.22 release-2.0.22-stable 2)
-
-# v8 4.8 - cb4 is the last version for all supported platforms.
-#        - cb5 contains an upstream patch and build script changes only for
-#          FreeBSD.
-_ADD_DEP_PACKAGE(v8 4.8 4.8-couchbase 5)
+_ADD_DEP_PACKAGE(v8 5.2 5.2-couchbase 1)
 _ADD_DEP_PACKAGE(jemalloc 4.0.4 4.0.4 2)
-_ADD_DEP_PACKAGE(curl 7.40.0 curl-7_40_0 2)
+_ADD_DEP_PACKAGE(curl 7.49.1 curl-7_49_1 1)
 
 # erlang R16B03-couchbase / branch: couchbase-watson
 # - SHA 96430ba for R16B03-couchbase-cb1 release

@@ -26,8 +26,8 @@ IF (WIN32)
   SET(V8_BUILD_DIR_DEBUG "out\\Debug${_arch_suffix}")
   SET(V8_LIBRARY_DIR_RELEASE "<SOURCE_DIR>/out/Release${_arch_suffix}")
   SET(V8_LIBRARY_DIR_DEBUG "<SOURCE_DIR>/out/Debug${_arch_suffix}")
-  SET(V8_STATIC_DIR_RELEASE "<SOURCE_DIR>/out/Release${_arch_suffix}/obj/tools/gyp")
-  SET(V8_STATIC_DIR_DEBUG "<SOURCE_DIR>/out/Debug${_arch_suffix}/obj/tools/gyp")
+  SET(V8_STATIC_DIR_RELEASE "<SOURCE_DIR>/out/Release${_arch_suffix}/obj/src")
+  SET(V8_STATIC_DIR_DEBUG "<SOURCE_DIR>/out/Debug${_arch_suffix}/obj/src")
 
   ExternalProject_Add(v8
     GIT_REPOSITORY ${_git_repo}
@@ -97,12 +97,16 @@ ELSE (WIN32)
 
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
 
-    INSTALL_COMMAND mkdir -p <INSTALL_DIR>/lib <INSTALL_DIR>/include
-    COMMAND ${CMAKE_COMMAND} -E copy ${V8_LIBRARY_FILE} <INSTALL_DIR>/lib
+    INSTALL_COMMAND mkdir -p <INSTALL_DIR>/lib/release <INSTALL_DIR>/lib/debug <INSTALL_DIR>/include
+    COMMAND ${CMAKE_COMMAND} -E copy ${V8_LIBRARY_FILE} <INSTALL_DIR>/lib/release
     COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include <INSTALL_DIR>/include
     COMMAND ${CMAKE_COMMAND} -E remove -f <INSTALL_DIR>/include/OWNERS
 
-    COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
+    COMMAND ${CMAKE_COMMAND} -E remove -f ${V8_LIBRARY_FILE}
+    COMMAND $(MAKE) -j4 x64.release GYPFLAGS+=${GYP_FLAGS} GYPFLAGS+="-Drelease_extra_cflags=-ggdb3" CFLAGS+=-DDEBUG CPPFLAGS+=-DDEBUG PYTHONPATH=<SOURCE_DIR>/third_party/argparse-1.4.0
+    COMMAND ${CMAKE_COMMAND} -E copy ${V8_LIBRARY_FILE} <INSTALL_DIR>/lib/debug
+
+    COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt <INSTALL_DIR>/CMakeLists.txt
 )
 ENDIF (WIN32)
 
