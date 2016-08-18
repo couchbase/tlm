@@ -177,7 +177,6 @@ ADD_SUBDIRECTORY(ep-engine)
 
 IF (NOT DEFINED COUCHBASE_KV_COMMIT_VALIDATION)
    ADD_SUBDIRECTORY(couchbase-cli)
-   ADD_SUBDIRECTORY(couchbase-examples)
 ENDIF (NOT DEFINED COUCHBASE_KV_COMMIT_VALIDATION)
 
 ADD_SUBDIRECTORY(sigar)
@@ -210,6 +209,7 @@ IF (NOT DEFINED COUCHBASE_KV_COMMIT_VALIDATION)
     ADD_SUBDIRECTORY(godeps/src/github.com/couchbase/cbauth)
 
     ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbft)
+    ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
 
     IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/backup)
