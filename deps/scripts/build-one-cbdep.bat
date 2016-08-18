@@ -12,7 +12,7 @@ set target_arch=amd64
 call ..\..\win32\environment.bat
 mkdir winbuild
 cd winbuild
-cmake .. -G "NMake Makefiles" -DPACKAGE=%PACKAGE% -D CMAKE_GENERATOR_PLATFORM=x64 || goto error
+cmake .. -G "NMake Makefiles" -DPACKAGE=%PACKAGE% || goto error
 cmake --build . --target %PACKAGE% || goto error
 cd ..
 xcopy winbuild\deps build\deps /s /e /y
