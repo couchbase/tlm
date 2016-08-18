@@ -16,7 +16,7 @@
 # you may use the cmake macro GET_SUPPORTED_PRODUCTION_PLATFORM to
 # check if this is a supported platform.
 #
-DECLARE_DEP (breakpad VERSION 1e455b5-cb10 PLATFORMS centos6 centos7 debian7 debian8 suse11.2 ubuntu12.04 ubuntu14.04 windows_msvc)
+DECLARE_DEP (breakpad VERSION 7cfe125-cb1 PLATFORMS centos6 centos7 debian7 debian8 suse11.2 ubuntu12.04 ubuntu14.04 windows_msvc)
 DECLARE_DEP (curl VERSION 7.49.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 freebsd sunos suse11.2 ubuntu12.04 ubuntu14.04 windows_msvc)
 DECLARE_DEP (erlang VERSION R16B03-1-couchbase-cb1 PLATFORMS windows_msvc)
 DECLARE_DEP (erlang VERSION R16B03-couchbase-cb2 PLATFORMS centos6 centos7 debian7 debian8 freebsd macosx sunos suse11.2 ubuntu12.04 ubuntu14.04)
