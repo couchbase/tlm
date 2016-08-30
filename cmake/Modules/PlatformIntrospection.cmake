@@ -137,12 +137,14 @@ MACRO (GET_SUPPORTED_PRODUCTION_PLATFORM _supported_platform)
   _DETERMINE_PLATFORM(_platform)
 
   # .. and check it against the list, returning it if found.
+  # MB-15796: For now "windows_msvc2015" isn't production, so it
+  # can build without breakpad.
   LIST(APPEND _supported_prod_platforms
        "centos6" "centos7"
        "debian7" "debian8"
        "suse11.2"
        "ubuntu12.04" "ubuntu14.04"
-       "windows" "windows_msvc2015")
+       "windows")
   LIST (FIND _supported_prod_platforms ${_platform} _index)
   IF (_index GREATER "-1")
     SET(${_supported_platform} ${_platform})
