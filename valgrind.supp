@@ -128,3 +128,16 @@
    fun:operator<<
    fun:_ZNK13Configuration8addStatsEPFvPKctS1_jPKvES3_
 }
+
+# libevent lock leaks. Fixed in libevent 2.1: https://github.com/libevent/libevent/issues/55
+{
+   libevent2.0.21_global_setup_locks_leak
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:evthread_posix_lock_alloc
+   ...
+   fun:event_global_setup_locks_
+   fun:evthread_use_pthreads
+   ...
+}
