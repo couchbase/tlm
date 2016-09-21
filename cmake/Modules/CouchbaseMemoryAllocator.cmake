@@ -27,23 +27,14 @@ IF (COUCHBASE_MEMORY_ALLOCATOR)
    ENDIF ("${COUCHBASE_MEMORY_ALLOCATOR}" STREQUAL "tcmalloc")
 
 ELSE (COUCHBASE_MEMORY_ALLOCATOR)
-   # No allocator explicitly selected by user, prefer jemalloc on Linux/OSX,
-   # tcmalloc on Windows.
-   IF (WIN32)
-      IF (TCMALLOC_FOUND)
-         SET(MEMORY_ALLOCATOR tcmalloc)
-      ELSE (TCMALLOC_FOUND)
-         SET(MEMORY_ALLOCATOR system)
-      ENDIF (TCMALLOC_FOUND)
-   ELSE (WIN32)
-      IF (JEMALLOC_FOUND)
-        SET(MEMORY_ALLOCATOR jemalloc)
-      ELSEIF (TCMALLOC_FOUND)
-        SET(MEMORY_ALLOCATOR tcmalloc)
-      ELSE (JEMALLOC_FOUND)
-        SET(MEMORY_ALLOCATOR system)
-      ENDIF (JEMALLOC_FOUND)
-   ENDIF(WIN32)
+   # No allocator explicitly selected by user, prefer jemalloc if available, then TCMalloc, then system.
+   IF (JEMALLOC_FOUND)
+     SET(MEMORY_ALLOCATOR jemalloc)
+   ELSEIF (TCMALLOC_FOUND)
+     SET(MEMORY_ALLOCATOR tcmalloc)
+   ELSE ()
+     SET(MEMORY_ALLOCATOR system)
+   ENDIF ()
 ENDIF (COUCHBASE_MEMORY_ALLOCATOR)
 
 # Finally, set the appropriate defines for our selected memory allocator.

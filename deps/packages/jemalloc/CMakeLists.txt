@@ -18,6 +18,7 @@ ExternalProject_Add(jemalloc
                                                     --prefix=<INSTALL_DIR>
                                                     --with-jemalloc-prefix=je_
                                                     --disable-cache-oblivious
+                                                    --disable-zone-allocator
                                                     ${EXTRA_CONFIGURE_OPTIONS}
 
   BUILD_COMMAND $(MAKE) build_lib_shared
