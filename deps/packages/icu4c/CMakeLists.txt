@@ -13,6 +13,7 @@ ExternalProject_Add(icu4c
                                                   --disable-layout
                                                   --disable-tests
                                                   --disable-samples
+                                                  --enable-rpath
 
   BUILD_COMMAND $(MAKE) -j4 all
 
