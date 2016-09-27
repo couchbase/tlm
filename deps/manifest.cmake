@@ -16,14 +16,14 @@
 # you may use the cmake macro GET_SUPPORTED_PRODUCTION_PLATFORM to
 # check if this is a supported platform.
 #
-DECLARE_DEP (breakpad VERSION 7cfe125-cb1 PLATFORMS centos6 centos7 debian7 debian8 suse11.2 ubuntu12.04 ubuntu14.04 windows_msvc)
+DECLARE_DEP (breakpad VERSION 20160926-cb1 PLATFORMS centos6 centos7 debian7 debian8 suse11.2 ubuntu12.04 ubuntu14.04 windows_msvc windows_msvc2015)
 DECLARE_DEP (curl VERSION 7.49.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 freebsd sunos suse11.2 ubuntu12.04 ubuntu14.04 windows_msvc windows_msvc2015)
 DECLARE_DEP (erlang VERSION R16B03-1-couchbase-cb1 PLATFORMS windows_msvc windows_msvc2015)
 DECLARE_DEP (erlang VERSION R16B03-couchbase-cb2 PLATFORMS centos6 centos7 debian7 debian8 freebsd macosx sunos suse11.2 ubuntu12.04 ubuntu14.04)
 DECLARE_DEP (flatbuffers VERSION 1.2.0-cb1 PLATFORMS centos6 centos7 debian7 debian8 freebsd macosx sunos suse11.2 ubuntu12.04 ubuntu14.04 windows_msvc windows_msvc2015)
 DECLARE_DEP (gperftools VERSION 2.5-cb1 PLATFORMS windows_msvc windows_msvc2015)
 DECLARE_DEP (icu4c VERSION 54.1.0 PLATFORMS windows_msvc windows_msvc2015)
-DECLARE_DEP (icu4c VERSION 54.1-cb7 PLATFORMS centos6 centos7 debian7 debian8 freebsd macosx sunos suse11.2 ubuntu12.04 ubuntu14.04)
+DECLARE_DEP (icu4c VERSION 54.1-cb8 PLATFORMS centos6 centos7 debian7 debian8 freebsd macosx sunos suse11.2 ubuntu12.04 ubuntu14.04)
 DECLARE_DEP (jemalloc VERSION 4.1.0-cb2 PLATFORMS windows_msvc windows_msvc2015)
 DECLARE_DEP (jemalloc VERSION 4.0.4-cb2 PLATFORMS centos6 centos7 debian7 debian8 sunos suse11.2 ubuntu12.04 ubuntu14.04)
 DECLARE_DEP (jemalloc VERSION 4.1.1-couchbase-cb2 PLATFORMS macosx)
