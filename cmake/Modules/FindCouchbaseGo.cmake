@@ -103,6 +103,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     SET (GO_SINGLE_ROOT)
   ENDMACRO (ENABLE_MULTI_GO)
 
+  # On MacOS, to ensure compatibility with MacOS Sierra, we must enforce
+  # a minimum version of Go. MB-20509.
+  SET (GO_MAC_MINIMUM_VERSION 1.7.1)
+
   # This macro is called by GoInstall() / GoYacc() / etc. to find the
   # appropriate Go compiler to use, based on whether or not Multi-Go mode
   # is enabled and the requested version. It will set the variable named by
@@ -126,6 +130,19 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       # Map '1.4.x' special version to global default
       IF ("${_version}" STREQUAL "1.4.x")
         SET (_version "${GO_14x_VERSION}")
+      ENDIF ()
+
+      # MB-20509: MacOS Sierra requires a minimum of Go 1.7.1
+      IF (APPLE)
+        IF (${_version} VERSION_LESS "${GO_MAC_MINIMUM_VERSION}")
+          IF ("$ENV{CB_MAC_GO_WARNING}" STREQUAL "")
+            MESSAGE (${_go_warning} "Forcing Go version 1.7.1 on MacOS (MB-20509) "
+              "(to suppress this warning, set environment variable "
+              "CB_MAC_GO_WARNING to any value")
+            SET (_go_warning WARNING)
+          ENDIF ()
+          SET (_version 1.7.1)
+        ENDIF ()
       ENDIF ()
 
       GET_GO_VERSION ("${_version}" ${var})
