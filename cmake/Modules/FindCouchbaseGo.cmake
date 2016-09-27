@@ -136,12 +136,12 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       IF (APPLE)
         IF (${_version} VERSION_LESS "${GO_MAC_MINIMUM_VERSION}")
           IF ("$ENV{CB_MAC_GO_WARNING}" STREQUAL "")
-            MESSAGE (${_go_warning} "Forcing Go version 1.7.1 on MacOS (MB-20509) "
+            MESSAGE (${_go_warning} "Forcing Go version ${GO_MAC_MINIMUM_VERSION} on MacOS (MB-20509) "
               "(to suppress this warning, set environment variable "
               "CB_MAC_GO_WARNING to any value")
             SET (_go_warning WARNING)
           ENDIF ()
-          SET (_version 1.7.1)
+          SET (_version ${GO_MAC_MINIMUM_VERSION})
         ENDIF ()
       ENDIF ()
 
