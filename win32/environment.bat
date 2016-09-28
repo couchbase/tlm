@@ -50,11 +50,9 @@ rem test in a module..
 echo Setting compile environment for building Couchbase server
 set OBJDIR=\build
 set MODULEPATH=%SOURCE_ROOT%%OBJDIR%\platform
-set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\libvbucket
-set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\cbsasl
+set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\phosphor
 set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\memcached
 set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\couchstore
-set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\libmemcached
 set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\sigar\build-src
 set PATH=%MODULEPATH%;%PATH%;%SOURCE_ROOT%\install\bin
 set OBJDIR=
