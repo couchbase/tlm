@@ -7,14 +7,17 @@ ExternalProject_Add(icu4c
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
 
-  CONFIGURE_COMMAND <SOURCE_DIR>/source/configure LDFLAGS=${ICU_LDFLAGS}
+# For APPLE we anyway set rpaths using install_name_tool below
+ if(not APPLE)
+   SET(_extra_configure_options "--enable-rpath")
+ endif()
+ CONFIGURE_COMMAND <SOURCE_DIR>/source/configure LDFLAGS=${ICU_LDFLAGS}
                                                   --prefix=<INSTALL_DIR>
                                                   --disable-extras
                                                   --disable-layout
                                                   --disable-tests
                                                   --disable-samples
-                                                  --enable-rpath
-
+                                                   ${_extra_configure_options}
   BUILD_COMMAND $(MAKE) -j4 all
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
