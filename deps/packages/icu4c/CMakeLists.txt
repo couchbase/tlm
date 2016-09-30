@@ -2,15 +2,17 @@
 
 include(ExternalProject)
 
+# For APPLE we anyway set rpaths using install_name_tool below
+if (APPLE)
+  SET(_extra_configure_options "")
+else (APPLE)
+  SET(_extra_configure_options "--enable-rpath")
+endif (APPLE)
 ### Download, configure and build icu4c ####################################
 ExternalProject_Add(icu4c
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
 
-# For APPLE we anyway set rpaths using install_name_tool below
- if(not APPLE)
-   SET(_extra_configure_options "--enable-rpath")
- endif()
  CONFIGURE_COMMAND <SOURCE_DIR>/source/configure LDFLAGS=${ICU_LDFLAGS}
                                                   --prefix=<INSTALL_DIR>
                                                   --disable-extras
