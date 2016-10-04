@@ -128,9 +128,6 @@ endif(WIN32)
 #
 # And here is the set of "latest" dependencies.
 #
-
-_ADD_DEP_PACKAGE(gperftools 2.5 2.5-couchbase 1)
-
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
    _ADD_DEP_PACKAGE(breakpad 20160926 20160926-couchbase 1)
 ELSE (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
