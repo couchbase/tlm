@@ -4,9 +4,11 @@ include(ExternalProject)
 
 # For APPLE we anyway set rpaths using install_name_tool below
 if (APPLE)
-  SET(_extra_configure_options "")
+    SET(_rpath_options "")
+    SET(_rpath-link_options "")
 else (APPLE)
-  SET(_extra_configure_options "--enable-rpath")
+    SET(_rpath_options "--enable-rpath")
+    SET(_rpath-link_options "--enable-rpath-link")
 endif (APPLE)
 ### Download, configure and build icu4c ####################################
 ExternalProject_Add(icu4c
@@ -19,7 +21,8 @@ ExternalProject_Add(icu4c
                                                   --disable-layout
                                                   --disable-tests
                                                   --disable-samples
-                                                   ${_extra_configure_options}
+                                                  ${_rpath_options}
+                                                  ${_rpath-link_options}
   BUILD_COMMAND $(MAKE) -j4 all
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
