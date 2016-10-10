@@ -128,3 +128,18 @@
    fun:operator<<
    fun:_ZNK13Configuration8addStatsEPFvPKctS1_jPKvES3_
 }
+{
+   mb21302 ignore fdb issues
+   Memcheck:Value8
+   fun:crc32_8
+   ...
+   fun:docio_*
+}
+{
+   mb21302 ignore fdb issues
+   Memcheck:Param
+   pwrite64(buf)
+   obj:/lib/x86_64-linux-gnu/libpthread-2.15.so
+   fun:_Z21_filemgr_linux_pwriteiPvml
+   fun:filemgr_write_blocks
+}
