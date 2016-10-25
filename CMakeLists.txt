@@ -95,15 +95,9 @@ INCLUDE(CouchbaseAddressSanitizer)
 INCLUDE(CouchbaseThreadSanitizer)
 INCLUDE(CouchbaseMemoryAllocator)
 
-# libcurl is no longer used in Couchbase server, but cbcollect_info use the
-# curl command line utility
-FIND_PROGRAM(CURL curl)
-IF (NOT CURL)
-   MESSAGE(FATAL_ERROR "Failed to locate the curl binary")
-ENDIF(NOT CURL)
-
 INCLUDE(FindCouchbaseOpenSSL)
 INCLUDE(FindCouchbaseLibevent)
+INCLUDE(FindCouchbaseCurl)
 INCLUDE(FindCouchbaseIcu)
 INCLUDE(FindCouchbaseSnappy)
 INCLUDE(FindCouchbaseLua)
@@ -179,6 +173,7 @@ IF (NOT DEFINED COUCHBASE_KV_COMMIT_VALIDATION)
 ENDIF (NOT DEFINED COUCHBASE_KV_COMMIT_VALIDATION)
 
 ADD_SUBDIRECTORY(sigar)
+ADD_SUBDIRECTORY(moxi)
 
 IF (NOT DEFINED COUCHBASE_KV_COMMIT_VALIDATION)
     ADD_SUBDIRECTORY(couchdb)
@@ -217,4 +212,5 @@ ENDIF (NOT DEFINED COUCHBASE_KV_COMMIT_VALIDATION)
 
 IF (NOT WIN32)
    CONFIGURE_FILE(tlm/memcached-wrapper.in ${CMAKE_BINARY_DIR}/tlm/memcached-wrapper)
+   CONFIGURE_FILE(tlm/moxi-wrapper.in ${CMAKE_BINARY_DIR}/tlm/moxi-wrapper)
 ENDIF (NOT WIN32)
