@@ -96,6 +96,7 @@ MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
 MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE} (${CB_BUILD_TYPE})")
 
 INCLUDE(CouchbaseAddressSanitizer)
+INCLUDE(CouchbaseAsciiDocs)
 INCLUDE(CouchbaseThreadSanitizer)
 INCLUDE(CouchbaseMemoryAllocator)
 
