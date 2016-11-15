@@ -346,7 +346,7 @@ install all of the updates ;-)
 
 Install as much as possible of the precompiled dependencies with:
 
-    yum install -y gcc gcc-c++ make redhat-lsb git openssl-devel
+    yum install -y gcc gcc-c++ make redhat-lsb-core git openssl-devel
 
 A newer version of cmake and repo is needed so we have to compile
 them from source with:
