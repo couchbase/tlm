@@ -95,6 +95,7 @@ INCLUDE(CouchbaseAddressSanitizer)
 INCLUDE(CouchbaseThreadSanitizer)
 INCLUDE(CouchbaseMemoryAllocator)
 
+INCLUDE(FindCouchbaseBoost)
 INCLUDE(FindCouchbaseOpenSSL)
 INCLUDE(FindCouchbaseLibevent)
 INCLUDE(FindCouchbaseCurl)
