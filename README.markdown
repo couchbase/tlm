@@ -517,11 +517,11 @@ platforms which Clang/LLVM is available, however this isn't tested.
 
 *  Add `scan-build` and `scan-view` to your path:
 
-        export PATH=$PATH:/path/to/checker-276
+        export PATH=$PATH:/path/to/scan-build
 
-*  Run `make analyzer` at the top-level to configure clang-analyser as the 'compiler':
+*  Run `make analyze` at the top-level to configure clang-analyser as the 'compiler':
 
-        make analyzer
+        make analyze
 
 *  At the end you will see a message similar to the following - Invoke the specified command to browse the found bugs:
 
