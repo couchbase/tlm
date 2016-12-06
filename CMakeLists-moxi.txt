@@ -1,0 +1,38 @@
+#
+# This is the toplevel CMakeLists.txt that is used to build standalone moxi.
+# It expects to run in the context of the moxi manifest.
+#
+CMAKE_MINIMUM_REQUIRED (VERSION 2.8.10)
+PROJECT ("moxi")
+SET (CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
+
+IF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+  SET(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/install" CACHE STRING
+      "The install location" FORCE)
+ENDIF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+LIST(APPEND CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}")
+
+# This is defined in forestdb but used in platform :(
+FUNCTION (ENABLE_CODE_COVERAGE_REPORT)
+ENDFUNCTION ()
+
+INCLUDE (CMakePushCheckState)
+INCLUDE (CheckCXXSourceCompiles)
+INCLUDE (CouchbaseCompilerOptions)
+
+# Have to define this before INCLUDE_DIR(platform), a bit oddly
+INCLUDE_DIRECTORIES(BEFORE ${CMAKE_BINARY_DIR}/platform/include)
+
+ADD_SUBDIRECTORY (googletest EXCLUDE_FROM_ALL)
+
+SET (CB_DOWNLOAD_DEPS True)
+SET (CB_DOWNLOAD_DEPS_DEFAULT_MANIFEST "${CMAKE_CURRENT_SOURCE_DIR}/tlm/deps/moxi-manifest.cmake")
+ADD_SUBDIRECTORY (tlm/deps)
+
+INCLUDE (FindCouchbaseLibevent)
+INCLUDE (FindCouchbaseCurl)
+
+
+ADD_SUBDIRECTORY (platform)
+ADD_SUBDIRECTORY (moxi)
+
