@@ -43,8 +43,11 @@ IF (EXISTS "${CB_DOWNLOAD_DEPS_MANIFEST}")
 ENDIF (EXISTS "${CB_DOWNLOAD_DEPS_MANIFEST}")
 
 # Read stock manifest
+IF (NOT DEFINED CB_DOWNLOAD_DEPS_DEFAULT_MANIFEST)
+  SET (CB_DOWNLOAD_DEPS_DEFAULT_MANIFEST manifest.cmake)
+ENDIF ()
 MESSAGE (STATUS "-----------------------------------------")
 MESSAGE (STATUS "Reading global third-party dependencies manifest...")
-INCLUDE (manifest.cmake)
+INCLUDE ("${CB_DOWNLOAD_DEPS_DEFAULT_MANIFEST}")
 MESSAGE (STATUS "Global third-party dependencies manifest complete")
 MESSAGE (STATUS "-----------------------------------------")

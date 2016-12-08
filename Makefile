@@ -64,7 +64,7 @@ Makefile: tlm/Makefile
 analyze:
 	@-mkdir build-analyzer
 	(cd build-analyzer && 				\
-	 scan-build --use-analyzer=Xcode $(CMAKE) $(CMAKE_ARGS) .. && \
+	 scan-build --use-analyzer=Xcode $(CMAKE) $(CMAKE_ARGS) -DCOUCHBASE_DISABLE_CCACHE=1 .. && \
 	 scan-build --use-analyzer=Xcode -o analyser-results/ $(MAKE) all)
 
 # geocouch needs a special build for running the unit tests
