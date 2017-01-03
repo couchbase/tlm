@@ -141,14 +141,3 @@
    fun:evthread_use_pthreads
    ...
 }
-{
-   MB-22064 jemalloc 4.3.1 valgrind issue1:je_ticker_ticks
-   Memcheck:Addr4
-   fun:je_ticker_ticks
-   fun:je_arena_decay_ticks
-   fun:je_arena_decay_tick
-   fun:je_arena_dalloc_small
-   fun:je_iqalloc
-   fun:ifree
-   ...
-}
