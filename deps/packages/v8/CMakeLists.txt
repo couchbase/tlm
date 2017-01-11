@@ -86,6 +86,7 @@ IF (WIN32)
             COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt <INSTALL_DIR>/CMakeLists.txt
   )
 ELSE (WIN32)
+  _DETERMINE_CPU_COUNT(_parallelism)
   ExternalProject_Add(v8
     GIT_REPOSITORY ${_git_repo}
     GIT_TAG ${_git_rev}
@@ -93,7 +94,7 @@ ELSE (WIN32)
 
     CONFIGURE_COMMAND cd <SOURCE_DIR>/build
 
-    BUILD_COMMAND $(MAKE) -j4 x64.release GYPFLAGS+=${GYP_FLAGS} CFLAGS+=-DDEBUG CPPFLAGS+=-DDEBUG PYTHONPATH=<SOURCE_DIR>/third_party/argparse-1.4.0
+    BUILD_COMMAND $(MAKE) -j${_parallelism} x64.release GYPFLAGS+=${GYP_FLAGS} CFLAGS+=-DDEBUG CPPFLAGS+=-DDEBUG PYTHONPATH=<SOURCE_DIR>/third_party/argparse-1.4.0
 
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
 
@@ -103,7 +104,7 @@ ELSE (WIN32)
     COMMAND ${CMAKE_COMMAND} -E remove -f <INSTALL_DIR>/include/OWNERS
 
     COMMAND ${CMAKE_COMMAND} -E remove -f ${V8_LIBRARY_FILE}
-    COMMAND $(MAKE) -j4 x64.release GYPFLAGS+=${GYP_FLAGS} GYPFLAGS+="-Drelease_extra_cflags=-ggdb3" CFLAGS+=-DDEBUG CPPFLAGS+=-DDEBUG PYTHONPATH=<SOURCE_DIR>/third_party/argparse-1.4.0
+    COMMAND $(MAKE) -j${_parallelism} x64.release GYPFLAGS+=${GYP_FLAGS} GYPFLAGS+="-Drelease_extra_cflags=-ggdb3" CFLAGS+=-DDEBUG CPPFLAGS+=-DDEBUG PYTHONPATH=<SOURCE_DIR>/third_party/argparse-1.4.0
     COMMAND ${CMAKE_COMMAND} -E copy ${V8_LIBRARY_FILE} <INSTALL_DIR>/lib/debug
 
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt <INSTALL_DIR>/CMakeLists.txt

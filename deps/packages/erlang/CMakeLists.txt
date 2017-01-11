@@ -1,11 +1,13 @@
 # Downloads the declared version of Erlang source code and builds it.
 
 include(ExternalProject)
+include(PlatformIntrospection)
 
 ### Download, configure and build erlang ####################################
 
 SET(ERL_CFLAGS "-fno-strict-aliasing -O3 -ggdb3 -DOPENSSL_NO_EC=1")
 
+_DETERMINE_CPU_COUNT(_parallelism)
 ExternalProject_Add(erlang
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
@@ -22,7 +24,7 @@ ExternalProject_Add(erlang
                                            CFLAGS=${ERL_CFLAGS}
 
   BUILD_IN_SOURCE 1
-  BUILD_COMMAND $(MAKE) -j8
+  BUILD_COMMAND $(MAKE) -j${_parallelism}
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND $(MAKE) install

@@ -11,6 +11,7 @@ else (APPLE)
     SET(_rpath-link_options "--enable-rpath-link")
 endif (APPLE)
 ### Download, configure and build icu4c ####################################
+_DETERMINE_CPU_COUNT(_parallelism)
 ExternalProject_Add(icu4c
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
@@ -23,7 +24,7 @@ ExternalProject_Add(icu4c
                                                   --disable-samples
                                                   ${_rpath_options}
                                                   ${_rpath-link_options}
-  BUILD_COMMAND $(MAKE) -j4 all
+  BUILD_COMMAND $(MAKE) -j${_parallelism} all
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND $(MAKE) install

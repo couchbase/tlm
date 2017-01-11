@@ -1,6 +1,8 @@
 #
 # Collection of common macros and code for introspecting the platform.
 
+include(ProcessorCount)
+
 # Returns a simple string describing the current architecture. Possible
 # return values currently include: amd64, x86_64, x86.
 MACRO (_DETERMINE_ARCH var)
@@ -128,6 +130,26 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
   SET (${_distro} "${_id}${_rel}")
 ENDMACRO (_DETERMINE_LINUX_DISTRO)
 
+# Returns number of CPUs the system has. The value can be overwritten by the
+# CB_CPU_COUNT environment variable. If neither of these work, return some
+# (hopefully) reasonable default.
+MACRO (_DETERMINE_CPU_COUNT _var)
+  SET(_count 0)
+  IF (DEFINED $ENV{CB_CPU_COUNT})
+    SET(_count $ENV{CB_CPU_COUNT})
+  ENDIF (DEFINED $ENV{CB_CPU_COUNT})
+
+  IF (_count EQUAL 0)
+    ProcessorCount(_count)
+  ENDIF (_count EQUAL 0)
+
+  IF (_count EQUAL 0)
+    MESSAGE(WARNING "Couldn't determine number of CPUs to use. Using default.")
+    SET(_count 4)
+  ENDIF (_count EQUAL 0)
+
+  SET(${_var} ${_count})
+ENDMACRO (_DETERMINE_CPU_COUNT)
 
 # Sets _platform to the name of the current platform if it is a supported
 # production platform.
