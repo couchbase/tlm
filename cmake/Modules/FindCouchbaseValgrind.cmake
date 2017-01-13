@@ -6,6 +6,9 @@ set( _valgrind_options "--gen-suppressions=all"
                        "--num-callers=32"
                        "--partial-loads-ok=yes"
                        "--show-leak-kinds=all"
+                       # Needed for Valgrind 3.12+ to precent it incorrectly
+                       # intercepting malloc symbols in jemalloc / cbmalloc.
+                       "--soname-synonyms=somalloc=nouserintercept"
                        "--suppressions=${CMAKE_SOURCE_DIR}/tlm/valgrind.supp"
                        "--trace-children=yes"
                        "--track-origins=yes"
