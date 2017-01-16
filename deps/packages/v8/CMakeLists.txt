@@ -11,6 +11,28 @@ else (APPLE)
    if (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
       SET(GYP_FLAGS "${GYP_FLAGS}  -Drelease_extra_cflags=-Wno-format-pedantic")
    endif ()
+
+   if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
+     FIND_PROGRAM(_ld_gold NAMES ld.gold)
+     if (_ld_gold)
+       EXECUTE_PROCESS(COMMAND ${_ld_gold} --version
+         OUTPUT_VARIABLE _ld_gold_version
+         ERROR_QUIET)
+       STRING(REGEX MATCH "GNU Binutils [0-9.]+" _binutils_version_full "${_ld_gold_version}")
+       if (_binutils_version_full)
+         STRING(REGEX MATCH "[0-9.]+" _binutils_version "${_binutils_version_full}")
+
+         if (NOT (_binutils_version VERSION_LESS "2.25"))
+           MESSAGE(STATUS "Binutils version ${_binutils_version}")
+           MESSAGE(STATUS "Binutils version is at least 2.25, "
+             "cannot use bundled binutils")
+           SET(GYP_FLAGS "${GYP_FLAGS} -Dlinux_use_bundled_gold=0 -Dlinux_use_bundled_binutils=0")
+         endif ()
+       else ()
+         MESSAGE(WARNING "Couldn't figure out binutils version. The build might fail")
+       endif ()
+     endif ()
+   endif ()
 endif (APPLE)
 
 ### Download, configure and build v8 ####################################
