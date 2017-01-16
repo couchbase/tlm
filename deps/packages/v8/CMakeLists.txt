@@ -2,15 +2,16 @@
 
 include(ExternalProject)
 
-SET(GYP_FLAGS "-Dcomponent=shared_library -Dv8_enable_backtrace=1 -Dv8_use_snapshot='true' -Dv8_use_external_startup_data=0 -Dv8_enable_i18n_support=1 -Dtest_isolation_mode=noop")
+SET(GYP_FLAGS "\
+-Dcomponent=shared_library -Dv8_enable_backtrace=1 \
+-Dv8_use_snapshot='true' -Dv8_use_external_startup_data=0 \
+-Dv8_enable_i18n_support=1 -Dtest_isolation_mode=noop -Dwerror=-Wno-error")
+
 if (APPLE)
    SET(V8_LIBRARY_FILE "<SOURCE_DIR>/out/x64.release/libv8.dylib")
 else (APPLE)
    SET(V8_LIBRARY_FILE "<SOURCE_DIR>/out/x64.release/lib.target/libv8.so")
    SET(GYP_FLAGS "${GYP_FLAGS} -Dclang=0")
-   if (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
-      SET(GYP_FLAGS "${GYP_FLAGS}  -Drelease_extra_cflags=-Wno-format-pedantic")
-   endif ()
 
    if (${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
      FIND_PROGRAM(_ld_gold NAMES ld.gold)
