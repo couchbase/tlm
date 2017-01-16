@@ -49,22 +49,11 @@ IF (NOT CBDownloadDeps_INCLUDED)
     # "Return" the cached file path.
     SET (${var} "${_cache_file_path}" PARENT_SCOPE)
 
-    # If download file already exists, compare with md5
-    IF (EXISTS "${_cache_file_path}")
-      IF (EXISTS "${_cache_md5file_path}")
-        _CHECK_MD5 ("${_cache_file_path}" "${_cache_md5file_path}" _md5equal)
-        IF (_md5equal)
-          MESSAGE (STATUS "Dependency '${_file}' found in cache")
-          RETURN ()
-        ELSE (_md5equal)
-          MESSAGE (WARNING "Cached download for dependency '${_file}' has "
-            "incorrect MD5! Will re-download!")
-        ENDIF (_md5equal)
-      ELSE (EXISTS "${_cache_md5file_path}")
-        MESSAGE (WARNING "Cached download for dependency '${_file}' is missing "
-          "md5 file! Will re-download!")
-      ENDIF (EXISTS "${_cache_md5file_path}")
-    ENDIF (EXISTS "${_cache_file_path}")
+    _CHECK_CACHED_DEP_FILE("${_cache_file_path}" "${_cache_md5file_path}" _found_cached)
+
+    IF (_found_cached)
+      RETURN ()
+    ENDIF (_found_cached)
 
     # File not found in cache or cache corrupt - download new.
 
@@ -87,16 +76,41 @@ IF (NOT CBDownloadDeps_INCLUDED)
     ENDIF ()
   ENDFUNCTION (_DOWNLOAD_URL_TO_CACHE)
 
-  # Downloads a dependency to the cache dir. First checks the cache for
-  # an up-to-date copy based on md5.  Sets the variable named by 'var'
-  # to the downloaded dependency .tgz.
-  FUNCTION (_DOWNLOAD_DEP name version var)
+  FUNCTION (_CHECK_CACHED_DEP_FILE path md5path var)
+    SET(${var} FALSE PARENT_SCOPE)
+
+    IF (EXISTS "${path}")
+      IF (EXISTS "${md5path}")
+        _CHECK_MD5 ("${path}" "${md5path}" _md5equal)
+        IF (_md5equal)
+          MESSAGE (STATUS "Dependency '${path}' found in cache")
+          SET(${var} TRUE PARENT_SCOPE)
+          RETURN ()
+        ELSE (_md5equal)
+          MESSAGE (WARNING "Cached download for dependency '${path}' has "
+            "incorrect MD5! Will re-download!")
+        ENDIF (_md5equal)
+      ELSE (EXISTS "${md5path}")
+        MESSAGE (WARNING "Cached download for dependency '${md5path}' is missing "
+          "md5 file! Will re-download!")
+      ENDIF (EXISTS "${md5path}")
+    ENDIF (EXISTS "${path}")
+  ENDFUNCTION ()
+
+  FUNCTION (_GET_DEP_FILENAME name version var)
     _DETERMINE_PLATFORM (_platform)
     _DETERMINE_ARCH (_arch)
 
     # Compute relative paths to dependency on local filesystem
     # and in remote repository
-    SET (_rel_path "${name}-${_platform}-${_arch}-${version}.tgz")
+    SET (${var} "${name}-${_platform}-${_arch}-${version}.tgz" PARENT_SCOPE)
+  ENDFUNCTION ()
+
+  # Downloads a dependency to the cache dir. First checks the cache for
+  # an up-to-date copy based on md5.  Sets the variable named by 'var'
+  # to the downloaded dependency .tgz.
+  FUNCTION (_DOWNLOAD_DEP name version var)
+    _GET_DEP_FILENAME("${name}" "${version}" _rel_path)
     SET (_repo_url "${CB_DOWNLOAD_DEPS_REPO}/${name}/${version}/${_rel_path}")
     _DOWNLOAD_URL_TO_CACHE ("${_repo_url}" _cachefile)
     SET (${var} "${_cachefile}" PARENT_SCOPE)
@@ -143,9 +157,21 @@ IF (NOT CBDownloadDeps_INCLUDED)
         ENDIF ("${_this_platform}" STREQUAL "${_platform}")
       ENDFOREACH (_platform)
       IF (NOT _found_platform)
-        MESSAGE (STATUS "Dependency ${name} (${dep_VERSION}) not declared for platform "
-          "${_this_platform}, skipping...")
-        RETURN ()
+        # check if we maybe have locally built dep file
+        _GET_DEP_FILENAME("${name}" "${dep_VERSION}" _dep_filename)
+        SET(_dep_path "${CB_DOWNLOAD_DEPS_CACHE}/${_dep_filename}")
+        SET(_dep_md5path "${CB_DOWNLOAD_DEPS_CACHE}/${_dep_filename}.md5")
+
+        _CHECK_CACHED_DEP_FILE("${_dep_path}" "${_dep_md5path}" _dep_found)
+
+        IF (_dep_found)
+          MESSAGE (STATUS "Found locally built dependency file ${_dep_path}. "
+            "Going to use it even though the platform ${_this_platform} is unsupported")
+        ELSE ()
+          MESSAGE (STATUS "Dependency ${name} (${dep_VERSION}) not declared for platform "
+            "${_this_platform}, skipping...")
+          RETURN ()
+        ENDIF ()
       ENDIF (NOT _found_platform)
     ENDIF (_num_platforms GREATER 0)
 
