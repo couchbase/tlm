@@ -66,6 +66,8 @@ MACRO (_ADD_PACKAGE_STEP)
         COMMAND ${CMAKE_COMMAND} -E copy "${_output_file}.md5" "${_cached_md5}"
         DEPENDS ${_dep_package})
     endif ()
+
+    ADD_DEPENDENCIES(build-and-cache-all ${_target})
   endif ()
 ENDMACRO (_ADD_PACKAGE_STEP)
 
@@ -145,6 +147,8 @@ if (WIN32)
     SET(MSBUILD_ARCH ${HOST_ARCH})
   endif(HOST_ARCH STREQUAL "amd64")
 endif(WIN32)
+
+ADD_CUSTOM_TARGET(build-and-cache-all)
 
 #
 # And here is the set of "latest" dependencies.
