@@ -48,6 +48,16 @@ MACRO (_ADD_PACKAGE_STEP)
     WORKING_DIRECTORY <INSTALL_DIR>
     )
   _ADD_MD5_FILE_STEP(${_output_file}.tgz ${_output_file}.md5 ${_dep_package})
+
+  if (CB_DOWNLOAD_DEPS_CACHE)
+    SET(_cached_file "${CB_DOWNLOAD_DEPS_CACHE}/${_output_file_name}.tgz")
+    SET(_cached_md5 "${_cached_file}.md5")
+
+    ADD_CUSTOM_TARGET(build-and-cache-${_dep_package}
+      COMMAND ${CMAKE_COMMAND} -E copy "${_output_file}.tgz" "${_cached_file}"
+      COMMAND ${CMAKE_COMMAND} -E copy "${_output_file}.md5" "${_cached_md5}"
+      DEPENDS ${_dep_package})
+  endif ()
 ENDMACRO (_ADD_PACKAGE_STEP)
 
 # Macro to standardize several steps in sub-projects.
@@ -73,8 +83,9 @@ ENDMACRO (_ADD_PACKAGE_STEP)
 #
 MACRO (_ADD_DEP_PACKAGE package upstream_ver cb_branch cb_release)
   IF (NOT DEFINED PACKAGE OR "${PACKAGE}" STREQUAL "${package}")
+    SET (_output_file_name "${package}-${PLATFORM}-${HOST_ARCH}-${upstream_ver}-cb${cb_release}")
     SET (_output_dir "${CMAKE_BINARY_DIR}/deps/${package}/${upstream_ver}-cb${cb_release}")
-    SET (_output_file "${_output_dir}/${package}-${PLATFORM}-${HOST_ARCH}-${upstream_ver}-cb${cb_release}")
+    SET (_output_file "${_output_dir}/${_output_file_name}")
     SET (_git_repo "git://github.com/couchbasedeps/${package}.git")
     SET (_git_rev ${cb_branch})
     SET (_dep_package ${package})
