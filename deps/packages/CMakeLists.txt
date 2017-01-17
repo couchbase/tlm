@@ -52,11 +52,20 @@ MACRO (_ADD_PACKAGE_STEP)
   if (CB_DOWNLOAD_DEPS_CACHE)
     SET(_cached_file "${CB_DOWNLOAD_DEPS_CACHE}/${_output_file_name}.tgz")
     SET(_cached_md5 "${_cached_file}.md5")
+    SET(_target build-and-cache-${_dep_package})
 
-    ADD_CUSTOM_TARGET(build-and-cache-${_dep_package}
-      COMMAND ${CMAKE_COMMAND} -E copy "${_output_file}.tgz" "${_cached_file}"
-      COMMAND ${CMAKE_COMMAND} -E copy "${_output_file}.md5" "${_cached_md5}"
-      DEPENDS ${_dep_package})
+    _CHECK_CACHED_DEP_FILE("${_cached_file}" "${_cached_md5}" _dep_found)
+    if (_dep_found)
+      ADD_CUSTOM_TARGET(${_target}
+        COMMAND ${CMAKE_COMMAND} -E echo "Seems like you already have ${_cached_file}"
+        COMMAND ${CMAKE_COMMAND} -E echo "If that is not the case please regenerate cmake files"
+        COMMAND ${CMAKE_COMMAND} -E echo "If you want to rebuild the dependency, just delete the file")
+    else ()
+      ADD_CUSTOM_TARGET(${_target}
+        COMMAND ${CMAKE_COMMAND} -E copy "${_output_file}.tgz" "${_cached_file}"
+        COMMAND ${CMAKE_COMMAND} -E copy "${_output_file}.md5" "${_cached_md5}"
+        DEPENDS ${_dep_package})
+    endif ()
   endif ()
 ENDMACRO (_ADD_PACKAGE_STEP)
 
