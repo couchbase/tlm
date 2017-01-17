@@ -122,13 +122,8 @@ IF (NOT CBDownloadDeps_INCLUDED)
   FUNCTION (DECLARE_DEP name)
     PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION" "SKIP" ${ARGN})
 
-    # If this dependency(+version) has already been declared, skip it
-    if (dep_VERSION)
-      SET (_prop_name "CB_DOWNLOADED_DEP_${name}_${dep_VERSION}")
-    else (dep_VERSION)
-      SET (_prop_name "CB_DOWNLOADED_DEP_${name}")
-    endif(dep_VERSION)
-
+    # If this dependency has already been declared, skip it
+    SET (_prop_name "CB_DOWNLOADED_DEP_${name}")
     GET_PROPERTY (_declared GLOBAL PROPERTY ${_prop_name} SET)
     IF (_declared)
       MESSAGE (STATUS "Dependency ${name} already declared, skipping...")
