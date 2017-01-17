@@ -20,7 +20,7 @@ FIND_PATH(LUA_INCLUDE_DIR lua.h
                /opt)
 
 FIND_LIBRARY(LUA_LIBRARIES
-             NAMES lua lua5.2 lua5.1
+             NAMES lua5.2 lua5.1 lua
              HINTS
                  ENV LUA_DIR
              PATHS
