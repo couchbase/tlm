@@ -4,7 +4,8 @@
 # it, so bugs filed against it will need to be handled by those devs
 # who care to use it.
 
-PREFIX:=$(shell pwd)/install
+ROOT:=$(CURDIR)
+PREFIX:=$(ROOT)/install
 MAKEFLAGS=--no-print-directory
 
 PASSTHRU_TARGETS=all analyze clean clean-all clean-xfd clean-xfd-hard \
@@ -32,3 +33,18 @@ make-install-icu4c: icu4c/source/Makefile
 	$(MAKE) -C icu4c/source install
 
 make-install-couchdb-deps: make-install-icu4c
+
+DEPS_DIR := $(ROOT)/tlm/deps/packages
+
+# it's a little wasteful to call cmake all the time, but the code path taken
+# there might depend on the presence/absence of downloaded dependencies
+.PHONY: build_deps deps-all
+build_deps:
+	mkdir -p build_deps
+	(cd build_deps && cmake $(DEPS_DIR))
+
+dep-%: build_deps
+	$(MAKE) -C "build_deps" $(@:dep-%=build-and-cache-%)
+
+deps-all: build_deps
+	$(MAKE) -C "build_deps" build-and-cache-all
