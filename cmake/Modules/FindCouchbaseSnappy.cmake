@@ -3,9 +3,11 @@
 #  SNAPPY_FOUND, if false, do not try to link with snappy
 #  SNAPPY_LIBRARIES, Library path and libs
 #  SNAPPY_INCLUDE_DIR, where to find the ICU headers
+SET(_snappy_exploded ${CMAKE_BINARY_DIR}/tlm/deps/snappy.exploded)
 
 FIND_PATH(SNAPPY_INCLUDE_DIR snappy.h
           HINTS
+               "${_snappy_exploded}"
                ENV SNAPPY_DIR
           PATH_SUFFIXES include
           PATHS
@@ -19,7 +21,9 @@ FIND_PATH(SNAPPY_INCLUDE_DIR snappy.h
 FIND_LIBRARY(SNAPPY_LIBRARIES
              NAMES snappy
              HINTS
+                 "${_snappy_exploded}"
                  ENV SNAPPY_DIR
+             PATH_SUFFIXES lib
              PATHS
                  ~/Library/Frameworks
                  /Library/Frameworks

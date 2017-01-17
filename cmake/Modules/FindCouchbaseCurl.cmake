@@ -12,10 +12,10 @@
 SET (_curl_exploded "${CMAKE_BINARY_DIR}/tlm/deps/curl.exploded")
 FIND_PATH(CURL_INCLUDE_DIR curl/curl.h
           HINTS
+               "${_curl_exploded}/include"
                ENV CURL_DIR
           PATH_SUFFIXES include
           PATHS
-               "${_curl_exploded}/include"
                ~/Library/Frameworks
                /Library/Frameworks
                /opt/local
@@ -26,6 +26,7 @@ FIND_PATH(CURL_INCLUDE_DIR curl/curl.h
 FIND_LIBRARY(CURL_LIBRARIES
              NAMES curl libcurl libcurl_imp
              HINTS
+                "${_curl_exploded}/lib"
                  ENV CURL_DIR
              PATHS
                  ~/Library/Frameworks

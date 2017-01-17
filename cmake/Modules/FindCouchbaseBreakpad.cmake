@@ -14,7 +14,7 @@ ENDIF (${LCASE_SYSTEM} STREQUAL "sunos")
 SET(_breakpad_exploded ${CMAKE_BINARY_DIR}/tlm/deps/breakpad.exploded)
 
 FIND_PATH(BREAKPAD_INCLUDE_DIR client/${LCASE_SYSTEM}/handler/exception_handler.h
-          PATHS ${_breakpad_exploded}/include
+          HINTS ${_breakpad_exploded}/include
           PATH_SUFFIXES breakpad)
 IF (WIN32)
 
@@ -46,9 +46,9 @@ IF (WIN32)
 ELSE (WIN32)
   FIND_LIBRARY(BREAKPAD_LIBRARIES
                NAMES breakpad_client
-               PATHS ${_breakpad_exploded}/lib)
+               HINTS ${_breakpad_exploded}/lib)
 
-  FIND_PROGRAM(MINIDUMP2CORE minidump-2-core)
+  FIND_PROGRAM(MINIDUMP2CORE minidump-2-core HINTS ${_breakpad_exploded}/bin)
   IF (MINIDUMP2CORE)
      MESSAGE(STATUS "Found minidump-2-core: ${MINIDUMP2CORE}")
   ENDIF (MINIDUMP2CORE)

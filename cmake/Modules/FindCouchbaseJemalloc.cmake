@@ -10,10 +10,10 @@ SET(_jemalloc_exploded ${CMAKE_BINARY_DIR}/tlm/deps/jemalloc.exploded)
 
 FIND_PATH(JEMALLOC_INCLUDE_DIR jemalloc/jemalloc.h
           HINTS
+               ${_jemalloc_exploded}
                ENV JEMALLOC_DIR
           PATH_SUFFIXES include
           PATHS
-               ${_jemalloc_exploded}
                ~/Library/Frameworks
                /Library/Frameworks
                /opt/local
@@ -24,10 +24,10 @@ FIND_PATH(JEMALLOC_INCLUDE_DIR jemalloc/jemalloc.h
 FIND_LIBRARY(JEMALLOC_LIBRARIES
              NAMES jemalloc libjemalloc
              HINTS
+                 ${_jemalloc_exploded}
                  ENV JEMALLOC_DIR
              PATH_SUFFIXES lib
              PATHS
-                 ${_jemalloc_exploded}
                  ~/Library/Frameworks
                  /Library/Frameworks
                  /opt/local

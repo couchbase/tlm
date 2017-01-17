@@ -5,8 +5,8 @@
 SET(google_flatbuffers_exploded ${CMAKE_BINARY_DIR}/tlm/deps/flatbuffers.exploded)
 
 FIND_PATH(FLATBUFFERS_INCLUDE_DIR flatbuffers/flatbuffers.h
-          PATHS ${google_flatbuffers_exploded}/include)
-FIND_PROGRAM(FLATC flatc PATHS PATHS ${google_flatbuffers_exploded}/bin)
+          HINTS ${google_flatbuffers_exploded}/include)
+FIND_PROGRAM(FLATC flatc HINTS ${google_flatbuffers_exploded}/bin)
 
 IF (FLATBUFFERS_INCLUDE_DIR AND FLATC)
   MESSAGE(STATUS "Found Google Flatbuffers in ${FLATBUFFERS_INCLUDE_DIR} : ${FLATC}")

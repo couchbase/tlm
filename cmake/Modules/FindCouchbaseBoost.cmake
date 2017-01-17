@@ -4,8 +4,7 @@
 SET(boost_exploded ${CMAKE_BINARY_DIR}/tlm/deps/boost.exploded)
 
 FIND_PATH(BOOST_INCLUDE_DIR boost/intrusive/list.hpp
-          PATHS ${boost_exploded}/include
-          [NO_DEFAULT_PATH])
+          HINTS ${boost_exploded}/include)
 
 IF (BOOST_INCLUDE_DIR)
   MESSAGE(STATUS "Found boost in ${BOOST_INCLUDE_DIR}")
