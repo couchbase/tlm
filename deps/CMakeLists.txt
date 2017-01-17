@@ -16,8 +16,9 @@ MESSAGE (STATUS "Set arch to ${cbcache_arch} for dependency downloads")
 GET_SUPPORTED_DEVELOPMENT_PLATFORM(_supported_platform)
 IF (NOT _supported_platform)
   MESSAGE(STATUS "NOTE: The dependencies for unsupported platforms may not be available.")
-  MESSAGE(STATUS "      Downloads may fail. You may build dependencies from from")
-  MESSAGE(STATUS "      tlm/deps/packages and store then in ~/.cbdepscache")
+  MESSAGE(STATUS "      Downloads may fail.")
+  MESSAGE(STATUS "      You may try building dependencies by running \"make deps-all\" from the repo root.")
+  MESSAGE(STATUS "      Individual dependencies can be built by running \"make dep-<dependency name>\".")
 ENDIF (NOT _supported_platform)
 
 # Default personal override manifest is in user's home directory; may
