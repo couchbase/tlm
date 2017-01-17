@@ -27,13 +27,14 @@ MESSAGE (STATUS "Set platform to ${cbcache_platform} for dependency downloads")
 MESSAGE (STATUS "Set arch to ${cbcache_arch} for dependency downloads")
 
 # Generate a .md5 file
-MACRO (_GENERATE_MD5_FILE sourcefile md5file target)
-  ADD_CUSTOM_COMMAND (TARGET ${target} POST_BUILD
+MACRO (_ADD_MD5_FILE_STEP sourcefile md5file package)
+  ExternalProject_Add_Step (${package} md5
     COMMAND "${CMAKE_COMMAND}"
     -D "FILE=${sourcefile}"
     -D "MD5FILE=${md5file}"
-    -P "${PROJECT_SOURCE_DIR}/util/GenMD5.cmake")
-ENDMACRO (_GENERATE_MD5_FILE)
+    -P "${PROJECT_SOURCE_DIR}/util/GenMD5.cmake"
+    DEPENDEES package)
+ENDMACRO (_ADD_MD5_FILE_STEP)
 
 
 # Macro intended to be called by package sub-projects to provide
@@ -46,7 +47,7 @@ MACRO (_ADD_PACKAGE_STEP)
     DEPENDEES install
     WORKING_DIRECTORY <INSTALL_DIR>
     )
-  _GENERATE_MD5_FILE(${_output_file}.tgz ${_output_file}.md5 ${_dep_package})
+  _ADD_MD5_FILE_STEP(${_output_file}.tgz ${_output_file}.md5 ${_dep_package})
 ENDMACRO (_ADD_PACKAGE_STEP)
 
 # Macro to standardize several steps in sub-projects.
