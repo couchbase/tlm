@@ -91,6 +91,9 @@ ELSE ("" STREQUAL "${BUILD_ENTERPRISE}")
    SET(CB_ENTERPRISE_EDITION True CACHE BOOL "Building enterprise edition")
 ENDIF ("" STREQUAL "${BUILD_ENTERPRISE}")
 
+# Build 'developer builds' by default
+OPTION (CB_DEVELOPER_BUILD "Produce Developer builds" True)
+
 MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
 MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE} (${CB_BUILD_TYPE})")
