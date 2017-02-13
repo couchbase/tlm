@@ -8,7 +8,7 @@ ROOT:=$(CURDIR)
 PREFIX:=$(ROOT)/install
 MAKEFLAGS=--no-print-directory
 
-PASSTHRU_TARGETS=all analyze clean clean-all clean-xfd clean-xfd-hard \
+PASSTHRU_TARGETS=all analytics-install analyze clean clean-all clean-xfd clean-xfd-hard \
   e2etest e2eviewtests geocouch-build-for-testing install reset run-mats test
 
 $(PASSTHRU_TARGETS):

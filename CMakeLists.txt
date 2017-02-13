@@ -117,6 +117,7 @@ INCLUDE(FindCouchbaseValgrind)
 INCLUDE(CouchbaseCompilerOptions)
 INCLUDE(FindCouchbaseV8)
 INCLUDE(FindCouchbaseNlohmannJson)
+INCLUDE(FindCouchbaseMaven)
 
 IF (WIN32)
    SET(COUCHBASE_NETWORK_LIBS "Ws2_32")
@@ -207,9 +208,19 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbft)
     ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
 
+    # Analytics CBGT connector
+    IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbaselabs/cbas")
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbaselabs/cbas)
+    ENDIF()
+
+    # Analytics Maven project
+    IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/analytics")
+      ADD_SUBDIRECTORY (analytics)
+    ENDIF ()
+
     IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/backup)
-    ENDIF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
+    ENDIF()
 ENDIF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
 
 IF (NOT WIN32)

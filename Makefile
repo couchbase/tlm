@@ -75,6 +75,9 @@ geocouch-build-for-testing: compile
 	 -D GEOCOUCH_BUILD_FOR_UNIT_TESTS=1 ../../geocouch && \
 	 $(MAKE))
 
+analytics-install: build/Makefile
+	(cd build && make analytics)
+
 run-mats:
 	cd testrunner && $(MAKE) simple-test
 
