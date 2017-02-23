@@ -178,7 +178,7 @@ _ADD_DEP_PACKAGE(pysqlite2 0ff6e32 0ff6e32 1)
 _ADD_DEP_PACKAGE(flatbuffers 1.4.0 v1.4.0 1)
 _ADD_DEP_PACKAGE(json 1.1.0 v1.1.0 1)
 _ADD_DEP_PACKAGE(boost 1.62.0 v1.62.0 2)
-
 IF (APPLE)
   _ADD_DEP_PACKAGE(openssl_h 0.9.8za 0.9.8za 1)
 ENDIF ()
+_ADD_DEP_PACKAGE(libcouchbase 2.7.2 2.7.2 1)
