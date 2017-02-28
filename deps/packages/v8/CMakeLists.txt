@@ -24,7 +24,7 @@ else (APPLE)
        EXECUTE_PROCESS(COMMAND ${_ld_gold} --version
          OUTPUT_VARIABLE _ld_gold_version
          ERROR_QUIET)
-       STRING(REGEX MATCH "GNU Binutils [0-9.]+" _binutils_version_full "${_ld_gold_version}")
+       STRING(REGEX MATCH "GNU Binutils .*[0-9.]+\\)" _binutils_version_full "${_ld_gold_version}")
        if (_binutils_version_full)
          STRING(REGEX MATCH "[0-9.]+" _binutils_version "${_binutils_version_full}")
 
