@@ -6,7 +6,7 @@ IF (NOT APPLE)
   SET (_libsqlite3_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
   SET (_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
   SET (CMAKE_INSTALL_PREFIX "${_libsqlite3_install}")
-  DECLARE_DEP (libsqlite3 VERSION 3.7.2-cb1 PLATFORMS centos6 centos7 debian7 debian8 suse11.2 ubuntu12.04 ubuntu14.04 freebsd)
+  DECLARE_DEP (libsqlite3 VERSION 3.7.2-cb1 PLATFORMS centos6 centos7 debian7 debian8 suse11.2 ubuntu12.04 ubuntu14.04 ubuntu16.04 freebsd)
   SET (CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 ENDIF (NOT APPLE)
 
