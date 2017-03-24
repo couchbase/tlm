@@ -22,12 +22,19 @@ SET(boost_repos
   assert
   config
   core
+  detail
+  functional
+  math
   move
+  mpl
   optional
+  preprocessor
   static_assert
   throw_exception
+  type_index
   type_traits
-  utility)
+  utility
+  variant)
 
 FOREACH(boost_repo ${boost_repos})
 
