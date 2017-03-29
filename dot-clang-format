@@ -45,7 +45,9 @@ DisableFormat:   false
 ExperimentalAutoDetectBinPacking: false
 ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
 IncludeCategories:
-  - Regex:           '^<.*\.h>'
+  - Regex:           '^"config.h"'
+    Priority:        -1
+  - Regex:           '^<.*\.(h|hpp)>'
     Priority:        1
   - Regex:           '^<.*'
     Priority:        2
