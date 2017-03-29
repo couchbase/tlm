@@ -4,8 +4,11 @@
 #  OPENSSL_LIBRARIES, Library path and libs
 #  OPENSSL_INCLUDE_DIR, where to find the ICU headers
 
+SET(_openssl_h_exploded ${CMAKE_BINARY_DIR}/tlm/deps/openssl_h.exploded)
+
 FIND_PATH(OPENSSL_INCLUDE_DIR openssl/ssl.h
           HINTS
+               ${_openssl_h_exploded}
                ENV OPENSSL_DIR
           PATH_SUFFIXES include
           PATHS
