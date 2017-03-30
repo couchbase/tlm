@@ -147,6 +147,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
     # If this dependency declares PLATFORM, ensure that we are running on
     # one of those platforms.
     _DETERMINE_PLATFORM (_this_platform)
+    GET_SUPPORTED_PRODUCTION_PLATFORM (_supported_platform)
     LIST (LENGTH dep_PLATFORMS _num_platforms)
     IF (_num_platforms GREATER 0)
       SET (_found_platform 0)
@@ -156,7 +157,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
           BREAK ()
         ENDIF ("${_this_platform}" STREQUAL "${_platform}")
       ENDFOREACH (_platform)
-      IF (NOT _found_platform)
+      IF (NOT _found_platform AND NOT _supported_platform)
         # check if we maybe have locally built dep file
         _GET_DEP_FILENAME("${name}" "${dep_VERSION}" _dep_filename)
         SET(_dep_path "${CB_DOWNLOAD_DEPS_CACHE}/${_dep_filename}")
@@ -167,12 +168,14 @@ IF (NOT CBDownloadDeps_INCLUDED)
         IF (_dep_found)
           MESSAGE (STATUS "Found locally built dependency file ${_dep_path}. "
             "Going to use it even though the platform ${_this_platform} is unsupported")
-        ELSE ()
-          MESSAGE (STATUS "Dependency ${name} (${dep_VERSION}) not declared for platform "
-            "${_this_platform}, skipping...")
-          RETURN ()
+          SET (_found_platform 1)
         ENDIF ()
-      ENDIF (NOT _found_platform)
+      ENDIF (NOT _found_platform AND NOT _supported_platform)
+      IF (NOT _found_platform)
+        MESSAGE (STATUS "Dependency ${name} (${dep_VERSION}) not declared for platform "
+          "${_this_platform}, skipping...")
+        RETURN ()
+      ENDIF ()
     ENDIF (_num_platforms GREATER 0)
 
     # Remember that this dependency has been declared.
@@ -199,7 +202,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
       SET (EXPLODED_VERSION "<none>")
     ENDIF (EXISTS "${_explode_dir}/VERSION.txt")
 
-    MESSAGE (STATUS "Checking exploded version ${EXPLODED_VERSION} against ${dep_VERSION}")
+    MESSAGE (STATUS "Checking exploded ${name} version ${EXPLODED_VERSION} against ${dep_VERSION}")
     IF (EXPLODED_VERSION STREQUAL ${dep_VERSION})
       MESSAGE (STATUS "Dependency '${name} (${dep_VERSION})' already downloaded")
     ELSE (EXPLODED_VERSION STREQUAL ${dep_VERSION})
