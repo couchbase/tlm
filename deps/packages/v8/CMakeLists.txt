@@ -123,17 +123,23 @@ ELSE (WIN32)
     CONFIGURE_COMMAND cd <SOURCE_DIR>/build
 
     BUILD_COMMAND $(MAKE) -j${_parallelism} x64.release GYPFLAGS+=${GYP_FLAGS} CFLAGS+=-DDEBUG CPPFLAGS+=-DDEBUG PYTHONPATH=<SOURCE_DIR>/third_party/argparse-1.4.0
+    IF (APPLE)
+        COMMAND install_name_tool -id @rpath/libv8.dylib <SOURCE_DIR>/out/x64.release/libv8.dylib
+    ENDIF (APPLE)
 
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
 
-    INSTALL_COMMAND mkdir -p <INSTALL_DIR>/lib/release <INSTALL_DIR>/lib/debug <INSTALL_DIR>/include
-    COMMAND ${CMAKE_COMMAND} -E copy ${V8_LIBRARY_FILE} <INSTALL_DIR>/lib/release
+    INSTALL_COMMAND mkdir -p <INSTALL_DIR>/lib/Release <INSTALL_DIR>/lib/Debug <INSTALL_DIR>/include
+    COMMAND ${CMAKE_COMMAND} -E copy ${V8_LIBRARY_FILE} <INSTALL_DIR>/lib/Release
     COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include <INSTALL_DIR>/include
     COMMAND ${CMAKE_COMMAND} -E remove -f <INSTALL_DIR>/include/OWNERS
 
     COMMAND ${CMAKE_COMMAND} -E remove -f ${V8_LIBRARY_FILE}
     COMMAND $(MAKE) -j${_parallelism} x64.release GYPFLAGS+=${GYP_FLAGS} GYPFLAGS+="-Drelease_extra_cflags=-ggdb3" CFLAGS+=-DDEBUG CPPFLAGS+=-DDEBUG PYTHONPATH=<SOURCE_DIR>/third_party/argparse-1.4.0
-    COMMAND ${CMAKE_COMMAND} -E copy ${V8_LIBRARY_FILE} <INSTALL_DIR>/lib/debug
+    IF (APPLE)
+        COMMAND install_name_tool -id @rpath/libv8.dylib <SOURCE_DIR>/out/x64.release/libv8.dylib
+    ENDIF (APPLE)
+    COMMAND ${CMAKE_COMMAND} -E copy ${V8_LIBRARY_FILE} <INSTALL_DIR>/lib/Debug
 
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt <INSTALL_DIR>/CMakeLists.txt
 )
@@ -168,13 +174,7 @@ if (APPLE)
     DEPENDEES configure
     DEPENDERS build
   )
-  ExternalProject_Add_Step(v8 install_name
-    COMMAND install_name_tool -id @rpath/libv8.dylib out/x64.release/libv8.dylib
-    DEPENDEES build
-    DEPENDERS install
-    WORKING_DIRECTORY <BINARY_DIR>
-  )
-endif(APPLE)
+endif (APPLE)
 
 # cbdeps boilerplate
 _ADD_PACKAGE_STEP()
