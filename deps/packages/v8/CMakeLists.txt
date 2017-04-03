@@ -115,6 +115,13 @@ IF (WIN32)
   )
 ELSE (WIN32)
   _DETERMINE_CPU_COUNT(_parallelism)
+
+  # Extra command to perform only on Mac
+  IF (APPLE)
+    SET (TWEAK_DYLIB
+      COMMAND install_name_tool -id @rpath/libv8.dylib <SOURCE_DIR>/out/x64.release/libv8.dylib)
+  ENDIF (APPLE)
+
   ExternalProject_Add(v8
     GIT_REPOSITORY ${_git_repo}
     GIT_TAG ${_git_rev}
@@ -123,9 +130,7 @@ ELSE (WIN32)
     CONFIGURE_COMMAND cd <SOURCE_DIR>/build
 
     BUILD_COMMAND $(MAKE) -j${_parallelism} x64.release GYPFLAGS+=${GYP_FLAGS} CFLAGS+=-DDEBUG CPPFLAGS+=-DDEBUG PYTHONPATH=<SOURCE_DIR>/third_party/argparse-1.4.0
-    IF (APPLE)
-        COMMAND install_name_tool -id @rpath/libv8.dylib <SOURCE_DIR>/out/x64.release/libv8.dylib
-    ENDIF (APPLE)
+    ${TWEAK_DYLIB}
 
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
 
@@ -136,9 +141,7 @@ ELSE (WIN32)
 
     COMMAND ${CMAKE_COMMAND} -E remove -f ${V8_LIBRARY_FILE}
     COMMAND $(MAKE) -j${_parallelism} x64.release GYPFLAGS+=${GYP_FLAGS} GYPFLAGS+="-Drelease_extra_cflags=-ggdb3" CFLAGS+=-DDEBUG CPPFLAGS+=-DDEBUG PYTHONPATH=<SOURCE_DIR>/third_party/argparse-1.4.0
-    IF (APPLE)
-        COMMAND install_name_tool -id @rpath/libv8.dylib <SOURCE_DIR>/out/x64.release/libv8.dylib
-    ENDIF (APPLE)
+    ${TWEAK_DYLIB}
     COMMAND ${CMAKE_COMMAND} -E copy ${V8_LIBRARY_FILE} <INSTALL_DIR>/lib/Debug
 
     COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt <INSTALL_DIR>/CMakeLists.txt
