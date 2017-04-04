@@ -174,7 +174,6 @@ _ADD_DEP_PACKAGE(curl 7.49.1 curl-7_49_1 1)
 _ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase-watson 3)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
-_ADD_DEP_PACKAGE(pysqlite2 0ff6e32 0ff6e32 1)
 _ADD_DEP_PACKAGE(flatbuffers 1.4.0 v1.4.0 1)
 _ADD_DEP_PACKAGE(json 1.1.0 v1.1.0 1)
 _ADD_DEP_PACKAGE(boost 1.62.0 v1.62.0 2)
