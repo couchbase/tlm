@@ -9,9 +9,8 @@
 #
 # MULTI-GO MODE
 # In "multi-go" mode, the build will download exactly the required versions of
-# the Go compiler (there is a GO_DEFAULT_VERSION variable which is used for
-# any targets that do not specify GOVERSION). The build will fail if the exact
-# Go versions cannot be obtained, and it will not search for Go anywhere else.
+# the Go compiler. The build will fail if the exact Go versions cannot be
+# obtained, and it will not search for Go anywhere else.
 # This is how the production builds work.
 #
 #   NOTE: the build can only support a single Go 1.4.x version safely due to
@@ -95,7 +94,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     MESSAGE (STATUS "Multi-Go mode enabled; all desired Go compiler versions "
       "will be downloaded for the build")
     INCLUDE (CBDownloadDeps)
-    SET (GO_DEFAULT_VERSION 1.5.2)
     SET (GO_14x_VERSION 1.4.2)
     IF (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
       # 1.4.2 is not available for FreeBSD, but 1.4.3 is.
@@ -120,11 +118,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # by "ver" to the actual version of Go used.
   MACRO (GET_GOROOT VERSION var ver)
     IF (CB_MULTI_GO)
-      IF (NOT "${VERSION}" STREQUAL "")
-        SET (_version ${VERSION})
-      ELSE ()
-        SET (_version ${GO_DEFAULT_VERSION})
-      ENDIF ()
+      SET (_version ${VERSION})
 
       # Ensure no attempt to use a specific 1.4.
       IF ("${_version}" MATCHES "^1.4.[0-9]+$")
@@ -207,10 +201,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # GOPATH - Every entry on this list will be placed onto the GOPATH
   # environment variable before invoking the compiler.
   #
-  # Optional arguments:
-  #
   # GOVERSION - the version of the Go compiler required for this target.
   # See file header comment.
+  #
+  # Optional arguments:
   #
   # GCFLAGS - flags that will be passed (via -gcflags) to all compile
   # steps; should be a single string value, with spaces if necessary
@@ -250,6 +244,9 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     IF (NOT Go_PACKAGE)
       MESSAGE (FATAL_ERROR "PACKAGE is required!")
     ENDIF (NOT Go_PACKAGE)
+    IF (NOT Go_GOVERSION)
+      MESSAGE (FATAL_ERROR "GOVERSION is required!")
+    ENDIF (NOT Go_GOVERSION)
 
     # Hunt for the requested package on GOPATH (used for installing)
     SET (_found)
