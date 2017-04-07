@@ -9,6 +9,15 @@ OPTION(CB_ADDRESSSANITIZER "Enable AddressSanitizer memory error detector."
        OFF)
 
 IF (CB_ADDRESSSANITIZER)
+
+    # AddressSanitizer doesn't appear to work correctly on a Debug build :(
+    IF ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
+        MESSAGE(FATAL_ERROR "CB_ADDRESSSANITIZER enabled but AddressSanitizer "
+                            "is incompatible with CMAKE_BUILD_TYPE==Debug. "
+                            "Change build type RelWithDebInfo or similar to "
+                            "use AddressSanitizer. Cannot continue.")
+    ENDIF ()
+
     CMAKE_PUSH_CHECK_STATE(RESET)
     SET(CMAKE_REQUIRED_FLAGS "-fsanitize=address") # Also needs to be a link flag for test to pass
     CHECK_C_COMPILER_FLAG("-fsanitize=address" HAVE_FLAG_SANITIZE_ADDRESS_C)
