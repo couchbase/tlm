@@ -141,3 +141,19 @@
    fun:evthread_use_pthreads
    ...
 }
+
+# Conditional jump or move depends on uninitialised value(s)
+# fixed in OpenSSL 1.0.2 according to https://rt.openssl.org/Ticket/Display.html?id=2400
+{
+   <insert_a_suppression_name_here>
+   Memcheck:Cond
+   fun:ASN1_STRING_set
+   fun:ASN1_mbstring_ncopy
+   fun:ASN1_mbstring_copy
+   fun:ASN1_STRING_to_UTF8
+   ...
+   fun:ASN1_item_ex_d2i
+   ...
+   fun:ASN1_item_ex_d2i
+   ...
+}
