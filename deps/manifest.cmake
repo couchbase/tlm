@@ -18,7 +18,8 @@
 #
 DECLARE_DEP (breakpad VERSION 1e455b5-cb10 PLATFORMS centos6 centos7 debian7 debian8 suse11.2 ubuntu12.04 ubuntu14.04 windows_msvc)
 DECLARE_DEP (curl VERSION 7.49.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 freebsd sunos suse11.2 ubuntu12.04 ubuntu14.04 windows_msvc)
-DECLARE_DEP (erlang VERSION R16B03-1-couchbase-cb3 PLATFORMS centos6 centos7 debian7 debian8 freebsd macosx sunos suse11.2 ubuntu12.04 ubuntu14.04 windows_msvc)
+DECLARE_DEP (erlang VERSION R16B03-1-couchbase-cb3 PLATFORMS centos6 centos7 debian7 debian8 freebsd macosx sunos suse11.2 ubuntu12.04 ubuntu14.04)
+DECLARE_DEP (erlang VERSION R16B03-1-couchbase-cb4 PLATFORMS windows_msvc)
 DECLARE_DEP (flatbuffers VERSION 1.2.0-cb1 PLATFORMS centos6 centos7 debian7 debian8 freebsd macosx sunos suse11.2 ubuntu12.04 ubuntu14.04 windows_msvc)
 DECLARE_DEP (icu4c VERSION 54.1.0 PLATFORMS windows_msvc)
 DECLARE_DEP (icu4c VERSION 54.1-cb7 PLATFORMS centos6 centos7 debian7 debian8 freebsd macosx sunos suse11.2 ubuntu12.04 ubuntu14.04)
