@@ -120,7 +120,7 @@ if (LIBEVENT_THREAD_LIB)
   if (${_libevent_core_dir} STREQUAL ${_libevent_pthreads_dir})
     list(APPEND LIBEVENT_LIBRARIES ${LIBEVENT_THREAD_LIB})
   else ()
-    messsage(STATUS "NOTE: Ignoring libevent_pthreads as it is located in another directory than libevent_core")
+    message(STATUS "NOTE: Ignoring libevent_pthreads as it is located in another directory than libevent_core")
   endif ()
 endif ()
 
