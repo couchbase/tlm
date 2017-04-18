@@ -29,7 +29,6 @@ SEPARATOR=\\
 CMAKE=cmake
 
 CMAKE_ARGS=-G "$(MAKETYPE)" -D PRODUCT_VERSION=$(PRODUCT_VERSION) \
-                            -D BUILD_ENTERPRISE=$(BUILD_ENTERPRISE) \
                             $(EXTRA_CMAKE_OPTIONS)
 
 

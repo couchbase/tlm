@@ -83,20 +83,25 @@ ADD_SUBDIRECTORY(tlm/deps)
 
 INCLUDE(CouchbaseDefaultValues)
 
-IF ("" STREQUAL "${BUILD_ENTERPRISE}")
-   SET(CB_BUILD_TYPE "Community Edition")
-   SET(CB_ENTERPRISE_EDITION False CACHE BOOL "Building enterprise edition")
-ELSE ("" STREQUAL "${BUILD_ENTERPRISE}")
-   SET(CB_BUILD_TYPE "Enterprise Edition")
-   SET(CB_ENTERPRISE_EDITION True CACHE BOOL "Building enterprise edition")
-ENDIF ("" STREQUAL "${BUILD_ENTERPRISE}")
+# If the user has synced any closed-source code, assume building EE
+IF (EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
+  SET (_ee_found ON)
+ELSE ()
+  SET (_ee_found OFF)
+ENDIF()
+OPTION (BUILD_ENTERPRISE "Building Enterprise Edition" ${_ee_found})
 
 # Build 'developer builds' by default
-OPTION (CB_DEVELOPER_BUILD "Produce Developer builds" True)
+OPTION (CB_DEVELOPER_BUILD "Produce Developer builds" ON)
 
 MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
-MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE} (${CB_BUILD_TYPE})")
+MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
+IF (BUILD_ENTERPRISE)
+  MESSAGE (STATUS "Building Couchbase Server Enterprise Edition")
+ELSE ()
+  MESSAGE (STATUS "Building Couchbase Server Community Edition")
+ENDIF ()
 
 INCLUDE(CouchbaseAddressSanitizer)
 INCLUDE(CouchbaseAsciiDocs)
@@ -233,7 +238,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ADD_SUBDIRECTORY (analytics)
     ENDIF ()
 
-    IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
+    IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/backup)
     ENDIF()
 ENDIF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
