@@ -11,8 +11,12 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
     MESSAGE (STATUS "Found Maven executable: ${MAVEN_EXECUTABLE}")
     SET (MAVEN_FOUND True CACHE BOOL "Whether Maven has been found")
 
+    SET (CB_INVOKE_MAVEN False CACHE BOOL "Whether to add Maven targets to ALL")
+
     # Create a target to build a Maven project from a specified directory.
-    # Since Maven is slow and painful, this target will not be added to ALL.
+    # Since Maven is slow and painful and in particular has terrible
+    # incremental build ability, this target will not be added to ALL
+    # unless the build parameter CB_INVOKE_MAVEN is True.
     #
     # Since it's not in ALL, using INSTALL() is probably a bad idea. As a
     # workaround, this macro allows you to specify a single directory of
@@ -36,8 +40,6 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
         SET (Mvn_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
       ENDIF ()
 
-      # We don't add Maven projects to the "all" target because Maven
-      # is kind of terrible and slow, and makes incremental builds painful
       MESSAGE (STATUS "Adding Maven project target '${Mvn_TARGET}'")
       IF (NOT "${Mvn_ARTIFACTS}" STREQUAL "")
         ADD_CUSTOM_TARGET ("${Mvn_TARGET}-install"
@@ -52,7 +54,11 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
         WORKING_DIRECTORY "${Mvn_PATH}"
         COMMENT "Building Maven project ${Mvn_TARGET}"
         VERBATIM)
-      ADD_CUSTOM_TARGET ("${Mvn_TARGET}")
+      SET (_all "")
+      IF (CB_INVOKE_MAVEN)
+        SET (_all "ALL")
+      ENDIF ()
+      ADD_CUSTOM_TARGET ("${Mvn_TARGET}" ${_all})
       IF (TARGET "${Mvn_TARGET}-install")
         ADD_DEPENDENCIES ("${Mvn_TARGET}-install" "${Mvn_TARGET}-build")
         ADD_DEPENDENCIES ("${Mvn_TARGET}" "${Mvn_TARGET}-install")
