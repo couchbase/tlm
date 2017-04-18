@@ -167,7 +167,6 @@ _ADD_DEP_PACKAGE(jemalloc 4.3.1 4.3.1 1)
 _ADD_DEP_PACKAGE(curl 7.49.1 curl-7_49_1 1)
 
 # erlang R16B03-couchbase / branch: couchbase-watson
-<<<<<<< HEAD
 # - SHA 96430ba for R16B03-couchbase-cb1 release
 # - SHA 00852da for R16B03-couchbase-cb2 release
 # - SHA 1f768b7 for R16B03-1-couchbase-cb2 release (Windows only)
