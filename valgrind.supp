@@ -157,3 +157,16 @@
    fun:ASN1_item_ex_d2i
    ...
 }
+
+# ignore thread local leak in unit tests from the main thread
+# http://review.couchbase.org/#/c/76854 - for details
+# MB-23936: Use Threadlocal variables to accumulate stats
+{
+   ThreadLocal Main Thread dtor not called on exit in unit tests
+   Memcheck:Leak
+   ...
+   fun:*EPStats*memAllocated*
+   ...
+   fun:RUN_ALL_TESTS
+   fun:main
+}
