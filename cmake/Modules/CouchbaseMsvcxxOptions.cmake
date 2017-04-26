@@ -1,5 +1,17 @@
 SET(CB_MSVCXX_DEBUG "")
-SET(CB_MSVCXX_WARNINGS "")
+# Our code emits tons of warnings due to missing declspec dllimport/export
+# for standard types (std::vector, unordered_map etc).
+# For now let's just mute them.
+#
+#   4251 - https://msdn.microsoft.com/en-us/library/esew7y1w.aspx
+#          'identifier' : class 'type' needs to have dll-interface
+#          to be used by clients of class 'type2'
+#
+#   4275 - https://msdn.microsoft.com/en-us/library/3tdb471s.aspx
+#         non – DLL-interface classkey 'identifier' used as base for
+#         DLL-interface classkey 'identifier'
+#
+SET(CB_MSVCXX_WARNINGS "/wd4251 /wd4275")
 SET(CB_MSVCXX_VISIBILITY "")
 SET(CB_MSVCXX_THREAD "")
 
