@@ -97,11 +97,6 @@ OPTION (CB_DEVELOPER_BUILD "Produce Developer builds" ON)
 MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
 MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
-IF (BUILD_ENTERPRISE)
-  MESSAGE (STATUS "Building Couchbase Server Enterprise Edition")
-ELSE ()
-  MESSAGE (STATUS "Building Couchbase Server Community Edition")
-ENDIF ()
 
 INCLUDE(CouchbaseAddressSanitizer)
 INCLUDE(CouchbaseAsciiDocs)
@@ -127,18 +122,28 @@ INCLUDE(FindCouchbaseV8)
 INCLUDE(FindCouchbaseNlohmannJson)
 INCLUDE(FindCouchbaseMaven)
 
+# Declare PRODUCT_VERSION in cache, but then override user-defined value
+# if it is an empty string
+SET (PRODUCT_VERSION "" CACHE STRING "Product version with build number")
 IF ("${PRODUCT_VERSION}" STREQUAL "")
   IF (PYTHON_EXECUTABLE)
     # Try to determine product version from manifest
     EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_version.py
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-      OUTPUT_VARIABLE PRODUCT_VERSION
+      OUTPUT_VARIABLE _product_version
       ERROR_QUIET
       OUTPUT_STRIP_TRAILING_WHITESPACE)
   ELSE (PYTHON_EXECUTABLE)
-    SET(PRODUCT_VERSION "0.0.0-9999")
+    SET(_product_version "0.0.0-9999")
   ENDIF (PYTHON_EXECUTABLE)
+  SET (PRODUCT_VERSION ${_product_version} CACHE STRING "Product version with build number" FORCE)
 ENDIF ("${PRODUCT_VERSION}" STREQUAL "")
+
+IF (BUILD_ENTERPRISE)
+  MESSAGE (STATUS "Building Couchbase Server ${PRODUCT_VERSION} Enterprise Edition")
+ELSE ()
+  MESSAGE (STATUS "Building Couchbase Server ${PRODUCT_VERSION} Community Edition")
+ENDIF ()
 
 IF (WIN32)
    SET(COUCHBASE_NETWORK_LIBS "Ws2_32")

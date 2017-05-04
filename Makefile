@@ -28,8 +28,7 @@ SEPARATOR=\\
 
 CMAKE=cmake
 
-CMAKE_ARGS=-G "$(MAKETYPE)" -D PRODUCT_VERSION=$(PRODUCT_VERSION) \
-                            $(EXTRA_CMAKE_OPTIONS)
+CMAKE_ARGS=-G "$(MAKETYPE)" $(EXTRA_CMAKE_OPTIONS)
 
 
 all: CMakeLists.txt Makefile GNUmakefile build/Makefile compile
