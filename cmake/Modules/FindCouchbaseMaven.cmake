@@ -33,6 +33,8 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
     #   ARTIFACTS - path (relative to PATH) to directory containing
     #               artifacts to install
     #   DESTINATION - path (relative to CMAKE_INSTALL_DIR) to install ARTIFACTS
+    #                 (must be specified if ARTIFACTS is specified, and must
+    #                 contain a slash to prevent eg. blowing away "lib")
 
     MACRO (MAVEN_PROJECT)
       PARSE_ARGUMENTS (Mvn "" "TARGET;PATH;ARTIFACTS;DESTINATION" "" ${ARGN})
@@ -42,10 +44,16 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
 
       MESSAGE (STATUS "Adding Maven project target '${Mvn_TARGET}'")
       IF (NOT "${Mvn_ARTIFACTS}" STREQUAL "")
+        STRING (FIND "${Mvn_DESTINATION}" "/" _pos)
+        IF (_pos LESS 0)
+          MESSAGE (FATAL_ERROR "Must specify DESTINATION (containing a '/') if ARTIFACTS specified")
+        ENDIF ()
         ADD_CUSTOM_TARGET ("${Mvn_TARGET}-install"
+          COMMAND "${CMAKE_COMMAND}" -E remove_directory
+            "${CMAKE_INSTALL_PREFIX}/${Mvn_DESTINATION}"
           COMMAND "${CMAKE_COMMAND}" -E copy_directory
-          "${Mvn_PATH}/${Mvn_ARTIFACTS}"
-          "${CMAKE_INSTALL_PREFIX}/${Mvn_DESTINATION}"
+            "${Mvn_PATH}/${Mvn_ARTIFACTS}"
+            "${CMAKE_INSTALL_PREFIX}/${Mvn_DESTINATION}"
           COMMENT "Installing artifacts for Maven project ${Mvn_TARGET}"
           VERBATIM)
       ENDIF ()
