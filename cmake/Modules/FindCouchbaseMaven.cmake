@@ -29,17 +29,27 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
     #   TARGET - name of CMake target to create
     #
     # Optional arguments:
+    #   GOAL - the Maven goal to invoke (defaults to 'package')
     #   PATH - directory containing Maven project (defaults to current src dir)
     #   ARTIFACTS - path (relative to PATH) to directory containing
     #               artifacts to install
     #   DESTINATION - path (relative to CMAKE_INSTALL_DIR) to install ARTIFACTS
     #                 (must be specified if ARTIFACTS is specified, and must
     #                 contain a slash to prevent eg. blowing away "lib")
+    #   OPTS - additional command-line options to pass to 'mvn'. Defaults to
+    #          -DskipTests (but if you provide a value here and want to still
+    #          skip tests, you'll need to explicitly include -DskipTests)
 
     MACRO (MAVEN_PROJECT)
-      PARSE_ARGUMENTS (Mvn "" "TARGET;PATH;ARTIFACTS;DESTINATION" "" ${ARGN})
+      PARSE_ARGUMENTS (Mvn "OPTS" "TARGET;GOAL;PATH;ARTIFACTS;DESTINATION" "" ${ARGN})
       IF ("${Mvn_PATH}" STREQUAL "")
         SET (Mvn_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
+      ENDIF ()
+      IF ("${Mvn_GOAL}" STREQUAL "")
+        SET (Mvn_GOAL package)
+      ENDIF ()
+      IF ("${Mvn_OPTS}" STREQUAL "")
+        SET (Mvn_OPTS -DskipTests)
       ENDIF ()
 
       MESSAGE (STATUS "Adding Maven project target '${Mvn_TARGET}'")
@@ -58,7 +68,7 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
           VERBATIM)
       ENDIF ()
       ADD_CUSTOM_TARGET ("${Mvn_TARGET}-build"
-        COMMAND "${MAVEN_EXECUTABLE}" package -DskipTests
+        COMMAND "${MAVEN_EXECUTABLE}" "${Mvn_GOAL}" ${Mvn_OPTS}
         WORKING_DIRECTORY "${Mvn_PATH}"
         COMMENT "Building Maven project ${Mvn_TARGET}"
         VERBATIM)
