@@ -27,9 +27,10 @@ SET(CMAKE_CXX_FLAGS_DEBUG          "/MDd /Od /Ob0 /Zi")
 
 SET(CB_CXX_FLAGS_NO_OPTIMIZE       /Od /Ob0)
 
-# C++11 support has gradually increased in MSVC starting with 2010 (v16), but
-# we declare that at least VS 2013 (v18) is needed for std::atomic / C99.
-IF (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 17)
+# C++11 support has gradually increased in MSVC starting with 2010
+# (v16), but we declare that at least VS 2015 (v19) is needed due to
+# many bugs in previous releases.
+IF (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 19.0)
   SET(COMPILER_SUPPORTS_CXX11 true)
   SET(CB_CXX_LANG_VER "C++11")
 ENDIF()
