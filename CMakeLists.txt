@@ -212,12 +212,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
 
     SET (GODEPSDIR "${CMAKE_CURRENT_SOURCE_DIR}/godeps")
 
-    IF (NOT DEFINED JETBRAINS_CLION_IDE)
-      # The CLion IDE from JetBrains don't support building "in source",
-      # so let's just skip ns_server in that configuration (we don't use
-      # CLion for Erlang development anyway...
-      ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
-    ENDIF (NOT DEFINED JETBRAINS_CLION_IDE)
+    ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
 
     ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/query)
     ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/indexing)
