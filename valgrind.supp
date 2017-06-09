@@ -179,21 +179,7 @@
    match-leak-kinds: reachable
    fun:_Znam
    fun:_ZN2v84base16LazyInstanceImplIPNS_8internal12ElementsKindENS0_32StaticallyAllocatedInstanceTraitIS4_EENS2_34InitializeFastElementsKindSequenceENS0_23ThreadSafeInitOnceTraitENS0_18LeakyInstanceTraitIS4_EEE12InitInstanceEPNS6_11StorageTypeE
-   fun:_ZN2v84base12CallOnceImplEPlPFvPvES2_
-   fun:_ZN2v88internal36GetSequenceIndexFromFastElementsKindENS0_12ElementsKindE
-   fun:_ZN2v88internal24ArrayConstructorStubBase24GenerateStubsAheadOfTimeEPNS0_7IsolateE
-   fun:_ZN2v88internal10CallICStub15HandleArrayCaseEPNS0_14MacroAssemblerEPNS0_5LabelE
-   fun:_ZN2v88internal10CallICStub8GenerateEPNS0_14MacroAssemblerE
-   fun:_ZN2v88internal16PlatformCodeStub12GenerateCodeEv
-   fun:_ZN2v88internal8CodeStub7GetCodeEv
-   fun:_ZN2v88internal20CallICTrampolineStub8GenerateEPNS0_14MacroAssemblerE
-   fun:_ZN2v88internal16PlatformCodeStub12GenerateCodeEv
-   fun:_ZN2v88internal8CodeStub7GetCodeEv
-   fun:_ZN2v88internal11CodeFactory6CallICEPNS0_7IsolateEiNS0_19ConvertReceiverModeENS0_12TailCallModeE
-   fun:_ZN2v88internal17FullCodeGenerator8EmitCallEPNS0_4CallENS0_19ConvertReceiverModeE
-   fun:_ZN2v88internal17FullCodeGenerator18EmitCallWithLoadICEPNS0_4CallE
-   fun:_ZN2v88internal17FullCodeGenerator9VisitCallEPNS0_4CallE
-   fun:_ZN2v88internal17FullCodeGenerator16VisitConditionalEPNS0_11ConditionalE
+   ...
    fun:_ZN2v88internal17FullCodeGenerator20VisitReturnStatementEPNS0_15ReturnStatementE
    fun:_ZN2v88internal10AstVisitor15VisitStatementsEPNS0_8ZoneListIPNS0_9StatementEEE
    fun:_ZN2v88internal17FullCodeGenerator8GenerateEv
@@ -201,4 +187,14 @@
    fun:_ZN2v88internal12_GLOBAL__N_123GenerateUnoptimizedCodeEPNS0_15CompilationInfoE
    fun:_ZN2v88internal8Compiler21GetSharedFunctionInfoEPNS0_15FunctionLiteralENS0_6HandleINS0_6ScriptEEEPNS0_15CompilationInfoE
    fun:_ZN2v88internal17FullCodeGenerator20VisitFunctionLiteralEPNS0_15FunctionLiteralE
+}
+
+{
+   v8 cond jump depending on uninitialised
+   Memcheck:Cond
+   fun:_ZN2v88internal9ExitFrame23GetStateForFramePointerEPhPNS0_10StackFrame5StateE
+   fun:_ZN2v88internal18StackFrameIterator5ResetEPNS0_14ThreadLocalTopE
+   fun:_ZN2v88internal7Isolate20UnwindAndFindHandlerEv
+   fun:_ZN2v88internal37Runtime_UnwindAndFindExceptionHandlerEiPPNS0_6ObjectEPNS0_7IsolateE
+   ...
 }
