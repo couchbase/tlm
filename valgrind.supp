@@ -198,3 +198,16 @@
    fun:_ZN2v88internal37Runtime_UnwindAndFindExceptionHandlerEiPPNS0_6ObjectEPNS0_7IsolateE
    ...
 }
+
+# MB-24860 Suppress the leak of the thread-local counters
+{
+   ThreadLocal counter leak - MB-24860
+   Memcheck:Leak
+   match-leak-kinds: definite
+   fun:je_malloc
+   fun:cb_malloc
+   fun:_Znwm
+   fun:_ZN7EPStats12memAllocatedEm
+   fun:_ZN14ObjectRegistry15memoryAllocatedEm
+   ...
+}
