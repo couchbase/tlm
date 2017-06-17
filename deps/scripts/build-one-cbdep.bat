@@ -1,6 +1,7 @@
 cd deps\packages
 
 rem Make the output directory that the job expects
+rmdir /s /q build\deps
 mkdir build\deps
 
 rem When compiling V8, Gyp expects the TMP variable to be set

@@ -1,6 +1,7 @@
 #!/bin/sh -ex
 
 cd deps/packages
+rm -rf build
 mkdir build
 cd build
 cmake .. -DPACKAGE=${PACKAGE}
