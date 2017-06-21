@@ -193,8 +193,9 @@ IF (NOT CBDownloadDeps_INCLUDED)
     # Always add the dep subdir; this will "re-install" the dep every time you
     # run CMake, which might be wasteful, but at least should be safe.
     FILE (MAKE_DIRECTORY "${_binary_dir}")
-    ADD_SUBDIRECTORY ("${_explode_dir}" "${_binary_dir}" EXCLUDE_FROM_ALL)
-
+    IF (EXISTS ${_explode_dir}/CMakeLists.txt)
+      ADD_SUBDIRECTORY ("${_explode_dir}" "${_binary_dir}" EXCLUDE_FROM_ALL)
+    ENDIF (EXISTS ${_explode_dir}/CMakeLists.txt)
   ENDFUNCTION (DECLARE_DEP)
 
   # Download and cache a specific version of Go, and explode it into the
