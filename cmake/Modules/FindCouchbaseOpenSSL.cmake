@@ -1,64 +1,71 @@
-# Locate openssl library
+# Locate OpenSSL library
+#
+# For Windows and MacOSX we bundle our own version, but for the
+# other platforms we should search for a system-wide installed
+# version.
+#
 # This module defines
-#  OPENSSL_FOUND, if false, do not try to link with openssl
 #  OPENSSL_LIBRARIES, Library path and libs
 #  OPENSSL_INCLUDE_DIR, where to find the ICU headers
 
-SET(_openssl_h_exploded ${CMAKE_BINARY_DIR}/tlm/deps/openssl_h.exploded)
+SET(_openssl_exploded ${CMAKE_BINARY_DIR}/tlm/deps/openssl.exploded)
+set(_openssl_libraries "ssl;libssl32;ssleay32;crypto;libeay32")
 
-FIND_PATH(OPENSSL_INCLUDE_DIR openssl/ssl.h
-          HINTS
-               ${_openssl_h_exploded}
-               ENV OPENSSL_DIR
-          PATH_SUFFIXES include
-          PATHS
-               ~/Library/Frameworks
-               /Library/Frameworks
-               /usr/local
-               /opt/local
-               /opt/csw
-               /opt/openssl
-               /opt
-               /usr/local/opt/openssl)
+if (WIN32 OR APPLE)
+    find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h
+              HINTS ${_openssl_exploded}
+              PATH_SUFFIXES include
+              NO_CMAKE_PATH
+              NO_CMAKE_ENVIRONMENT_PATH)
 
-FIND_LIBRARY(OPENSSL_SSL_LIBRARY
-             NAMES ssl libssl32 ssleay32
-             HINTS
-                 ENV OPENSSL_DIR
-             PATHS
-                 ~/Library/Frameworks
-                 /Library/Frameworks
+    string(STRIP ${OPENSSL_INCLUDE_DIR} OPENSSL_INCLUDE_DIR)
+    foreach(_mylib ${_openssl_libraries})
+        unset(_the_lib CACHE)
+        find_library(_the_lib
+                     NAMES ${_mylib}
+                     HINTS ${CMAKE_INSTALL_PREFIX}/lib
+                     NO_DEFAULT_PATH)
+        if (_the_lib)
+            list(APPEND OPENSSL_LIBRARIES ${_the_lib})
+        endif (_the_lib)
+    endforeach(_mylib)
+else (WIN32 OR APPLE)
+    find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h
+              HINTS ENV OPENSSL_DIR
+              PATH_SUFFIXES include
+              PATHS
                  /usr/local
                  /opt/local
                  /opt/csw
                  /opt/openssl
-                 /opt
-                 /usr/local/opt/openssl/lib)
+                 /opt)
 
-FIND_LIBRARY(OPENSSL_CRYPT_LIBRARY
-             NAMES crypto libeay32
-             HINTS
-                 ENV OPENSSL_DIR
-             PATHS
-                 ${DEPS_LIB_DIR}
-                 ~/Library/Frameworks
-                 /Library/Frameworks
-                 /usr/local
-                 /opt/local
-                 /opt/csw
-                 /opt/openssl
-                 /opt
-                 /usr/local/opt/openssl/lib)
+    foreach (_mylib ${_openssl_libraries})
+        unset(_the_lib CACHE)
+        find_library(_the_lib
+                     NAMES ${_mylib}
+                     HINTS ENV OPENSSL_DIR
+                     PATHS
+                         /usr/local
+                         /opt/local
+                         /opt/csw
+                         /opt/openssl
+                         /opt)
+        if (_the_lib)
+            list(APPEND OPENSSL_LIBRARIES ${_the_lib})
+        endif (_the_lib)
+    endforeach (_mylib)
 
+    if (OPENSSL_SSL_LIBRARY AND OPENSSL_CRYPT_LIBRARY)
+        set(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPT_LIBRARY})
+    endif (OPENSSL_SSL_LIBRARY AND OPENSSL_CRYPT_LIBRARY)
+endif (WIN32 OR APPLE)
 
-IF (OPENSSL_SSL_LIBRARY AND OPENSSL_CRYPT_LIBRARY)
-   SET(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPT_LIBRARY})
-ENDIF(OPENSSL_SSL_LIBRARY AND OPENSSL_CRYPT_LIBRARY)
+if (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
+    message(STATUS "Found OpenSSL headers in ${OPENSSL_INCLUDE_DIR}")
+    message(STATUS "Using OpenSSL libraries: ${OPENSSL_LIBRARIES}")
+else (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
+  message(FATAL_ERROR "Can't build Couchbase without openssl")
+endif (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
 
-IF (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
-  MESSAGE(STATUS "Found openssl in ${OPENSSL_INCLUDE_DIR} : ${OPENSSL_LIBRARIES}")
-ELSE (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
-  MESSAGE(FATAL_ERROR "Can't build Couchbase without openssl")
-ENDIF (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
-
-MARK_AS_ADVANCED(OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
+mark_as_advanced(OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
