@@ -1,5 +1,5 @@
 SET(CB_GXX_DEBUG "-g")
-SET(CB_GXX_WARNINGS "-Wall -Wredundant-decls -fno-strict-aliasing")
+SET(CB_GXX_WARNINGS "-Wall -Wredundant-decls -Wmissing-braces -fno-strict-aliasing")
 SET(CB_GXX_VISIBILITY "-fvisibility=hidden")
 SET(CB_GXX_THREAD "-pthread")
 
