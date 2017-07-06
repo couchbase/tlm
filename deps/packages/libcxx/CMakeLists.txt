@@ -21,15 +21,14 @@ ExternalProject_Add(libcxxabi
   # (includes), but we can't just build libcxx first because it
   # depends on libcxxabi.so. So, we download libcxx again.
   UPDATE_COMMAND echo ${CMAKE_CURRENT_BINARY_DIR}
-    COMMAND git clone git://github.com/couchbasedeps/libcxx 
+    COMMAND git clone git://github.com/couchbasedeps/libcxx
     ${CMAKE_CURRENT_BINARY_DIR}/libcxx-copy --single-branch -b ${_git_rev}
- 
+
   # Configure step
   CMAKE_ARGS -DCMAKE_BUILD_TYPE=Release
     -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR}
     -DLIBCXXABI_LIBCXX_INCLUDES=${CMAKE_CURRENT_BINARY_DIR}/libcxx-copy/include
     -DLIBCXXABI_ENABLE_STATIC=OFF
-    -DLLVM_CONFIG=/usr/lib/llvm-3.8/bin/llvm-config
 
   BUILD_COMMAND $(MAKE) -j4
 
@@ -55,7 +54,6 @@ ExternalProject_Add(libcxx
     -DLIBCXX_CXX_ABI=libcxxabi
     -DLIBCXX_CXX_ABI_INCLUDE_PATHS=${INSTALL_DIR}/include
     -DLIBCXX_CXX_ABI_LIBRARY_PATH=${INSTALL_DIR}/lib
-    -DLLVM_CONFIG=/usr/lib/llvm-3.8/bin/llvm-config
 
   BUILD_COMMAND $(MAKE) -j4
 
