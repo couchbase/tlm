@@ -340,6 +340,88 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
   ENDMACRO (GoInstall)
 
+  # Adds a test named NAME which calls go test in the DIR
+  # Required arguments:
+  #
+  # TARGET - name of the test to create
+  #
+  # PACKAGE - A single Go package to build. When this is specified,
+  # the package and all dependencies on GOPATH will be built, using
+  # the Go compiler's normal dependency-handling system.
+  #
+  # GOPATH - Every entry on this list will be placed onto the GOPATH
+  # environment variable before invoking the compiler.
+  #
+  # GOVERSION - the version of the Go compiler required for this target.
+  # See file header comment.
+  #
+  # Optional arguments:
+  #
+  # GCFLAGS - flags that will be passed (via -gcflags) to all compile
+  # steps; should be a single string value, with spaces if necessary
+  #
+  # GOTAGS - tags that will be passed (viga -tags) to all compile
+  # steps; should be a single string value, with spaces as necessary
+  #
+  # LDFLAGS - flags that will be passed (via -ldflags) to all compile
+  # steps; should be a single string value, with spaces if necessary
+  #
+  # NOCONSOLE - for targets that should not launch a console at runtime
+  # (on Windows - silently ignored on other platforms)
+  #
+  # DEPENDS - list of other CMake targets on which TARGET will depend
+  #
+  # CGO_INCLUDE_DIRS - path(s) to directories to search for C include files
+  #
+  # CGO_LIBRARY_DIRS - path(s) to libraries to search for C link libraries
+  #
+
+  MACRO (GoTest)
+
+  PARSE_ARGUMENTS (Go "DEPENDS;GOPATH;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
+        "TARGET;PACKAGE;GOVERSION;GCFLAGS;GOTAGS;LDFLAGS"
+        "NOCONSOLE" ${ARGN})
+
+  IF (NOT Go_TARGET)
+    MESSAGE (FATAL_ERROR "TARGET is required!")
+  ENDIF (NOT Go_TARGET)
+  IF (NOT Go_PACKAGE)
+    MESSAGE (FATAL_ERROR "PACKAGE is required!")
+  ENDIF (NOT Go_PACKAGE)
+  IF (NOT Go_GOVERSION)
+    MESSAGE (FATAL_ERROR "GOVERSION is required!")
+  ENDIF (NOT Go_GOVERSION)
+
+  # Concatenate NOCONSOLE with LDFLAGS
+  IF (WIN32 AND ${Go_NOCONSOLE})
+    SET (_ldflags "-H windowsgui ${Go_LDFLAGS}")
+  ELSE (WIN32 AND ${Go_NOCONSOLE})
+    SET (_ldflags "${Go_LDFLAGS}")
+  ENDIF (WIN32  AND ${Go_NOCONSOLE})
+
+  # Compute path to Go compiler, depending on the Go mode (single or multi)
+  GET_GOROOT ("${Go_GOVERSION}" _goroot _gover)
+
+  add_test(NAME "${Go_TARGET}"
+             COMMAND "${CMAKE_COMMAND}"
+             -D "GOROOT=${_goroot}"
+             -D "GOVERSION=${_gover}"
+             -D "GO_BINARY_DIR=${GO_BINARY_DIR}/go-${_gover}"
+             -D "CMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
+             -D "GOPATH=${Go_GOPATH}"
+             -D "WORKSPACE=${_workspace}"
+             -D "CGO_LDFLAGS=${CMAKE_CGO_LDFLAGS}"
+             -D "GCFLAGS=${Go_GCFLAGS}"
+             -D "GOTAGS=${Go_GOTAGS}"
+             -D "LDFLAGS=${_ldflags}"
+             -D "PACKAGE=${Go_PACKAGE}"
+             -D "CGO_INCLUDE_DIRS=${Go_CGO_INCLUDE_DIRS}"
+             -D "CGO_LIBRARY_DIRS=${Go_CGO_LIBRARY_DIRS}"
+             -D "CB_GO_CODE_COVERAGE=${CB_GO_CODE_COVERAGE}"
+             -D "CB_GO_RACE_DETECTOR=${CB_GO_RACE_DETECTOR}"
+             -P "${TLM_MODULES_DIR}/go-test.cmake")
+
+  ENDMACRO (GoTest)
 
   # Adds a target named TARGET which (always) calls "go tool yacc
   # PATH".
