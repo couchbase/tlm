@@ -236,6 +236,10 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/backup)
     ENDIF()
+
+    IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/plasma")
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/plasma)
+    ENDIF()
 ENDIF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
 
 IF (NOT WIN32)
