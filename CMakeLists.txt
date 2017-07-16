@@ -233,6 +233,11 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ADD_SUBDIRECTORY (analytics)
     ENDIF ()
 
+    # Analytics UI
+    IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/cbas-ui")
+      ADD_SUBDIRECTORY (cbas-ui)
+    ENDIF ()
+
     IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/backup)
     ENDIF()
