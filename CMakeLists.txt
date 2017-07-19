@@ -121,6 +121,7 @@ INCLUDE(CouchbaseCompilerOptions)
 INCLUDE(FindCouchbaseV8)
 INCLUDE(FindCouchbaseNlohmannJson)
 INCLUDE(FindCouchbaseMaven)
+INCLUDE(FindCouchbaseRocksDB)
 
 # Declare PRODUCT_VERSION in cache, but then override user-defined value
 # if it is an empty string

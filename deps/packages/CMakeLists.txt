@@ -187,3 +187,7 @@ _ADD_DEP_PACKAGE(libcouchbase 2.7.5 2.7.5 1)
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
   _ADD_DEP_PACKAGE(libcxx 3.9.1 release_39 2)
 ENDIF ()
+
+IF (NOT WIN32)
+    _ADD_DEP_PACKAGE(rocksdb 5.6.1 v5.6.1 1)
+ENDIF ()
