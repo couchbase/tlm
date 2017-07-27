@@ -17,11 +17,6 @@ building Couchbase on multiple platforms.
 - [Ubuntu 14.04](#user-content-ubuntu-1404)
 - [Fedora 21](#user-content-fedora-21)
 - [OpenSUSE](#opensuse)
-- [SmartOS containers](#user-content-smartos)
-	- [SmartOS](#user-content-smartos-container)
-	- [CentOS 7](#user-content-centos-7)
-	- [Ubuntu](#user-content-ubuntu)
-	- [Debian 7](#user-content-debian7)
 - [Static Analysis](#user-content-static-analysis)
 
 ## Content
@@ -172,7 +167,7 @@ El Capitan
 
 Install the following packages from homebrew:
 
-    trond@ok> brew install cmake git ccache openssl
+    trond@ok> brew install cmake git ccache
 
 You should be all set to start compile the server as described above.
 
@@ -185,8 +180,7 @@ procedure is verified with a clean installation of Ubuntu 14.04.1
     wget https://storage.googleapis.com/git-repo-downloads/repo
     chmod a+x repo
     mv repo /usr/local/bin
-    apt-get install -y git gcc g++ ccache cmake libssl-dev libicu-dev \
-                       erlang
+    apt-get install -y git gcc g++ ccache cmake libssl-dev
 
 ## Fedora 21
 
@@ -198,7 +192,7 @@ procedure is verified with a clean installation of Fedora 21
     chmod a+x repo
     mv repo /usr/local/bin
     yum install -y gcc gcc-c++ git cmake ccache redhat-lsb-core \
-                   erlang openssl-devel libicu-devel
+                   openssl-devel
 
 ## OpenSUSE
 
@@ -235,264 +229,6 @@ likely out of date for Couchbase Server builds later than 4.1.
 You should be able to start the server by running
 
     /opt/couchbase/bin/couchbase-server start
-
-## SmartOS
-
-The following chapters describes how to configure and build under
-various containers hosted by SmartOS. [Joyent][joyent_link] provides a
-variety of datasets for various operating systems (CentOS, Fedora,
-FreeBSD, Debian, SmartOS, ...). This section is not intended to cover
-all of these, but covers a set of configurations known to work.
-
-### SmartOS container
-
-The following descrtiption use the standard64 (14.2.1) image imported by:
-
-    root@smartos~> imgadm import 3f57ffe8-47da-11e4-aa8b-dfb50a06586a
-
-The KVM may be created with the following attributes (store in `smartos.json`):
-
-    {
-      "alias" : "compilesrv",
-      "autoboot": true,
-      "brand": "joyent",
-      "dns_domain" : "norbye.org",
-      "resolvers" : [ "8.8.4.4" ],
-      "image_uuid" : "3f57ffe8-47da-11e4-aa8b-dfb50a06586a",
-      "hostname" : "compilesrv",
-      "filesystems" : [
-       {
-          "type" : "lofs",
-          "source" : "/zones/home",
-          "target" : "/home",
-          "options" : "nodevices"
-        }
-      ],
-      "max_physical_memory": 4096,
-      "nics": [
-         {
-          "nic_tag": "admin",
-          "ip": "10.0.0.207",
-          "netmask": "255.255.255.0",
-          "gateway": "10.0.0.1"
-        }
-      ]
-    }
-
-Create the KVM with:
-
-    root@smartos~> vmadm create -f smartos.json
-
-Log into the newly created zone and install the following packages:
-
-    root@compilesrv~> pkgin update
-    root@compilesrv~> pkgin -y in py27-expat-2.7.7 icu-53.1 erlang-16.1.2nb3 go-1.3
-
-[Install Google repo][google_repo_link] and you should be all set to
-start building the code as described above.
-
-### CentOS 7
-
-The following descrtiption use the Centos-7 image imported by:
-
-    root@smartos~> imgadm import 553da8ba-499e-11e4-8bee-5f8dadc234ce
-
-The KVM may be created with the following attributes (store in `centos.json`):
-
-    {
-      "alias": "centos-7",
-      "brand": "kvm",
-      "resolvers": [
-        "10.0.0.1",
-        "8.8.4.4"
-      ],
-      "default-gateway": "10.0.0.1",
-      "hostname":"centos",
-      "ram": "6144",
-      "vcpus": "2",
-      "nics": [
-        {
-          "nic_tag": "admin",
-          "ip": "10.0.0.201",
-          "netmask": "255.255.255.0",
-          "gateway": "10.0.0.1",
-          "model": "virtio",
-          "primary": true
-        }
-      ],
-      "disks": [
-        {
-          "image_uuid": "553da8ba-499e-11e4-8bee-5f8dadc234ce",
-          "boot": true,
-          "model": "virtio",
-          "image_size": 10240
-        },
-       {
-          "model": "virtio",
-          "size": 10240
-        }
-      ],
-    "customer_metadata": {
-        "root_authorized_keys": "<my ssh key>"
-      }
-    }
-
-Create the KVM with:
-
-    root@smartos~> vmadm create -f centos.json
-
-You should now be able to ssh into the machine and run `yum update` and
-install all of the updates ;-)
-
-Install as much as possible of the precompiled dependencies with:
-
-    yum install -y gcc gcc-c++ make redhat-lsb-core git openssl-devel
-
-A newer version of cmake and repo is needed so we have to compile
-them from source with:
-
-    wget http://www.cmake.org/files/v3.2/cmake-3.2.1.tar.gz
-    tar xfz cmake-3.2.1.tar.gz
-    cd cmake-3.2.1
-    ./bootstrap && make && make install
-    cd /usr/local/bin
-    curl https://storage.googleapis.com/git-repo-downloads/repo > repo
-    chmod a+x repo
-
-And you should be all set to start building the code as described above.
-
-### Ubuntu
-
-The following descrtiption use the Ubuntu 14.04 image imported by:
-
-    root@smartos~> imgadm import c864f104-624c-43d2-835e-b49a39709b6b
-
-The KVM may be created with the following attributes (store in `ubuntu.json`):
-
-    {
-      "alias": "ubuntu-1404",
-      "brand": "kvm",
-      "resolvers": [
-        "10.0.0.1",
-        "8.8.4.4"
-      ],
-      "default-gateway": "10.0.0.1",
-      "hostname":"ubuntu",
-      "ram": "6144",
-      "vcpus": "2",
-      "nics": [
-        {
-          "nic_tag": "admin",
-          "ip": "10.0.0.203",
-          "netmask": "255.255.255.0",
-          "gateway": "10.0.0.1",
-          "model": "virtio",
-          "primary": true
-        }
-      ],
-      "disks": [
-        {
-          "image_uuid": "c864f104-624c-43d2-835e-b49a39709b6b",
-          "boot": true,
-          "model": "virtio",
-          "image_size": 10240
-        },
-       {
-          "model": "virtio",
-          "size": 20480
-        }
-      ],
-    "customer_metadata": {
-        "root_authorized_keys": "<my ssh key>"
-      }
-    }
-
-Create the KVM with:
-
-    root@smartos~> vmadm create -f ubuntu.json
-
-You should now be able to ssh into the machine and run `aptitude` and
-install all of the updates ;-)
-
-Install as much as possible of the precompiled dependencies with:
-
-    apt-get update --fix-missing
-    apt-get install -y git gcc g++ make ccache lsb-release libssl-dev cmake
-
-A newer version of repo is needed:
-
-    cd /usr/local/bin
-    curl https://storage.googleapis.com/git-repo-downloads/repo > repo
-    chmod a+x repo
-
-And you should be all set to start building the code as described above.
-
-### Debian7
-
-The following descrtiption use the Debian image imported by:
-
-    root@smartos~> imgadm import 5f41692e-a70d-11e4-8c2d-afc6735144dc
-
-The KVM may be created with the following attributes (store in `debian7.json`):
-
-    {
-      "alias": "debian-7",
-      "brand": "kvm",
-      "resolvers": [
-        "10.0.0.1",
-        "8.8.4.4"
-      ],
-      "default-gateway": "10.0.0.1",
-      "hostname":"debian",
-      "ram": "6144",
-      "vcpus": "2",
-      "nics": [
-        {
-          "nic_tag": "admin",
-          "ip": "10.0.0.200",
-          "netmask": "255.255.255.0",
-          "gateway": "10.0.0.1",
-          "model": "virtio",
-          "primary": true
-        }
-      ],
-      "disks": [
-        {
-          "image_uuid": "5f41692e-a70d-11e4-8c2d-afc6735144dc",
-          "boot": true,
-          "model": "virtio",
-          "image_size": 10240
-        }
-      ],
-      "customer_metadata": {
-        "root_authorized_keys": "ssh-rsa <my-personal-public-key>"
-      }
-    }
-
-Create the KVM with:
-
-    root@smartos~> vmadm create -f debian7.json
-
-You should now be able to ssh into the machine and run `aptitude` and
-install all of the updates ;-)
-
-Install as much as possible of the precompiled dependencies with:
-
-    apt-get update --fix-missing
-    apt-get install -y git gcc g++ make ccache lsb-release libssl-dev
-
-A newer version of cmake and repo is needed so we have to compile
-it from source with:
-
-    wget http://www.cmake.org/files/v3.2/cmake-3.2.1.tar.gz
-    tar xfz cmake-3.2.1.tar.gz
-    cd cmake-3.2.1
-    ./bootstrap && make && make install
-    cd /usr/local/bin
-    curl https://storage.googleapis.com/git-repo-downloads/repo > repo
-    chmod a+x repo
-
-And you should be all set to start building the code as described above.
 
 ## Static Analysis
 
