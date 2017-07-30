@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+
+config=$(git config couchbase.clangformat)
+
+has_issues () {
+    diff=$(git clang-format --diff)
+    [[ $diff == diff* ]]
+}
+
+reformat () {
+    if [ ! $config = "commit" ] ; then
+        echo -n "Commit rejected. "
+    fi
+    echo "Running \`git clang-format\` to fix style..."
+    reformat_results=$(git clang-format)
+    ret_val=$?
+    echo "$reformat_results"
+    return $ret_val
+}
+
+add_reformatted_files () {
+    # Hacky. Skips the first line of the output from clang-format,
+    # strips leading spaces, and replaces newlines with nulls, to
+    # pass to xargs -0 (because xargs -d is a GNU extension)
+    # to stage all changes. Better ways would be appreciated!
+    echo "$reformat_results" | tail -n +2 | sed -e 's/^[[:space:]]*//' | tr '\n' '\0' | xargs -0 git add
+}
+
+if has_issues ; then
+    case $config in
+      (fix)
+        reformat
+        if [ $? = 0 ] ; then
+            echo "Review changes, add, and commit again."
+        fi
+        exit 1
+        ;;
+      (stage)
+        reformat
+        if [ $? = 0 ] ; then
+            add_reformatted_files
+        fi
+        exit 1
+        ;;
+      (commit)
+        reformat
+        if [ $? = 0 ] ; then
+            add_reformatted_files
+            exit 0
+        fi
+        exit 1
+        ;;
+      (*)
+        echo "Commit rejected. Run \`git clang-format\` to fix style issues or use \`git commit --no-verify\` to skip hooks."
+        exit 1
+        ;;
+    esac
+fi
