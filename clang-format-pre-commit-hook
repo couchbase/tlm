@@ -51,7 +51,10 @@ if has_issues ; then
         exit 1
         ;;
       (*)
-        echo "Commit rejected. Run \`git clang-format\` to fix style issues or use \`git commit --no-verify\` to skip hooks."
+        echo "Commit rejected as clang-format detected formatting issues."
+        echo "    Run \`git clang-format --diff\` to view suggested changes"
+        echo "    and \`git clang-format\` to apply them."
+        echo "    Alternatively, use \`git commit --no-verify\` to skip hooks."
         exit 1
         ;;
     esac
