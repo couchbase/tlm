@@ -90,6 +90,9 @@ OPTION (BUILD_ENTERPRISE "Building Enterprise Edition" ${_ee_found})
 # Build 'developer builds' by default
 OPTION (CB_DEVELOPER_BUILD "Produce Developer builds" ON)
 
+# 'Production builds' are those built by the official Couchbase build jobs
+OPTION (CB_PRODUCTION_BUILD "Official production build" OFF)
+
 MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
 MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
