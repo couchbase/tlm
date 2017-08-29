@@ -31,6 +31,7 @@ DECLARE_DEP (jemalloc VERSION 4.3.1-cb2 PLATFORMS centos6 centos7 debian7 debian
 DECLARE_DEP (json VERSION 1.1.0-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 freebsd macosx sunos suse11.2 suse12.2 ubuntu12.04 ubuntu14.04 ubuntu16.04 ubuntu17.04 windows_msvc windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (libcouchbase VERSION 2.7.7-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu12.04 ubuntu14.04 ubuntu16.04 ubuntu17.04 windows_msvc2015)
 DECLARE_DEP (libevent VERSION 2.1.8-cb2 PLATFORMS centos6 centos7 debian7 debian8 debian9 freebsd macosx sunos suse11.2 suse12.2 ubuntu12.04 ubuntu14.04 ubuntu16.04 ubuntu17.04 windows_msvc windows_msvc2015 windows_msvc2017)
+DECLARE_DEP (libuv VERSION 1.13.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 ubuntu17.04 windows_msvc2015)
 DECLARE_DEP (openssl VERSION 1.0.2k-cb1 PLATFORMS macosx windows_msvc windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (python-snappy VERSION c97d633 PLATFORMS windows_msvc windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (python-snappy VERSION c97d633-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 freebsd macosx sunos suse11.2 suse12.2 ubuntu12.04 ubuntu14.04 ubuntu16.04 ubuntu17.04)
