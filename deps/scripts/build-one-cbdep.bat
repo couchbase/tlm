@@ -1,5 +1,7 @@
 cd deps\packages
 
+rmdir /s /q winbuild
+
 rem Make the output directory that the job expects
 rmdir /s /q build\deps
 mkdir build\deps
@@ -17,9 +19,6 @@ cmake .. -G "NMake Makefiles" -DPACKAGE=%PACKAGE% || goto error
 cmake --build . --target %PACKAGE% || goto error
 cd ..
 xcopy winbuild\deps build\deps /s /e /y
-
-rem Clean up
-rmdir /s /q winbuild
 
 goto eof
 
