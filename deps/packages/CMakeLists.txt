@@ -174,7 +174,8 @@ _ADD_DEP_PACKAGE(curl 7.49.1 curl-7_49_1 1)
 # - SHA 3ea8397 for R16B03-1-couchbase-cb4 release (Windows only - cb3 on Windows
 #     mistakenly built from wrong branch)
 # - SHA 70bac35 for R16B03-1-couchbase-cb5 release (macOS - MB-24741)
-_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase-watson 5)
+# - SHA 1f6969e for R16B03-1-couchbase-cb6 release (MB-25968 - all platforms but Windows)
+_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase-watson 6)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 _ADD_DEP_PACKAGE(flatbuffers 1.4.0 v1.4.0 1)
