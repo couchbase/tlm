@@ -40,8 +40,8 @@ DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc windows_msvc2015 window
 DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS centos6 centos7 debian7 debian8 debian9 freebsd macosx sunos suse11.2 suse12.2 ubuntu12.04 ubuntu14.04 ubuntu16.04 ubuntu17.04)
 DECLARE_DEP (v8 VERSION 5.2-cb1 PLATFORMS centos6 debian7 suse11.2 windows_msvc2017)
 # 5.2-cb2 was rebuilt just for MacOS
-DECLARE_DEP (v8 VERSION 5.2-cb2 PLATFORMS macosx ubuntu17.04)
-DECLARE_DEP (v8 VERSION 5.9-cb1 PLATFORMS centos7 debian8 debian9 suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
+DECLARE_DEP (v8 VERSION 5.2-cb2 PLATFORMS ubuntu17.04)
+DECLARE_DEP (v8 VERSION 5.9-cb1 PLATFORMS centos7 debian8 debian9 macosx suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
 DECLARE_DEP (v8 VERSION 4.8-cb4 PLATFORMS sunos)
 # 4.8-cb5 contains build fix only for FreeBSD; other platforms don't need it
 DECLARE_DEP (v8 VERSION 4.8-cb5 PLATFORMS freebsd)
