@@ -93,6 +93,9 @@ OPTION (CB_DEVELOPER_BUILD "Produce Developer builds" ON)
 # 'Production builds' are those built by the official Couchbase build jobs
 OPTION (CB_PRODUCTION_BUILD "Official production build" OFF)
 
+# Temporary option to enable building eventing before it is fully phased into vulcan
+OPTION (CB_ENABLE_EVENTING "Enable eventing features" OFF)
+
 MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
 MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
@@ -243,6 +246,10 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
 
     IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/plasma")
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/plasma)
+    ENDIF()
+
+    IF (BUILD_ENTERPRISE AND CB_ENABLE_EVENTING)
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing)
     ENDIF()
 
     IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbsummary")
