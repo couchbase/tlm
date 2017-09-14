@@ -93,8 +93,8 @@ OPTION (CB_DEVELOPER_BUILD "Produce Developer builds" ON)
 # 'Production builds' are those built by the official Couchbase build jobs
 OPTION (CB_PRODUCTION_BUILD "Official production build" OFF)
 
-# Temporary option to enable building eventing before it is fully phased into vulcan
-OPTION (CB_ENABLE_EVENTING "Enable eventing features" OFF)
+# This option will be removed soon
+OPTION (CB_ENABLE_EVENTING "Enable eventing features" ON)
 
 MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
