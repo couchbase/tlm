@@ -3,35 +3,24 @@
 INSTALL_DIR=$1
 PLATFORM=$2
 
-# QQQ These are hacks. The buildslave images should contain these packages.
-# However we're doing this v8 upgrade right in the last days of Spock,
-# and re-building the buildslaves images seems an unnecessary risk.
 case "$PLATFORM" in
     ubuntu14.04|debian7|debian8|debian9)
-        # This package by itself should be safe.
+        # The buildslave images should contain this package. However
+        # we're doing this v8 upgrade right in the last days of Spock,
+        # and re-building the buildslaves images seems an unnecessary risk.
         sudo apt-get update && sudo apt-get install -y pkg-config
         ;;
-    suse11*)
-        # We'll install newer Python for this user only, and not on
-        # standard path
-        export PYDIR=/home/couchbase/opt/python
-        if [ ! -d "$PYDIR" ]; then
-            mkdir -p $PYDIR
-            mkdir tmp
-            (
-                cd tmp
-                curl -O https://www.python.org/ftp/python/2.7.12/Python-2.7.12.tgz
-                tar xf Python-2.7.12.tgz
-                cd Python-2.7.12
-                ./configure --prefix=$PYDIR --disable-shared
-                make -j8
-                make install
-            )
-        fi
-        export PATH=$PYDIR/bin:$PATH
+esac
 
-        # See also https://forums.opensuse.org/showthread.php/446927-missing-library-libtinfo-so-5
-        sudo ln -s libncurses.so.5.6 /lib64/libtinfo.so.5
+# Some old Linuxes have a glibc version too old to work with the tools
+# in the Google-provided toolchain. So, we have to use a hackier build
+# process. Isolate that away in a separate script
+case "$PLATFORM" in
+    suse11*|centos6|debian7)
+        pushd `dirname $0` > /dev/null
+        SCRIPTPATH=`pwd -P`
+        popd > /dev/null
+        exec $SCRIPTPATH/v8_old_unix.sh $INSTALL_DIR $PLATFORM
         ;;
 esac
 
