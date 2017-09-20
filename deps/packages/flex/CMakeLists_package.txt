@@ -1,0 +1,6 @@
+IF (WIN32)
+    rem Put correct files in here
+    rem FILE (COPY lib/v8.dll DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
+ELSE (WIN32)
+    FILE (COPY bin lib include DESTINATION "${CMAKE_INSTALL_PREFIX}")
+ENDIF (WIN32)
