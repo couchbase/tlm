@@ -11,8 +11,7 @@ FIND_PATH(LIBUV_INCLUDE_DIR uv.h
           PATH_SUFFIXES include)
 
 FIND_LIBRARY(LIBUV_LIBRARIES
-          NAMES uv
-          HINTS "${_libuv_exploded}"
+          NAMES uv libuv
           ENV LIBUV_DIR
           PATH_SUFFIXES lib)
 

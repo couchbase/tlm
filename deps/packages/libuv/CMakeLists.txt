@@ -16,13 +16,13 @@ ExternalProject_Add(libuv
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
 
-  CONFIGURE_COMMAND ${CMAKE_COMMAND} -E echo do be do be
-  BUILD_COMMAND ${CMAKE_COMMAND} -E echo dooooo
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND "${_build_script}" <INSTALL_DIR>
   BUILD_IN_SOURCE 1
   INSTALL_DIR "${_install_dir}"
-  INSTALL_COMMAND ${_build_script} <INSTALL_DIR>
-
-  COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib include DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
+  INSTALL_COMMAND "${CMAKE_COMMAND}" -E copy
+    "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt"
+    <INSTALL_DIR>/CMakeLists.txt
 )
 
 # cbdeps boilerplate
