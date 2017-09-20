@@ -11,8 +11,7 @@ FIND_PATH(LIBCOUCHBASE_INCLUDE_DIR libcouchbase/couchbase.h
           PATH_SUFFIXES include)
 
 FIND_LIBRARY(LIBCOUCHBASE_LIBRARIES
-             NAMES couchbase
-             HINTS "${_libcouchbase_exploded}"
+             NAMES couchbase libcouchbase
              ENV LIBCOUCHBASE_DIR
              PATH_SUFFIXES lib)
 
