@@ -9,7 +9,7 @@ if (WIN32)
         GIT_TAG ${_git_rev}
 
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -E make_directory <SOURCE_DIR>/build
-        COMMAND cd <SOURCE_DIR>/build && cmake .. -DLCB_NO_PLUGINS=1
+        COMMAND cd <SOURCE_DIR>/build && cmake -DLCB_NO_PLUGINS=1 .. -G "Visual Studio 14 2015 Win64"
 
         BUILD_COMMAND cd <SOURCE_DIR>/build && cmake --build . --config Release
 
