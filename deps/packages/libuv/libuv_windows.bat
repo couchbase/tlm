@@ -3,7 +3,7 @@
 set INSTALL_DIR=%1
 
 set PYTHON=C:\Python27\python.exe
-call .\vcbuild.bat release shared
+call .\vcbuild.bat release shared x64
 if errorlevel 1 exit /b 1
 
 @echo on
