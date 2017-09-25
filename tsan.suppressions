@@ -46,9 +46,3 @@ deadlock:plock_lock
 # symbol-based suppressions (e.g. the tzset_internal one above).
 # Therefore just suppress anything for this unit test.
 race:memcached_logger_emfile_test
-
-# in memcached drain_notification_channel dumps some unneeded data into
-# `char devnull[8192]` - like it's namesake this is a blackhole, we
-# never want to read it back. Therefore, we can safely ignore racy
-# writes.
-race:^drain_notification_channel(int)
