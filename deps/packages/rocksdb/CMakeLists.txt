@@ -4,13 +4,13 @@ include(ExternalProject)
 
 ### Download, configure and build rocksdb  ####################################
 ExternalProject_Add(rocksdb
-  GIT_REPOSITORY https://github.com/facebook/rocksdb.git
+  GIT_REPOSITORY https://github.com/couchbasedeps/rocksdb.git
   GIT_TAG ${_git_rev}
 
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND ""
 
-  BUILD_COMMAND $(MAKE) shared_lib
+  BUILD_COMMAND PORTABLE=1 $(MAKE) shared_lib
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
