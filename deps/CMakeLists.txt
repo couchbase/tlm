@@ -52,3 +52,7 @@ MESSAGE (STATUS "Reading global third-party dependencies manifest...")
 INCLUDE ("${CB_DOWNLOAD_DEPS_DEFAULT_MANIFEST}")
 MESSAGE (STATUS "Global third-party dependencies manifest complete")
 MESSAGE (STATUS "-----------------------------------------")
+
+# Update prefix path to include paths for all cbdeps for searching
+GET_PROPERTY(_cbdeps_prefix_path GLOBAL PROPERTY CBDEPS_PREFIX_PATH)
+SET(CMAKE_PREFIX_PATH "${_cbdeps_prefix_path};${CMAKE_PREFIX_PATH}" PARENT_SCOPE)
