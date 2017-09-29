@@ -162,7 +162,7 @@ ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows
 _ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 2)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 1)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 1)
-_ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 2)
+_ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 3)
 _ADD_DEP_PACKAGE(v8 5.9 5.9.223 3)
 _ADD_DEP_PACKAGE(jemalloc 5.0.1 5.0.1 1)
 _ADD_DEP_PACKAGE(curl 7.49.1 curl-7_49_1 1)
@@ -183,6 +183,9 @@ _ADD_DEP_PACKAGE(flatbuffers 1.4.0 v1.4.0 1)
 _ADD_DEP_PACKAGE(json 1.1.0 v1.1.0 1)
 _ADD_DEP_PACKAGE(boost 1.62.0 v1.62.0 3)
 IF (WIN32 OR APPLE)
+  # Note: we build libevent with support for SSL, so whenever
+  # OpenSSL is upgraded with an API breaking change we probably
+  # need to rebuild libevent as well.
   _ADD_DEP_PACKAGE(openssl 1.0.2k OpenSSL_1_0_2k 1)
 ENDIF (WIN32 OR APPLE)
 _ADD_DEP_PACKAGE(libcouchbase 2.7.7 2.7.7 6)
