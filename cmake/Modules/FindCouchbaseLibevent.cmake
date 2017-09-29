@@ -93,7 +93,7 @@ message(STATUS "Found libevent headers in: ${LIBEVENT_INCLUDE_DIR}")
 message(STATUS "                     core: ${LIBEVENT_CORE_LIB}")
 message(STATUS "                    extra: ${LIBEVENT_EXTRA_LIB}")
 if (LIBEVENT_THREAD_LIB)
-  message(STATUS "                 pthreads: ${LIBEVENT_EXTRA_LIB}")
+  message(STATUS "                 pthreads: ${LIBEVENT_THREAD_LIB}")
 endif ()
 
 # Set LIBEVENT_LIBRARIES to list all of the libevent libraries.
