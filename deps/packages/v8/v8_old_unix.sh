@@ -30,13 +30,13 @@ esac
 
 case "$PLATFORM" in
     suse11*)
+        # We'll need chrpath in a bit
+        sudo zypper install -y chrpath
         # See also https://forums.opensuse.org/showthread.php/446927-missing-library-libtinfo-so-5
         sudo ln -sf libncurses.so.5.6 /lib64/libtinfo.so.5
         ;;
-esac
-
-case "$PLATFORM" in
     centos6)
+        sudo yum install -y chrpath
         ;;
 esac
 
@@ -139,3 +139,5 @@ if [ "$DO_DEBUG" = "yes" ]; then
         cp -avi libv8*.* $INSTALL_DIR/lib/Debug
     )
 fi
+
+chrpath -d $INSTALL_DIR/lib/*/libv8*.*

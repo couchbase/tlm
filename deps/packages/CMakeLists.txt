@@ -163,7 +163,7 @@ _ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 2)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 1)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 1)
 _ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 3)
-_ADD_DEP_PACKAGE(v8 5.9 5.9.223 3)
+_ADD_DEP_PACKAGE(v8 5.9 5.9.223 4)
 _ADD_DEP_PACKAGE(jemalloc 4.3.1-couchbase1 4.3.1-couchbase1 1)
 _ADD_DEP_PACKAGE(curl 7.49.1 curl-7_49_1 1)
 
