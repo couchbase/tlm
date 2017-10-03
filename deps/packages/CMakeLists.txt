@@ -201,5 +201,5 @@ ENDIF()
 _ADD_DEP_PACKAGE(zlib 1.2.11 v1.2.11 2)
 
 IF (NOT WIN32)
-    _ADD_DEP_PACKAGE(rocksdb 5.6.1 v5.6.1 2)
+    _ADD_DEP_PACKAGE(rocksdb 5.6.1 v5.6.1 3)
 ENDIF ()

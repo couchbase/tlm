@@ -136,13 +136,16 @@ IF (NOT CBDownloadDeps_INCLUDED)
   FUNCTION (DECLARE_DEP name)
     PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION" "SKIP" ${ARGN})
 
-    # If this dependency has already been declared, skip it
+    # If this dependency has already been declared, skip it.
+    # Exception: if we are building the cbdeps packages themselves then
+    # allow duplicates; as each cbdep may need the package for it's
+    # own build.
     SET (_prop_name "CB_DOWNLOADED_DEP_${name}")
     GET_PROPERTY (_declared GLOBAL PROPERTY ${_prop_name} SET)
-    IF (_declared)
+    IF (_declared AND NOT "${CMAKE_PROJECT}" STREQUAL "cbdeps_packages")
       MESSAGE (STATUS "Dependency ${name} already declared, skipping...")
       RETURN ()
-    ENDIF (_declared)
+    ENDIF (_declared AND NOT "${CMAKE_PROJECT}" STREQUAL "cbdeps_packages")
 
     # If this dependency declares PLATFORM, ensure that we are running on
     # one of those platforms.
