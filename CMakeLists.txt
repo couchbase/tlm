@@ -28,6 +28,24 @@ OPTION(COUCHBASE_KV_COMMIT_VALIDATION
        "Only build modules used by KV commit validation"
        OFF)
 
+# This option should be be enabled in the early phases of development
+# (e.g. when developing off master) and is used to guard additional
+# runtime checks which are desirable to report during testing; but
+# should not trigger in production.  As such this option should be set
+# to OFF before we move into the Beta/pre-release phase.
+#
+# Example usage - asserting that statistical counters are of an
+# expected range (don't underflow) - we would like to detect such
+# bugs; but they arn't serious enough to warrant crashing in a
+# customer environment.
+OPTION(CB_DEVELOPMENT_ASSERTS
+       "Enable additional asserts which abort execution if they fail."
+       OFF)
+IF (CB_DEVELOPMENT_ASSERTS)
+   MESSAGE(STATUS "Enabling CB_DEVELOPMENT_ASSERTS")
+   ADD_DEFINITIONS(-DCB_DEVELOPMENT_ASSERTS)
+ENDIF (CB_DEVELOPMENT_ASSERTS)
+
 IF ($ENV{JETBRAINS_IDE})
    SET(JETBRAINS_CLION_IDE True CACHE BOOL "Build Couchbase under CLion")
 ENDIF ($ENV{JETBRAINS_IDE})
