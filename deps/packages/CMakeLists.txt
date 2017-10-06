@@ -198,7 +198,7 @@ IF (WIN32)
 ELSE ()
   _ADD_DEP_PACKAGE(flex 2.6.4 master 3)
 ENDIF()
-_ADD_DEP_PACKAGE(zlib 1.2.11 v1.2.11 2)
+_ADD_DEP_PACKAGE(zlib 1.2.11 v1.2.11 3)
 
 IF (NOT WIN32)
     _ADD_DEP_PACKAGE(rocksdb 5.6.1 v5.6.1 3)
