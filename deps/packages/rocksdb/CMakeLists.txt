@@ -18,7 +18,7 @@ ExternalProject_Add(rocksdb
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND ""
 
-  BUILD_COMMAND PLATFORM_LDFLAGS=-L${_snappy_install}/lib CFLAGS=-I${_snappy_install}/include PORTABLE=1 $(MAKE) shared_lib
+  BUILD_COMMAND PLATFORM_LDFLAGS=-L${_snappy_install}/lib CFLAGS=-I${_snappy_install}/include PORTABLE=1 USE_SSE=1 $(MAKE) shared_lib
 
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
 
