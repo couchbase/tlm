@@ -150,7 +150,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
     # If this dependency declares PLATFORM, ensure that we are running on
     # one of those platforms.
     _DETERMINE_PLATFORM (_this_platform)
-    GET_SUPPORTED_PRODUCTION_PLATFORM (_supported_platform)
+    CB_GET_SUPPORTED_PLATFORM (_supported_platform)
     LIST (LENGTH dep_PLATFORMS _num_platforms)
     IF (_num_platforms GREATER 0)
       SET (_found_platform 0)
@@ -286,8 +286,16 @@ IF (NOT CBDownloadDeps_INCLUDED)
     ENDIF ()
   ENDFUNCTION (GET_GO_VERSION)
 
-  SET (CB_DOWNLOAD_DEPS_REPO "http://packages.couchbase.com/couchbase-server/deps"
-    CACHE STRING "URL of third-party dependency repository")
+  CB_GET_SUPPORTED_PLATFORM (_supported_platform)
+  IF (_supported_platform)
+    SET (CB_DOWNLOAD_DEPS_REPO
+      "http://packages.couchbase.com/couchbase-server/deps"
+      CACHE STRING "URL of third-party dependency repository")
+  ELSE ()
+    SET (CB_DOWNLOAD_DEPS_REPO
+      "http://packages.couchbase.com/couchbase-server/deps-unsupported"
+      CACHE STRING "URL of third-party dependency repository")
+  ENDIF ()
   SET (GO_DOWNLOAD_REPO "http://storage.googleapis.com/golang"
     CACHE STRING "URL of Golang downloads repository")
 

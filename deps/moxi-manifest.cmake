@@ -13,7 +13,7 @@
 # builders on platforms like SmartOS/Solars, FreeBSD etc).
 #
 # The list of supported platforms may change between releases, but
-# you may use the cmake macro GET_SUPPORTED_PRODUCTION_PLATFORM to
+# you may use the cmake macro CB_GET_SUPPORTED_PLATFORM to
 # check if this is a supported platform.
 #
 DECLARE_DEP (curl VERSION 7.35.0 PLATFORMS windows_msvc)

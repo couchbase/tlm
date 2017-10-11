@@ -26,7 +26,7 @@
 
 include(PlatformIntrospection)
 
-get_supported_production_platform(_supported_platform)
+cb_get_supported_platform(_supported_platform)
 if (_supported_platform)
   # Supported platforms should only use the provided hints and pick up
   # libevent from cbdeps

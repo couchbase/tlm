@@ -63,7 +63,7 @@ ELSE (BREAKPAD_LIBRARIES AND BREAKPAD_INCLUDE_DIR AND MINIDUMP2CORE)
   SET(BREAKPAD_FOUND false)
   SET(BREAKPAD_LIBRARIES "")
   # For production, supported platforms we require Breakpad.
-  GET_SUPPORTED_PRODUCTION_PLATFORM(_supported_platform)
+  CB_GET_SUPPORTED_PLATFORM(_supported_platform)
   IF (_supported_platform)
      MESSAGE(FATAL_ERROR "Breakpad not found (required on supported production platform '${_supported_platform}').")
   ELSE (_supported_platform)
