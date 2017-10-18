@@ -52,6 +52,8 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
         SET (Mvn_OPTS -DskipTests)
       ENDIF ()
 
+      INCLUDE (FindCouchbaseJava)
+
       MESSAGE (STATUS "Adding Maven project target '${Mvn_TARGET}'")
       IF (NOT "${Mvn_ARTIFACTS}" STREQUAL "")
         STRING (FIND "${Mvn_DESTINATION}" "/" _pos)
@@ -68,7 +70,8 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
           VERBATIM)
       ENDIF ()
       ADD_CUSTOM_TARGET ("${Mvn_TARGET}-build"
-        COMMAND "${MAVEN_EXECUTABLE}" "${Mvn_GOAL}" ${Mvn_OPTS}
+        COMMAND "${CMAKE_COMMAND}" -E env "JAVACMD=${Java_JAVA_EXECUTABLE}"
+          "${MAVEN_EXECUTABLE}" "${Mvn_GOAL}" ${Mvn_OPTS}
         WORKING_DIRECTORY "${Mvn_PATH}"
         COMMENT "Building Maven project ${Mvn_TARGET}"
         VERBATIM)
@@ -85,7 +88,8 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
       ENDIF ()
 
       ADD_CUSTOM_TARGET ("${Mvn_TARGET}-clean"
-        COMMAND "${MAVEN_EXECUTABLE}" clean
+        COMMAND "${CMAKE_COMMAND}" -E env "JAVACMD=${Java_JAVA_EXECUTABLE}"
+          "${MAVEN_EXECUTABLE}" clean
         WORKING_DIRECTORY "${Mvn_PATH}"
         VERBATIM)
       IF (TARGET realclean)

@@ -1,7 +1,7 @@
 #
 # This is the toplevel CMakeLists.txt that is used to build Couchbase
 #
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.2)
 
 STRING(REGEX REPLACE "[ ]" "a" modified_source_dir "${CMAKE_SOURCE_DIR}")
 IF (NOT modified_source_dir STREQUAL CMAKE_SOURCE_DIR)
@@ -223,9 +223,9 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
 
     # Analytics CBGT connector
-    IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbaselabs/cbas")
+    IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbaselabs/cbas")
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbaselabs/cbas)
-    ENDIF()
+    ENDIF ()
 
     # Analytics Maven project
     IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/analytics")
@@ -243,6 +243,10 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
 
     IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/plasma")
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/plasma)
+    ENDIF()
+
+    IF (BUILD_ENTERPRISE AND CB_ENABLE_EVENTING AND EXISTS "${RPOJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/eventing")
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing)
     ENDIF()
 
     IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbsummary")
