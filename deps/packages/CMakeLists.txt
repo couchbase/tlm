@@ -186,7 +186,7 @@ IF (WIN32 OR APPLE)
   # Note: we build libevent with support for SSL, so whenever
   # OpenSSL is upgraded with an API breaking change we probably
   # need to rebuild libevent as well.
-  _ADD_DEP_PACKAGE(openssl 1.0.2k OpenSSL_1_0_2k 1)
+  _ADD_DEP_PACKAGE(openssl 1.0.2k OpenSSL_1_0_2k 2)
 ENDIF (WIN32 OR APPLE)
 _ADD_DEP_PACKAGE(libcouchbase 2.7.7 2.7.7 6)
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
