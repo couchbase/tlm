@@ -122,7 +122,7 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
     # Just use the major version from the CentOS/Debian identifier - we don't
     # need different builds for different minor versions.
     STRING (REGEX MATCH "[0-9]+" _rel "${_rel}")
-  ELSEIF (_id STREQUAL "fedora")
+  ELSEIF (_id STREQUAL "fedora" AND _rel VERSION_LESS 26)
     SET (_id "centos")
     SET (_rel "7")
   ELSEIF (_id STREQUAL "opensuse project" OR _id STREQUAL "suse linux")
