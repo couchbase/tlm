@@ -50,4 +50,4 @@ DECLARE_DEP (v8 VERSION 4.8-cb4 PLATFORMS sunos)
 # 4.8-cb5 contains build fix only for FreeBSD; other platforms don't need it
 DECLARE_DEP (v8 VERSION 4.8-cb5 PLATFORMS freebsd)
 DECLARE_DEP (zlib VERSION 1.2.11-cb3 PLATFORMS freebsd sunos)
-DECLARE_DEP (rocksdb VERSION 5.7.3-cb1 PLATFORMS fedora27)
+DECLARE_DEP (rocksdb VERSION 5.7.3-cb1 PLATFORMS fedora26)
