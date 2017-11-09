@@ -19,7 +19,7 @@ ExternalProject_Add(rocksdb
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND ""
 
-  BUILD_COMMAND PLATFORM_LDFLAGS=-L${_snappy_install}/lib CFLAGS=-I${_snappy_install}/include PORTABLE=1 USE_SSE=1 $(MAKE) -j${_parallelism} shared_lib
+  BUILD_COMMAND PLATFORM_LDFLAGS=-L${_snappy_install}/lib CFLAGS=-I${_snappy_install}/include PORTABLE=1 USE_RTTI=1 USE_SSE=1 $(MAKE) -j${_parallelism} shared_lib
 
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
 
@@ -32,7 +32,7 @@ ExternalProject_Add(rocksdb
 # OS X-only: Custom post-build step to set the shared library install name.
 if (APPLE)
   ExternalProject_Add_Step(rocksdb install_name
-    COMMAND install_name_tool -id @rpath/librocksdb.5.7.dylib <BINARY_DIR>/librocksdb.5.7.dylib
+    COMMAND install_name_tool -id @rpath/librocksdb.5.8.dylib <BINARY_DIR>/librocksdb.5.8.dylib
 
     DEPENDEES build
     DEPENDERS install
