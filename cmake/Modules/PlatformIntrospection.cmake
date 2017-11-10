@@ -162,7 +162,7 @@ MACRO (GET_SUPPORTED_PRODUCTION_PLATFORM _supported_platform)
   # .. and check it against the list, returning it if found.
   LIST(APPEND _supported_prod_platforms
        "centos6" "centos7"
-       "debian7" "debian8"
+       "debian7" "debian8" "debian9"
        "suse11.2" "suse12.2"
        "ubuntu12.04" "ubuntu14.04" "ubuntu16.04"
        "windows" "windows_msvc" "windows_msvc2015")
