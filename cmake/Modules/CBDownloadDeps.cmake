@@ -142,10 +142,10 @@ IF (NOT CBDownloadDeps_INCLUDED)
     # own build.
     SET (_prop_name "CB_DOWNLOADED_DEP_${name}")
     GET_PROPERTY (_declared GLOBAL PROPERTY ${_prop_name} SET)
-    IF (_declared AND NOT "${CMAKE_PROJECT}" STREQUAL "cbdeps_packages")
+    IF (_declared AND NOT "${PROJECT_NAME}" STREQUAL "cbdeps_packages")
       MESSAGE (STATUS "Dependency ${name} already declared, skipping...")
       RETURN ()
-    ENDIF (_declared AND NOT "${CMAKE_PROJECT}" STREQUAL "cbdeps_packages")
+    ENDIF (_declared AND NOT "${PROJECT_NAME}" STREQUAL "cbdeps_packages")
 
     # If this dependency declares PLATFORM, ensure that we are running on
     # one of those platforms.
