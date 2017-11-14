@@ -5,8 +5,11 @@
 SET (_snappy_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
 SET (_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 SET (CMAKE_INSTALL_PREFIX "${_snappy_install}")
-DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc)
-DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx sunos suse11.2 suse12.2 ubuntu12.04 ubuntu14.04 ubuntu16.04 ubuntu17.04 freebsd)
+IF (WIN32)
+  MESSAGE (FATAL_ERROR "python-snappy > 1.1.1 cannot be built on Windows")
+ELSE ()
+  DECLARE_DEP (snappy VERSION 1.1.6-cb1 PLATFORMS centos6 centos7 debian8 debian9 macosx sunos suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 freebsd)
+ENDIF ()
 SET (CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 
 include(ExternalProject)
@@ -19,7 +22,7 @@ ExternalProject_Add(python-snappy
   CONFIGURE_COMMAND "${CMAKE_COMMAND}" -E echo Configuring python-snappy...
 
   BUILD_COMMAND python setup.py build build_ext
-                -I "${_snappy_install}/include" -L "${_snappy_install}/lib"
+                -I "${CMAKE_CURRENT_BINARY_DIR}/snappy.exploded/include" -L "${_snappy_install}/lib"
   BUILD_IN_SOURCE 1
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
