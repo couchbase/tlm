@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# Wrapper script for building RocksDB. Necessary as CMake cannot set
+# environment variables which contain a space in them correctly
+# (e.g. CFLAGS).
+
+export PLATFORM_LDFLAGS=-L${_dep_install}/lib
+export CFLAGS="-I${_dep_install}/include -I${CMAKE_CURRENT_BINARY_DIR}/lz4.exploded/include"
+export DEBUG_LEVEL=0
+export PORTABLE=1
+export USE_RTTI=1
+export USE_SSE=1
+
+make $@
