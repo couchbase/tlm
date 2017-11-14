@@ -1,0 +1,6 @@
+IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/bin")
+   # Install dll-files into the bin directory on windows
+   FILE (COPY bin DESTINATION ${CMAKE_INSTALL_PREFIX})
+ENDIF ()
+
+FILE (COPY lib DESTINATION ${CMAKE_INSTALL_PREFIX})
