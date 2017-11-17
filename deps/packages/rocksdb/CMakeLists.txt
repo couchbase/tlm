@@ -5,7 +5,7 @@ SET (_dep_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
 SET (_temp_cmake_install_prefix "${CMAKE_INSTALL_PREFIX}")
 SET (CMAKE_INSTALL_PREFIX "${_dep_install}")
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc)
-DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx sunos suse11.2 suse12.2 ubuntu12.04 ubuntu14.04 ubuntu16.04 ubuntu17.04 freebsd)
+DECLARE_DEP (snappy VERSION 1.1.6-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx sunos suse11.2 suse12.2 ubuntu12.04 ubuntu14.04 ubuntu16.04 ubuntu17.04 freebsd)
 DECLARE_DEP (lz4 VERSION 1.8.0-cb2 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx sunos suse11.2 suse12.2 ubuntu14.04 ubuntu16.04)
 SET (CMAKE_INSTALL_PREFIX "${_temp_cmake_install_prefix}")
 

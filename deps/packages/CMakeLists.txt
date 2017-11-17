@@ -212,6 +212,6 @@ _ADD_DEP_PACKAGE(zlib 1.2.11 v1.2.11 3)
 _ADD_DEP_PACKAGE(numactl 2.0.11 v2.0.11 1)
 
 IF (NOT WIN32)
-    _ADD_DEP_PACKAGE(rocksdb 5.8.0 v5.8 2)
+    _ADD_DEP_PACKAGE(rocksdb 5.8.0 v5.8 3)
 ENDIF ()
 _ADD_DEP_PACKAGE(lz4 1.8.0 v1.8.0 2)
