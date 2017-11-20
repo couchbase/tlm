@@ -6,11 +6,8 @@
 
 SET(_v8_exploded ${CMAKE_BINARY_DIR}/tlm/deps/v8.exploded)
 
-# V8 inlcudes libplatform/libplatform.h which includes another header as
-# `#include <include/v8-platform.h>`. To allow this inclusion we are setting
-# V8_INCLUDE_DIR path up until include directory
-FIND_PATH(V8_INCLUDE_DIR include/v8.h
-          HINTS ${_v8_exploded}
+FIND_PATH(V8_INCLUDE_DIR v8.h
+          HINTS ${_v8_exploded}/include
           PATHS
               ~/Library/Frameworks
               /Library/Frameworks
@@ -35,12 +32,12 @@ IF (WIN32)
                NAMES v8.dll
                HINTS ${_v8_exploded}/lib/${_build_type})
   FIND_LIBRARY(V8_PLATFORMLIB
-               NAMES v8_libplatform
-               HINTS ${_v8_exploded}/archive/${_build_type})
+               NAMES v8_libplatform.dll
+               HINTS ${_v8_exploded}/lib/${_build_type})
   FIND_LIBRARY(V8_BASELIB
-               NAMES v8_libbase
-               HINTS ${_v8_exploded}/archive/${_build_type})
-  SET(V8_LIBRARIES ${V8_SHAREDLIB} ${V8_PLATFORMLIB} ${V8_BASELIB} winmm)
+               NAMES v8_libbase.dll
+               HINTS ${_v8_exploded}/lib/${_build_type})
+  SET(V8_LIBRARIES ${V8_SHAREDLIB} ${V8_PLATFORMLIB} ${V8_BASELIB})
 ELSE (WIN32)
   FIND_LIBRARY(V8_SHAREDLIB
                NAMES v8

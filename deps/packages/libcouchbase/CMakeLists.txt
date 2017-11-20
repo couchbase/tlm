@@ -9,7 +9,7 @@ if (WIN32)
         GIT_TAG ${_git_rev}
 
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -E make_directory <SOURCE_DIR>/build
-        COMMAND cd <SOURCE_DIR>/build && cmake .. -DLCB_NO_PLUGINS=1
+        COMMAND cd <SOURCE_DIR>/build && cmake -DLCB_NO_PLUGINS=1 .. -G "Visual Studio 14 2015 Win64"
 
         BUILD_COMMAND cd <SOURCE_DIR>/build && cmake --build . --config Release
 
@@ -57,21 +57,20 @@ else (WIN32)
 
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -E make_directory <SOURCE_DIR>/build
         COMMAND ${CMAKE_COMMAND} -E make_directory <SOURCE_DIR>/dbgbuild
-        COMMAND cd <SOURCE_DIR>/build && cmake .. -DLCB_NO_PLUGINS=1  -DLCB_BUILD_DTRACE=OFF -DCMAKE_BUILD_TYPE=Release
-        COMMAND cd <SOURCE_DIR>/dbgbuild && cmake .. -DLCB_NO_PLUGINS=1 -DLCB_BUILD_DTRACE=OFF -DCMAKE_BUILD_TYPE=Debug
+        COMMAND cd <SOURCE_DIR>/build && cmake .. -DLCB_NO_PLUGINS=1  -DLCB_BUILD_DTRACE=OFF -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>/Release
+        COMMAND cd <SOURCE_DIR>/dbgbuild && cmake .. -DLCB_NO_PLUGINS=1 -DLCB_BUILD_DTRACE=OFF -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>/Debug
 
-        BUILD_COMMAND cd <SOURCE_DIR> && $(MAKE) -j${_parallelism} -C build
-                                      && $(MAKE) -j${_parallelism} -C dbgbuild
+        BUILD_IN_SOURCE 1
+        BUILD_COMMAND $(MAKE) -j${_parallelism} all install -C build
+        COMMAND $(MAKE) -j${_parallelism} all install -C dbgbuild
 
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-        INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include <INSTALL_DIR>/include
-        COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/build/generated <INSTALL_DIR>/include
+        INSTALL_COMMAND ${CMAKE_COMMAND} -E rename <INSTALL_DIR>/Release/include <INSTALL_DIR>/include
         COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/lib
-        COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/lib/Release
-        COMMAND ${CMAKE_COMMAND} -E copy ${LIBCOUCHBASE_LIBRARY_FILE} <INSTALL_DIR>/lib/Release/
-        COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/lib/Debug
-        COMMAND ${CMAKE_COMMAND} -E copy ${LIBCOUCHBASE_DBG_LIBRARY_FILE} <INSTALL_DIR>/lib/Debug
-
+        COMMAND ${CMAKE_COMMAND} -E rename <INSTALL_DIR>/Release/lib <INSTALL_DIR>/lib/Release
+        COMMAND ${CMAKE_COMMAND} -E rename <INSTALL_DIR>/Debug/lib <INSTALL_DIR>/lib/Debug
+        COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/Debug
+        COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/Release
         COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt <INSTALL_DIR>/CMakeLists.txt
         )
 

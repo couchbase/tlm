@@ -68,7 +68,7 @@ IF ("${GOVERSION}" VERSION_GREATER 1.4.9)
 ENDIF ()
 
 # Execute "go install".
-MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install ${_bits_str} -tags=\"${GOTAGS}\" -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${_go_race} ${PACKAGE}")
+MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install ${_bits_str} -tags=\"${GOTAGS}\" -buildmode=\"${GOBUILDMODE}\" -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${_go_race} ${PACKAGE}")
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
   COMMAND "${GO_EXECUTABLE}" install ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} ${_go_race} "${PACKAGE}")
   IF (CB_GO_CODE_COVERAGE)

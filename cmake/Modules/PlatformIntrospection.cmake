@@ -122,7 +122,7 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
     # Just use the major version from the CentOS/Debian identifier - we don't
     # need different builds for different minor versions.
     STRING (REGEX MATCH "[0-9]+" _rel "${_rel}")
-  ELSEIF (_id STREQUAL "fedora")
+  ELSEIF (_id STREQUAL "fedora" AND _rel VERSION_LESS 26)
     SET (_id "centos")
     SET (_rel "7")
   ELSEIF (_id STREQUAL "opensuse project" OR _id STREQUAL "suse linux")
@@ -153,33 +153,27 @@ MACRO (_DETERMINE_CPU_COUNT _var)
 ENDMACRO (_DETERMINE_CPU_COUNT)
 
 # Sets _platform to the name of the current platform if it is a supported
-# production platform.
+# platform, or a False value otherwise.
+# "Supported" means that we produce and distribute builds to
+# customers on that platform.
+# QQQ This list should come from manifest/product-config.json ultimately.
 # _platform is in the same format as _DETERMINE_PLATFORM().
-MACRO (GET_SUPPORTED_PRODUCTION_PLATFORM _supported_platform)
+MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
+  SET (${_supported_platform} 0)
+
   # First get the current platform
   _DETERMINE_PLATFORM(_platform)
 
   # .. and check it against the list, returning it if found.
-  LIST(APPEND _supported_prod_platforms
+  SET (_supported_platforms
        "centos6" "centos7"
        "debian7" "debian8" "debian9"
+       "macosx"
        "suse11.2" "suse12.2"
-       "ubuntu12.04" "ubuntu14.04" "ubuntu16.04"
-       "windows" "windows_msvc" "windows_msvc2015")
-  LIST (FIND _supported_prod_platforms ${_platform} _index)
+       "ubuntu14.04" "ubuntu16.04"
+       "windows_msvc2015")
+  LIST (FIND _supported_platforms ${_platform} _index)
   IF (_index GREATER "-1")
     SET(${_supported_platform} ${_platform})
   ENDIF (_index GREATER "-1")
-ENDMACRO (GET_SUPPORTED_PRODUCTION_PLATFORM _supported_platform)
-
-MACRO (GET_SUPPORTED_DEVELOPMENT_PLATFORM _supported_platform)
-  GET_SUPPORTED_PRODUCTION_PLATFORM(_prod_platform)
-  IF (_prod_platform)
-    SET(${_supported_platform} ${_prod_platform})
-  ELSE (_prod_platform)
-    _DETERMINE_PLATFORM(_platform)
-    IF (APPLE)
-      SET(${_supported_platform} ${_platform})
-    ENDIF (APPLE)
-  ENDIF (_prod_platform)
-ENDMACRO (GET_SUPPORTED_DEVELOPMENT_PLATFORM _supported_platform)
+ENDMACRO (CB_GET_SUPPORTED_PLATFORM)

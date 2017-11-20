@@ -211,3 +211,18 @@
    fun:_ZN14ObjectRegistry15memoryAllocatedEm
    ...
 }
+
+# Type cache of v8 compiler
+{
+   Ignore v8 compiler type cache one time initialization
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   fun:_ZN2v88internal19AccountingAllocator10GetSegmentEm
+   fun:_ZN2v88internal4Zone9NewExpandEm
+   fun:_ZN2v88internal4Zone3NewEm
+   fun:_ZN2v88internal8compiler9TypeCacheC2Ev
+   fun:_ZN2v84base12CallOnceImplEPlPFvPvES2_
+   fun:_ZN2v88internal8compiler9TypeCache3GetEv
+   ...
+}

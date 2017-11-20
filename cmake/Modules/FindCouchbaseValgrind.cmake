@@ -6,9 +6,15 @@ set( _valgrind_options "--gen-suppressions=all"
                        "--num-callers=32"
                        "--partial-loads-ok=yes"
                        "--show-leak-kinds=all"
-                       # Needed for Valgrind 3.12+ to precent it incorrectly
-                       # intercepting malloc symbols in jemalloc / cbmalloc.
-                       "--soname-synonyms=somalloc=nouserintercept"
+                       # MB-26684: New features we introduced in RocksDBKVStore
+                       # led to the execution of the 'malloc_usable_size' function.
+                       # While the 'new' and  'delete' operators in 'libstd++' are
+                       # correctly redirected to the Valgrind ones, we need to tell
+                       # Valgrind to redirect also the 'malloc_usable_size' function in
+                       # 'libplatform'. Missing that leads to SegFault when the
+                       # non-Valgrind 'malloc_usable_size' is called giving in input a
+                       # pointer to a Valgrind-allocated block of memory.
+                       "--soname-synonyms=somalloc=libplatform_so.*"
                        "--suppressions=${CMAKE_SOURCE_DIR}/tlm/valgrind.supp"
                        "--trace-children=yes"
                        "--track-origins=yes"

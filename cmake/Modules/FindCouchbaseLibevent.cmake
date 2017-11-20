@@ -26,7 +26,7 @@
 
 include(PlatformIntrospection)
 
-get_supported_production_platform(_supported_platform)
+cb_get_supported_platform(_supported_platform)
 if (_supported_platform)
   # Supported platforms should only use the provided hints and pick up
   # libevent from cbdeps
@@ -46,6 +46,7 @@ macro(get_directory _dirname filename)
 endmacro(get_directory _dirname filename)
 
 set(_libevent_exploded ${CMAKE_BINARY_DIR}/tlm/deps/libevent.exploded)
+set(_libevent_library_dir ${CMAKE_INSTALL_PREFIX})
 
 find_path(LIBEVENT_INCLUDE_DIR event2/event.h
           HINTS ${_libevent_exploded}/include
@@ -57,7 +58,7 @@ endif ()
 
 find_library(LIBEVENT_CORE_LIB
              NAMES event_core
-             HINTS ${CMAKE_INSTALL_PREFIX}/lib
+             HINTS ${_libevent_library_dir}/lib
              ${NO_DEFAULT_PATH})
 
 if (NOT LIBEVENT_CORE_LIB)
@@ -66,7 +67,7 @@ endif ()
 
 find_library(LIBEVENT_EXTRA_LIB
              NAMES event_extra
-             HINTS ${CMAKE_INSTALL_PREFIX}/lib
+             HINTS ${_libevent_library_dir}/lib
              ${NO_DEFAULT_PATH})
 
 if (NOT LIBEVENT_EXTRA_LIB)
@@ -79,7 +80,11 @@ endif ()
 if (NOT _supported_platform)
   find_library(LIBEVENT_THREAD_LIB
                NAMES event_pthreads
-               HINTS ${CMAKE_INSTALL_PREFIX}/lib
+               HINTS ${_libevent_library_dir}/lib
+               ${NO_DEFAULT_PATH})
+  find_library(LIBEVENT_OPENSSL_LIB
+               NAMES event_openssl
+               HINTS ${_libevent_library_dir}/lib
                ${NO_DEFAULT_PATH})
 endif ()
 
@@ -88,12 +93,18 @@ get_directory(_libevent_extra_dir ${LIBEVENT_EXTRA_LIB})
 if (LIBEVENT_THREAD_LIB)
   get_directory(_libevent_pthreads_dir ${LIBEVENT_THREAD_LIB})
 endif ()
+if (LIBEVENT_OPENSSL_LIB)
+  get_directory(_libevent_openssl_dir ${LIBEVENT_OPENSSL_LIB})
+endif ()
 
 message(STATUS "Found libevent headers in: ${LIBEVENT_INCLUDE_DIR}")
 message(STATUS "                     core: ${LIBEVENT_CORE_LIB}")
 message(STATUS "                    extra: ${LIBEVENT_EXTRA_LIB}")
 if (LIBEVENT_THREAD_LIB)
-  message(STATUS "                 pthreads: ${LIBEVENT_EXTRA_LIB}")
+  message(STATUS "                 pthreads: ${LIBEVENT_THREAD_LIB}")
+endif ()
+if (LIBEVENT_OPENSSL_LIB)
+  message(STATUS "                  openssl: ${LIBEVENT_OPENSSL_LIB}")
 endif ()
 
 # Set LIBEVENT_LIBRARIES to list all of the libevent libraries.
@@ -114,9 +125,9 @@ if (NOT "${_libevent_core_dir}" STREQUAL "${_libevent_extra_dir}")
   message(FATAL_ERROR "libevent_core and libevent_extra inconsistency (not located in the same directory)")
 endif ()
 
+# We should only use libevent_pthread and libevent_openssl if they exists
+# in the same directory as libevent_core and libevent_extras
 if (LIBEVENT_THREAD_LIB)
-  # Only use the libevent_pthreads if it exists in the same directory
-  # as the two other libraries
   if (${_libevent_core_dir} STREQUAL ${_libevent_pthreads_dir})
     list(APPEND LIBEVENT_LIBRARIES ${LIBEVENT_THREAD_LIB})
   else ()
@@ -124,11 +135,19 @@ if (LIBEVENT_THREAD_LIB)
   endif ()
 endif ()
 
+if (LIBEVENT_OPENSSL_LIB)
+  if (${_libevent_core_dir} STREQUAL ${_libevent_openssl_dir})
+    list(APPEND LIBEVENT_LIBRARIES ${LIBEVENT_OPENSSL_LIB})
+  else ()
+    message(STATUS "NOTE: Ignoring libevent_openssl as it is located in another directory than libevent_core")
+  endif ()
+endif ()
+
 if (NOT ${LIBEVENT_INCLUDE_DIR} STREQUAL ${_libevent_exploded}/include)
   message(WARNING "Non-supported version of libevent headers detected, trying to use it anyway")
 endif ()
 
-if (NOT ${_libevent_core_dir} STREQUAL ${CMAKE_INSTALL_PREFIX}/lib)
+if (NOT ${_libevent_core_dir} STREQUAL ${_libevent_library_dir}/lib)
   message(WARNING "Non-supported version of libevent libraries detected, trying to use anyway")
 endif ()
 

@@ -29,6 +29,24 @@ OPTION(COUCHBASE_KV_COMMIT_VALIDATION
        "Only build modules used by KV commit validation"
        OFF)
 
+# This option should be be enabled in the early phases of development
+# (e.g. when developing off master) and is used to guard additional
+# runtime checks which are desirable to report during testing; but
+# should not trigger in production.  As such this option should be set
+# to OFF before we move into the Beta/pre-release phase.
+#
+# Example usage - asserting that statistical counters are of an
+# expected range (don't underflow) - we would like to detect such
+# bugs; but they arn't serious enough to warrant crashing in a
+# customer environment.
+OPTION(CB_DEVELOPMENT_ASSERTS
+       "Enable additional asserts which abort execution if they fail."
+       OFF)
+IF (CB_DEVELOPMENT_ASSERTS)
+   MESSAGE(STATUS "Enabling CB_DEVELOPMENT_ASSERTS")
+   ADD_DEFINITIONS(-DCB_DEVELOPMENT_ASSERTS)
+ENDIF (CB_DEVELOPMENT_ASSERTS)
+
 IF ($ENV{JETBRAINS_IDE})
    SET(JETBRAINS_CLION_IDE True CACHE BOOL "Build Couchbase under CLion")
 ENDIF ($ENV{JETBRAINS_IDE})
@@ -93,6 +111,9 @@ OPTION (CB_DEVELOPER_BUILD "Produce Developer builds" ON)
 
 # 'Production builds' are those built by the official Couchbase build jobs
 OPTION (CB_PRODUCTION_BUILD "Official production build" OFF)
+
+# Temporary option to enable building eventing before it is fully phased into vulcan
+OPTION (CB_ENABLE_EVENTING "Enable eventing features" ON)
 
 MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
@@ -246,7 +267,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/plasma)
     ENDIF()
 
-    IF (BUILD_ENTERPRISE AND CB_ENABLE_EVENTING AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/eventing")
+    IF (BUILD_ENTERPRISE AND CB_ENABLE_EVENTING)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing)
     ENDIF()
 

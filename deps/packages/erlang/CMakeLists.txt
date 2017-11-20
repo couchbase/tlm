@@ -1,36 +1,26 @@
 # Downloads the declared version of Erlang source code and builds it.
 
-include(ExternalProject)
-include(PlatformIntrospection)
+INCLUDE (ExternalProject)
 
-### Download, configure and build erlang ####################################
+IF (WIN32)
+  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/erlang_windows.bat)
+ELSE ()
+  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/erlang_unix.sh)
+ENDIF ()
+SET (_install_dir "${CMAKE_BINARY_DIR}/install")
+FILE (TO_NATIVE_PATH "${_install_dir}" _install_dir)
 
-SET(ERL_CFLAGS "-fno-strict-aliasing -O3 -ggdb3 -DOPENSSL_NO_EC=1")
-
-_DETERMINE_CPU_COUNT(_parallelism)
-ExternalProject_Add(erlang
+ExternalProject_Add (erlang
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
 
-  CONFIGURE_COMMAND ./otp_build autoconf
-            COMMAND touch <SOURCE_DIR>/lib/debugger/SKIP
-                          <SOURCE_DIR>/lib/megaco/SKIP
-                          <SOURCE_DIR>/lib/observer/SKIP
-                          <SOURCE_DIR>/lib/wx/SKIP
-            COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>
-                                           --enable-smp-support
-                                           --disable-hipe
-                                           --disable-fp-exceptions
-                                           CFLAGS=${ERL_CFLAGS}
-
+  CONFIGURE_COMMAND "${CMAKE_COMMAND}" -E make_directory <INSTALL_DIR>
+  BUILD_COMMAND "${_build_script}" <INSTALL_DIR> ${PLATFORM}
   BUILD_IN_SOURCE 1
-  BUILD_COMMAND $(MAKE) -j${_parallelism}
-
-  INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-  INSTALL_COMMAND $(MAKE) install
-          COMMAND ${CMAKE_COMMAND} -E echo "FILE(COPY bin lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
-  # Invoke Erlang 'Install' to update the Erlang ROOTDIR
-          COMMAND ${CMAKE_COMMAND} -E echo "EXECUTE_PROCESS(COMMAND \${CMAKE_INSTALL_PREFIX}/lib/erlang/Install -minimal \${CMAKE_INSTALL_PREFIX}/lib/erlang)" >> <INSTALL_DIR>/CMakeLists.txt
+  INSTALL_DIR "${_install_dir}"
+  INSTALL_COMMAND "${CMAKE_COMMAND}" -E copy
+    "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt"
+    <INSTALL_DIR>/CMakeLists.txt
 )
 
 # cbdeps boilerplate
