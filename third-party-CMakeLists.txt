@@ -1,0 +1,5 @@
+# Note: This file lives in git at 'tlm/third-party-CMakeLists.txt'.
+# It is copied by repo into third_party/CMakeLists.txt, so should be
+# considered read-only in that location.
+
+add_subdirectory(gsl-lite)
