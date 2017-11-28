@@ -1,0 +1,24 @@
+diff --git a/toolchain/gcc_toolchain.gni b/toolchain/gcc_toolchain.gni
+index dfd187954..6c8dc1817 100644
+--- a/toolchain/gcc_toolchain.gni
++++ b/toolchain/gcc_toolchain.gni
+@@ -561,6 +561,7 @@ template("clang_toolchain") {
+                              "strip",
+                              "is_clang_analysis_supported",
+                              "enable_linker_map",
++                             "extra_ldflags",
+                            ])
+
+     toolchain_args = {
+diff --git a/toolchain/linux/BUILD.gn b/toolchain/linux/BUILD.gn
+index 3be5c36bc..ac581bc2a 100644
+--- a/toolchain/linux/BUILD.gn
++++ b/toolchain/linux/BUILD.gn
+@@ -106,6 +106,7 @@ clang_toolchain("clang_x64") {
+   # Output linker map files for binary size analysis.
+   enable_linker_map = true
+
++  extra_ldflags = "-Wl,-rpath=\\\$ORIGIN -Wl,--enable-new-dtags"
+   toolchain_args = {
+     current_cpu = "x64"
+     current_os = "linux"

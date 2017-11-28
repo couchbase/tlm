@@ -3,6 +3,10 @@
 INSTALL_DIR=$1
 PLATFORM=$2
 
+pushd `dirname $0` > /dev/null
+SCRIPTPATH=`pwd -P`
+popd > /dev/null
+
 case "$PLATFORM" in
     ubuntu14.04|debian7|debian8|debian9)
         # The buildslave images should contain this package. However
@@ -17,9 +21,6 @@ esac
 # process. Isolate that away in a separate script
 case "$PLATFORM" in
     suse11*|centos6|debian7)
-        pushd `dirname $0` > /dev/null
-        SCRIPTPATH=`pwd -P`
-        popd > /dev/null
         exec $SCRIPTPATH/v8_old_unix.sh $INSTALL_DIR $PLATFORM
         ;;
 esac
@@ -54,6 +55,16 @@ solutions = [
 EOF
 gclient sync --noprehooks --nohooks
 gclient runhooks
+
+# On Debian 9 (and others?), we want DT_RUNPATH enabled on libv8.so
+# and friends. This ridiculous hack is the only way I could find to do so.
+case "$PLATFORM" in
+    debian9)
+        pushd v8/build
+        git apply $SCRIPTPATH/v8_linux_runpath.patch
+        popd
+        ;;
+esac
 
 # Actual v8 configure and build steps - we build debug and release.
 cd v8
