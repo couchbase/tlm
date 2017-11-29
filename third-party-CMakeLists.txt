@@ -3,3 +3,4 @@
 # considered read-only in that location.
 
 add_subdirectory(gsl-lite)
+add_subdirectory(spdlog)
