@@ -252,7 +252,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     ENDIF ()
 
     # Analytics Maven project
-    IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/analytics")
+    IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/analytics/CMakeLists.txt")
       ADD_SUBDIRECTORY (analytics)
     ENDIF ()
 
