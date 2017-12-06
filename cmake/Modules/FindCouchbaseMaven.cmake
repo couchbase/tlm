@@ -7,6 +7,12 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
 
   FIND_PROGRAM (MAVEN_EXECUTABLE mvn)
 
+  # Keep these arguments separated here, to prevent the with-Maven and
+  # without-Maven versions of MAVEN_PROJECT() from falling out of sync
+  SET (_multi_args "OPTS")
+  SET (_single_args "TARGET;GOAL;PATH;ARTIFACTS;DESTINATION")
+  SET (_option_args "")
+
   IF (MAVEN_EXECUTABLE)
     MESSAGE (STATUS "Found Maven executable: ${MAVEN_EXECUTABLE}")
     SET (MAVEN_FOUND True CACHE BOOL "Whether Maven has been found")
@@ -41,7 +47,7 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
     #          skip tests, you'll need to explicitly include -DskipTests)
 
     MACRO (MAVEN_PROJECT)
-      PARSE_ARGUMENTS (Mvn "OPTS" "TARGET;GOAL;PATH;ARTIFACTS;DESTINATION" "" ${ARGN})
+      PARSE_ARGUMENTS (Mvn "${_multi_args}" "${_single_args}" "${_option_args}" ${ARGN})
       IF ("${Mvn_PATH}" STREQUAL "")
         SET (Mvn_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
       ENDIF ()
@@ -102,7 +108,7 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
     MESSAGE (STATUS "Maven not found - Java subprojects will be skipped")
     SET (MAVEN_FOUND False CACHE BOOL "Whether Maven has been found")
     MACRO (MAVEN_PROJECT)
-      PARSE_ARGUMENTS (Mvn "" "TARGET;PATH;ARTIFACTS;DESTINATION" "" ${ARGN})
+      PARSE_ARGUMENTS (Mvn "${_multi_args}" "${_single_args}" "${_option_args}" ${ARGN})
       MESSAGE (STATUS "NOTE: Not doing anything for Maven target '${Mvn_TARGET}'")
     ENDMACRO (MAVEN_PROJECT)
   ENDIF (MAVEN_EXECUTABLE)
