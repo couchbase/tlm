@@ -253,9 +253,6 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
 
     # Analytics Maven project
     IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/analytics/CMakeLists.txt")
-      IF (NOT MAVEN_EXECUTABLE)
-         MESSAGE(FATAL_ERROR "Can't build analytics without maven")
-      ENDIF (NOT MAVEN_EXECUTABLE)
       ADD_SUBDIRECTORY (analytics)
     ENDIF ()
 
