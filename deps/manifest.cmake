@@ -12,9 +12,9 @@
 # you may use the cmake macro CB_GET_SUPPORTED_PLATFORM to
 # check if this is a supported platform.
 #
-DECLARE_DEP (breakpad VERSION 20160926-cb1 PLATFORMS centos6 debian9 suse11.2 ubuntu16.04 windows_msvc2015)
+DECLARE_DEP (breakpad VERSION 20160926-cb1 PLATFORMS centos6 centos7 debian9 ubuntu16.04 windows_msvc2015)
 # breakpad 20160926-cb2 rebuilt using GCC 7.2.0.
-DECLARE_DEP (breakpad VERSION 20160926-cb2 PLATFORMS centos7 debian8 suse12.2 ubuntu14.04)
+DECLARE_DEP (breakpad VERSION 20160926-cb2 PLATFORMS debian8 suse11.2 suse12.2 ubuntu14.04)
 DECLARE_DEP (boost VERSION 1.62.0-cb3 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
 DECLARE_DEP (curl VERSION 7.49.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
 DECLARE_DEP (erlang VERSION R16B03-1-couchbase-cb6 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04)
@@ -36,8 +36,8 @@ DECLARE_DEP (python-snappy VERSION c97d633 PLATFORMS windows_msvc2015)
 DECLARE_DEP (python-snappy VERSION c97d633-cb1 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04)
 # RocksDB 5.8.0-cb3 was an aborted version linked to Snappy 1.1.6
 # RocksDB 5.8.0-cb4 is rebuilt with GCC 7.2.0 on older platforms
-DECLARE_DEP (rocksdb VERSION 5.8.0-cb2 PLATFORMS centos6 debian7 debian9 macosx suse11.2 ubuntu16.04)
-DECLARE_DEP (rocksdb VERSION 5.8.0-cb4 PLATFORMS centos7 debian8 suse12.2 ubuntu14.04)
+DECLARE_DEP (rocksdb VERSION 5.8.0-cb2 PLATFORMS centos6 centos7 debian7 debian9 macosx ubuntu16.04)
+DECLARE_DEP (rocksdb VERSION 5.8.0-cb4 PLATFORMS debian8 suse11.2 suse12.2 ubuntu14.04)
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc2015)
 DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04)
 DECLARE_DEP (v8 VERSION 5.9-cb3 PLATFORMS centos7 debian8 macosx suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
