@@ -166,7 +166,7 @@ _ADD_DEP_PACKAGE(v8 5.2 5.2-couchbase 2)
 _ADD_DEP_PACKAGE(jemalloc 4.3.1 4.3.1 2)
 _ADD_DEP_PACKAGE(curl 7.49.1 curl-7_49_1 1)
 
-# erlang R16B03-couchbase / branch: couchbase-watson
+# erlang R16B03-1-couchbase / branch: couchbase-watson
 # - SHA 96430ba for R16B03-couchbase-cb1 release
 # - SHA 00852da for R16B03-couchbase-cb2 release
 # - SHA 1f768b7 for R16B03-1-couchbase-cb2 release (Windows only)
@@ -174,7 +174,11 @@ _ADD_DEP_PACKAGE(curl 7.49.1 curl-7_49_1 1)
 # - SHA 3ea8397 for R16B03-1-couchbase-cb4 release (Windows only - cb3 on Windows
 #     mistakenly built from wrong branch)
 # - SHA 70bac35 for R16B03-1-couchbase-cb5 release (macOS - MB-24741)
-_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase-watson 5)
+# - SHA 1f6969e for R16B03-1-couchbase-cb6 release (MB-25968 - all platforms but Windows)
+# After -cb6 we switched to branch "couchbase" since "couchbase-watson" was
+# no longer accurate
+# - SHA 53c0d14 for R16B03-1-couchbase-cb7 (MB-27322 - all platforms)
+_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase 7)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 _ADD_DEP_PACKAGE(flatbuffers 1.4.0 v1.4.0 1)
