@@ -1,0 +1,23 @@
+Currently the Windows build is not integrated into the system fully.
+You need to use a specially configured Windows VM with the following:
+  - MSVC 2013 (yes, 2013, not 2015)
+     - Also need version 8.1 of SDK (goes with MSVC 2013)
+  - Latest versions of:
+     - Cygwin
+     - ActiveState Perl
+     - NSIS (at least 2.51)
+     - JDK 8
+  - Installed version of OpenSSL 1.0.2k in C:\OpenSSL-Win64
+
+There's a 'windows-erlang' VM (IP 172.23.113.156) with this configuration
+(as of 2017/12/27) that can be used, but should be updated regularly.
+
+Once the VM is ready, copy the 'cygwin.bash_profile' to the user homedir
+running for Cygwin terminal as '.bash_profile', then copy the scripts
+'erlang-windows.sh' - some changes for the latter might need to be made
+for the tarball naming and version, so review it carefully.  Once that's
+done, open a Cygwin terminal and set ERL_TOP to '$HOME/otp_src_<release>'
+(currently release is 'R16B03-1') and export it, then run the script.
+If successful, a '.tgz' file should be at the top-level of the homedir,
+which can then be copied into place in the releases directory on latest-
+builds.

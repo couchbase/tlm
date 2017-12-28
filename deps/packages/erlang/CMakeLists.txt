@@ -3,7 +3,7 @@
 INCLUDE (ExternalProject)
 
 IF (WIN32)
-  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/erlang_windows.bat)
+  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/erlang_windows.sh)
 ELSE ()
   SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/erlang_unix.sh)
 ENDIF ()
