@@ -167,7 +167,7 @@ _ADD_DEP_PACKAGE(v8 5.9 5.9.223 5)
 _ADD_DEP_PACKAGE(jemalloc 4.3.1-couchbase1 4.3.1-couchbase1 2)
 _ADD_DEP_PACKAGE(curl 7.49.1 curl-7_49_1 1)
 
-# erlang R16B03-couchbase / branch: couchbase-watson
+# erlang R16B03-1-couchbase / branch: couchbase-watson
 # - SHA 96430ba for R16B03-couchbase-cb1 release
 # - SHA 00852da for R16B03-couchbase-cb2 release
 # - SHA 1f768b7 for R16B03-1-couchbase-cb2 release (Windows only)
@@ -176,7 +176,11 @@ _ADD_DEP_PACKAGE(curl 7.49.1 curl-7_49_1 1)
 #     mistakenly built from wrong branch)
 # - SHA 70bac35 for R16B03-1-couchbase-cb5 release (macOS - MB-24741)
 # - SHA 1f6969e for R16B03-1-couchbase-cb6 release (MB-25968 - all platforms but Windows)
-_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase-watson 6)
+# After -cb6 we switched to branch "couchbase" since "couchbase-watson" was
+# no longer accurate
+# - SHA 53c0d14 for R16B03-1-couchbase-cb7 (MB-27322 - all platforms - DO NOT USE)
+# - SHA 53c0d14 for R16B03-1-couchbase-cb8 (still MB-27322 - rebuilt with correct build scripts)
+_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase 8)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 

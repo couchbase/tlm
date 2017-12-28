@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 INSTALL_DIR=$1
 PLATFORM=$2
@@ -17,6 +17,10 @@ case "$PLATFORM" in
             cd openssl-1.0.2k
             git clone -b OpenSSL_1_0_2k --depth 1 git://github.com/couchbasedeps/openssl
             cd openssl
+            # OpenSSL's config script uses RELEASE to override the value
+            # of uname -r, which breaks things when this script runs as
+            # part of the cbdeps-platform-build Jenkins job. So, unset it.
+            unset RELEASE
             ./config --prefix=$OPENSSL_DIR \
                 shared no-comp no-ssl2 no-ssl3
             make depend
