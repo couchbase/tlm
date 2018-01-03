@@ -9,4 +9,5 @@ cd apache-maven-${VERSION} || exit 1
 
 cp -pr bin ${INSTALL_DIR}/ || exit 1
 cp -pr boot ${INSTALL_DIR}/ || exit 1
+cp -pr conf ${INSTALL_DIR}/ || exit 1
 cp -pr lib ${INSTALL_DIR}/ || exit 1
