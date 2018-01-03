@@ -5,7 +5,17 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
 
   INCLUDE (ParseArguments)
 
-  FIND_PROGRAM (MAVEN_EXECUTABLE mvn)
+  SET (_maven_exploded "${CMAKE_BINARY_DIR}/tlm/deps/maven.exploded")
+  FIND_PROGRAM (MAVEN_EXECUTABLE mvn
+                HINTS
+                    "${_maven_exploded}/bin"
+                PATHS
+                    ~/Library/Frameworks
+                    /Library/Frameworks
+                    /opt/local
+                    /opt/csw
+                    /opt/maven
+                    /opt)
 
   # Keep these arguments separated here, to prevent the with-Maven and
   # without-Maven versions of MAVEN_PROJECT() from falling out of sync
