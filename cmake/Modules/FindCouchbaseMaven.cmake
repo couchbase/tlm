@@ -6,7 +6,12 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
   INCLUDE (ParseArguments)
 
   SET (_maven_exploded "${CMAKE_BINARY_DIR}/tlm/deps/maven.exploded")
-  FIND_PROGRAM (MAVEN_EXECUTABLE mvn
+  IF (WIN32)
+    SET (_mvn_program mvn.cmd)
+  ELSE (WIN32)
+    SET (_mvn_program mvn)
+  ENDIF (WIN32)
+  FIND_PROGRAM (MAVEN_EXECUTABLE ${_mvn_program}
                 HINTS
                     "${_maven_exploded}/bin"
                 PATHS

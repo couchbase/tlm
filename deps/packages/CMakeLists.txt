@@ -221,8 +221,6 @@ IF (NOT WIN32)
     _ADD_DEP_PACKAGE(rocksdb 5.8.0 v5.8 4)
 ENDIF ()
 _ADD_DEP_PACKAGE(lz4 1.8.0 v1.8.0 2)
-if (WIN32)
-  _ADD_DEP_PACKAGE(maven 3.5.2 master 4)
-ELSE ()
-  _ADD_DEP_PACKAGE(maven 3.5.2 master 2)
-ENDIF ()
+# maven 3.5.2-cb3 and 3.5.2-cb4 exist as attempts to make Windows work,
+# but are not correct. If we rebuild maven again in future, start with -cb5.
+_ADD_DEP_PACKAGE(maven 3.5.2 master 4)
