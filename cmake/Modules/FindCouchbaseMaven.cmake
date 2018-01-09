@@ -32,7 +32,7 @@ IF (NOT FindCouchbaseMaven_INCLUDED)
     MESSAGE (STATUS "Found Maven executable: ${MAVEN_EXECUTABLE}")
     SET (MAVEN_FOUND True CACHE BOOL "Whether Maven has been found")
 
-    SET (CB_INVOKE_MAVEN False CACHE BOOL "Whether to add Maven targets to ALL")
+    SET (CB_INVOKE_MAVEN True CACHE BOOL "Whether to add Maven targets to ALL")
 
     # Create a target to build a Maven project from a specified directory.
     # Since Maven is slow and painful and in particular has terrible
