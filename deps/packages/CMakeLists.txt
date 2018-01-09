@@ -200,7 +200,7 @@ IF (WIN32 OR APPLE)
   # need to rebuild libevent as well.
   _ADD_DEP_PACKAGE(openssl 1.0.2k OpenSSL_1_0_2k 2)
 ENDIF (WIN32 OR APPLE)
-_ADD_DEP_PACKAGE(libcouchbase 2.7.7 2.7.7 6)
+_ADD_DEP_PACKAGE(libcouchbase 2.8.4 2.8.4 1)
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
   IF (PLATFORM STREQUAL "fedora26" OR PLATFORM STREQUAL "fedora27")
     _ADD_DEP_PACKAGE(libcxx 4.0.0 release_40 1)
