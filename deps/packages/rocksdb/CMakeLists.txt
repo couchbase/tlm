@@ -9,6 +9,14 @@ DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS centos6 centos7 debian7 debian8 
 DECLARE_DEP (lz4 VERSION 1.8.0-cb2 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx sunos suse11.2 suse12.2 ubuntu14.04 ubuntu16.04)
 SET (CMAKE_INSTALL_PREFIX "${_temp_cmake_install_prefix}")
 
+# RocksDB 5.9.2 contains new code that triggers the new GCC 7 'implicit-fallthrough' warnings.
+# When we compile using the GCC '-Werror/-Wswitch' options, all the specified warnings are
+# made into an error. So, we need to treat the 'implicit-fallthrough' warning as an exception until
+# the RocksDB code is fixed. We use the following 'W_NO_ERROR' (if set) in 'build_rocksdb.sh'.
+if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.0)
+  SET (W_NO_ERROR "-Wno-error=implicit-fallthrough")
+endif()
+
 include(ExternalProject)
 
 ### Download, configure and build rocksdb  ####################################
@@ -34,7 +42,7 @@ ExternalProject_Add(rocksdb
 # OS X-only: Custom post-build step to set the shared library install name.
 if (APPLE)
   ExternalProject_Add_Step(rocksdb install_name
-    COMMAND install_name_tool -id @rpath/librocksdb.5.8.dylib <BINARY_DIR>/librocksdb.5.8.dylib
+    COMMAND install_name_tool -id @rpath/librocksdb.5.9.2.dylib <BINARY_DIR>/librocksdb.5.9.2.dylib
 
     DEPENDEES build
     DEPENDERS install
