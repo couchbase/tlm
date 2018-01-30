@@ -2,6 +2,11 @@
 # It is copied by repo into third_party/CMakeLists.txt, so should be
 # considered read-only in that location.
 
+# Ensure the third party code is position independent because our
+# code is always built as position-independent.
+# This setting is specifically required for HdrHistogram_c.
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 add_subdirectory(gsl-lite)
 add_subdirectory(HdrHistogram_c)
 add_subdirectory(spdlog)
