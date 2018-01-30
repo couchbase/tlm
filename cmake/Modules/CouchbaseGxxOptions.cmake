@@ -3,6 +3,12 @@ SET(CB_GXX_WARNINGS "-Wall -Wredundant-decls -Wmissing-braces -fno-strict-aliasi
 SET(CB_GXX_VISIBILITY "-fvisibility=hidden")
 SET(CB_GXX_THREAD "-pthread")
 
+IF (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 6.9.9)
+    #Disable aligned-new warning
+    SET(CB_GXX_WARNINGS "${CB_GXX_WARNINGS} -Wno-aligned-new")
+    MESSAGE(STATUS "Disabling aligned-new warning as we don't support C++17 (yet): ${CB_GXX_WARNINGS}")
+ENDIF ()
+
 # We want RelWithDebInfo to have the same optimization level as
 # Release, only differing in whether debugging information is enabled.
 SET(CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
