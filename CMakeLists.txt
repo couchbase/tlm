@@ -68,8 +68,8 @@ IF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
   LIST(APPEND CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}")
 ENDIF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
-SET(COUCHBASE_SERVER_BUILD True CACHE BOOL "Indicating this is a server build")
+LIST (APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
+SET (COUCHBASE_SERVER_BUILD True CACHE BOOL "Indicating this is a server build")
 
 # Try to download the prebuilt 3rd-party dependencies by default
 IF (NOT DEFINED CB_DOWNLOAD_DEPS)
@@ -126,7 +126,6 @@ INCLUDE(FindCouchbaseValgrind)
 INCLUDE(CouchbaseCompilerOptions)
 INCLUDE(FindCouchbaseV8)
 INCLUDE(FindCouchbaseNlohmannJson)
-INCLUDE(FindCouchbaseMaven)
 INCLUDE(FindCouchbaseRocksDB)
 
 # Declare PRODUCT_VERSION in cache, but then override user-defined value
