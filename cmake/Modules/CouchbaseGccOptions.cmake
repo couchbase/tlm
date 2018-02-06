@@ -8,7 +8,7 @@ SET(CB_GNU_LANG_VER "-std=gnu99")
 # Release, only differing in whether debugging information is enabled.
 SET(CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG")
 SET(CMAKE_C_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g")
-SET(CMAKE_C_FLAGS_DEBUG          "-O0 -g")
+SET(CMAKE_C_FLAGS_DEBUG          "-Og -g")
 
 SET(CB_C_FLAGS_NO_OPTIMIZE       -O0)
 
