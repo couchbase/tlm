@@ -12,5 +12,5 @@ add_subdirectory(HdrHistogram_c)
 add_subdirectory(spdlog)
 
 # Define macro which renames spdlog's severity levels
-set(CUSTOM_LEVELS "{\"TRACE\",\ \"DEBUG\",\ \"INFO\",\ \"WARNING\",\ \"ERROR\",\ \"CRITICAL\",\ \"OFF\"}\\\;\ ")
+set(CUSTOM_LEVELS "{\"TRACE\",\"DEBUG\",\"INFO\",\"WARNING\",\"ERROR\",\"CRITICAL\",\"OFF\"}")
 target_compile_definitions(spdlog INTERFACE -DSPDLOG_LEVEL_NAMES=${CUSTOM_LEVELS})
