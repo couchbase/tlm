@@ -12,9 +12,14 @@ SET (CMAKE_INSTALL_PREFIX "${_temp_cmake_install_prefix}")
 # RocksDB 5.9.2 contains new code that triggers the new GCC 7 'implicit-fallthrough' warnings.
 # When we compile using the GCC '-Werror/-Wswitch' options, all the specified warnings are
 # made into an error. So, we need to treat the 'implicit-fallthrough' warning as an exception until
-# the RocksDB code is fixed. We use the following 'W_NO_ERROR' (if set) in 'build_rocksdb.sh'.
+# the RocksDB code is fixed. We use the following 'W_NO_ERROR_IMPLICIT_FALLTHROUGH'
+# (if set) in 'build_rocksdb.sh'.
+# RocksDB 5.10.2 contains new code that triggers the new GCC 7 'format-truncation' error.
+# We need to suppress the error until the RocksDB code is fixed. We use the following
+# 'W_NO_ERROR_FORMAT_TRUNCATION' (if set) in 'build_rocksdb.sh'.
 if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 7.0)
-  SET (W_NO_ERROR "-Wno-error=implicit-fallthrough")
+  SET (W_NO_ERROR_IMPLICIT_FALLTHROUGH "-Wno-error=implicit-fallthrough")
+  SET (W_NO_ERROR_FORMAT_TRUNCATION "-Wno-error=format-truncation")
 endif()
 
 include(ExternalProject)
@@ -42,7 +47,7 @@ ExternalProject_Add(rocksdb
 # OS X-only: Custom post-build step to set the shared library install name.
 if (APPLE)
   ExternalProject_Add_Step(rocksdb install_name
-    COMMAND install_name_tool -id @rpath/librocksdb.5.9.2.dylib <BINARY_DIR>/librocksdb.5.9.2.dylib
+    COMMAND install_name_tool -id @rpath/librocksdb.5.10.2.dylib <BINARY_DIR>/librocksdb.5.10.2.dylib
 
     DEPENDEES build
     DEPENDERS install
