@@ -11,7 +11,14 @@ SET(CB_MSVCXX_DEBUG "")
 #         non – DLL-interface classkey 'identifier' used as base for
 #         DLL-interface classkey 'identifier'
 #
-SET(CB_MSVCXX_WARNINGS "/wd4251 /wd4275")
+# Our code has a lot of align-new warnings generated, but we can't really
+# make use of these warnings until we have C++17 support, so for now we
+# should just mute them.
+#
+#   4316 - https://msdn.microsoft.com/en-us/library/dn448573.aspx
+#          object allocated on the heap may not be aligned 128
+#
+SET(CB_MSVCXX_WARNINGS "/wd4251 /wd4275 /wd4316")
 SET(CB_MSVCXX_VISIBILITY "")
 SET(CB_MSVCXX_THREAD "")
 
