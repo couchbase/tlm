@@ -18,7 +18,15 @@ SET(CB_MSVCXX_DEBUG "")
 #   4316 - https://msdn.microsoft.com/en-us/library/dn448573.aspx
 #          object allocated on the heap may not be aligned 128
 #
-SET(CB_MSVCXX_WARNINGS "/wd4251 /wd4275 /wd4316")
+# We have a couple of C4800: 'type' : forcing value to bool 'true' or 
+# 'false' (performance warning) warnings
+# which actually got removed in VS2017 so go ahead and ignore them
+#
+#   4800 - https://msdn.microsoft.com/en-us/library/b6801kcy.aspx
+#          'type' : forcing value to bool 'true' or 'false' 
+#	   (performance warning) warnings
+
+SET(CB_MSVCXX_WARNINGS "/wd4251 /wd4275 /wd4316 /wd4800")
 SET(CB_MSVCXX_VISIBILITY "")
 SET(CB_MSVCXX_THREAD "")
 
