@@ -6,7 +6,14 @@ SET(CB_GXX_THREAD "-pthread")
 IF (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 6.9.9)
     #Disable aligned-new warning
     SET(CB_GXX_WARNINGS "${CB_GXX_WARNINGS} -Wno-aligned-new")
-    MESSAGE(STATUS "Disabling aligned-new warning as we don't support C++17 (yet): ${CB_GXX_WARNINGS}")
+    MESSAGE(STATUS "Disabling aligned-new warning as we don't support C++17 (yet)")
+
+    # Disable stringop-overflow warnings as there seem to be a fair few bugs in that area (GCC 7.2)
+    # There are multiple bugs files regarding false positives.
+    # See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=79095 and https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83239
+    SET(CB_GXX_WARNINGS "${CB_GXX_WARNINGS} -Wno-stringop-overflow")
+    MESSAGE(STATUS "Disabling stringop-overflow warning as it seems to report false positives at the moment")
+    MESSAGE(STATUS "Current GXX Warnings state: ${CB_GXX_WARNINGS}")
 ENDIF ()
 
 # We want RelWithDebInfo to have the same optimization level as
