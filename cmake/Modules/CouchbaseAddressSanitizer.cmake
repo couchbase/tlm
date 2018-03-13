@@ -1,22 +1,22 @@
 # Support for building with AddressSanitizer (asan) -
 # https://github.com/google/sanitizers/wiki/AddressSanitizer
+#
+# Usage:
+# The variable CB_ADDRESSSANITIZER is used to enable ASAN, which
+# accepts the following values:
+#   0: Disabled.
+#   1: Global - All targets will have ASan enabled on them.
+#   2: Specific - Only targets which explicitly enable ASan, via the
+#      add_sanitizers() macro will have ASan enabled.
 
 INCLUDE(CheckCCompilerFlag)
 INCLUDE(CheckCXXCompilerFlag)
 INCLUDE(CMakePushCheckState)
 
 OPTION(CB_ADDRESSSANITIZER "Enable AddressSanitizer memory error detector."
-       OFF)
+       0)
 
 IF (CB_ADDRESSSANITIZER)
-
-    # AddressSanitizer doesn't appear to work correctly on a Debug build :(
-    IF ("${CMAKE_BUILD_TYPE}" STREQUAL "Debug")
-        MESSAGE(FATAL_ERROR "CB_ADDRESSSANITIZER enabled but AddressSanitizer "
-                            "is incompatible with CMAKE_BUILD_TYPE==Debug. "
-                            "Change build type RelWithDebInfo or similar to "
-                            "use AddressSanitizer. Cannot continue.")
-    ENDIF ()
 
     CMAKE_PUSH_CHECK_STATE(RESET)
     SET(CMAKE_REQUIRED_FLAGS "-fsanitize=address") # Also needs to be a link flag for test to pass
@@ -38,12 +38,9 @@ IF (CB_ADDRESSSANITIZER)
     ENDIF()
 
     IF(HAVE_FLAG_SANITIZE_ADDRESS_C AND HAVE_FLAG_SANITIZE_ADDRESS_CXX)
-        SET(ADDRESS_SANITIZER_FLAG "-fsanitize=address")
+        # Have AddressSanitizer for C & C++; enable as per the user's selection.
 
-        # Need -fno-omit-frame-pointer to allow the backtraces to be symbolified.
-        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADDRESS_SANITIZER_FLAG} -fno-omit-frame-pointer")
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDRESS_SANITIZER_FLAG} -fno-omit-frame-pointer")
-        SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${ADDRESS_SANITIZER_FLAG}")
+        SET(ADDRESS_SANITIZER_FLAG "-fsanitize=address")
 
         # TC/jemalloc cause issues with AddressSanitizer - force
         # the use of the system allocator.
@@ -51,8 +48,6 @@ IF (CB_ADDRESSSANITIZER)
 
         # Configure CTest's MemCheck to AddressSanitizer.
         SET(MEMORYCHECK_TYPE AddressSanitizer)
-
-        ADD_DEFINITIONS(-DADDRESS_SANITIZER)
 
         # Override the normal ADD_TEST macro to set the ASAN_OPTIONS
         # environment variable - this allows us to specify the
@@ -68,9 +63,32 @@ IF (CB_ADDRESSSANITIZER)
                                  "ASAN_SYMBOLIZER_PATH=${LLVM_SYMBOLIZER}")
         ENDFUNCTION()
 
-        MESSAGE(STATUS "AddressSanitizer enabled.")
+        if(NOT CB_ADDRESSSANITIZER EQUAL 2)
+            # Enable globally
+
+            # Need -fno-omit-frame-pointer to allow the backtraces to be symbolified.
+            SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADDRESS_SANITIZER_FLAG} -fno-omit-frame-pointer")
+            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDRESS_SANITIZER_FLAG} -fno-omit-frame-pointer")
+            SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${ADDRESS_SANITIZER_FLAG}")
+
+            ADD_DEFINITIONS(-DADDRESS_SANITIZER)
+        endif()
+
+        MESSAGE(STATUS "AddressSanitizer enabled (mode ${CB_ADDRESSSANITIZER})")
     ELSE()
         MESSAGE(FATAL_ERROR "CB_ADDRESSSANITIZER enabled but compiler doesn't support AddressSanitizer - cannot continue.")
     ENDIF()
 ENDIF()
 
+# Enable AddressSanitizer for specific target. No-op if
+# CB_ADDRESSSANITIZER is not set to 2 (target-specific mode).
+function(add_sanitizers TARGET)
+    if (NOT CB_ADDRESSSANITIZER EQUAL 2)
+        return()
+    endif ()
+
+    set_property(TARGET ${TARGET} APPEND_STRING
+        PROPERTY COMPILE_FLAGS " ${ADDRESS_SANITIZER_FLAG} -fno-omit-frame-pointer")
+    set_property(TARGET ${TARGET} APPEND_STRING
+        PROPERTY LINK_FLAGS " ${ADDRESS_SANITIZER_FLAG}")
+endfunction()
