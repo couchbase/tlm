@@ -265,28 +265,30 @@ platforms which Clang/LLVM is available, however this isn't tested.
         scan-build: 31 bugs found.
         scan-build: Run 'scan-view /source/build-analyzer/analyser-results/2014-06-05-173247-52416-1' to examine bug reports.
 
-## Thread Sanitizer and Address Sanitizer
+## Address / Thread / UndefinedBehavior Sanitizers
 
 There are pre-canned build rules to allow you to build with
-[ThreadSanitizer][thread_sanitizer_link], to detect threading issues;
-or [AddressSanitizer][address_sanitizer_link], to detect memory
-errors.
+[ThreadSanitizer][thread_sanitizer_link] to detect threading issues,
+[AddressSanitizer][address_sanitizer_link] to detect memory errors, or
+[UndefinedBehaviorSanitizer][undefined_sanitizer_link] to detect
+undefined behavior.
 
 ### Prerequities
 
-* A compiler which supports ThreadSanitizer / AddressSanitizer. Recent
-  version of Clang (3.2+) or GCC (4.8+) are claimed to work, however
-  only Clang (3.5+) has been tested.
+* A compiler which supports Address / Thread / UndefinedBehavior
+  Sanitizer. Recent version of Clang (3.2+) or GCC (4.8+) are claimed
+  to work. Currently automatied tests use GCC 7 / Clang 3.9.
 
 ### Running
 
-* Ensure that the compiler supporting Thread/Address Sanitizer is chosen by
+* Ensure that the compiler supporting *Sanitizer is chosen by
   CMake. If it's the system default compiler there is nothing to do;
   otherwise you will need to set both `CC` and `CXX` environment
   variables to point to the C / C++ compiler before calling the build
   system.
 
-* Pass the variable `CB_THREADSANITIZER=1` / `CB_ADDRESSSANITIZER=1`to CMake.
+* Pass the variable `CB_THREADSANITIZER=1` / `CB_ADDRESSSANITIZER=1` /
+  `CB_UNDEFINEDSANITIZER=1` to CMake.
 
 ThreadSanitizer one liner for a Ubuntu-based system where Clang isn't
 the default system compiler:
@@ -297,9 +299,13 @@ and for AddressSanitizer:
 
         CC=clang CXX=clang++ make EXTRA_CMAKE_OPTIONS="-D CB_ADDRESSSANITIZER=1"
 
+similary for UndefinedBehaviorSanitizer:
+
+        CC=clang CXX=clang++ make EXTRA_CMAKE_OPTIONS="-D CB_UNDEFINEDSANITIZER=1"
+
 * Run one or more tests. Any issues will be reported (to stderr by default).
 
-### Customizing ThreadSanitizer / AddressSanitizer
+### Customizing Address / Thread / UndefinedBehavior Sanitizer
 
 See `cmake/Modules/CouchbaseThreadSanitizer.cmake` CMake fragment for
 how ThreadSanizer is configured.
@@ -308,10 +314,11 @@ See the `TSAN_OPTIONS` environment variable (documented on the
 ThreadSanitizer [Flags][thread_sanitizer_flags] wiki page) for more
 information on configuring.
 
-Similarly for AddressSanitizer see
-`cmake/Modules/CouchbaseAddressSanitizer.cmake`, and the
-`ASAN_OPTIONS` environment variable (documented on the
-AddressSanitizer [Flags][address_sanitizer_flags] wiki page) for
+Similarly for AddressSanitizer / UndefinedBehaviorSanitizer see
+`cmake/Modules/CouchbaseAddressSanitizer.cmake` or
+`cmake/Modules/CouchbassUndefinedBehaviorSanitizer.cmake`, and the
+`ASAN_OPTIONS` / `UBSAN_OPTIONS` environment variable (documented on
+the AddressSanitizer [Flags][address_sanitizer_flags] wiki page) for
 details..
 
 [win_visual_studio_link]: http://hub.internal.couchbase.com/confluence/download/attachments/7242678/en_visual_studio_professional_2013_x86_web_installer_3175305.exe?version=1&modificationDate=1389383332000
@@ -329,3 +336,4 @@ details..
 [thread_sanitizer_flags]: https://code.google.com/p/thread-sanitizer/wiki/Flags
 [address_sanitizer_link]: https://github.com/google/sanitizers/wiki/AddressSanitizer
 [address_sanitizer_flags]: https://github.com/google/sanitizers/wiki/AddressSanitizerFlags
+[undefined_sanitizer_link]: https://github.com/google/sanitizers/wiki/AddressSanitizer

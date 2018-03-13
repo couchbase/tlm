@@ -82,7 +82,8 @@ ENDIF()
 
 # Enable AddressSanitizer for specific target. No-op if
 # CB_ADDRESSSANITIZER is not set to 2 (target-specific mode).
-function(add_sanitizers TARGET)
+# Typically used via add_sanitizers()
+function(add_sanitize_memory TARGET)
     if (NOT CB_ADDRESSSANITIZER EQUAL 2)
         return()
     endif ()

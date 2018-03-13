@@ -104,9 +104,8 @@ MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
 MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
-INCLUDE(CouchbaseAddressSanitizer)
+INCLUDE(CouchbaseSanitizers)
 INCLUDE(CouchbaseAsciiDocs)
-INCLUDE(CouchbaseThreadSanitizer)
 INCLUDE(CouchbaseMemoryAllocator)
 INCLUDE(CouchbaseCompression)
 
