@@ -40,7 +40,13 @@ IF (CB_UNDEFINEDSANITIZER GREATER 0)
     IF(HAVE_FLAG_SANITIZE_UNDEFINED_C AND HAVE_FLAG_SANITIZE_UNDEFINED_CXX)
         # Have UndefinedBehaviorSanitizer for C & C++; enable as per the user's selection.
 
-        SET(UNDEFINED_SANITIZER_FLAG "-fsanitize=undefined -fno-sanitize=alignment")
+        # UBSan makes heavy use of RTTI to verify the type of objects
+        # match the pointer/reference they are accessed through at
+        # runtime. This requires typeinfo for essentially all types
+        # involved in static_cast<> / reinterpret_cast<>. To simplify
+        # providing this; change the default symbol visiibility to
+        # default (all symbols visible).
+        SET(UNDEFINED_SANITIZER_FLAG "-fsanitize=undefined -fno-sanitize=alignment -fvisibility=default")
 
         # Configure CTest's MemCheck mode.
         SET(MEMORYCHECK_TYPE UndefinedBehaviorSanitizer)
