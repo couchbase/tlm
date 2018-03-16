@@ -1,3 +1,5 @@
+include(CheckCXXCompilerFlag)
+
 SET(CB_CLANGXX_DEBUG "-g")
 SET(CB_CLANGXX_WARNINGS "-Qunused-arguments -Wall -pedantic -Wredundant-decls -Wmissing-braces -fno-strict-aliasing")
 SET(CB_CLANGXX_VISIBILITY "-fvisibility=hidden")
@@ -7,7 +9,14 @@ SET(CB_CLANGXX_THREAD "-pthread")
 # Release, only differing in whether debugging information is enabled.
 SET(CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
 SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g")
-SET(CMAKE_CXX_FLAGS_DEBUG          "-O0 -g")
+
+# Make use of -Og (optimize for debugging) if available (Clang 4.0 upwards)
+check_cxx_compiler_flag(-Og HAVE_OPTIMIZE_FOR_DEBUG)
+if(HAVE_OPTIMIZE_FOR_DEBUG)
+   SET(CMAKE_CXX_FLAGS_DEBUG "-Og -g")
+else()
+   SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+endif()
 
 SET(CB_CXX_FLAGS_NO_OPTIMIZE       -O0)
 
