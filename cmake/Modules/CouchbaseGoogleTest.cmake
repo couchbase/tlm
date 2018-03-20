@@ -148,6 +148,7 @@ same as the Google Test name (i.e. ``suite.testcase``); see also
                          [TEST_PREFIX prefix]
                          [TEST_SUFFIX suffix]
                          [NO_PRETTY_TYPES] [NO_PRETTY_VALUES]
+                         [ONE_CTEST_PER_SUITE]
                          [PROPERTIES name1 value1...]
                          [TEST_LIST var]
                          [DISCOVERY_TIMEOUT seconds]
@@ -207,6 +208,12 @@ same as the Google Test name (i.e. ``suite.testcase``); see also
     actual value in the CTest test name.  If this behavior is undesirable
     (e.g. because the value strings are unwieldy), this option will suppress
     this behavior.
+
+  ``ONE_CTEST_PER_SUITE``
+    By default, one CTest will be created for every GoogleTest case. If this
+    behavour is undesirable (e.g. because there is a large setup / teardown
+    cost), this option will instead create one CTest for each GoogleTest
+    _suite_.
 
   ``PROPERTIES name1 value1...``
     Specifies additional properties to be set on all tests discovered by this
@@ -367,7 +374,7 @@ endfunction()
 function(gtest_discover_tests TARGET)
   cmake_parse_arguments(
     ""
-    "NO_PRETTY_TYPES;NO_PRETTY_VALUES"
+    "NO_PRETTY_TYPES;NO_PRETTY_VALUES;ONE_CTEST_PER_SUITE"
     "TEST_PREFIX;TEST_SUFFIX;WORKING_DIRECTORY;TEST_LIST;DISCOVERY_TIMEOUT"
     "EXTRA_ARGS;PROPERTIES"
     ${ARGN}
@@ -430,6 +437,7 @@ function(gtest_discover_tests TARGET)
             -D "TEST_LIST=${_TEST_LIST}"
             -D "CTEST_FILE=${ctest_tests_file}"
             -D "TEST_DISCOVERY_TIMEOUT=${_DISCOVERY_TIMEOUT}"
+            -D "ONE_CTEST_PER_SUITE=${_ONE_CTEST_PER_SUITE}"
             -P "${_GOOGLETEST_DISCOVER_TESTS_SCRIPT}"
     VERBATIM
   )
@@ -471,5 +479,5 @@ endfunction()
 ###############################################################################
 
 set(_GOOGLETEST_DISCOVER_TESTS_SCRIPT
-  ${CMAKE_CURRENT_LIST_DIR}/GoogleTestAddTests.cmake
+  ${CMAKE_CURRENT_LIST_DIR}/CouchbaseGoogleTestAddTests.cmake
 )

@@ -61,7 +61,25 @@ foreach(line ${output})
         set(pretty_suite "${suite}")
       endif()
       string(REGEX REPLACE "^DISABLED_" "" pretty_suite "${pretty_suite}")
-    else()
+      # If defining one test per GoogleTest suite; then add a wildcard
+      # for the current suite.
+      if (ONE_CTEST_PER_SUITE)
+        add_command(add_test
+          "${prefix}${pretty_suite}"
+          ${TEST_EXECUTOR}
+          "${TEST_EXECUTABLE}"
+          "--gtest_filter=${suite}.*"
+          ${extra_args}
+        )
+        add_command(set_tests_properties
+          "${prefix}${pretty_suite}"
+          PROPERTIES
+          WORKING_DIRECTORY "${TEST_WORKING_DIR}"
+          ${properties}
+        )
+      endif()
+    # Only add a CTest test if we are not grouping by GoogleTest suite.
+    elseif(NOT ONE_CTEST_PER_SUITE)
       # Test name; strip spaces and comments to get just the name...
       string(REGEX REPLACE " +" "" test "${line}")
       if(test MATCHES "#" AND NOT NO_PRETTY_VALUES)
