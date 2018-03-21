@@ -447,6 +447,25 @@ function(gtest_discover_tests TARGET)
     APPEND PROPERTY TEST_INCLUDE_FILES "${ctest_include_file}"
   )
 
+  # Backport to cmake 3.9 and earlier - TEST_INCLUDE_FILES property
+  # was added in cmake 3.10; prior to that we only have the singular
+  # TEST_INCLUDE_FILE property, which only allows one file to be included
+  # per directory. Therefore if running with cmake before 3.10, add a final
+  # step where we manually combine all elements in TEST_INCLUDE_FILES into a
+  # single unified file, and use TEST_INCLUDE_FILE to include that.
+  if (CMAKE_VERSION VERSION_LESS 3.10)
+    set(ctest_unified_include_file "${ctest_file_base}_include_unified.cmake")
+    get_property(_test_include_file_VALUE DIRECTORY PROPERTY TEST_INCLUDE_FILES)
+    foreach (file IN LISTS _test_include_file_VALUE)
+      file(READ ${file} contents)
+      set(unified ${unified}${contents})
+    endforeach ()
+    file(WRITE "${ctest_unified_include_file}" "${unified}")
+    set_property(DIRECTORY
+      PROPERTY TEST_INCLUDE_FILE "${ctest_unified_include_file}"
+    )
+  endif()
+
 endfunction()
 
 ###############################################################################
