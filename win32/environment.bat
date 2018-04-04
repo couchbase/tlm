@@ -8,7 +8,12 @@ if exist "C:\Program Files (x86)\Microsoft Visual Studio 14.0" (
 )
 
 :tools_set
-echo Using tools from: C:\Program Files (x86)\Microsoft Visual Studio %tools_version%
+if "%tools_version%" == "15.0" (
+  set "tools_dir=C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build"
+) else (
+  set "tools_dir=C:\Program Files (x86)\Microsoft Visual Studio %tools_version%\VC"
+)
+echo Using tools from %tools_dir%
 if not defined source_root goto default_source_root
 
 :target_arch
@@ -34,12 +39,12 @@ goto setup_arch
 
 :setup_x86
 echo Setting up Visual Studio environment for x86
-call "C:\Program Files (x86)\Microsoft Visual Studio %tools_version%\VC\vcvarsall.bat" x86
+call "%tools_dir%\vcvarsall.bat" x86
 goto setup_environment
 
 :setup_amd64
 echo Setting up Visual Studio environment for amd64
-call "C:\Program Files (x86)\Microsoft Visual Studio %tools_version%\VC\vcvarsall.bat" amd64
+call "%tools_dir%\vcvarsall.bat" amd64
 goto setup_environment
 
 :setup_environment
