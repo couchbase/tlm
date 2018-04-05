@@ -57,16 +57,19 @@ ENDMACRO (_LSB_RELEASE)
 
 
 # Returns a simple string describing the current platform. Possible
-# return values currently include: windows_msvc2015; windows_msvc (implies
-# MSVC 2013); macosx; or any value from _DETERMINE_LINUX_DISTRO.
+# return values currently include: windows_msvc2017; windows_msvc2015;
+# windows_msvc2013; windows_msvc2012; macosx; or any value from
+# _DETERMINE_LINUX_DISTRO.
 MACRO (_DETERMINE_PLATFORM var)
   IF (DEFINED CB_DOWNLOAD_DEPS_PLATFORM)
     SET (_plat ${CB_DOWNLOAD_DEPS_PLATFORM})
   ELSE (DEFINED CB_DOWNLOAD_DEPS_PLATFORM)
     SET (_plat ${CMAKE_SYSTEM_NAME})
     IF (_plat STREQUAL "Windows")
-	  if (${MSVC_VERSION} LESS 1900)
-	    SET (_plat "windows_msvc")
+	  if (${MSVC_VERSION} LESS 1800)
+	    SET (_plat "windows_msvc2012")
+	  elseif (${MSVC_VERSION} LESS 1900)
+	    SET (_plat "windows_msvc2013")
 	  elseif (${MSVC_VERSION} LESS 1910)
 	    SET (_plat "windows_msvc2015")
 	  elseif (${MSVC_VERSION} LESS 1920)
