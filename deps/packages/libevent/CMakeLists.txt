@@ -3,12 +3,12 @@
 if (APPLE OR WIN32)
   # We bundle OpenSSL on MacOS X and Windows, and we want support
   # for OpenSSL in libevent so we need to install the OpenSSL Package
-  SET (_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
+  SET (_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/unused")
   SET (_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
   SET (CMAKE_INSTALL_PREFIX "${_openssl_install}")
   DECLARE_DEP(openssl VERSION 1.0.2k-cb2 PLATFORMS windows_msvc windows_msvc2012 windows_msvc2013 windows_msvc2015 windows_msvc2017 macosx)
   SET (CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
-  SET (_libevent_extra_options -D OPENSSL_ROOT_DIR=${_openssl_install})
+  SET (_libevent_extra_options -D "OPENSSL_ROOT_DIR=${CMAKE_BINARY_DIR}/libevent/openssl.exploded")
 endif (APPLE OR WIN32)
 
 include(ExternalProject)
