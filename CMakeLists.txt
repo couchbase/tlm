@@ -253,6 +253,13 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/plasma)
     ENDIF()
 
+    IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/libcouchbase")
+      SET (LCB_NO_PLUGINS ON CACHE BOOL "Don't build plugins" FORCE)
+      SET (LCB_NO_TESTS ON CACHE BOOL "Don't run tests" FORCE)
+      SET (LCB_BUILD_DTRACE OFF CACHE BOOL "Turn off tracing" FORCE)
+      ADD_SUBDIRECTORY(libcouchbase)
+    ENDIF()
+
     IF (BUILD_ENTERPRISE AND CB_ENABLE_EVENTING)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing)
     ENDIF()
