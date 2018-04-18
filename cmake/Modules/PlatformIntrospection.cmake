@@ -21,7 +21,7 @@ MACRO (_DETERMINE_ARCH var)
       EXECUTE_PROCESS (COMMAND isainfo -k
         COMMAND tr -d '\n'
         OUTPUT_VARIABLE _arch)
-    ELSEIF (${CMAKE_SYSTEM_NAME} STREQUAL "Windows")
+    ELSEIF (${CMAKE_SYSTEM_NAME} STREQUAL "Windows" OR ${CMAKE_SYSTEM_NAME} STREQUAL "WindowsStore")
       # If user didn't specify the arch via target_arch or
       # CB_DOWNLOAD_DEPS_ARCH, assume that the target is the same as
       # the current host architecture and derive that from
@@ -65,7 +65,7 @@ MACRO (_DETERMINE_PLATFORM var)
     SET (_plat ${CB_DOWNLOAD_DEPS_PLATFORM})
   ELSE (DEFINED CB_DOWNLOAD_DEPS_PLATFORM)
     SET (_plat ${CMAKE_SYSTEM_NAME})
-    IF (_plat STREQUAL "Windows")
+    IF (_plat STREQUAL "Windows" OR _plat STREQUAL "WindowsStore")
 	  if (${MSVC_VERSION} LESS 1800)
 	    SET (_plat "windows_msvc2012")
 	  elseif (${MSVC_VERSION} LESS 1900)
