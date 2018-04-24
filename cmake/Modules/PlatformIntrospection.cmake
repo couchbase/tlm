@@ -94,7 +94,7 @@ MACRO (_DETERMINE_PLATFORM var)
     ELSE (_plat STREQUAL "Windows")
       MESSAGE (WARNING "Sorry, don't recognize your system ${_plat}. ")
       SET (_plat "unknown")
-    ENDIF (_plat STREQUAL "Windows")
+    ENDIF (_plat STREQUAL "Windows" OR _plat STREQUAL "WindowsStore")
     SET (CB_DOWNLOAD_DEPS_PLATFORM ${_plat} CACHE STRING
       "Platform for downloaded dependencies")
     MARK_AS_ADVANCED (CB_DOWNLOAD_DEPS_PLATFORM)
