@@ -1,0 +1,5 @@
+[erlang]
+Bindir=${CMAKE_INSTALL_PREFIX}/erts-9.3/bin
+Progname=erl
+Rootdir=${CMAKE_INSTALL_PREFIX}
+

@@ -9,15 +9,18 @@
 SET (_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/ignored")
 SET (_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 SET (CMAKE_INSTALL_PREFIX "${_openssl_install}")
-DECLARE_DEP(openssl VERSION 1.0.2k-cb2 PLATFORMS macosx windows_msvc2015)
+DECLARE_DEP (openssl VERSION 1.0.2k-cb2 PLATFORMS macosx)
 SET (CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 
 INCLUDE (ExternalProject)
 
 IF (WIN32)
-  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/erlang_windows.sh)
+  SET (_build_scriptdir ${CMAKE_CURRENT_SOURCE_DIR}/windows)
+  SET (_build_script ${_build_scriptdir}/erlang_windows.bat)
+  FILE (TO_NATIVE_PATH "${_build_scriptdir}" _build_scriptdir)
 ELSE ()
-  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/erlang_unix.sh)
+  SET (_build_scriptdir ${CMAKE_CURRENT_SOURCE_DIR}/unix)
+  SET (_build_script ${_build_scriptdir}/erlang_unix.sh)
 ENDIF ()
 SET (_install_dir "${CMAKE_BINARY_DIR}/install")
 FILE (TO_NATIVE_PATH "${_install_dir}" _install_dir)
@@ -27,13 +30,11 @@ ExternalProject_Add (erlang
   GIT_TAG ${_git_rev}
 
   CONFIGURE_COMMAND "${CMAKE_COMMAND}" -E make_directory <INSTALL_DIR>
-  BUILD_COMMAND "${_build_script}" <INSTALL_DIR> ${PLATFORM}
+  BUILD_COMMAND "${_build_script}" <INSTALL_DIR> ${_build_scriptdir} ${PLATFORM}
       "${CMAKE_CURRENT_BINARY_DIR}/openssl.exploded"
   BUILD_IN_SOURCE 1
   INSTALL_DIR "${_install_dir}"
-  INSTALL_COMMAND "${CMAKE_COMMAND}" -E copy
-    "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt"
-    <INSTALL_DIR>/CMakeLists.txt
+  INSTALL_COMMAND ""
 )
 
 # cbdeps boilerplate

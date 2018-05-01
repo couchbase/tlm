@@ -1,3 +1,8 @@
+############## THIS SCRIPT IS NOT USED
+##### This is left for historical reference for when we automate building
+##### Erlang from source code on Windows. It was used as part of a semi-
+##### manual process for Erlang 16.
+
 echo start build at `date`
 
 thisdir=`pwd`

@@ -1,8 +1,9 @@
 #!/bin/bash -ex
 
 INSTALL_DIR=$1
-PLATFORM=$2
-CBDEPS_OPENSSL_DIR=$3
+SCRIPT_DIR=$2
+PLATFORM=$3
+CBDEPS_OPENSSL_DIR=$4
 
 case "$PLATFORM" in
     debian9|fedora26)
@@ -55,6 +56,9 @@ esac
 make -j4
 
 make install
+
+# Copy in cbdeps CMakeLists
+cp ${SCRIPT_DIR}/CMakeLists_package.txt ${INSTALL_DIR}/CMakeLists.txt
 
 # On MacOS, set up the RPath for the crypto plugin to find our custom OpenSSL
 if [ $(uname -s) = "Darwin" ]; then
