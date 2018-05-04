@@ -20,7 +20,7 @@ DECLARE_DEP (curl VERSION 7.49.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 d
 DECLARE_DEP (erlang VERSION OTP-20.3.2-cb5 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
 DECLARE_DEP (flatbuffers VERSION 1.4.0-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
 DECLARE_DEP (flex VERSION 2.5.4a-cb1 PLATFORMS windows_msvc2015)
-DECLARE_DEP (flex VERSION 2.6.4-cb3 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04)
+DECLARE_DEP (flex VERSION 2.6.4-cb4 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04)
 DECLARE_DEP (icu4c VERSION 59.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
 DECLARE_DEP (jemalloc VERSION 4.1.0-cb2 PLATFORMS windows_msvc2015)
 DECLARE_DEP (jemalloc VERSION 4.5.0.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04)
