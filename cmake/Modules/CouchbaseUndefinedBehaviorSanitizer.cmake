@@ -18,10 +18,12 @@ OPTION(CB_UNDEFINEDSANITIZER "Enable UndefinedBehaviorSanitizer memory error det
 
 IF (CB_UNDEFINEDSANITIZER GREATER 0)
 
+    SET(UNDEFINED_SANITIZER_FLAG "-fsanitize=undefined -fno-sanitize=alignment -fno-sanitize-recover")
+
     CMAKE_PUSH_CHECK_STATE(RESET)
-    SET(CMAKE_REQUIRED_FLAGS "-fsanitize=undefined") # Also needs to be a link flag for test to pass
-    CHECK_C_COMPILER_FLAG("-fsanitize=undefined" HAVE_FLAG_SANITIZE_UNDEFINED_C)
-    CHECK_CXX_COMPILER_FLAG("-fsanitize=undefined" HAVE_FLAG_SANITIZE_UNDEFINED_CXX)
+    SET(CMAKE_REQUIRED_FLAGS ${UNDEFINED_SANITIZER_FLAG}) # Also needs to be a link flag for test to pass
+    CHECK_C_COMPILER_FLAG(${UNDEFINED_SANITIZER_FLAG} HAVE_FLAG_SANITIZE_UNDEFINED_C)
+    CHECK_CXX_COMPILER_FLAG(${UNDEFINED_SANITIZER_FLAG} HAVE_FLAG_SANITIZE_UNDEFINED_CXX)
     CMAKE_POP_CHECK_STATE()
 
     IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -46,7 +48,7 @@ IF (CB_UNDEFINEDSANITIZER GREATER 0)
         # involved in static_cast<> / reinterpret_cast<>. To simplify
         # providing this; change the default symbol visiibility to
         # default (all symbols visible).
-        SET(UNDEFINED_SANITIZER_FLAG "-fsanitize=undefined -fno-sanitize=alignment -fvisibility=default")
+        SET(UNDEFINED_SANITIZER_FLAG "${UNDEFINED_SANITIZER_FLAG} -fvisibility=default")
 
         # Configure CTest's MemCheck mode.
         SET(MEMORYCHECK_TYPE UndefinedBehaviorSanitizer)
