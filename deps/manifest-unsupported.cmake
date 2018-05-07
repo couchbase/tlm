@@ -22,7 +22,6 @@
 DECLARE_DEP (breakpad VERSION 20160926-cb2 PLATFORMS ubuntu17.04 fedora26 fedora27)
 DECLARE_DEP (boost VERSION 1.62.0-cb3 PLATFORMS freebsd ubuntu17.04 fedora26 fedora27 windows_msvc2017)
 DECLARE_DEP (curl VERSION 7.49.1-cb1 PLATFORMS freebsd sunos ubuntu17.04 fedora26 fedora27 windows_msvc2017)
-DECLARE_DEP (erlang VERSION R16B03-1-couchbase-cb8 PLATFORMS fedora27 fedora29)
 DECLARE_DEP (erlang VERSION R16B03-1-couchbase-cb6 PLATFORMS sunos ubuntu17.04 fedora26)
 DECLARE_DEP (erlang VERSION R16B03-1-couchbase-cb4 PLATFORMS freebsd windows_msvc2017)
 DECLARE_DEP (flatbuffers VERSION 1.4.0-cb1 PLATFORMS freebsd sunos ubuntu17.04 windows_msvc2017)
