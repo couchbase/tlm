@@ -134,7 +134,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
   # Declare a dependency
   FUNCTION (DECLARE_DEP name)
-    PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION" "SKIP" ${ARGN})
+    PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION" "SKIP;NOINSTALL" ${ARGN})
 
     # If this dependency has already been declared, skip it.
     # Exception: if we are building the cbdeps packages themselves then
@@ -221,7 +221,11 @@ IF (NOT CBDownloadDeps_INCLUDED)
     # run CMake, which might be wasteful, but at least should be safe.
     FILE (MAKE_DIRECTORY "${_binary_dir}")
     IF (EXISTS ${_explode_dir}/CMakeLists.txt)
-      ADD_SUBDIRECTORY ("${_explode_dir}" "${_binary_dir}" EXCLUDE_FROM_ALL)
+      IF (dep_NOINSTALL)
+	MESSAGE(STATUS "Skip running CMakeLists from the package")
+      ELSE (dep_NOINSTALL)
+        ADD_SUBDIRECTORY ("${_explode_dir}" "${_binary_dir}" EXCLUDE_FROM_ALL)
+      ENDIF (dep_NOINSTALL)
     ENDIF (EXISTS ${_explode_dir}/CMakeLists.txt)
   ENDFUNCTION (DECLARE_DEP)
 
