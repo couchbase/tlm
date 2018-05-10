@@ -19,6 +19,7 @@ ExternalProject_Add(libevent
   GIT_TAG ${_git_rev}
 
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
+             -D CMAKE_BUILD_TYPE=RelWithDebInfo
              -D EVENT__BUILD_SHARED_LIBRARIES=ON
              -D EVENT__DISABLE_DEBUG_MODE=ON
              -D EVENT__DISABLE_BENCHMARK=ON
