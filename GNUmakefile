@@ -17,23 +17,6 @@ $(PASSTHRU_TARGETS):
             PREFIX="$(PREFIX)" CHMODCMD="chmod u+w" CP=cp \
             SEPARATOR=/ RM=rm RMOPTS=-rf $@
 
-ICU_OPT=
-UNAME := $(shell uname -s)
-ifeq ($(UNAME),Darwin)
-    # MB-11442
-    ICU_OPT=-mmacosx-version-min=10.7
-endif
-
-icu4c/source/Makefile:
-	(cd icu4c/source && \
-	CFLAGS=$(ICU_OPT) CXXFLAGS=$(ICU_OPT) LDFLAGS=$(ICU_OPT) \
-	  ./configure "--prefix=$(PREFIX)")
-
-make-install-icu4c: icu4c/source/Makefile
-	$(MAKE) -C icu4c/source install
-
-make-install-couchdb-deps: make-install-icu4c
-
 DEPS_DIR := $(ROOT)/tlm/deps/packages
 
 # it's a little wasteful to call cmake all the time, but the code path taken
