@@ -162,7 +162,7 @@ ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows
 _ADD_DEP_PACKAGE(snappy 1.1.6 1.1.6 1)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 1)
-_ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 3)
+_ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 4)
 _ADD_DEP_PACKAGE(v8 5.9 5.9.223 5)
 # jemalloc comes from "stable-4" branch, which is a bit later than their
 # 4.5.0 release, so we call it 4.5.0.1.
