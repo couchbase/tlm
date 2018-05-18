@@ -67,20 +67,25 @@ IF ("${GOVERSION}" VERSION_GREATER 1.4.9)
   STRING (REPLACE ";" " " _bits_str "${_bits}")
 ENDIF ()
 
+# Attempt to hide build-system-specific paths in resulting binaries.
+get_filename_component(REPOSYNC "${REPOSYNC}" REALPATH)
+SET (GCFLAGS "-trimpath=${REPOSYNC}" ${GCFLAGS})
+SET (ASMFLAGS "-trimpath=${REPOSYNC}")
+
 # Execute "go install".
-MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install ${_bits_str} -tags=\"${GOTAGS}\" -buildmode=\"${GOBUILDMODE}\" -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${_go_race} ${PACKAGE}")
+MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install ${_bits_str} -tags=\"${GOTAGS}\" -buildmode=\"${GOBUILDMODE}\" -gcflags=\"${GCFLAGS}\" -asmflags=\"${ASMFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${_go_race} ${PACKAGE}")
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
-  COMMAND "${GO_EXECUTABLE}" install ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} ${_go_race} "${PACKAGE}")
+  COMMAND "${GO_EXECUTABLE}" install ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} ${_go_race} "${PACKAGE}")
   IF (CB_GO_CODE_COVERAGE)
-    MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} test -c -cover -covermode=count -coverpkg ${PACKAGE} -tags=${GOTAGS} -gcflags=${GCFLAGS} -ldflags=${LDFLAGS} ${_go_debug} ${PACKAGE}")
-    EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" test -c -cover -covermode=count -coverpkg ${PACKAGE} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} "${PACKAGE}")
+    MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} test -c -cover -covermode=count -coverpkg ${PACKAGE} -tags=${GOTAGS} -gcflags=${GCFLAGS} -asmflags=${ASMFLAGS} -ldflags=${LDFLAGS} ${_go_debug} ${PACKAGE}")
+    EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" test -c -cover -covermode=count -coverpkg ${PACKAGE} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} "${PACKAGE}")
   ENDIF ()
 IF (_failure)
   MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
   MESSAGE (STATUS "@ 'go install' failed! Re-running as 'go build' to help debug...")
   MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
   # Easier to debug
-  EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" build ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" -x "${PACKAGE}")
+  EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" build ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}" -x "${PACKAGE}")
   MESSAGE (FATAL_ERROR "Failed running go install")
 ENDIF (_failure)
 
