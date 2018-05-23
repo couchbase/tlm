@@ -1,85 +1,90 @@
+#
+#     Copyright 2018 Couchbase, Inc.
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 # Locate v8 library
 # This module defines
-#  V8_FOUND, if false, do not try to link with v8
+#  V8_FOUND, if V8 was found
 #  V8_LIBRARIES, Library path and libs
 #  V8_INCLUDE_DIR, where to find V8 headers
+if (NOT DEFINED V8_FOUND)
+    include(PlatformIntrospection)
 
-SET(_v8_exploded ${CMAKE_BINARY_DIR}/tlm/deps/v8.exploded)
+    cb_get_supported_platform(_supported_platform)
+    if (_supported_platform)
+        # Supported platforms should only use the provided hints and pick it up
+        # from cbdeps
+        set(_v8_no_default_path NO_DEFAULT_PATH)
+    endif ()
 
-FIND_PATH(V8_INCLUDE_DIR v8.h
-          HINTS ${_v8_exploded}/include
-          PATHS
-              ~/Library/Frameworks
-              /Library/Frameworks
-              /opt/local
-              /opt/csw
-              /opt/v8
-              /opt/v8/include
-              /opt
-          NO_CMAKE_PATH
-          NO_CMAKE_ENVIRONMENT_PATH)
+    set(_v8_exploded ${CMAKE_BINARY_DIR}/tlm/deps/v8.exploded)
 
-IF (WIN32)
-  # RelWithDebInfo & MinSizeRel should use the Release libraries, otherwise use
-  # the same directory as the build type.
-  IF(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-    SET(_build_type "Release")
-  ELSE()
-    SET(_build_type ${CMAKE_BUILD_TYPE})
-  ENDIF()
+    find_path(V8_INCLUDE_DIR v8.h
+              HINTS ${_v8_exploded}/include
+              ${_v8_no_default_path})
 
-  FIND_LIBRARY(V8_SHAREDLIB
-               NAMES v8.dll
-               HINTS ${_v8_exploded}/lib/${_build_type})
-  FIND_LIBRARY(V8_PLATFORMLIB
-               NAMES v8_libplatform.dll
-               HINTS ${_v8_exploded}/lib/${_build_type})
-  FIND_LIBRARY(V8_BASELIB
-               NAMES v8_libbase.dll
-               HINTS ${_v8_exploded}/lib/${_build_type})
-  SET(V8_LIBRARIES ${V8_SHAREDLIB} ${V8_PLATFORMLIB} ${V8_BASELIB})
-ELSE (WIN32)
-  FIND_LIBRARY(V8_SHAREDLIB
-               NAMES v8
-               HINTS ${CMAKE_INSTALL_PREFIX}/lib
-               PATHS
-                   ~/Library/Frameworks
-                   /Library/Frameworks
-                   /opt/local
-                   /opt/csw
-                   /opt/v8
-                   /opt/v8/lib
-                   /opt)
-  FIND_LIBRARY(V8_PLATFORMLIB
-               NAMES v8_libplatform
-               PATHS
-                   ~/Library/Frameworks
-                   /Library/Frameworks
-                   /opt/local
-                   /opt/csw
-                   /opt/v8
-                   /opt/v8/lib
-                   /opt)
-  FIND_LIBRARY(V8_BASELIB
-               NAMES v8_libbase
-               PATHS
-                   ~/Library/Frameworks
-                   /Library/Frameworks
-                   /opt/local
-                   /opt/csw
-                   /opt/v8
-                   /opt/v8/lib
-                   /opt)
-  SET(V8_LIBRARIES ${V8_SHAREDLIB})
-  IF (V8_PLATFORMLIB AND V8_BASELIB)
-    SET(V8_LIBRARIES ${V8_LIBRARIES} ${V8_PLATFORMLIB} ${V8_BASELIB})
-  ENDIF (V8_PLATFORMLIB AND V8_BASELIB)
-ENDIF (WIN32)
+    if (NOT V8_INCLUDE_DIR)
+        message(FATAL_ERROR "Failed to locate v8.h")
+    endif ()
 
-IF (V8_LIBRARIES)
-  MESSAGE(STATUS "Found v8 in ${V8_INCLUDE_DIR} : ${V8_LIBRARIES}")
-ELSE (V8_LIBRARIES)
-  MESSAGE(FATAL_ERROR "Can't build Couchbase without V8")
-ENDIF (V8_LIBRARIES)
+    if (WIN32)
+        # RelWithDebInfo & MinSizeRel should use the Release libraries, otherwise use
+        # the same directory as the build type.
+        if (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+            set(_build_type "Release")
+        else ()
+            set(_build_type ${CMAKE_BUILD_TYPE})
+        ENDIF ()
 
-MARK_AS_ADVANCED(V8_INCLUDE_DIR V8_LIBRARIES)
+        if (NOT V8_LIBRARIES)
+            set(_v8_libraries "v8.dll;v8_libplatform.dll;v8_libbase.dll")
+            foreach (_mylib ${_v8_libraries})
+                unset(_the_lib CACHE)
+                find_library(_the_lib
+                             NAMES ${_mylib}
+                             HINTS ${_v8_exploded}/lib/${_build_type}
+                             ${_v8_no_default_path})
+                if (_the_lib)
+                    list(APPEND _v8_libs_found ${_the_lib})
+                endif (_the_lib)
+            endforeach (_mylib)
+            set(V8_LIBRARIES ${_v8_libs_found} CACHE STRING "V8 Libraries" FORCE)
+        endif (NOT V8_LIBRARIES)
+    else (WIN32)
+        if (NOT V8_LIBRARIES)
+            set(_v8_libraries "v8;v8_libplatform;v8_libbase")
+            foreach (_mylib ${_v8_libraries})
+                unset(_the_lib CACHE)
+                find_library(_the_lib
+                             NAMES ${_mylib}
+                             HINTS ${CMAKE_INSTALL_PREFIX}/lib
+                             ${_v8_no_default_path})
+                if (_the_lib)
+                    list(APPEND _v8_libs_found ${_the_lib})
+                endif (_the_lib)
+            endforeach (_mylib)
+            set(V8_LIBRARIES ${_v8_libs_found} CACHE STRING "V8 Libraries" FORCE)
+        endif (NOT V8_LIBRARIES)
+    endif (WIN32)
+
+    if (V8_LIBRARIES)
+        message(STATUS "Found v8 headers in: ${V8_INCLUDE_DIR}")
+        message(STATUS "          libraries: ${V8_LIBRARIES}")
+    else (V8_LIBRARIES)
+        message(FATAL_ERROR "Can't build Couchbase without V8")
+    endif (V8_LIBRARIES)
+
+    set(V8_FOUND true CACHE BOOL "Found V8" FORCE)
+    mark_as_advanced(V8_FOUND V8_INCLUDE_DIR V8_LIBRARIES)
+endif (NOT DEFINED V8_FOUND)
