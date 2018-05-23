@@ -127,6 +127,11 @@ INCLUDE(FindCouchbaseV8)
 INCLUDE(FindCouchbaseNlohmannJson)
 INCLUDE(FindCouchbaseRocksDB)
 
+if (BUILD_ENTERPRISE)
+    # libuv is currently only used by the enterpise builds
+    include(FindCouchbaseLibuv)
+endif()
+
 # Declare PRODUCT_VERSION in cache, but then override user-defined value
 # if it is an empty string
 SET (PRODUCT_VERSION "" CACHE STRING "Product version with build number")
