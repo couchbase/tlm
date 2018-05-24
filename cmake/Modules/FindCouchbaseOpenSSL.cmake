@@ -1,3 +1,18 @@
+#
+#     Copyright 2018 Couchbase, Inc.
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
+
 # Locate OpenSSL library
 #
 # For Windows and MacOSX we bundle our own version, but for the
@@ -5,68 +20,65 @@
 # version.
 #
 # This module defines
+#  OPENSSL_FOUND, Set when OpenSSL is detected
 #  OPENSSL_LIBRARIES, Library path and libs
-#  OPENSSL_INCLUDE_DIR, where to find the ICU headers
+#  OPENSSL_INCLUDE_DIR, where to find the OpenSSL headers
 
-SET(_openssl_exploded ${CMAKE_BINARY_DIR}/tlm/deps/openssl.exploded)
-set(_openssl_libraries "ssl;libssl32;ssleay32;crypto;libeay32")
+if (NOT DEFINED OPENSSL_FOUND)
+    set(_openssl_exploded ${CMAKE_BINARY_DIR}/tlm/deps/openssl.exploded)
+    set(_openssl_libraries "ssl;libssl32;ssleay32;crypto;libeay32")
 
-if (WIN32 OR APPLE)
-    find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h
-              HINTS ${_openssl_exploded}
-              PATH_SUFFIXES include
-              NO_CMAKE_PATH
-              NO_CMAKE_ENVIRONMENT_PATH)
+    if (WIN32 OR APPLE)
+        # For Windows and Apple we bundle the version of OpenSSL we want
+        # to use (See the NO_DEFAULT_PATH)
+        find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h
+                  HINTS ${_openssl_exploded}
+                  PATH_SUFFIXES include
+                  NO_CMAKE_PATH
+                  NO_CMAKE_ENVIRONMENT_PATH
+                  NO_DEFAULT_PATH)
 
-    string(STRIP ${OPENSSL_INCLUDE_DIR} OPENSSL_INCLUDE_DIR)
-    foreach(_mylib ${_openssl_libraries})
-        unset(_the_lib CACHE)
-        find_library(_the_lib
-                     NAMES ${_mylib}
-                     HINTS ${CMAKE_INSTALL_PREFIX}/lib
-                     NO_DEFAULT_PATH)
-        if (_the_lib)
-            list(APPEND OPENSSL_LIBRARIES ${_the_lib})
-        endif (_the_lib)
-    endforeach(_mylib)
-else (WIN32 OR APPLE)
-    find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h
-              HINTS ENV OPENSSL_DIR
-              PATH_SUFFIXES include
-              PATHS
-                 /usr/local
-                 /opt/local
-                 /opt/csw
-                 /opt/openssl
-                 /opt)
+        string(STRIP ${OPENSSL_INCLUDE_DIR} OPENSSL_INCLUDE_DIR)
+        if (NOT OPENSSL_LIBRARIES)
+            foreach (_mylib ${_openssl_libraries})
+                unset(_the_lib CACHE)
+                find_library(_the_lib
+                             NAMES ${_mylib}
+                             HINTS ${CMAKE_INSTALL_PREFIX}/lib
+                             NO_DEFAULT_PATH)
+                if (_the_lib)
+                    list(APPEND _openssl_libs_found ${_the_lib})
+                endif (_the_lib)
+            endforeach (_mylib)
+            set(OPENSSL_LIBRARIES ${_openssl_libs_found} CACHE STRING "OpenSSL Libraries" FORCE)
+        endif (NOT OPENSSL_LIBRARIES)
+    else (WIN32 OR APPLE)
+        # We're using the OS provided version of OpenSSL on Linux
+        find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h
+                  HINTS ENV OPENSSL_DIR
+                  PATH_SUFFIXES include)
 
-    foreach (_mylib ${_openssl_libraries})
-        unset(_the_lib CACHE)
-        find_library(_the_lib
-                     NAMES ${_mylib}
-                     HINTS ENV OPENSSL_DIR
-                     PATHS
-                         /usr/local
-                         /opt/local
-                         /opt/csw
-                         /opt/openssl
-                         /opt)
-        if (_the_lib)
-            list(APPEND OPENSSL_LIBRARIES ${_the_lib})
-        endif (_the_lib)
-    endforeach (_mylib)
+        if (NOT OPENSSL_LIBRARIES)
+            foreach (_mylib ${_openssl_libraries})
+                unset(_the_lib CACHE)
+                find_library(_the_lib
+                             NAMES ${_mylib}
+                             HINTS ENV OPENSSL_DIR)
+                if (_the_lib)
+                    list(APPEND _openssl_libs_found ${_the_lib})
+                endif (_the_lib)
+            endforeach (_mylib)
+            set(OPENSSL_LIBRARIES ${_openssl_libs_found} CACHE STRING "OpenSSL Libraries" FORCE)
+        endif (NOT OPENSSL_LIBRARIES)
+    endif (WIN32 OR APPLE)
 
-    if (OPENSSL_SSL_LIBRARY AND OPENSSL_CRYPT_LIBRARY)
-        set(OPENSSL_LIBRARIES ${OPENSSL_SSL_LIBRARY} ${OPENSSL_CRYPT_LIBRARY})
-    endif (OPENSSL_SSL_LIBRARY AND OPENSSL_CRYPT_LIBRARY)
-endif (WIN32 OR APPLE)
+    if (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
+        message(STATUS "Found OpenSSL headers in: ${OPENSSL_INCLUDE_DIR}")
+        message(STATUS "               libraries: ${OPENSSL_LIBRARIES}")
+    else (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
+        message(FATAL_ERROR "Can't build Couchbase without openssl")
+    endif (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
 
-if (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
-    message(STATUS "Found OpenSSL headers in ${OPENSSL_INCLUDE_DIR}")
-    message(STATUS "Using OpenSSL libraries: ${OPENSSL_LIBRARIES}")
-else (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
-  message(FATAL_ERROR "Can't build Couchbase without openssl")
-endif (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
-
-set(OPENSSL_FOUND true)
-mark_as_advanced(OPENSSL_FOUND OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
+    set(OPENSSL_FOUND true CACHE BOOL "Found OpenSSL" FORCE)
+    mark_as_advanced(OPENSSL_FOUND OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
+endif (NOT DEFINED OPENSSL_FOUND)
