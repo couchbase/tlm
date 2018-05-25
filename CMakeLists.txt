@@ -258,6 +258,8 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       SET (LCB_NO_PLUGINS ON CACHE BOOL "Don't build plugins" FORCE)
       SET (LCB_NO_TESTS ON CACHE BOOL "Don't run tests" FORCE)
       SET (LCB_BUILD_DTRACE OFF CACHE BOOL "Turn off tracing" FORCE)
+      SET (LCB_INSTALL_HEADERS OFF CACHE BOOL "Don't install headers" FORCE)
+      SET (LCB_INSTALL_PKGCONFIG OFF CACHE BOOL "Don't install libcouchbase.pc" FORCE)
       ADD_SUBDIRECTORY(libcouchbase)
     ENDIF()
 
