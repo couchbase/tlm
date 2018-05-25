@@ -38,9 +38,9 @@ ELSEIF ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
   INCLUDE(CouchbaseClangOptions)
 ELSEIF ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
   INCLUDE(CouchbaseMsvcOptions)
-ELSEIF ("${CMAKE_C_COMPILER_ID}" STREQUAL "SunPro")
-  INCLUDE(CouchbaseSproOptions)
-ENDIF ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+ELSE ()
+  MESSAGE(FATAL_ERROR "Unsupported C compiler: ${CMAKE_C_COMPILER_ID}")
+ENDIF()
 
 #
 # Set flags for the C++ compiler
@@ -51,9 +51,9 @@ ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
   INCLUDE(CouchbaseClangxxOptions)
 ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
   INCLUDE(CouchbaseMsvcxxOptions)
-ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "SunPro")
-  INCLUDE(CouchbaseSproxxOptions)
-ENDIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+ELSE ()
+    MESSAGE(FATAL_ERROR "Unsupported C++ compiler: ${CMAKE_C_COMPILER_ID}")
+ENDIF ()
 
 # Add common -D sections
 INCLUDE(CouchbaseDefinitions)
