@@ -44,15 +44,20 @@ DerivePointerAlignment: false
 DisableFormat:   false
 ExperimentalAutoDetectBinPacking: false
 ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
+# Include ordering based on:
+# https://github.com/couchbase/kv_engine/blob/master/docs/CodingStandards.rst#include-style
 IncludeCategories:
   - Regex:           '^"config.h"'
     Priority:        -1
-  - Regex:           '^<.*\.(h|hpp)>'
+# Main header for a source file automatically gets priority 0.
+  - Regex:           '^".*\.h"'
     Priority:        1
-  - Regex:           '^<.*'
+  - Regex:           '^<.*\.(h|hpp)>'
     Priority:        2
-  - Regex:           '.*'
+  - Regex:           '^<.*'
     Priority:        3
+  - Regex:           '.*'
+    Priority:        4
 IndentCaseLabels: false
 IndentWidth:     4
 IndentWrappedFunctionNames: false
