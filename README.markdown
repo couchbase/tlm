@@ -5,38 +5,21 @@ building Couchbase on multiple platforms.
 
 **Table of Contents**
 
-- [Content](#user-content-content)
 - [How to build](#user-content-how-to-build)
 	- [Simple](#user-content-simple-build)
 	- [Customize your builds](#user-content-customize-your-builds)
-- [Microsoft Windows 2008R2](#user-content-microsoft-windows-2008r2)
-	- [Configuration](#user-content-configuration)
-		- [git](#user-content-git)
-	- [How to build](#user-content-how-to-build-1)
-- [MacOSX](#user-content-macosx)
-- [Ubuntu 14.04](#user-content-ubuntu-1404)
-- [Fedora 21](#user-content-fedora-21)
-- [OpenSUSE](#opensuse)
+	- [Microsoft Windows](#user-content-microsoft-windows)
 - [Static Analysis](#user-content-static-analysis)
 
-## Content
+## Software requirements
 
-The file named `CMakeLists.txt` contains the full build description
-for Couchbase. It should be copied to the top of your source directory
-(this happens automatically when you are using repo).
-
-The `cmake` directory contains macros used by cmake to configure a
-build of Couchbase.
-
-`Makefile` is a convenience file that repo will put in the root of
-your source directory. It invokes `cmake` with a specific set of
-options. "All" flavors of make should be able to parse this makefile,
-and its defaults are set to match building on Microsoft Windows.
-
-`GNUmakefile` is another convenience file that repo will put in the
-root of your source directory. GNU make will favor this file over
-`Makefile` and this file just overrides the defaults specified in
-`Makefile`.
+* C/C++ compiler:
+  * Visual Studio 2015
+  * clang
+  * gcc
+* ccache may speed up the development cycle when clang / gcc is used)
+* CMake
+* Google repo (in order to fetch all of the source code)
 
 ## How to build
 
@@ -44,13 +27,10 @@ Couchbase utilizes [CMake][cmake_link] in order to provide build
 support for a wide range of platforms. CMake isn't a build system
 like GNU Autotools, but a tool that generates build information for
 external systems like: Visual Studio projects, XCode projects and
-Makefiles to name a few. Their good support for Microsoft Windows and
-Makefiles is the primary reason why we decided to move away from GNU
-Autotools. CMake isn't a magic pill that solves all our problems; it
-comes with its own list of challenges.
-
-It is recommended to perform "out of source builds", which means that
-the build artifacts is stored _outside_ the source directory.
+Makefiles to name a few. The nightly build of Couchbase (and hence
+what we test) is using Makefiles (and ninja on Windows). Other
+systems _may_ however work, but you're pretty much on your own if
+you try to use them.
 
 ### Simple build
 
@@ -67,7 +47,7 @@ convenience:
 This would install the build software in a subdirectory named
 `install`. To change this you may run:
 
-    trond@ok source> make PREFIX=/opt/couchbase
+    trond@ok source> make EXTRA_CMAKE_OPTIONS='-DCMAKE_INSTALL_PREFIX=/opt/couchbase'
 
 ### Customize your builds
 
@@ -107,128 +87,41 @@ locations. Ex:
 
     CMAKE_PREFIX_PATH="/opt/r14b04;/opt/couchbase;/opt/local"
 
-## Microsoft Windows 2008R2
+### Microsoft Windows
 
-The following steps are needed to build Couchbase on Microsoft Windows 2008R2:
+Couchbase use google repo to stich together all of the individual git
+repositories. Repo is implemented in python, but it's unfortunately using
+features not available on python for windows. The workaround I've been using
+(and tested) is by using repo from http://github.com/esrlabs/git-repo. To
+avoid any "problems" I'm performing all of the repo / git steps through
+the bash shell provided with git (remember to enable support for creating
+symbolic links for your user: "Windows Settings", "Security Settings",
+"Local policies", "User Rights assignment" and locate the "Create symbolic
+links" and add the user). I'm performing all of the build steps
+through `command.com`.
 
-* Install OS, activate and run Windows Update and install all updates
-* Install Google Chrome (optional, but makes your life easier)
-* Install [Visual Studio 2013 Professional][win_visual_studio_link]
-* Install all updates from microsoft update
-* Install [GIT][win_git_link] and select the option to add GIT to path
-* Install [Python 2.7][win_python_link] and add c:\python27 to path (manually)
-* Install [7-ZIP][win_7zip_link] and add the installation to path (manually)
-* Install [CMake][win_cmake_link] and add to path
-* Install [MinGW][mingw_link] and add to path
-* Download and install [2008 runtime extensions][win_2008_runtime_ext_link]
+I've only tested this on Windows 10PRO, but it may work with other (newer)
+versions of windows:
 
-Note: Significant portions of Couchbase Server are written in Go. Go itself
-is automatically downloaded as part of the build, but Go requires gcc (and
-not Visual Studio) in order to interface with C libraries. Our builds are
-tested with MinGW 4.8.3.
+* Install Microsoft Visual Studio 2015
+* Install git from https://git-scm.com (I configured it to only be available from within bash)
+* Install google repo (use the one from github.com/esrlabs/git-repo)
+* Install cmake
+* Install mingw via Chocolatey package manager (http://chocolatey.org) and
+  add `c:\tools\mingw64\bin` to PATH
 
-### Configuration
+Before you can start the build process you need to set a lot of environemnt
+variables, and all of them is located in `tlm\win32\environment.bat`. Open
+up `command.com` and run the command above in the root of the source directory.
 
-#### git
+You could now be able to build Couchbase by executing:
 
-Repo will complain if git isn't properly configured. Setting name and
-email should be sufficient, but you also may at least want to set the
-two additional settings suggested:
+    C:\compile> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
+    C:\compile> repo sync
+    C:\compile> tlm\win32\environment.bat
+    C:\compile> nmake
 
-    C:\> git config --global user.email trond.norbye@gmail.com
-    C:\> git config --global user.name "Trond Norbye"
-    C:\> git config --global color.ui false
-    C:\> git config --global core.autocrlf true
-
-### How to build
-
-Before you may start to build on Microsoft Windows you have to set up
-the environment. The script `environment.bat` is located in the `win32`
-directory.
-
-Open cmd.com and type in the following (assuming c:\compile\couchbase
-is the directory holding your source):
-
-    C:\> set source_root=c:\compile\couchbase
-    C:\> set target_arch=amd64
-    C:\> environment
-
-You may now follow the build description outlined in [How to
-build](#user-content-how-to-build). Please note that the make utility
-on windows is named `nmake`.
-
-## MacOSX
-
-Multiple versions of Mac OSX may work, but this list is verified with
-El Capitan
-
-* Install XCode 7.2
-* Install [Homebrew][homebrew_link]
-
-Install the following packages from homebrew:
-
-    trond@ok> brew install cmake git ccache
-
-You should be all set to start compile the server as described above.
-
-## Ubuntu 14.04
-
-The steps below may work on other versions of Ubuntu as well, but this
-procedure is verified with a clean installation of Ubuntu 14.04.1
-
-    sudo su -
-    wget https://storage.googleapis.com/git-repo-downloads/repo
-    chmod a+x repo
-    mv repo /usr/local/bin
-    apt-get install -y git gcc g++ ccache cmake libssl-dev
-
-## Fedora 21
-
-The steps below may work on other versions of Fedora as well, but this
-procedure is verified with a clean installation of Fedora 21
-
-    sudo su -
-    wget https://storage.googleapis.com/git-repo-downloads/repo
-    chmod a+x repo
-    mv repo /usr/local/bin
-    yum install -y gcc gcc-c++ git cmake ccache redhat-lsb-core \
-                   openssl-devel
-
-## OpenSUSE
-
-I tested this on a clean install of OpenSUSE 13.2 by choosing the
-defaults during the installer except choosing gnome desktop and enable
-ssh access.
-
-    sudo zypper install gcc gcc-c++ autoconf automake ncurses-devel \
-                        git ccache libopenssl-devel cmake
-
-Open a new terminal to ensure you get an updated environment (the
-package install modifies some of the environement variables)
-
-    curl https://storage.googleapis.com/git-repo-downloads/repo > ~/bin/repo
-    chmod a+x ~/bin/repo
-    sudo mkdir /opt/couchbase
-    sudo chown `whoami` /opt/couchbase
-    mkdir -p compile/couchbase
-    cd compile/couchbase
-    repo init -u git://github.com/couchbase/manifest -m branch-master.xml -g default,build
-    repo sync
-    repo start opensuse --all
-    mkdir cbdeps && cd cbdeps
-    ../cbbuild/cbdeps/build-all-sherlock.sh
-    export CB_DOWNLOAD_DEPS_CACHE=`pwd`/output
-    export CB_DOWNLOAD_DEPS_MANIFEST=`pwd`/output/manifest.cmake
-    unset GOBIN
-    cd ..
-    gmake PREFIX=/opt/couchbase
-
-Note: Unfortunately the build-all-sherlock.sh script mentioned above is
-likely out of date for Couchbase Server builds later than 4.1.
-
-You should be able to start the server by running
-
-    /opt/couchbase/bin/couchbase-server start
+And that should be it
 
 ## Static Analysis
 
@@ -242,7 +135,8 @@ platforms which Clang/LLVM is available, however this isn't tested.
 
 ### Prerequisites
 
-* Install `clang` (from OS X Developer Tools). If you can build from source you should already have this :)
+* Install `clang` (from OS X Developer Tools). If you can build from source
+  you should already have this :)
 * Download and extract clang Static Analyzer tools
   (from [clang-analyzer.llvm.org][clang_static_analyzer_link]).
   Note that while the actual analyzer functionality is built into
@@ -255,12 +149,13 @@ platforms which Clang/LLVM is available, however this isn't tested.
 
         export PATH=$PATH:/path/to/scan-build
 
-*  Run `make analyze` at the top-level to configure clang-analyser as the 'compiler':
+*  Run `make analyze` at the top-level to configure clang-analyser as the
+   'compiler':
 
         make analyze
 
-*  At the end you will see a message similar to the following - Invoke the specified command to browse the found bugs:
-
+*  At the end you will see a message similar to the following - Invoke the
+   specified command to browse the found bugs:
 
         scan-build: 31 bugs found.
         scan-build: Run 'scan-view /source/build-analyzer/analyser-results/2014-06-05-173247-52416-1' to examine bug reports.
@@ -321,15 +216,6 @@ Similarly for AddressSanitizer / UndefinedBehaviorSanitizer see
 the AddressSanitizer [Flags][address_sanitizer_flags] wiki page) for
 details..
 
-[win_visual_studio_link]: http://hub.internal.couchbase.com/confluence/download/attachments/7242678/en_visual_studio_professional_2013_x86_web_installer_3175305.exe?version=1&modificationDate=1389383332000
-[win_git_link]: http://git-scm.com/download/win
-[win_python_link]: http://www.python.org/download/releases/2.7/
-[win_7zip_link]: http://downloads.sourceforge.net/sevenzip/7z920-x64.msi
-[win_cmake_link]: http://www.cmake.org/cmake/resources/software.html
-[win_mingw_link]: http://www.mingw.org/
-[win_2008_runtime_ext_link]: http://www.microsoft.com/en-us/download/confirmation.aspx?id=15336
-[google_repo_link]: http://source.android.com/source/downloading.html#installing-repo
-[homebrew_link]: http://brew.sh/
 [cmake_link]: http://www.cmake.org/cmake/
 [clang_static_analyzer_link]: http://clang-analyzer.llvm.org
 [thread_sanitizer_link]: https://code.google.com/p/thread-sanitizer/wiki/CppManual
