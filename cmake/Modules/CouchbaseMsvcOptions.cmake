@@ -5,12 +5,8 @@ set(CMAKE_C_FLAGS_RELWITHDEBINFO "/MD /O2 /Ob2 /D NDEBUG /Zi")
 set(CMAKE_C_FLAGS_DEBUG          "/MDd /Od /Ob0 /Zi")
 set(CB_C_FLAGS_NO_OPTIMIZE       "/Od /Ob0")
 
-add_definitions(-D_CRT_SECURE_NO_WARNINGS=1)
-add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
-# Valgrind's macros doesn't support MSVC - disable any attempt to use them.
-add_definitions(-DNVALGRIND)
-add_definitions(-DNOMINMAX=1)
-
+# we've created wrappers of some of the typical header files
+# provided on Linux/Unix to avoid having to deal with #ifdef's
 include_directories(AFTER ${CMAKE_SOURCE_DIR}/platform/include/win32)
 
 if (MSVC_VERSION LESS 1800)
