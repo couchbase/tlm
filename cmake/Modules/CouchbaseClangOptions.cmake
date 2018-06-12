@@ -1,92 +1,99 @@
-SET(CB_CLANG_DEBUG "-g")
-SET(CB_CLANG_WARNINGS "-Qunused-arguments -Wall -pedantic -Wmissing-prototypes -Wmissing-declarations -Wredundant-decls -fno-strict-aliasing -Wno-overlength-strings")
-SET(CB_CLANG_VISIBILITY "-fvisibility=hidden")
-SET(CB_CLANG_THREAD "-pthread")
-SET(CB_CLANG_LANG_VER "-std=gnu99")
+#
+#     Copyright 2018 Couchbase, Inc.
+#
+#   Licensed under the Apache License, Version 2.0 (the "License");
+#   you may not use this file except in compliance with the License.
+#   You may obtain a copy of the License at
+#
+#       http://www.apache.org/licenses/LICENSE-2.0
+#
+#   Unless required by applicable law or agreed to in writing, software
+#   distributed under the License is distributed on an "AS IS" BASIS,
+#   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#   See the License for the specific language governing permissions and
+#   limitations under the License.
 
-# We want RelWithDebInfo to have the same optimization level as
-# Release, only differing in whether debugging information is enabled.
-SET(CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG")
-SET(CMAKE_C_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g")
-SET(CMAKE_C_FLAGS_DEBUG          "-O0 -g")
-
-SET(CB_CXX_FLAGS_NO_OPTIMIZE     -O0)
-
-IF ("${ENABLE_WERROR}" STREQUAL "YES")
-   SET(CB_CLANG_WERROR "-Werror")
-ENDIF()
-
-FOREACH(dir ${CB_SYSTEM_HEADER_DIRS})
-   SET(CB_CLANG_IGNORE_HEADER "${CB_CLANG_IGNORE_HEADER} -isystem ${dir}")
-ENDFOREACH(dir ${CB_SYSTEM_HEADER_DIRS})
-
-IF (CB_CODE_COVERAGE)
-   SET(CB_CLANG_COVERAGE "--coverage -fprofile-instr-generate -fcoverage-mapping")
-   SET(CB_LINK_COVERAGE "-fprofile-instr-generate")
-ENDIF ()
-
-SET(CMAKE_C_FLAGS "${CB_CLANG_IGNORE_HEADER} ${CMAKE_C_FLAGS} ${CB_CLANG_DEBUG} ${CB_CLANG_LANG_VER} ${CB_CLANG_WARNINGS} ${CB_CLANG_VISIBILITY} ${CB_CLANG_THREAD} ${CB_CLANG_WERROR} ${CB_CLANG_COVERAGE}")
-SET(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} ${CB_CLANG_LDFLAGS} ${CB_LINK_COVERAGE}")
-
-# Enable color diagnostic output when using Ninja build generator
-# (Clang fails to auto-detect it can use color).
-IF (CMAKE_C_COMPILER_ID STREQUAL "Clang" AND CMAKE_GENERATOR STREQUAL "Ninja")
-   SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fcolor-diagnostics")
-ENDIF()
-
+# Set the compiler flags for Clang C and C++ compilator
 include(CheckCXXCompilerFlag)
 
-SET(CB_CLANGXX_DEBUG "-g")
-SET(CB_CLANGXX_WARNINGS "-Qunused-arguments -Wall -pedantic -Wredundant-decls -Wmissing-braces -fno-strict-aliasing")
-SET(CB_CLANGXX_VISIBILITY "-fvisibility=hidden")
-SET(CB_CLANGXX_THREAD "-pthread")
+# Add common flags for C and C++
+foreach (dir ${CB_SYSTEM_HEADER_DIRS})
+    list(APPEND _cb_c_flags "-isystem ${dir}")
+endforeach (dir ${CB_SYSTEM_HEADER_DIRS})
+
+if (CB_CODE_COVERAGE)
+    list(APPEND _cb_c_flags
+         --coverage
+         -fprofile-instr-generate
+         -fcoverage-mapping)
+    set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -fprofile-instr-generate")
+endif ()
+
+list(APPEND _cb_c_flags -fvisibility=hidden -pthread)
+if (CMAKE_GENERATOR STREQUAL "Ninja")
+    # Enable color diagnostic output when using Ninja build generator
+    # (Clang fails to auto-detect it can use color).
+    list(APPEND _cb_c_flags -fcolor-diagnostics)
+endif ()
+
+# Copy the flags over to C++
+set(_cb_cxx_flags ${_cb_c_flags})
+
+# Configure the C compiler
+list(APPEND _cb_c_flags
+     --std=gnu99
+     -Qunused-arguments
+     -Wall
+     -pedantic
+     -Werror=missing-prototypes
+     -Werror=missing-declarations
+     -Werror=redundant-decls
+     -fno-strict-aliasing
+     -Wno-overlength-strings)
+
+# Convert the list to a string
+string(REPLACE ";" " " _cb_c_options "${_cb_c_flags}")
 
 # We want RelWithDebInfo to have the same optimization level as
 # Release, only differing in whether debugging information is enabled.
-SET(CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
-SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g")
+set(CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g")
+set(CMAKE_C_FLAGS_DEBUG          "-O0 -g")
+set(CB_CXX_FLAGS_NO_OPTIMIZE     "-O0")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_cb_c_options}")
+
+# Configure the C++ compiler
+if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 3.1)
+    message(FATAL_ERROR "The C++ compiler is too old and don't support C++11")
+endif()
+
+list(APPEND _cb_cxx_flags
+     -std=c++11
+     -Qunused-arguments
+     -Wall
+     -pedantic
+     -fno-strict-aliasing
+     -Werror=switch
+     -Werror=redundant-decls
+     -Werror=missing-braces
+     -ftemplate-depth=900)
+# Convert the list to a string
+string(REPLACE ";" " " _cb_cxx_options "${_cb_cxx_flags}")
+
+# We want RelWithDebInfo to have the same optimization level as
+# Release, only differing in whether debugging information is enabled.
+set(CMAKE_CXX_FLAGS_RELEASE "-O3 -DNDEBUG")
+set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g")
 
 # Make use of -Og (optimize for debugging) if available (Clang 4.0 upwards)
 check_cxx_compiler_flag(-Og HAVE_OPTIMIZE_FOR_DEBUG)
-if(HAVE_OPTIMIZE_FOR_DEBUG)
-   SET(CMAKE_CXX_FLAGS_DEBUG "-Og -g")
-else()
-   SET(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
-endif()
+if (HAVE_OPTIMIZE_FOR_DEBUG)
+    set(CMAKE_CXX_FLAGS_DEBUG "-Og -g")
+else ()
+    set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
+endif ()
+set(CB_CXX_FLAGS_NO_OPTIMIZE -O0)
 
-SET(CB_CXX_FLAGS_NO_OPTIMIZE       -O0)
-
-IF ("${ENABLE_WERROR}" STREQUAL "YES")
-   SET(CB_CLANGXX_WERROR "-Werror")
-ELSE()
-   # We've fixed all occurrences for the following warnings and don't want
-   # any new ones to appear
-   SET(CB_CLANGXX_WERROR "-Werror=switch")
-ENDIF()
-
-if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 3.1)
-   SET(CB_CXX_LANG_VER "")
-   MESSAGE(WARNING "The C++ compiler is too old and don't support C++11")
-ELSE ()
-   SET(COMPILER_SUPPORTS_CXX11 true)
-   SET(CB_CXX_LANG_VER "-std=c++11")
-   SET(CB_GNU_CXX11_OPTION "-std=gnu++11")
-   # Increase the template-depth to be the same as the g++ default.
-   SET(CB_CLANGXX_TEMPLATE_DEPTH "-ftemplate-depth=900")
-ENDIF()
-
-FOREACH(dir ${CB_SYSTEM_HEADER_DIRS})
-   SET(CB_CLANGXX_IGNORE_HEADER "${CB_CLANGXX_IGNORE_HEADER} -isystem ${dir}")
-ENDFOREACH(dir ${CB_SYSTEM_HEADER_DIRS})
-
-IF (CB_CODE_COVERAGE)
-   SET(CB_CLANGXX_COVERAGE "--coverage  -fprofile-instr-generate -fcoverage-mapping")
-ENDIF ()
-
-SET(CMAKE_CXX_FLAGS "${CB_CLANGXX_IGNORE_HEADER} ${CMAKE_CXX_FLAGS} ${CB_CXX_LANG_VER} ${CB_CLANGXX_DEBUG} ${CB_CLANGXX_WARNINGS} ${CB_CLANGXX_VISIBILITY} ${CB_CLANGXX_THREAD} ${CB_CLANGXX_WERROR} ${CB_CLANGXX_TEMPLATE_DEPTH} ${CB_CLANGXX_COVERAGE}")
-
-# Enable color diagnostic output when using Ninja build generator
-# (Clang fails to auto-detect it can use color).
-IF (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_GENERATOR STREQUAL "Ninja")
-   SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fcolor-diagnostics")
-ENDIF()
+set(COMPILER_SUPPORTS_CXX11 true)
+set(CB_GNU_CXX11_OPTION "-std=gnu++11")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_cb_cxx_options}")
