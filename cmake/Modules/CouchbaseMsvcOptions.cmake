@@ -1,32 +1,18 @@
-SET(CB_MSVC_DEBUG "")
-SET(CB_MSVC_WARNINGS "")
-SET(CB_MSVC_VISIBILITY "")
-SET(CB_MSVC_THREAD "")
-
-IF ("${ENABLE_WERROR}" STREQUAL "YES")
-   SET(CB_MSVC_WERROR "")
-ENDIF()
-
 # We want RelWithDebInfo to have the same optimization level as
 # Release, only differing in whether debugging information is enabled.
-SET(CMAKE_C_FLAGS_RELEASE        "/MD /O2 /Ob2 /D NDEBUG")
-SET(CMAKE_C_FLAGS_RELWITHDEBINFO "/MD /O2 /Ob2 /D NDEBUG /Zi")
-SET(CMAKE_C_FLAGS_DEBUG          "/MDd /Od /Ob0 /Zi")
+set(CMAKE_C_FLAGS_RELEASE        "/MD /O2 /Ob2 /D NDEBUG")
+set(CMAKE_C_FLAGS_RELWITHDEBINFO "/MD /O2 /Ob2 /D NDEBUG /Zi")
+set(CMAKE_C_FLAGS_DEBUG          "/MDd /Od /Ob0 /Zi")
+set(CB_C_FLAGS_NO_OPTIMIZE       "/Od /Ob0")
 
-SET(CB_C_FLAGS_NO_OPTIMIZE       /Od /Ob0)
-
-SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${CB_MSVC_DEBUG} ${CB_MSVC_WARNINGS} ${CB_MSVC_VISIBILITY} ${CB_MSVC_THREAD} ${CB_MSVC_WERROR}")
-SET(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} ${CB_MSVC_LDFLAGS}")
-
-ADD_DEFINITIONS(-D_CRT_SECURE_NO_WARNINGS=1)
-ADD_DEFINITIONS(-D_CRT_NONSTDC_NO_DEPRECATE)
+add_definitions(-D_CRT_SECURE_NO_WARNINGS=1)
+add_definitions(-D_CRT_NONSTDC_NO_DEPRECATE)
 # Valgrind's macros doesn't support MSVC - disable any attempt to use them.
-ADD_DEFINITIONS(-DNVALGRIND)
+add_definitions(-DNVALGRIND)
+add_definitions(-DNOMINMAX=1)
 
-ADD_DEFINITIONS(-DNOMINMAX=1)
+include_directories(AFTER ${CMAKE_SOURCE_DIR}/platform/include/win32)
 
-INCLUDE_DIRECTORIES(AFTER ${CMAKE_SOURCE_DIR}/platform/include/win32)
-
-IF (MSVC_VERSION LESS 1800)
-   MESSAGE(FATAL_ERROR "You need MSVC 2013 or newer")
-ENDIF (MSVC_VERSION LESS 1800)
+if (MSVC_VERSION LESS 1800)
+    message(FATAL_ERROR "You need MSVC 2013 or newer")
+endif (MSVC_VERSION LESS 1800)
