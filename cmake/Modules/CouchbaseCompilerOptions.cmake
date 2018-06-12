@@ -30,30 +30,35 @@ if (IS_DIRECTORY "${BREAKPAD_INCLUDE_DIR}")
 endif (IS_DIRECTORY "${BREAKPAD_INCLUDE_DIR}")
 
 #
-# Set flags for the C Compiler
+# Set flags for the C and C++ Compiler
 #
 if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+        message(WARNING "C compiler identifier: ${CMAKE_C_COMPILER_ID}")
+        message(WARNING "C++ compiler identifier: ${CMAKE_CXX_COMPILER_ID}")
+        message(FATAL_ERROR "Unsupported configuration. Please use both a GNU C and C++ compiler")
+    endif()
+
     include(CouchbaseGccOptions)
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
+    if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+        message(WARNING "C compiler identifier: ${CMAKE_C_COMPILER_ID}")
+        message(WARNING "C++ compiler identifier: ${CMAKE_CXX_COMPILER_ID}")
+        message(FATAL_ERROR "Unsupported configuration. Please use both a GNU C and C++ compiler")
+    endif()
     include(CouchbaseClangOptions)
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
+    if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+        message(WARNING "C compiler identifier: ${CMAKE_C_COMPILER_ID}")
+        message(WARNING "C++ compiler identifier: ${CMAKE_CXX_COMPILER_ID}")
+        message(FATAL_ERROR "Unsupported configuration. Please use both a GNU C and C++ compiler")
+    endif()
     include(CouchbaseMsvcOptions)
 else ()
     message(FATAL_ERROR "Unsupported C compiler: ${CMAKE_C_COMPILER_ID}")
 endif ()
 
-#
-# Set flags for the C++ compiler
-#
-if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-    include(CouchbaseGxxOptions)
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-    include(CouchbaseClangxxOptions)
-elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-    include(CouchbaseMsvcxxOptions)
-else ()
-    message(FATAL_ERROR "Unsupported C++ compiler: ${CMAKE_C_COMPILER_ID}")
-endif ()
+include(CouchbaseCXXVersion)
 
 # Add common -D sections
 include(CouchbaseDefinitions)
