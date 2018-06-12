@@ -1,11 +1,11 @@
 #
 # Choose deployment target on MacOS
 #
-IF (APPLE)
-  # See http://www.couchbase.com/issues/browse/MB-11442
-  SET (CMAKE_OSX_DEPLOYMENT_TARGET "10.7" CACHE STRING
-    "Minimum supported version of MacOS X")
-ENDIF (APPLE)
+if (APPLE)
+    # See http://www.couchbase.com/issues/browse/MB-11442
+    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7" CACHE STRING
+        "Minimum supported version of MacOS X")
+endif (APPLE)
 
 # Create a list of all of the directories we would like to be treated
 # as system headers (and not report compiler warnings from (if the
@@ -25,92 +25,87 @@ ENDIF (APPLE)
 
 # Explicitly add Google Breakpad as it's headers have
 # many warnings :(
-IF (IS_DIRECTORY "${BREAKPAD_INCLUDE_DIR}")
-   LIST(APPEND CB_SYSTEM_HEADER_DIRS "${BREAKPAD_INCLUDE_DIR}")
-ENDIF (IS_DIRECTORY "${BREAKPAD_INCLUDE_DIR}")
+if (IS_DIRECTORY "${BREAKPAD_INCLUDE_DIR}")
+    list(APPEND CB_SYSTEM_HEADER_DIRS "${BREAKPAD_INCLUDE_DIR}")
+endif (IS_DIRECTORY "${BREAKPAD_INCLUDE_DIR}")
 
 #
 # Set flags for the C Compiler
 #
-IF ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
-  INCLUDE(CouchbaseGccOptions)
-ELSEIF ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
-  INCLUDE(CouchbaseClangOptions)
-ELSEIF ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
-  INCLUDE(CouchbaseMsvcOptions)
-ELSE ()
-  MESSAGE(FATAL_ERROR "Unsupported C compiler: ${CMAKE_C_COMPILER_ID}")
-ENDIF()
+if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    include(CouchbaseGccOptions)
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
+    include(CouchbaseClangOptions)
+elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
+    include(CouchbaseMsvcOptions)
+else ()
+    message(FATAL_ERROR "Unsupported C compiler: ${CMAKE_C_COMPILER_ID}")
+endif ()
 
 #
 # Set flags for the C++ compiler
 #
-IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
-  INCLUDE(CouchbaseGxxOptions)
-ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
-  INCLUDE(CouchbaseClangxxOptions)
-ELSEIF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
-  INCLUDE(CouchbaseMsvcxxOptions)
-ELSE ()
-    MESSAGE(FATAL_ERROR "Unsupported C++ compiler: ${CMAKE_C_COMPILER_ID}")
-ENDIF ()
+if ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "GNU")
+    include(CouchbaseGxxOptions)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
+    include(CouchbaseClangxxOptions)
+elseif ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC")
+    include(CouchbaseMsvcxxOptions)
+else ()
+    message(FATAL_ERROR "Unsupported C++ compiler: ${CMAKE_C_COMPILER_ID}")
+endif ()
 
 # Add common -D sections
-INCLUDE(CouchbaseDefinitions)
+include(CouchbaseDefinitions)
 
 # Setup the RPATH
-INCLUDE(CouchbaseRpath)
+include(CouchbaseRpath)
 
 # Check function attibute availability
 # - warn_used_result
-INCLUDE(CheckCCompilerFlag)
-CHECK_C_SOURCE_COMPILES("int main() {
+include(CheckCCompilerFlag)
+check_c_source_compiles("int main() {
       return 0;
 }
 int foo() __attribute__((warn_unused_result));" HAVE_ATTR_WARN_UNUSED_RESULT)
 
 # - printf-style format checking
-INCLUDE(CheckCCompilerFlag)
-CHECK_C_SOURCE_COMPILES("int main() {
+check_c_source_compiles("int main() {
       return 0;
 }
 int my_printf(const char* fmt, ...) __attribute__((format (printf, 1, 2)));" HAVE_ATTR_FORMAT)
 
 # - noreturn for functions not returning
-INCLUDE(CheckCCompilerFlag)
-CHECK_C_SOURCE_COMPILES("int main() {
+check_c_source_compiles("int main() {
       return 0;
 }
 int foo(void) __attribute__((noreturn));" HAVE_ATTR_NORETURN)
 
 # - nonnull parameters that can't be null
-INCLUDE(CheckCCompilerFlag)
-CHECK_C_SOURCE_COMPILES("int main() {
+check_c_source_compiles("int main() {
       return 0;
 }
 int foo(void* foo) __attribute__((nonnull(1)));" HAVE_ATTR_NONNULL)
 
 # - deprecated
-INCLUDE(CheckCCompilerFlag)
-CHECK_C_SOURCE_COMPILES("int main() {
+check_c_source_compiles("int main() {
       return 0;
 }
 int foo(void* foo) __attribute__((deprecated));" HAVE_ATTR_DEPRECATED)
 
+if (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
+    find_program(CCACHE ccache)
 
-IF (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
-   FIND_PROGRAM(CCACHE ccache)
+    if (CCACHE)
+        get_filename_component(_ccache_realpath ${CCACHE} REALPATH)
+        get_filename_component(_cc_realpath ${CMAKE_C_COMPILER} REALPATH)
 
-   IF (CCACHE)
-      GET_FILENAME_COMPONENT(_ccache_realpath ${CCACHE} REALPATH)
-      GET_FILENAME_COMPONENT(_cc_realpath ${CMAKE_C_COMPILER} REALPATH)
-
-      IF (_ccache_realpath STREQUAL _cc_realpath)
-          MESSAGE(STATUS "seems like ccache is already used via masquerading")
-      ELSE ()
-          MESSAGE(STATUS "ccache is available as ${CCACHE}, using it")
-          SET_PROPERTY(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE})
-          SET_PROPERTY(GLOBAL PROPERTY RULE_LAUNCH_LINK ${CCACHE})
-      ENDIF ()
-   ENDIF (CCACHE)
-ENDIF (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
+        if (_ccache_realpath STREQUAL _cc_realpath)
+            message(STATUS "seems like ccache is already used via masquerading")
+        else ()
+            message(STATUS "ccache is available as ${CCACHE}, using it")
+            set_property(GLOBAL PROPERTY RULE_LAUNCH_COMPILE ${CCACHE})
+            set_property(GLOBAL PROPERTY RULE_LAUNCH_LINK ${CCACHE})
+        endif ()
+    endif (CCACHE)
+endif (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
