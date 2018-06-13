@@ -52,12 +52,13 @@ set(CB_C_FLAGS_NO_OPTIMIZE       "-O0")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_cb_c_options}")
 
 # Configure the C++ compiler
-if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 5.1.0)
-   message (FATAL_ERROR "Couchbase Server requires GCC version 5.1.0 or newer to compile. Aborting build.")
-endif ()
-
+#   (Ideally we shouldn't be setting -std=c++14 here as we try to use
+#   set(CMAKE_CXX_STANDARD 14), but the option isn't added to the
+#   check_cxx_source_compiles causing such tests to fail.
+#   Keep the flag here until we've safely removed all of these
+#   checks)
 list(APPEND _cb_cxx_flags
-     -std=c++11
+     -std=c++14
      -pedantic
      -Wall
      -Wredundant-decls
@@ -65,8 +66,6 @@ list(APPEND _cb_cxx_flags
      -fno-strict-aliasing
      -Werror=switch)
 
-
-SET(COMPILER_SUPPORTS_CXX11 true)
 SET(CB_GNU_CXX11_OPTION "-std=gnu++11")
 
 if (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 6.9.9)

@@ -29,6 +29,13 @@ if (IS_DIRECTORY "${BREAKPAD_INCLUDE_DIR}")
     list(APPEND CB_SYSTEM_HEADER_DIRS "${BREAKPAD_INCLUDE_DIR}")
 endif (IS_DIRECTORY "${BREAKPAD_INCLUDE_DIR}")
 
+set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF)
+
+message(STATUS "C++ compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
+message(STATUS "C++ language version: ${CMAKE_CXX_STANDARD}")
+
 #
 # Set flags for the C and C++ Compiler
 #
@@ -57,8 +64,6 @@ elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "MSVC")
 else ()
     message(FATAL_ERROR "Unsupported C compiler: ${CMAKE_C_COMPILER_ID}")
 endif ()
-
-include(CouchbaseCXXVersion)
 
 # Add common -D sections
 include(CouchbaseDefinitions)

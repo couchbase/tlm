@@ -63,12 +63,13 @@ set(CB_CXX_FLAGS_NO_OPTIMIZE     "-O0")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_cb_c_options}")
 
 # Configure the C++ compiler
-if (${CMAKE_CXX_COMPILER_VERSION} VERSION_LESS 3.1)
-    message(FATAL_ERROR "The C++ compiler is too old and don't support C++11")
-endif()
-
+#   (Ideally we shouldn't be setting -std=c++14 here as we try to use
+#   set(CMAKE_CXX_STANDARD 14), but the option isn't added to the
+#   check_cxx_source_compiles causing such tests to fail.
+#   Keep the flag here until we've safely removed all of these
+#   checks)
 list(APPEND _cb_cxx_flags
-     -std=c++11
+     -std=c++14
      -Qunused-arguments
      -Wall
      -pedantic
@@ -94,6 +95,5 @@ else ()
 endif ()
 set(CB_CXX_FLAGS_NO_OPTIMIZE -O0)
 
-set(COMPILER_SUPPORTS_CXX11 true)
 set(CB_GNU_CXX11_OPTION "-std=gnu++11")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_cb_cxx_options}")

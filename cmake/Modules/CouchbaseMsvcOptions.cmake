@@ -9,10 +9,6 @@ set(CB_C_FLAGS_NO_OPTIMIZE       "/Od /Ob0")
 # provided on Linux/Unix to avoid having to deal with #ifdef's
 include_directories(AFTER ${CMAKE_SOURCE_DIR}/platform/include/win32)
 
-if (MSVC_VERSION LESS 1800)
-    message(FATAL_ERROR "You need MSVC 2013 or newer")
-endif (MSVC_VERSION LESS 1800)
-
 # We want RelWithDebInfo to have the same optimization level as
 # Release, only differing in whether debugging information is enabled.
 set(CMAKE_CXX_FLAGS_RELEASE        "/MD /O2 /Ob2 /D NDEBUG")
@@ -47,11 +43,3 @@ set(CB_CXX_FLAGS_NO_OPTIMIZE       "/Od /Ob0")
 #          'type' : forcing value to bool 'true' or 'false'
 #	   (performance warning) warnings
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4251 /wd4275 /wd4316 /wd4800")
-
-# C++11 support has gradually increased in MSVC starting with 2010
-# (v16), but we declare that at least VS 2015 (v19) is needed due to
-# many bugs in previous releases.
-if (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 19.0)
-    set(COMPILER_SUPPORTS_CXX11 true)
-    set(CB_CXX_LANG_VER "C++11")
-endif ()
