@@ -58,7 +58,6 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_cb_c_options}")
 #   Keep the flag here until we've safely removed all of these
 #   checks)
 list(APPEND _cb_cxx_flags
-     -std=c++14
      -pedantic
      -Wall
      -Wredundant-decls
