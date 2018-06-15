@@ -24,7 +24,7 @@ DECLARE_DEP (flex VERSION 2.6.4-cb4 PLATFORMS centos6 centos7 debian8 debian9 ma
 DECLARE_DEP (icu4c VERSION 59.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
 DECLARE_DEP (jemalloc VERSION 4.1.0-cb2 PLATFORMS windows_msvc2015)
 DECLARE_DEP (jemalloc VERSION 4.5.0.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04)
-DECLARE_DEP (json VERSION 1.1.0-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
+DECLARE_DEP (json VERSION 3.1.2-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
 DECLARE_DEP (libevent VERSION 2.1.8-cb4 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
 DECLARE_DEP (libuv VERSION 1.20.3-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 windows_msvc2015)
 DECLARE_DEP (lz4 VERSION 1.8.0-cb2 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04)

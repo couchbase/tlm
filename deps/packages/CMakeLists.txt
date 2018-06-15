@@ -179,7 +179,7 @@ ELSE ()
   _ADD_DEP_PACKAGE(flatbuffers 1.4.0 v1.4.0 1)
 ENDIF ()
 
-_ADD_DEP_PACKAGE(json 1.1.0 v1.1.0 1)
+_ADD_DEP_PACKAGE(json 3.1.2 v3.1.2 1)
 _ADD_DEP_PACKAGE(boost 1.62.0 v1.62.0 3)
 IF (WIN32 OR APPLE)
   # Note: we build libevent with support for SSL, so whenever

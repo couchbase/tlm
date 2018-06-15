@@ -11,8 +11,8 @@ if (CMAKE_MAJOR_VERSION GREATER 2)
     GIT_TAG ${_git_rev}
     CONFIGURE_COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/install/include
     BUILD_COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_CURRENT_BINARY_DIR}/install/include/nlohmann
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/src/json.hpp ${CMAKE_CURRENT_BINARY_DIR}/install/include/nlohmann
-            COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE.MIT ${CMAKE_CURRENT_BINARY_DIR}/install/include/nlohmann
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/single_include ${CMAKE_CURRENT_BINARY_DIR}/install/single_include
+            COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include ${CMAKE_CURRENT_BINARY_DIR}/install/include
 
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install)
 else()
@@ -21,8 +21,8 @@ else()
     GIT_TAG ${_git_rev}
     CONFIGURE_COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/install/include
     BUILD_COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/install/include/nlohmann
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/src/json.hpp ${CMAKE_CURRENT_BINARY_DIR}/install/include/nlohmann
-            COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/LICENSE.MIT ${CMAKE_CURRENT_BINARY_DIR}/install/include/nlohmann
+    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/single_include ${CMAKE_CURRENT_BINARY_DIR}/install/single_include
+            COMMAND ${CMAKE_COMMAND} -E copy_directory <SOURCE_DIR>/include ${CMAKE_CURRENT_BINARY_DIR}/install/include
 
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install)
 endif()
