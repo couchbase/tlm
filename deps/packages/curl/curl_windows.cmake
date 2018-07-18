@@ -19,6 +19,8 @@ ExternalProject_Add(curl
   # Bug in the Curl Windows build script if these directories are missing
   CONFIGURE_COMMAND ${CMAKE_COMMAND} -E make_directory "<SOURCE_DIR>/${OBJLIB_DIR}/vauth"
             COMMAND ${CMAKE_COMMAND} -E make_directory "<SOURCE_DIR>/${OBJLIB_DIR}/vtls"
+            COMMAND cd <SOURCE_DIR>
+            COMMAND .\\buildconf.bat
 
   BUILD_COMMAND cd <SOURCE_DIR>/winbuild
         COMMAND nmake /f Makefile.vc mode=dll VC=12 MACHINE=${CURL_MACHINE} DEBUG=no GEN_PDB=yes

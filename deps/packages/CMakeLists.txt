@@ -167,7 +167,7 @@ _ADD_DEP_PACKAGE(v8 5.9 5.9.223 5)
 # jemalloc comes from "stable-4" branch, which is a bit later than their
 # 4.5.0 release, so we call it 4.5.0.1.
 _ADD_DEP_PACKAGE(jemalloc 4.5.0.1 stable-4 1)
-_ADD_DEP_PACKAGE(curl 7.49.1 curl-7_49_1 1)
+_ADD_DEP_PACKAGE(curl 7.60.0 curl-7_60_0 1)
 
 _ADD_DEP_PACKAGE(erlang OTP-20.3.2 OTP-20.3.2 3)
 
