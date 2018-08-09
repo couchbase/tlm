@@ -211,3 +211,4 @@ _ADD_DEP_PACKAGE(lz4 1.8.0 v1.8.0 2)
 # maven 3.5.2-cb3 and 3.5.2-cb4 exist as attempts to make Windows work,
 # but are not correct.
 _ADD_DEP_PACKAGE(maven 3.5.2 master 5)
+_ADD_DEP_PACKAGE(openjdk-rt 1.8.0.171 UNUSED 1)
