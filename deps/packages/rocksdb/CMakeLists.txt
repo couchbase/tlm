@@ -28,7 +28,7 @@ include(ExternalProject)
 _DETERMINE_CPU_COUNT(_parallelism)
 configure_file("build_rocksdb.sh.in" "build_rocksdb.sh")
 ExternalProject_Add(rocksdb
-  GIT_REPOSITORY https://github.com/couchbasedeps/rocksdb.git
+  GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
 
   BUILD_IN_SOURCE 1
@@ -47,7 +47,7 @@ ExternalProject_Add(rocksdb
 # OS X-only: Custom post-build step to set the shared library install name.
 if (APPLE)
   ExternalProject_Add_Step(rocksdb install_name
-    COMMAND install_name_tool -id @rpath/librocksdb.5.10.2.dylib <BINARY_DIR>/librocksdb.5.10.2.dylib
+    COMMAND install_name_tool -id @rpath/librocksdb.5.14.2.dylib <BINARY_DIR>/librocksdb.5.14.2.dylib
 
     DEPENDEES build
     DEPENDERS install
