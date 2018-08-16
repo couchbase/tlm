@@ -40,10 +40,7 @@ DECLARE_DEP (openssl VERSION 1.0.2k-cb3 PLATFORMS macosx)
 DECLARE_DEP (python-snappy VERSION c97d633 PLATFORMS windows_msvc2015)
 DECLARE_DEP (python-snappy VERSION c97d633-cb1 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11 suse12 ubuntu14.04 ubuntu16.04)
 DECLARE_DEP (python-snappy VERSION c97d633-cb2 PLATFORMS ubuntu18.04)
-# RocksDB 5.8.0-cb3 was an aborted version linked to Snappy 1.1.6
-# RocksDB 5.8.0-cb4 is rebuilt with GCC 7.2.0 on older platforms
-DECLARE_DEP (rocksdb VERSION 5.8.0-cb2 PLATFORMS debian7 debian9 macosx ubuntu16.04 ubuntu18.04)
-DECLARE_DEP (rocksdb VERSION 5.8.0-cb4 PLATFORMS centos6 centos7 debian8 suse11 suse12 ubuntu14.04)
+DECLARE_DEP (rocksdb VERSION 5.12.5-cb1 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11 suse12 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc2015)
 DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11 suse12 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (v8 VERSION 5.9-cb3 PLATFORMS centos7 debian8 macosx suse12 ubuntu14.04 ubuntu16.04 windows_msvc2015)
