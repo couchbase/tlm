@@ -16,7 +16,8 @@ ExternalProject_Add(icu4c
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
 
- CONFIGURE_COMMAND <SOURCE_DIR>/source/configure LDFLAGS=${ICU_LDFLAGS}
+ CONFIGURE_COMMAND sudo "${CMAKE_CURRENT_SOURCE_DIR}/check_xlocale_h.sh"
+ COMMAND <SOURCE_DIR>/source/configure LDFLAGS=${ICU_LDFLAGS}
                                                   --prefix=<INSTALL_DIR>
                                                   --disable-extras
                                                   --disable-layout
