@@ -87,7 +87,7 @@ e2eviewtests:
 
 clean:
 	-(cd build && $(MAKE) realclean)
-	-$(RM) $(RMOPTS) build ns_server$(SEPARATOR)build
+	-$(RM) $(RMOPTS) build ns_server$(SEPARATOR)build install voltron$(SEPARATOR)build
 
 reset:
 	(cd build && $(MAKE) reset)
