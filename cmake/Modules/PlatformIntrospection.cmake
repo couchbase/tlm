@@ -175,7 +175,7 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
        "centos6" "centos7"
        "debian7" "debian8" "debian9"
        "macosx"
-       "suse12" "suse15"
+       "suse11" "suse12" "suse15"
        "ubuntu14.04" "ubuntu16.04" "ubuntu18.04"
        "windows_msvc2015"
        "windows_msvc2017")
