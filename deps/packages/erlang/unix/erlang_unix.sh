@@ -63,7 +63,7 @@ cp ${SCRIPT_DIR}/CMakeLists_package.txt ${INSTALL_DIR}/CMakeLists.txt
 # On MacOS, set up the RPath for the crypto plugin to find our custom OpenSSL
 if [ $(uname -s) = "Darwin" ]; then
     install_name_tool -add_rpath @loader_path/../../../../.. \
-        ${INSTALL_DIR}/lib/erlang/lib/crypto-4.2.1/priv/lib/crypto.so
+        ${INSTALL_DIR}/lib/erlang/lib/crypto-4.2.2.2/priv/lib/crypto.so
 fi
 
 # For whatever reason, the special characters in this filename make
