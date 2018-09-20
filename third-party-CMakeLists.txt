@@ -11,7 +11,7 @@ add_subdirectory(gsl-lite)
 target_include_directories(gsl_lite INTERFACE ${gsl_lite_SOURCE_DIR}/include)
 
 add_subdirectory(HdrHistogram_c)
-add_subdirectory(spdlog)
+add_subdirectory(spdlognew)
 
 # Define macro which renames spdlog's severity levels
 set(CUSTOM_LEVELS "{\"TRACE\",\ \"DEBUG\",\ \"INFO\",\ \"WARNING\",\ \"ERROR\",\ \"CRITICAL\",\ \"OFF\"}\\\;\ ")
