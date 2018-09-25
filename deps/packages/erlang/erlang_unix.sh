@@ -2,7 +2,6 @@
 
 INSTALL_DIR=$1
 PLATFORM=$2
-CBDEPS_OPENSSL_DIR=$3
 
 case "$PLATFORM" in
     debian9|fedora26)
@@ -30,39 +29,23 @@ case "$PLATFORM" in
         )
         OPENSSL_FLAGS="--disable-dynamic-ssl-lib --with-ssl=$OPENSSL_DIR"
         ;;
-    macosx)
-        OPENSSL_FLAGS="--disable-dynamic-ssl-lib --with-ssl=$CBDEPS_OPENSSL_DIR"
-        ;;
     *)
         OPENSSL_FLAGS="--with-ssl"
         ;;
 esac
 
 ./otp_build autoconf
+touch ./lib/debugger/SKIP \
+      ./lib/megaco/SKIP \
+      ./lib/observer/SKIP \
+      ./lib/wx/SKIP
 ./configure --prefix="$INSTALL_DIR" \
       --enable-smp-support \
       --disable-hipe \
       --disable-fp-exceptions \
-      --without-javac \
-      --without-wx \
-      --without-et \
-      --without-debugger \
-      --without-megaco \
-      --without-observer \
       $OPENSSL_FLAGS \
-      CFLAGS="-fno-strict-aliasing -O3 -ggdb3"
+      CFLAGS="-fno-strict-aliasing -O3 -ggdb3 -DOPENSSL_NO_EC=1"
 
 make -j4
 
 make install
-
-# On MacOS, set up the RPath for the crypto plugin to find our custom OpenSSL
-if [ $(uname -s) = "Darwin" ]; then
-    install_name_tool -add_rpath @loader_path/../../../../.. \
-        ${INSTALL_DIR}/lib/erlang/lib/crypto-4.2.1/priv/lib/crypto.so
-fi
-
-# For whatever reason, the special characters in this filename make
-# Jenkins throw a fix (UI warnings about "There are resources Jenkins
-# was not able to dispose automatically"), so let's just delete it.
-rm -rf lib/ssh/test/ssh_sftp_SUITE_data/sftp_tar_test_data_*
