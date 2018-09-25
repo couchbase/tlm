@@ -19,6 +19,8 @@
 #  JEMALLOC_LIBRARIES, Library path and libs
 #  JEMALLOC_INCLUDE_DIR, where to find the jemalloc headers
 
+INCLUDE(CheckFunctionExists)
+
 # Wrap the content of the file to avoid having the
 # system log the same information multiple times
 # if the file gets included from multiple files
@@ -67,6 +69,7 @@ if (NOT DEFINED JEMALLOC_FOUND)
         list(APPEND CMAKE_REQUIRED_INCLUDES ${JEMALLOC_INCLUDE_DIR}/msvc_compat)
     endif ()
     check_symbol_exists(je_malloc "stdbool.h;jemalloc/jemalloc.h" HAVE_JE_SYMBOLS)
+    check_symbol_exists(je_sdallocx "stdbool.h;jemalloc/jemalloc.h" HAVE_JEMALLOC_SDALLOCX)
     cmake_pop_check_state()
 
     if (NOT HAVE_JE_SYMBOLS)
