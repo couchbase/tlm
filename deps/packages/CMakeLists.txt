@@ -182,8 +182,9 @@ _ADD_DEP_PACKAGE(curl 7.60.0 curl-7_60_0 1)
 # no longer accurate
 # - SHA 53c0d14 for R16B03-1-couchbase-cb7 (MB-27322 - all platforms - DO NOT USE)
 # - SHA 53c0d14 for R16B03-1-couchbase-cb8 (still MB-27322 - rebuilt with correct build scripts)
-# - SHA 6d69bef for R16B03-1-couchbase-cb9 (MB-31362 - all platforms, possibly not Windows yet)
-_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase 9)
+# - SHA 6d69bef for R16B03-1-couchbase-cb9 (MB-31362 - all platforms, but macOS)
+# - SHA 6d69bef for R16B03-1-couchbase-cb10 (MB-31362 - macOS)
+_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase 10)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 

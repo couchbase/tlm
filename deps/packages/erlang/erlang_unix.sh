@@ -2,6 +2,7 @@
 
 INSTALL_DIR=$1
 PLATFORM=$2
+CBDEPS_OPENSSL_DIR=$3
 
 case "$PLATFORM" in
     debian9|fedora26)
@@ -28,6 +29,9 @@ case "$PLATFORM" in
             make install
         )
         OPENSSL_FLAGS="--disable-dynamic-ssl-lib --with-ssl=$OPENSSL_DIR"
+        ;;
+    macosx)
+        OPENSSL_FLAGS="--disable-dynamic-ssl-lib --with-ssl=$CBDEPS_OPENSSL_DIR"
         ;;
     *)
         OPENSSL_FLAGS="--with-ssl"
