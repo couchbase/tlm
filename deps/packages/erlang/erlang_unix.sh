@@ -48,8 +48,19 @@ touch ./lib/debugger/SKIP \
       --disable-hipe \
       --disable-fp-exceptions \
       $OPENSSL_FLAGS \
-      CFLAGS="-fno-strict-aliasing -O3 -ggdb3 -DOPENSSL_NO_EC=1"
+      CFLAGS="-fno-strict-aliasing -O3 -ggdb3"
 
 make -j4
 
 make install
+
+# On MacOS, set up the RPath for the crypto plugin to find our custom OpenSSL
+if [ $(uname -s) = "Darwin" ]; then
+    install_name_tool -add_rpath @loader_path/../../../../.. \
+        ${INSTALL_DIR}/lib/erlang/lib/crypto-3.2/priv/lib/crypto.so
+fi
+
+# For whatever reason, the special characters in this filename make
+# Jenkins throw a fix (UI warnings about "There are resources Jenkins
+# was not able to dispose automatically"), so let's just delete it.
+rm -rf lib/ssh/test/ssh_sftp_SUITE_data/sftp_tar_test_data_*
