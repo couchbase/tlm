@@ -169,7 +169,7 @@ _ADD_DEP_PACKAGE(v8 5.9 5.9.223 5)
 _ADD_DEP_PACKAGE(jemalloc 4.5.0.1 stable-4 1)
 _ADD_DEP_PACKAGE(curl 7.60.0 curl-7_60_0 1)
 
-_ADD_DEP_PACKAGE(erlang OTP-20.3.8.8 OTP-20.3.8.8 1)
+_ADD_DEP_PACKAGE(erlang OTP-20.3.8.8 OTP-20.3.8.8 2)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 

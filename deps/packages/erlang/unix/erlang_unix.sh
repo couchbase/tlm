@@ -32,6 +32,7 @@ case "$PLATFORM" in
         OPENSSL_FLAGS="--disable-dynamic-ssl-lib --with-ssl=$OPENSSL_DIR"
         ;;
     macosx)
+        export MACOSX_DEPLOYMENT_TARGET=10.10
         OPENSSL_FLAGS="--disable-dynamic-ssl-lib --with-ssl=$CBDEPS_OPENSSL_DIR"
         ;;
     *)
