@@ -238,8 +238,8 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
 
     # Analytics CBGT connector
-    IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbaselabs/cbas")
-      ADD_SUBDIRECTORY(goproj/src/github.com/couchbaselabs/cbas)
+    IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbas")
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbas)
     ENDIF ()
 
     # Analytics Maven project
