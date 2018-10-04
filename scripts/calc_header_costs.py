@@ -102,5 +102,6 @@ for k,v in headers.items():
             # No cost value - print warming if this is a high count
             # header (and not system)
             if v['count'] > 100 and 'system' not in v:
-                print("Warning: No cost value for '{}' but has " + "#include count of {}".format(k, v['count']),
+                print(("Warning: No cost value for '{}' but has #include " +
+                       "count of {}").format(k, v['count']),
                       file=sys.stderr)
