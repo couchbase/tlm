@@ -1,17 +1,14 @@
 echo start build at `date`
 
-source ~/cygwin.bash_profile
-
 thisdir=`pwd`
-version="9.3.3.3"
-release="20"
-release_tag="OTP-20.3.8.8"
+version=$1
+release=$2
+release_tag=$3
+package_name=$4
+package_name_tgz="erlang-windows_msvc2015-amd64-$package_name.tgz"
+package_name_md5="erlang-windows_msvc2015-amd64-$package_name.md5"
 
-## get the source code
-git clone git://github.com/couchbasedeps/erlang otp_src_${release_tag}
-cd otp_src_${release_tag}
-git checkout ${release_tag}
-
+# Convert dos2unix
 find . -type f |xargs /cygdrive/c/Users/Administrator/Downloads/dos2unix-7.4.0-win64/bin/dos2unix.exe
 
 ## build the source, as per instructions
@@ -38,7 +35,7 @@ installdir=/cygdrive/c/Program\ Files/erl${version}
 ## cbdeps consumption. We could check the files in with placeholder
 ## tokens for version. But I am just generating them here dynamically
 ## because they are tiny files
-echo $release_tag > VERSION.txt
+echo $release > VERSION.txt
 echo "[erlang]
 Bindir=\${CMAKE_INSTALL_PREFIX}/erts-${version}/bin
 Progname=erl
@@ -54,12 +51,12 @@ CONFIGURE_FILE(\${CMAKE_CURRENT_SOURCE_DIR}/erl.ini.in \${CMAKE_INSTALL_PREFIX}/
 ## tar 'em up
 cp VERSION.txt erl.ini.in CMakeLists.txt "${installdir}"
 cd "${installdir}"
-tar --exclude="Install.exe" --exclude="Install.ini" --exclude="Uninstall.exe" -zcf ${thisdir}/erlang-windows_msvc2015-amd64-${release_tag}-cb3.tgz *
+tar --exclude="Install.exe" --exclude="Install.ini" --exclude="Uninstall.exe" -zcf ${thisdir}/${package_name_tgz} *
+printf $(md5sum ${thisdir}/${package_name_tgz}) > ${thisdir}/${package_name_md5}
+
 rm -f VERSION.txt erl.ini.in CMakeLists.txt
 
 ## uninstall the erlang installation
 "${installdir}/Uninstall.exe" /S
-
-rm -f VERSION.txt erl.ini.in CMakeLists.txt
 
 echo end build at `date`
