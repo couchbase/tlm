@@ -14,19 +14,19 @@
 #
 DECLARE_DEP (breakpad VERSION 20160926-cb1 PLATFORMS debian9 ubuntu16.04 windows_msvc2015)
 # breakpad 20160926-cb2 rebuilt using GCC 7.2.0.
-DECLARE_DEP (breakpad VERSION 20160926-cb2 PLATFORMS centos6 centos7 debian8 suse11 suse12 suse15 ubuntu14.04)
-# breakpad 20160926-cb3 ubuntu18.04
-DECLARE_DEP (breakpad VERSION 20160926-cb3 PLATFORMS ubuntu18.04)
+DECLARE_DEP (breakpad VERSION 20160926-cb2 PLATFORMS centos6 centos7 debian8 suse11 suse12 ubuntu14.04)
+# breakpad 20160926-cb3 suse15 ubuntu18.04
+DECLARE_DEP (breakpad VERSION 20160926-cb3 PLATFORMS suse15 ubuntu18.04)
 DECLARE_DEP (boost VERSION 1.62.0-cb3 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04 windows_msvc2015)
 DECLARE_DEP (curl VERSION 7.60.0-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04 windows_msvc2015)
 DECLARE_DEP (erlang VERSION OTP-20.3.8.8-cb2 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (erlang VERSION OTP-20.3.8.8-cb3 PLATFORMS windows_msvc2015)
-DECLARE_DEP (flatbuffers VERSION 1.4.0-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 windows_msvc2015)
-DECLARE_DEP (flatbuffers VERSION 1.4.0-cb2 PLATFORMS ubuntu18.04)
+DECLARE_DEP (flatbuffers VERSION 1.4.0-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 ubuntu14.04 ubuntu16.04 windows_msvc2015)
+DECLARE_DEP (flatbuffers VERSION 1.4.0-cb2 PLATFORMS suse15 ubuntu18.04)
 DECLARE_DEP (flex VERSION 2.5.4a-cb1 PLATFORMS windows_msvc2015)
 DECLARE_DEP (flex VERSION 2.6.4-cb4 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
-DECLARE_DEP (icu4c VERSION 59.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 windows_msvc2015)
-DECLARE_DEP (icu4c VERSION 59.1-cb2 PLATFORMS ubuntu18.04)
+DECLARE_DEP (icu4c VERSION 59.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 ubuntu14.04 ubuntu16.04 windows_msvc2015)
+DECLARE_DEP (icu4c VERSION 59.1-cb2 PLATFORMS suse15 ubuntu18.04)
 DECLARE_DEP (jemalloc VERSION 4.1.0-cb2 PLATFORMS windows_msvc2015)
 DECLARE_DEP (jemalloc VERSION 4.5.0.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (json VERSION 3.1.2-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04 windows_msvc2015)
@@ -39,8 +39,8 @@ DECLARE_DEP (openjdk-rt VERSION 1.8.0.171-cb1 PLATFORMS centos6 centos7 debian8 
 DECLARE_DEP (openssl VERSION 1.0.2k-cb2 PLATFORMS windows_msvc2015)
 DECLARE_DEP (openssl VERSION 1.0.2k-cb3 PLATFORMS macosx)
 DECLARE_DEP (python-snappy VERSION c97d633 PLATFORMS windows_msvc2015)
-DECLARE_DEP (python-snappy VERSION c97d633-cb1 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04)
-DECLARE_DEP (python-snappy VERSION c97d633-cb2 PLATFORMS ubuntu18.04)
+DECLARE_DEP (python-snappy VERSION c97d633-cb1 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11 suse12 ubuntu14.04 ubuntu16.04)
+DECLARE_DEP (python-snappy VERSION c97d633-cb2 PLATFORMS suse15 ubuntu18.04)
 DECLARE_DEP (rocksdb VERSION 5.12.5-cb1 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04)
 # TODO: cbdeps-build is not building for ubuntu18 (issue tracked in MB-31199), so use the previous dep for now. Remove this as soon as cbdeps-build has been fixed.
 DECLARE_DEP (rocksdb VERSION 5.8.0-cb2 PLATFORMS ubuntu18.04)
