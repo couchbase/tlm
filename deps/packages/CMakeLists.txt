@@ -180,7 +180,7 @@ ELSE ()
 ENDIF ()
 
 _ADD_DEP_PACKAGE(json 3.1.2 v3.1.2 1)
-_ADD_DEP_PACKAGE(boost 1.62.0 v1.62.0 3)
+_ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 1)
 IF (WIN32 OR APPLE)
   # Note: we build libevent with support for SSL, so whenever
   # OpenSSL is upgraded with an API breaking change we probably
