@@ -266,6 +266,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       SET (LCB_BUILD_DTRACE OFF CACHE BOOL "Turn off tracing" FORCE)
       SET (LCB_INSTALL_HEADERS OFF CACHE BOOL "Don't install headers" FORCE)
       SET (LCB_INSTALL_PKGCONFIG OFF CACHE BOOL "Don't install libcouchbase.pc" FORCE)
+      SET (CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Override libdir to violate FHS" FORCE)
       ADD_SUBDIRECTORY(libcouchbase)
     ENDIF()
 
