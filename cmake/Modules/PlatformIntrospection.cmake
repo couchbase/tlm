@@ -128,7 +128,7 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
   ELSEIF (_id STREQUAL "fedora" AND _rel VERSION_LESS 26)
     SET (_id "centos")
     SET (_rel "7")
-  ELSEIF (_id STREQUAL "opensuse project" OR _id STREQUAL "openSUSE" OR _id MATCHES "suse.*")
+  ELSEIF (_id MATCHES "opensuse.*" OR _id MATCHES "suse.*")
     SET(_id "suse")
     # Just use the major version from the SuSE identifier - we don't
     # need different builds for different minor versions.
