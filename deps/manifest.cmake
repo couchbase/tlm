@@ -17,7 +17,7 @@ DECLARE_DEP (breakpad VERSION 20160926-cb1 PLATFORMS debian9 ubuntu16.04 windows
 DECLARE_DEP (breakpad VERSION 20160926-cb2 PLATFORMS centos6 centos7 debian8 suse11 suse12 ubuntu14.04)
 # breakpad 20160926-cb3 suse15 ubuntu18.04
 DECLARE_DEP (breakpad VERSION 20160926-cb3 PLATFORMS suse15 ubuntu18.04)
-DECLARE_DEP (boost VERSION 1.62.0-cb3 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04 windows_msvc2015)
+DECLARE_DEP (boost VERSION 1.67.0-cb2 PLATFORMS centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015)
 DECLARE_DEP (curl VERSION 7.60.0-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04 windows_msvc2015)
 DECLARE_DEP (erlang VERSION OTP-20.3.8.8-cb2 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (erlang VERSION OTP-20.3.8.8-cb3 PLATFORMS windows_msvc2015)
