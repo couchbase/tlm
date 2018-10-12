@@ -216,3 +216,5 @@ _ADD_DEP_PACKAGE(openjdk-rt 1.8.0.171 UNUSED 1)
 _ADD_DEP_PACKAGE(double-conversion 3.0.0 v3.0.0 2)
 _ADD_DEP_PACKAGE(gflags 2.2.1 v2.2.1 2)
 _ADD_DEP_PACKAGE(glog 0.3.5 v0.3.5 1)
+
+_ADD_DEP_PACKAGE(folly v2018.08.13.00 v2018.08.13.00-couchbase 1)
