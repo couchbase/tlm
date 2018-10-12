@@ -110,6 +110,7 @@ INCLUDE(CouchbaseMemoryAllocator)
 INCLUDE(CouchbaseCompression)
 
 INCLUDE(FindCouchbaseBoost)
+INCLUDE(FindCouchbaseFolly)
 INCLUDE(FindCouchbaseOpenSSL)
 INCLUDE(FindCouchbaseLibevent)
 INCLUDE(FindCouchbaseCurl)
