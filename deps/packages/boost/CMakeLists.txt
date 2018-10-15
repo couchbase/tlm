@@ -18,15 +18,18 @@ ExternalProject_Add(boost
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND <SOURCE_DIR>/${boost_bootstrap} --prefix=<INSTALL_DIR>
       --with-libraries=context,chrono,date_time,filesystem,program_options,regex,system,thread
-  BUILD_COMMAND <SOURCE_DIR>/b2 --prefix=<INSTALL_DIR>
-      ${boost_cxx_version}
-      variant=release
-      link=static
-      threading=multi
-      runtime-link=shared
-      cxxflags=-fno-omit-frame-pointer
-      cflags=-fno-omit-frame-pointer
+  BUILD_COMMAND <SOURCE_DIR>/b2
       -j 4
+      --layout=system
+      --prefix=<INSTALL_DIR>
+      address-model=64
+      ${boost_cxx_version}
+      cflags=-fno-omit-frame-pointer
+      cxxflags=-fno-omit-frame-pointer
+      link=static
+      runtime-link=shared
+      threading=multi
+      variant=release
       install
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   # CB Server and Folly (particulary) require most of Boost's submodules;
