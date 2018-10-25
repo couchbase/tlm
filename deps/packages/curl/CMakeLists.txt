@@ -1,10 +1,29 @@
 # Downloads the declared version of libcurl source code and builds it.
 
+include(ExternalProject)
+
 IF (WIN32)
-  INCLUDE ("curl_windows.cmake")
+  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/${_dep_package}_windows.bat)
 ELSE ()
-  INCLUDE ("curl_unix.cmake")
+  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/${_dep_package}_unix.sh)
 ENDIF ()
+
+SET (_install_dir "${CMAKE_BINARY_DIR}/install")
+FILE (TO_NATIVE_PATH "${_install_dir}" _install_dir)
+
+### Download, configure and build libcurl ###############################
+ExternalProject_Add (curl
+  GIT_REPOSITORY ${_git_repo}
+  GIT_TAG ${_git_rev}
+
+  CONFIGURE_COMMAND "${CMAKE_COMMAND}" -E make_directory <INSTALL_DIR>
+  BUILD_COMMAND "${_build_script}" <INSTALL_DIR> ${PLATFORM} "${_dep_version}"
+  BUILD_IN_SOURCE 1
+  INSTALL_DIR "${_install_dir}"
+  INSTALL_COMMAND "${CMAKE_COMMAND}" -E copy
+    "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt"
+    <INSTALL_DIR>/CMakeLists.txt
+)
 
 # cbdeps boilerplate
 _ADD_PACKAGE_STEP()
