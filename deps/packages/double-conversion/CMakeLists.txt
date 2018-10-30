@@ -5,6 +5,7 @@ ExternalProject_Add(double-conversion
   GIT_TAG ${_git_rev}
 
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
+             -D CMAKE_INSTALL_LIBDIR=lib
              -D BUILD_SHARED_LIBS=OFF
              -D BUILD_TESTING=OFF
 	     -D CMAKE_BUILD_TYPE=RelWithDebInfo
