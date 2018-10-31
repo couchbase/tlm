@@ -20,7 +20,6 @@ ExternalProject_Add(boost
       --with-libraries=context,chrono,date_time,filesystem,program_options,regex,system,thread
   BUILD_COMMAND <SOURCE_DIR>/b2
       -j 4
-      --layout=system
       --prefix=<INSTALL_DIR>
       address-model=64
       ${boost_cxx_version}
