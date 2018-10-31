@@ -14,31 +14,37 @@
 #   limitations under the License.
 
 # Locate Boost headers.
-# This module defines
-#  BOOST_FOUND, if boost was found
-#  BOOST_INCLUDE_DIR, where to find the boost headers
+# This module defines all the variables defined by the standard FindBoost
+# module (https://cmake.org/cmake/help/latest/module/FindBoost.html), plus
+# the following variables for compability with our original custom logic to
+# locate Boost:
+#   BOOST_INCLUDE_DIR, where to find the boost headers (copy of
+#                      Boost_INCLUDE_DIR - note the case).
 
-if (NOT DEFINED BOOST_FOUND)
+if (NOT DEFINED Boost_FOUND)
     include(PlatformIntrospection)
 
     cb_get_supported_platform(_supported_platform)
     if (_supported_platform)
         # Supported platforms should only use the provided hints and pick it up
         # from cbdeps
-        set(_boost_no_default_path NO_DEFAULT_PATH)
+        set(Boost_NO_SYSTEM_PATHS ON)
     endif ()
 
-    set(boost_exploded ${CMAKE_BINARY_DIR}/tlm/deps/boost.exploded)
+    set(Boost_ADDITIONAL_VERSIONS "1.67")
+    set(Boost_DETAILED_FAILURE_MSG ON)
+    set(Boost_USE_STATIC_LIBS ON)
 
-    find_path(BOOST_INCLUDE_DIR boost/intrusive/list.hpp
-              HINTS ${boost_exploded}/include
-              ${_boost_no_default_path})
+    set(BOOST_ROOT ${CMAKE_BINARY_DIR}/tlm/deps/boost.exploded)
 
-    if (BOOST_INCLUDE_DIR)
-        message(STATUS "Found boost in ${BOOST_INCLUDE_DIR}")
-    else (BOOST_INCLUDE_DIR)
+    find_package(Boost REQUIRED)
+
+    if(Boost_INCLUDE_DIR)
+        message(STATUS "Found Boost in ${Boost_INCLUDE_DIR}")
+        # Backwards compatabilty
+        set(BOOST_INCLUDE_DIR ${Boost_INCLUDE_DIR} CACHE STRING
+                "Boost include directory (copy of Boost_INCLUDE_DIR)")
+    else()
         message(FATAL_ERROR "Boost headers not found")
-    endif (BOOST_INCLUDE_DIR)
-    set(BOOST_FOUND true CACHE BOOL "Found boost" FORCE)
-    mark_as_advanced(BOOST_FOUND BOOST_INCLUDE_DIR)
-endif (NOT DEFINED BOOST_FOUND)
+    endif()
+endif()
