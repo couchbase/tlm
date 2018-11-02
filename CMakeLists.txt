@@ -236,6 +236,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
 
     ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbft)
     ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
+    ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/mobile-service)
 
     # Analytics CBGT connector
     IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbas")
