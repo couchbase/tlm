@@ -10,8 +10,6 @@ ExternalProject_Add(gflags
              -D INSTALL_HEADERS=ON
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-  INSTALL_COMMAND $(MAKE) install
-          COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/lib/cmake
 )
 
 # cbdeps boilerplate
