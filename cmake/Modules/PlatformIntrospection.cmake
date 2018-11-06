@@ -173,7 +173,7 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
        "debian7" "debian8" "debian9"
        "macosx"
        "suse11.2" "suse12.2"
-       "ubuntu14.04" "ubuntu16.04"
+       "ubuntu14.04" "ubuntu16.04" "ubuntu18.04"
        "windows_msvc2012" "windows_msvc2013" "windows_msvc2015"
        "windows_msvc2017")
   LIST (FIND _supported_platforms ${_platform} _index)
