@@ -18,7 +18,9 @@
 # This module defines
 #  COUCHBASE_PYTHON, Set to true if we may use this version of python
 
-if (NOT DEFINED COUCHBASE_PYTHON)
+if (NOT DEFINED COUCHBASE_PYTHON_INTERP_INCLUDED)
+    set (COUCHBASE_PYTHON_INTERP_INCLUDED 1)
+
     include(FindPythonInterp)
 
     if (NOT DEFINED PYTHON_VERSION_MAJOR)
@@ -35,4 +37,4 @@ if (NOT DEFINED COUCHBASE_PYTHON)
         set(COUCHBASE_PYTHON false CACHE BOOL "Python is too old for us to use" FORCE)
         message(WARNING "You should upgrade python so you can run tests!!!!!")
     endif ()
-endif (NOT DEFINED COUCHBASE_PYTHON)
+endif (NOT DEFINED COUCHBASE_PYTHON_INTERP_INCLUDED)
