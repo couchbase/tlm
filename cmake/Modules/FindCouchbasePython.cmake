@@ -51,8 +51,10 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
       MESSAGE (FATAL_ERROR "Failed to create Python venv: ${_cbdep_out}")
     ENDIF ()
 
+    # Have to use "python -m pip" here rather than invoking "pip" directly,
+    # as the later chokes on Windows
     EXECUTE_PROCESS (
-      COMMAND "${_pypip}" install -U pip pipenv
+      COMMAND "${_pyexe}" -m pip install -U pip pipenv
       RESULT_VARIABLE _pip_result
       OUTPUT_VARIABLE _pip_out
       ERROR_VARIABLE _pip_out
