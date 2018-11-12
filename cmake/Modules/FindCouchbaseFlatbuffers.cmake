@@ -42,9 +42,18 @@ if (NOT DEFINED FLATBUFFERS_FOUND)
         message(FATAL_ERROR "Failed to locate flatc")
     endif ()
 
+    find_library(FLATBUFFERS_LIBRARIES
+                 NAMES flatbuffers
+                 PATHS ${google_flatbuffers_exploded}/lib/)
+
+    if (NOT FLATBUFFERS_LIBRARIES)
+        message(FATAL_ERROR "Failed to locate flatbuffers library")
+    endif ()
+
     message(STATUS "Found Google Flatbuffers headers in: ${FLATBUFFERS_INCLUDE_DIR}")
+    message(STATUS "                            library: ${FLATBUFFERS_LIBRARIES}")
     message(STATUS "                           compiler: ${FLATC}")
 
     set(FLATBUFFERS_FOUND true CACHE BOOL "Found Google flatbuffers" FORCE)
-    mark_as_advanced(FLATBUFFERS_FOUND FLATBUFFERS_INCLUDE_DIR FLATC)
+    mark_as_advanced(FLATBUFFERS_FOUND FLATBUFFERS_INCLUDE_DIR FLATC FLATBUFFERS_LIBRARIES)
 endif (NOT DEFINED FLATBUFFERS_FOUND)
