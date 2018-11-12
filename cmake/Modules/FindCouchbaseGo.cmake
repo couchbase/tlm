@@ -106,9 +106,9 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     SET (GO_SINGLE_ROOT)
   ENDMACRO (ENABLE_MULTI_GO)
 
-  # On MacOS, to ensure compatibility with MacOS Sierra, we must enforce
-  # a minimum version of Go. MB-20509.
-  SET (GO_MAC_MINIMUM_VERSION 1.7.1)
+  # On MacOS, to ensure compatibility with MacOS Mojave, we must enforce
+  # a minimum version of Go. MB-31436.
+  SET (GO_MAC_MINIMUM_VERSION 1.11)
 
   # This macro is called by GoInstall() / GoYacc() / etc. to find the
   # appropriate Go compiler to use, based on whether or not Multi-Go mode
@@ -135,7 +135,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       IF (APPLE)
         IF (${_version} VERSION_LESS "${GO_MAC_MINIMUM_VERSION}")
           IF ("$ENV{CB_MAC_GO_WARNING}" STREQUAL "")
-            MESSAGE (${_go_warning} "Forcing Go version ${GO_MAC_MINIMUM_VERSION} on MacOS (MB-20509) "
+            MESSAGE (${_go_warning} "Forcing Go version ${GO_MAC_MINIMUM_VERSION} on MacOS (MB-31436) "
               "(to suppress this warning, set environment variable "
               "CB_MAC_GO_WARNING to any value")
             SET (_go_warning WARNING)
@@ -450,6 +450,14 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   #
   MACRO (GoYacc)
 
+    # Only build this target if somebody uses this macro
+    IF (NOT TARGET goyacc)
+      GoInstall (TARGET goyacc
+      PACKAGE golang.org/x/tools/cmd/goyacc
+      GOVERSION 1.11
+      GOPATH "${CMAKE_SOURCE_DIR}/godeps")
+    ENDIF ()
+
     PARSE_ARGUMENTS (Go "DEPENDS" "TARGET;YFILE;GOVERSION" "" ${ARGN})
 
     IF (NOT Go_TARGET)
@@ -470,9 +478,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ADD_CUSTOM_COMMAND(OUTPUT "${Go_OUTPUT}"
                        COMMAND "${CMAKE_COMMAND}"
                        -D "GOROOT=${_goroot}"
+                       -D "GOYACC_EXECUTABLE=${CMAKE_SOURCE_DIR}/godeps/bin/goyacc"
                        -D "YFILE=${_yfile}"
                        -P "${TLM_MODULES_DIR}/go-yacc.cmake"
-                       DEPENDS ${Go_YFILE}
+                       DEPENDS ${Go_YFILE} goyacc
                        WORKING_DIRECTORY "${_ypath}"
                        COMMENT "Build Go yacc target ${Go_TARGET} using Go ${_gover}"
                        VERBATIM)
