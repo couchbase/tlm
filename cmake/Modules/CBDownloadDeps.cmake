@@ -310,7 +310,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
     IF (NOT EXISTS "${CBDEP_CACHE}")
       MESSAGE (STATUS "Downloading cbdep ${CBDEP_VERSION}")
       _DOWNLOAD_FILE (
-        "https://packages.couchbase.com/cbdep/${CBDEP_VERSION}/${_cbdepfile}"
+        "http://packages.couchbase.com/cbdep/${CBDEP_VERSION}/${_cbdepfile}"
         "${CBDEP_CACHE}")
     ENDIF ()
     FILE (COPY "${CBDEP_CACHE}" DESTINATION "${PROJECT_BINARY_DIR}/tlm"
