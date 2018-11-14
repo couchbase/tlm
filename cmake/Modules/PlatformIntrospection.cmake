@@ -196,6 +196,7 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
 
   # .. and check it against the list, returning it if found.
   SET (_supported_platforms
+       "amzn2"
        "centos6" "centos7"
        "debian7" "debian8" "debian9"
        "macosx"
@@ -208,3 +209,4 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
     SET(${_supported_platform} ${_platform})
   ENDIF (_index GREATER "-1")
 ENDMACRO (CB_GET_SUPPORTED_PLATFORM)
+
