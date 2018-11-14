@@ -42,6 +42,8 @@ IF (CB_ADDRESSSANITIZER)
 
         SET(ADDRESS_SANITIZER_FLAG "-fsanitize=address")
 
+        SET(ADDRESS_SANITIZER_FLAG_DISABLE "-fno-sanitize=address")
+
         # TC/jemalloc cause issues with AddressSanitizer - force
         # the use of the system allocator.
         SET(COUCHBASE_MEMORY_ALLOCATOR system CACHE STRING "Memory allocator to use")
@@ -92,4 +94,18 @@ function(add_sanitize_memory TARGET)
         PROPERTY COMPILE_FLAGS " ${ADDRESS_SANITIZER_FLAG} -fno-omit-frame-pointer")
     set_property(TARGET ${TARGET} APPEND_STRING
         PROPERTY LINK_FLAGS " ${ADDRESS_SANITIZER_FLAG}")
+endfunction()
+
+# Disable AddressSanitizer for specific target. No-op if
+# CB_ADDRESSSANITIZER is not enabled.
+# Typically used via remove_sanitizers()
+function(remove_sanitize_memory TARGET)
+    if (NOT CB_ADDRESSSANITIZER)
+        return()
+    endif ()
+
+    set_property(TARGET ${TARGET} APPEND_STRING
+        PROPERTY COMPILE_FLAGS "${ADDRESS_SANITIZER_FLAG_DISABLE}")
+    set_property(TARGET ${TARGET} APPEND_STRING
+        PROPERTY LINK_FLAGS " ${ADDRESS_SANITIZER_FLAG_DISABLE}")
 endfunction()

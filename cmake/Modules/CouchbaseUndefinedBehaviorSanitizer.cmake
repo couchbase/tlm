@@ -50,6 +50,8 @@ IF (CB_UNDEFINEDSANITIZER GREATER 0)
         # default (all symbols visible).
         SET(UNDEFINED_SANITIZER_FLAG "${UNDEFINED_SANITIZER_FLAG} -fvisibility=default")
 
+        SET(UNDEFINED_SANITIZER_FLAG_DISABLE "-fno-sanitize=undefined -fvisibility=hidden")
+
         # Configure CTest's MemCheck mode.
         SET(MEMORYCHECK_TYPE UndefinedBehaviorSanitizer)
 
@@ -81,4 +83,18 @@ function(add_sanitize_undefined TARGET)
         PROPERTY COMPILE_FLAGS " ${UNDEFINED_SANITIZER_FLAG} -fno-omit-frame-pointer")
     set_property(TARGET ${TARGET} APPEND_STRING
         PROPERTY LINK_FLAGS " ${UNDEFINED_SANITIZER_FLAG}")
+endfunction()
+
+# Disable UBSAN for specific target. No-op if
+# CB_UNDEFINEDSANITIZER is not enabled.
+# Typically used via remove_sanitizers()
+function(remove_sanitize_undefined TARGET)
+    if (NOT CB_UNDEFINEDSANITIZER)
+        return()
+    endif ()
+
+    set_property(TARGET ${TARGET} APPEND_STRING
+        PROPERTY COMPILE_FLAGS " ${UNDEFINED_SANITIZER_FLAG_DISABLE}")
+    set_property(TARGET ${TARGET} APPEND_STRING
+        PROPERTY LINK_FLAGS " ${UNDEFINED_SANITIZER_FLAG_DISABLE}")
 endfunction()
