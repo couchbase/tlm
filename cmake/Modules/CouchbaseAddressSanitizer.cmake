@@ -74,6 +74,24 @@ IF (CB_ADDRESSSANITIZER)
             SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${ADDRESS_SANITIZER_FLAG}")
 
             ADD_DEFINITIONS(-DADDRESS_SANITIZER)
+
+            # Need to install libubsan to be able to run sanitized
+            # binaries on a machine different to the build machine
+            # (for example for RPM sanitized packages).
+            find_sanitizer_library(asan_lib libasan.so.4)
+            if(NOT asan_lib)
+              message(FATAL_ERROR "ASan library not found.")
+            endif()
+
+            message(STATUS "Found libasan at: ${asan_lib}")
+            install(FILES ${asan_lib} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+            if(IS_SYMLINK ${asan_lib})
+              # Often a shared library is actually a symlink to a versioned file - e.g.
+              # libasan.so.4 -> libasan.so.4.0.0
+              # In which case we also need to install the real file.
+              get_filename_component(asan_lib_realpath ${asan_lib} REALPATH)
+              install(FILES ${asan_lib_realpath} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+            endif()
         endif()
 
         MESSAGE(STATUS "AddressSanitizer enabled (mode ${CB_ADDRESSSANITIZER})")

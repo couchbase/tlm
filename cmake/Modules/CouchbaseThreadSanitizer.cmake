@@ -33,6 +33,24 @@ IF (CB_THREADSANITIZER)
 
         ADD_DEFINITIONS(-DTHREAD_SANITIZER)
 
+        # Need to install libtsan to be able to run sanitized
+        # binaries on a machine different to the build machine
+        # (for example for RPM sanitized packages).
+        find_sanitizer_library(tsan_lib libtsan.so.0)
+        if(NOT tsan_lib)
+          message(FATAL_ERROR "TSan library not found.")
+        endif()
+
+        message(STATUS "Found libtsan at: ${tsan_lib}")
+        install(FILES ${tsan_lib} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+        if(IS_SYMLINK ${tsan_lib})
+          # Often a shared library is actually a symlink to a versioned file - e.g.
+          # libtsan.so.1 -> libtsan.so.1.0.0
+          # In which case we also need to install the real file.
+          get_filename_component(tsan_lib_realpath ${tsan_lib} REALPATH)
+          install(FILES ${tsan_lib_realpath} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+        endif()
+
         # Override the normal ADD_TEST macro to set the TSAN_OPTIONS
         # environment variable - this allows us to specify the
         # suppressions file to use.
