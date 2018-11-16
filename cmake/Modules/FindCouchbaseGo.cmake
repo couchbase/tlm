@@ -283,6 +283,18 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       SET (_ldflags "${Go_LDFLAGS}")
     ENDIF (WIN32  AND ${Go_NOCONSOLE})
 
+    # If Sanitizers are enabled then add a runtime linker path to
+    # locate libasan.so / libubsan.so etc.
+    # This isn't usually needed if we are running on the same machine
+    # as we built (as the sanitizer libraries are typically in
+    # /usr/lib/ or similar), however when creating a packaged build
+    # which will be installed and run on a different machine we need
+    # to ensure that the runtime linker knows how to find our copies
+    # of libasan.so etc in $PREFIX/lib.
+    IF (CB_ADDRESSSANITIZER OR CB_UNDEFINED_SANITIZER)
+      SET (_ldflags "${_ldflags} -r \$ORIGIN/../lib")
+    ENDIF()
+
     # Compute path to Go compiler, depending on the Go mode (single or multi)
     GET_GOROOT ("${Go_GOVERSION}" _goroot _gover)
 
