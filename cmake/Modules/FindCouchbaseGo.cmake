@@ -139,6 +139,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
               "(to suppress this warning, set environment variable "
               "CB_MAC_GO_WARNING to any value")
             SET (_go_warning WARNING)
+            SET (ENV{CB_MAC_GO_WARNING} true)
           ENDIF ()
           SET (_version ${GO_MAC_MINIMUM_VERSION})
         ENDIF ()
