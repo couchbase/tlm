@@ -154,9 +154,6 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
     SET (_ver "7")
   ELSEIF (_id MATCHES "opensuse.*" OR _id MATCHES "suse.*" OR _id MATCHES "sles.*")
     SET(_id "suse")
-    # Just use the major version from the SuSE identifier - we don't
-    # need different builds for different minor versions.
-    STRING (REGEX MATCH "[0-9]+" _ver "${_ver}")
   ENDIF (_id STREQUAL "linuxmint")
   SET (${_distro} "${_id}${_ver}")
 ENDMACRO (_DETERMINE_LINUX_DISTRO)
@@ -200,10 +197,9 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
        "centos6" "centos7"
        "debian7" "debian8" "debian9"
        "macosx"
-       "suse11" "suse12" "suse15"
-       "ubuntu14.04" "ubuntu16.04" "ubuntu18.04"
-       "windows_msvc2015"
-       "windows_msvc2017")
+       "suse11.2" "suse12.2"
+       "ubuntu14.04" "ubuntu16.04"
+       "windows_msvc2015")
   LIST (FIND _supported_platforms ${_platform} _index)
   IF (_index GREATER "-1")
     SET(${_supported_platform} ${_platform})
