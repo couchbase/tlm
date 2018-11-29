@@ -48,7 +48,7 @@ touch ./lib/debugger/SKIP \
       --disable-hipe \
       --disable-fp-exceptions \
       $OPENSSL_FLAGS \
-      CFLAGS="-fno-strict-aliasing -O3 -ggdb3"
+      CFLAGS="-fno-strict-aliasing -O3 -ggdb3 -DOPENSSL_NO_EC=1"
 
 make -j4
 
