@@ -56,8 +56,9 @@
 #
 # The object library isn't expected to be linked against - it exists
 # only for the above two reasons, so the headers get compiled. As such
-# the target will be excluded from the 'all' target - to build it one
-# must explicilty specify that target to be build.
+# this function should only be called behind a CB_ENABLE_HEADER_INCLUDE_CHECK
+# guard. So that it is only built when option CB_ENABLE_HEADER_INCLUDE_CHECK
+# is specified as "ON" thus, making sure that it is not build by default.
 
 # To convince CMake to actually compile the headers, we symlink each
 # specified header to <headerh>.cc; so CMake treats it as a C++ source
@@ -74,7 +75,19 @@ function(add_header_object_library)
   # for each found header; and use the symlinks as the list of files to
   # compile.
   foreach(_path ${arg_HEADERS})
+    #When using Make as a CMake generator, create_symlink fails. This is due
+    #to the fact that the sub directories in ${_path} aren't there under
+    #${CMAKE_CURRENT_BINARY_DIR}. Thus, we need to create them to make the
+    #symlink. To do this we create the ${_paths} directory unser
+    #${CMAKE_CURRENT_BINARY_DIR} so we can symlink the files.
+
+    #create a variable to store the path of the symlink
     set(_header_cc ${CMAKE_CURRENT_BINARY_DIR}/${_path}.cc)
+
+    #get the directory path from the symlink path and then make sure it exists
+    get_filename_component(_head_build_symlink_directory
+                           ${_header_cc} DIRECTORY)
+    file(MAKE_DIRECTORY ${_head_build_symlink_directory})
 
     add_custom_command(OUTPUT ${_header_cc}
       COMMAND ${CMAKE_COMMAND} -E create_symlink ${CMAKE_CURRENT_SOURCE_DIR}/${_path} ${_header_cc}
@@ -103,7 +116,4 @@ function(add_header_object_library)
     COMPILE_FLAGS
     "-Wno-pragma-once-outside-header -Wno-unused-const-variable -Wno-unused-function")
 
-  # We don't actually want to build these targets by default (given
-  # they arn't actually used by any targets in normal build).
-  set_target_properties(${arg_NAME} PROPERTIES EXCLUDE_FROM_ALL TRUE)
 endfunction()
