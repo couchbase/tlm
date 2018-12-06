@@ -26,14 +26,10 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
     SET (PYTHON_VENV "${PROJECT_BINARY_DIR}/tlm/python.venv/python${PYTHON_VERSION}-amd64")
     SET (_pybindir "${PYTHON_VENV}/Scripts")
     SET (_pyexe "${_pybindir}/python.exe")
-    SET (_pypip "${_pybindir}/pip.exe")
-    SET (_pypipenv "${_pybindir}/pipenv.exe")
   ELSE ()
     SET (PYTHON_VENV "${PROJECT_BINARY_DIR}/tlm/python.venv/python${PYTHON_VERSION}")
     SET (_pybindir "${PYTHON_VENV}/bin")
     SET (_pyexe "${_pybindir}/python")
-    SET (_pypip "${_pybindir}/pip")
-    SET (_pypipenv "${_pybindir}/pipenv")
   ENDIF ()
 
   IF (NOT EXISTS "${PYTHON_VENV}")
@@ -51,22 +47,10 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
       MESSAGE (FATAL_ERROR "Failed to create Python venv: ${_cbdep_out}")
     ENDIF ()
 
-    # Have to use "python -m pip" here rather than invoking "pip" directly,
-    # as the later chokes on Windows
-    EXECUTE_PROCESS (
-      COMMAND "${_pyexe}" -m pip install -U pip pipenv
-      RESULT_VARIABLE _pip_result
-      OUTPUT_VARIABLE _pip_out
-      ERROR_VARIABLE _pip_out
-    )
-    IF (_pip_result)
-      FILE (REMOVE_RECURSE "${PYTHON_VENV}")
-      MESSAGE (FATAL_ERROR "Failed to create Python venv: ${_pip_out}")
-    ENDIF ()
   ENDIF ()
 
   SET (PYTHON_EXE "${_pyexe}" CACHE INTERNAL "Path to python interpretter")
-  SET (PYTHON_PIPENV "${_pypipenv}" CACHE INTERNAL "Path to pipenv")
+  SET (ENV{VIRTUAL_ENV} "${PYTHON_VENV}")
   MESSAGE (STATUS "Using Python ${PYTHON_VERSION} from ${PYTHON_EXE}")
 
   # Have to remember cwd when this find is INCLUDE()d
@@ -75,8 +59,8 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   INCLUDE (ParseArguments)
 
   # Adds a target which builds an executable from a Python program
-  # using PyInstaller. It is assumed that the current directory is
-  # a valid pipenv project, ie, it contains a Pipfile and Pipfile.lock.
+  # using PyInstaller. It is assumed that the current directory
+  # contains a requirements.txt.
   #
   # Required arguments:
   #
@@ -84,9 +68,10 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   #
   # SCRIPT - Python script
   #
-  # OUTPUT - name of output binary (will be created in CMAKE_CURRENT_BINARY_DIR)
-  #
   # Optional arguments:
+  #
+  # OUTPUT - name of output binary (will be created in CMAKE_CURRENT_BINARY_DIR)
+  # (default value is same as TARGET)
   #
   # INSTALL_PATH - creates a CMake INSTALL() directive to install the OUTPUT
   # into CMAKE_INSTALL_PREFIX in a directory with this name
@@ -94,9 +79,16 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   # DEPENDS - list of files (other than SCRIPT, Pipfile, and Pipfile.lock)
   # that should cause this target to re-run if they are newer than OUTPUT.
   # May also list CMake targets that must be executed prior to this one.
+  #
+  # IMPORTS - list of python packages that the script imports. PyInstaller can
+  # normally introspect this, but there are occasions when it cannot; you can
+  # add extra ones here as necessary.
+  #
+  # EXTRA_BIN - list of extra binaries to include in the resulting binary
+
   MACRO (PyInstall)
 
-    PARSE_ARGUMENTS (Py "DEPENDS"
+    PARSE_ARGUMENTS (Py "DEPENDS;IMPORTS;LIBRARY_DIRS;EXTRA_BIN"
       "TARGET;OUTPUT;SCRIPT;INSTALL_PATH"
       "" ${ARGN})
 
@@ -104,32 +96,43 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
       MESSAGE (FATAL_ERROR "TARGET is required!")
     ENDIF ()
     IF (NOT Py_OUTPUT)
-      MESSAGE (FATAL_ERROR "OUTPUT is required!")
+      SET (Py_OUTPUT ${Py_TARGET})
     ENDIF ()
     IF (NOT Py_SCRIPT)
       MESSAGE (FATAL_ERROR "SCRIPT is required!")
     ENDIF ()
 
-    # Local output file
+    # Local output file and build directory
     SET (_pyoutput "${CMAKE_CURRENT_BINARY_DIR}/${Py_OUTPUT}")
-
+    SET (_pyinstallerdir "${CMAKE_CURRENT_BINARY_DIR}/${Py_TARGET}.pyinstaller")
+    SET (_pyvenv "${CMAKE_CURRENT_BINARY_DIR}/pyvenv")
+    GET_FILENAME_COMPONENT (_dirname "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
     ADD_CUSTOM_COMMAND (OUTPUT "${_pyoutput}"
       COMMAND "${CMAKE_COMMAND}"
-        -D "PYTHON_PIPENV=${PYTHON_PIPENV}"
-        -D "BUILD_DIR=${CMAKE_CURRENT_BINARY_DIR}/${Py_TARGET}.pyinstaller"
+        -D "VENV_DIR=${_pyvenv}"
+        -D "BUILD_DIR=${_pyinstallerdir}"
         -D "SCRIPTFILE=${CMAKE_CURRENT_SOURCE_DIR}/${Py_SCRIPT}"
+        -D "HIDDENIMPORTS=${Py_IMPORTS}"
+        -D "LIBRARY_DIRS=${Py_LIBRARY_DIRS}"
+        -D "EXTRA_BIN=${Py_EXTRA_BIN}"
         -D "OUTPUT=${Py_OUTPUT}"
         -P "${TLM_MODULES_DIR}/py-install.cmake"
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       MAIN_DEPENDENCY "${Py_SCRIPT}"
       DEPENDS ${Py_DEPENDS}
-        "${CMAKE_CURRENT_SOURCE_DIR}/Pipfile"
-        "${CMAKE_CURRENT_SOURCE_DIR}/Pipfile.lock"
+        "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
+        "${_dirname}-venv"
       COMMENT "Building Python target ${Py_TARGET} using Python ${PYTHON_VERSION}"
       VERBATIM)
 
     # Python target
     ADD_CUSTOM_TARGET ("${Py_TARGET}" ALL DEPENDS "${_pyoutput}")
+
+    # Clean target
+    ADD_CUSTOM_TARGET ("${Py_TARGET}-clean"
+      COMMAND "${CMAKE_COMMAND}" -E remove "${_pyoutput}"
+      COMMAND "${CMAKE_COMMAND}" -E remove_directory "${_pyinstallerdir}")
+    ADD_DEPENDENCIES (realclean "${Py_TARGET}-clean")
 
     # Install directive
     IF (Py_INSTALL_PATH)
@@ -138,4 +141,54 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
     MESSAGE (STATUS "Added Python build target '${Py_TARGET}'")
 
   ENDMACRO (PyInstall)
+
+  # Adds a target which initializes a Python venv. It is assumed that the
+  # current directory contains a requirements.txt.
+  #
+  # Required arguments:
+  #
+  #   (none)
+  #
+  # Optional arguments:
+  #
+  # DEPENDS - list of files (other than SCRIPT, Pipfile, and Pipfile.lock)
+  # that should cause this target to re-run if they are newer than OUTPUT.
+  # May also list CMake targets that must be executed prior to this one.
+  #
+  # LIBRARY_DIRS, INCLUDE_DIRS - lists of directories where C-linkage pip
+  # requirements may look for libraries / header files.
+
+  MACRO (PyVenv)
+
+    PARSE_ARGUMENTS (Py "DEPENDS;LIBRARY_DIRS;INCLUDE_DIRS"
+      "TARGET"
+      "" ${ARGN})
+
+    # Local output file and build directory
+    SET (_pyvenv "${CMAKE_CURRENT_BINARY_DIR}/pyvenv")
+    SET (_pyvenvoutput "${_pyvenv}/created")
+    GET_FILENAME_COMPONENT (_dirname "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
+    ADD_CUSTOM_COMMAND (OUTPUT "${_pyvenvoutput}"
+      COMMAND "${CMAKE_COMMAND}"
+        -D "PYTHON_EXE=${PYTHON_EXE}"
+        -D "VENV_DIR=${_pyvenv}"
+        -D "LIBRARY_DIRS=${Py_LIBRARY_DIRS}"
+        -D "INCLUDE_DIRS=${Py_INCLUDE_DIRS}"
+        -P "${TLM_MODULES_DIR}/py-venv.cmake"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+      DEPENDS ${Py_DEPENDS}
+        "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
+      COMMENT "Building Python venv ${_dirname} using Python ${PYTHON_VERSION}"
+      VERBATIM)
+
+    # Venv target
+    ADD_CUSTOM_TARGET ("${_dirname}-venv" ALL DEPENDS "${_pyvenvoutput}")
+
+    # Clean target
+    ADD_CUSTOM_TARGET ("${_dirname}-venv-clean"
+      COMMAND "${CMAKE_COMMAND}" -E remove_directory "${_pyvenv}")
+    ADD_DEPENDENCIES (realclean "${_dirname}-venv-clean")
+
+  ENDMACRO (PyVenv)
+
 ENDIF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
