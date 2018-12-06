@@ -173,11 +173,7 @@ _ADD_DEP_PACKAGE(erlang OTP-20.3.8.8 OTP-20.3.8.8 2)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
-IF (PLATFORM STREQUAL "fedora26" OR PLATFORM STREQUAL "fedora27")
-  _ADD_DEP_PACKAGE(flatbuffers 1.7.1 v1.7.1 1)
-ELSE ()
-  _ADD_DEP_PACKAGE(flatbuffers 1.4.0 v1.4.0 2)
-ENDIF ()
+_ADD_DEP_PACKAGE(flatbuffers 1.10.0 v1.10.0 2)
 
 _ADD_DEP_PACKAGE(json 3.1.2 v3.1.2 1)
 _ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 3)
