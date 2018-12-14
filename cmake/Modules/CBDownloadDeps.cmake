@@ -286,6 +286,34 @@ IF (NOT CBDownloadDeps_INCLUDED)
     ENDIF ()
   ENDFUNCTION (GET_GO_VERSION)
 
+  # Start of CBDeps 2.0 - download and cache the new 'cbdep' tool
+  SET (CBDEP_VERSION 0.8.1)
+  FUNCTION (GET_CBDEP)
+    _DETERMINE_PLATFORM (_platform)
+    STRING (SUBSTRING "${_platform}" 0 6 _platform_head)
+    IF (_platform STREQUAL "macosx")
+      SET (_cbdepfile "cbdep-${CBDEP_VERSION}-darwin")
+    ELSEIF (_platform_head STREQUAL "window")
+      SET (_cbdepfile "cbdep-${CBDEP_VERSION}-windows.exe")
+    ELSE ()
+      # Presumed Linux
+      SET (_cbdepfile "cbdep-${CBDEP_VERSION}-linux")
+    ENDIF ()
+    SET (CBDEP_CACHE "${CB_DOWNLOAD_DEPS_CACHE}/cbdep/${CBDEP_VERSION}/${_cbdepfile}"
+      CACHE INTERNAL "Path to cbdep cached download")
+    SET (CBDEP "${PROJECT_BINARY_DIR}/tlm/${_cbdepfile}"
+      CACHE INTERNAL "Path to cbdep executable")
+    IF (NOT EXISTS "${CBDEP_CACHE}")
+      MESSAGE (STATUS "Downloading cbdep ${CBDEP_VERSION}")
+      _DOWNLOAD_FILE (
+        "http://packages.couchbase.com/cbdep/${CBDEP_VERSION}/${_cbdepfile}"
+        "${CBDEP_CACHE}")
+    ENDIF ()
+    FILE (COPY "${CBDEP_CACHE}" DESTINATION "${PROJECT_BINARY_DIR}/tlm"
+      FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE)
+    MESSAGE (STATUS "Using cbdep at ${CBDEP}")
+  ENDFUNCTION (GET_CBDEP)
+
   CB_GET_SUPPORTED_PLATFORM (_supported_platform)
   IF (_supported_platform)
     SET (CB_DOWNLOAD_DEPS_REPO
@@ -316,4 +344,5 @@ IF (NOT CBDownloadDeps_INCLUDED)
   MESSAGE (STATUS "Third-party dependencies will be cached in "
     "${CB_DOWNLOAD_DEPS_CACHE}")
 
+  GET_CBDEP ()
 ENDIF (NOT CBDownloadDeps_INCLUDED)
