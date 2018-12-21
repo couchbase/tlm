@@ -214,3 +214,4 @@ _ADD_DEP_PACKAGE(gflags 2.2.1 v2.2.1 2)
 _ADD_DEP_PACKAGE(glog 0.3.5 v0.3.5 1)
 
 _ADD_DEP_PACKAGE(folly v2018.08.13.00 v2018.08.13.00-couchbase 1)
+_ADD_DEP_PACKAGE(grpc 1.16.1 v1.16.1 1)
