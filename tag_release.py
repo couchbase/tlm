@@ -25,11 +25,20 @@ if len(sys.argv) < 3:
     exit(1)
 
 release = sys.argv[1]
-manifest_path = ".repo/manifests/released/" + release + ".xml"
-if not os.path.exists(manifest_path):
-    print >> sys.stderr, "No such file '" + manifest_path + "'. "
-    print >> sys.stderr, "Check specified release and current working" \
-    "directory (should be run from top-level of repo checkout)."
+manifest_path = None
+manifest_subdirs = ["released/", "released/couchbase-server/"]
+for subdir in manifest_subdirs:
+    path = ".repo/manifests/" + subdir + release + ".xml"
+    if os.path.exists(path):
+        manifest_path = path
+        break
+
+if not manifest_path:
+    print >> sys.stderr, "Unable to locate manifest '" + release + ".xml' - searched in:"
+    for subdir in manifest_subdirs:
+        print >> sys.stderr, "\t" + subdir
+    print >> sys.stderr, "Check specified release and current working " \
+        "directory (should be run from top-level of repo checkout)."
     exit(2)
 
 projects_to_tag = sys.argv[2:]
