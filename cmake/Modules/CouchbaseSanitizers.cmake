@@ -15,6 +15,13 @@ include(CouchbaseAddressSanitizer)
 include(CouchbaseThreadSanitizer)
 include(CouchbaseUndefinedBehaviorSanitizer)
 
+# Set a variable to allow targets to know if at least one of the sanitizers is enabled.
+if(CB_ADDRESSSANITIZER OR CB_THREADSANITIZER OR CB_UNDEFINEDSANITIZER)
+  set(CB_SANITIZERS True CACHE BOOL "Set if one or more sanitizers are enabled" FORCE)
+else()
+  set(CB_SANITIZERS False CACHE BOOL "Set if one or more sanitizers are enabled" FORCE)
+endif()
+
 # Enable sanitizers for specific target. No-op if none of the
 #  Sanitizers are enabled.
 function(add_sanitizers TARGET)
