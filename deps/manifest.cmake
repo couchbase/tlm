@@ -45,6 +45,7 @@ DECLARE_DEP (numactl VERSION 2.0.11-cb1 PLATFORMS amzn2 centos6 centos7 debian7 
 DECLARE_DEP (openjdk-rt VERSION 1.8.0.171-cb1 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04 windows_msvc2015)
 DECLARE_DEP (openssl VERSION 1.0.2k-cb2 PLATFORMS windows_msvc2015)
 DECLARE_DEP (openssl VERSION 1.0.2k-cb3 PLATFORMS macosx)
+DECLARE_DEP (pcre VERSION 8.42-cb1 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015)
 DECLARE_DEP (python-snappy VERSION c97d633 PLATFORMS windows_msvc2015)
 DECLARE_DEP (python-snappy VERSION c97d633-cb1 PLATFORMS centos6 centos7 debian8 debian9 macosx suse11 suse12 ubuntu14.04 ubuntu16.04)
 DECLARE_DEP (python-snappy VERSION c97d633-cb2 PLATFORMS amzn2 suse15 ubuntu18.04)
