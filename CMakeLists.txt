@@ -99,6 +99,12 @@ OPTION (CB_PRODUCTION_BUILD "Official production build" OFF)
 # Temporary option to enable building eventing before it is fully phased into vulcan
 OPTION (CB_ENABLE_EVENTING "Enable eventing features" ON)
 
+# Add option to build tools only
+SET(BUILD_ONLY_TOOLS False)
+IF ($ENV{CB_TOOLS_ONLY})
+  SET(BUILD_ONLY_TOOLS True)
+ENDIF ($ENV{CB_TOOLS_ONLY})
+
 MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
 MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
@@ -180,8 +186,10 @@ ENDIF(WORDS_BIG_ENDIAN)
 
 ENABLE_TESTING()
 
-INCLUDE_DIRECTORIES(BEFORE ${CMAKE_BINARY_DIR}/platform/include)
-INCLUDE_DIRECTORIES(AFTER ${NLOHMANN_JSON_INCLUDE_DIR})
+IF (NOT BUILD_ONLY_TOOLS)
+  INCLUDE_DIRECTORIES(BEFORE ${CMAKE_BINARY_DIR}/platform/include)
+  INCLUDE_DIRECTORIES(AFTER ${NLOHMANN_JSON_INCLUDE_DIR})
+ENDIF()
 
 # Add a quick (and safe) way to nuke everything
 ADD_CUSTOM_TARGET(reset
@@ -194,7 +202,10 @@ ADD_SUBDIRECTORY(googletest EXCLUDE_FROM_ALL)
 
 ADD_SUBDIRECTORY(benchmark EXCLUDE_FROM_ALL)
 
-ADD_SUBDIRECTORY(phosphor)
+IF (NOT BUILD_ONLY_TOOLS)
+  ADD_SUBDIRECTORY(phosphor)
+ENDIF()
+
 OPTION(PHOSPHOR_DISABLE "Disable compilation of Phosphor trace points into components" OFF)
 
 IF (PHOSPHOR_DISABLE)
@@ -204,63 +215,75 @@ ENDIF (PHOSPHOR_DISABLE)
 
 ADD_SUBDIRECTORY(third_party EXCLUDE_FROM_ALL)
 
-ADD_SUBDIRECTORY(platform)
-ADD_SUBDIRECTORY(subjson)
-ADD_SUBDIRECTORY(kv_engine/include)
-ADD_SUBDIRECTORY(couchstore)
+IF (NOT BUILD_ONLY_TOOLS)
+  ADD_SUBDIRECTORY(platform)
+  ADD_SUBDIRECTORY(subjson)
+  ADD_SUBDIRECTORY(kv_engine/include)
+  ADD_SUBDIRECTORY(couchstore)
+ENDIF()
+
 IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     ADD_SUBDIRECTORY(forestdb)
     SET (FORESTDB_INCLUDE_DIR "${ForestDB_SOURCE_DIR}/include")
     SET(FORESTDB_LIBRARY_DIR "${ForestDB_BINARY_DIR}")
     SET (FORESTDB_TARGET forestdb)
 ENDIF()
-ADD_SUBDIRECTORY(kv_engine)
-ADD_SUBDIRECTORY(sigar)
-if (EXISTS "${PROJECT_SOURCE_DIR}/moxi")
-   ADD_SUBDIRECTORY(moxi)
+
+IF (NOT BUILD_ONLY_TOOLS)
+  ADD_SUBDIRECTORY(kv_engine)
+  ADD_SUBDIRECTORY(sigar)
+ENDIF()
+if (EXISTS "${PROJECT_SOURCE_DIR}/moxi" AND NOT BUILD_ONLY_TOOLS)
+  ADD_SUBDIRECTORY(moxi)
 endif()
-ADD_SUBDIRECTORY(product-texts/couchbase-server)
+
+IF (NOT BUILD_ONLY_TOOLS)
+  ADD_SUBDIRECTORY(product-texts/couchbase-server)
+ENDIF()
 
 IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     ADD_SUBDIRECTORY(couchbase-cli)
-    ADD_SUBDIRECTORY(couchdb)
-    ADD_SUBDIRECTORY(geocouch)
-    ADD_SUBDIRECTORY(query-ui)
+    IF (NOT BUILD_ONLY_TOOLS)
+      ADD_SUBDIRECTORY(couchdb)
+      ADD_SUBDIRECTORY(geocouch)
+      ADD_SUBDIRECTORY(query-ui)
+    ENDIF()
 
     SET (GODEPSDIR "${CMAKE_CURRENT_SOURCE_DIR}/godeps")
+    IF (NOT BUILD_ONLY_TOOLS)
+      ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
 
-    ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/query)
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/indexing)
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/goxdcr)
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/gometa)
+      ADD_SUBDIRECTORY(godeps/src/github.com/couchbase/cbauth)
 
-    ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/query)
-    ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/indexing)
-    ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/goxdcr)
-    ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/gometa)
-    ADD_SUBDIRECTORY(godeps/src/github.com/couchbase/cbauth)
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbft)
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/mobile-service)
 
-    ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbft)
-    ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
-    ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/mobile-service)
+      # Analytics CBGT connector
+      IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbas")
+        ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbas)
+      ENDIF ()
 
-    # Analytics CBGT connector
-    IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbas")
-      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbas)
-    ENDIF ()
+      # Analytics Maven project
+      IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/analytics/CMakeLists.txt")
+        ADD_SUBDIRECTORY (analytics)
+      ENDIF ()
 
-    # Analytics Maven project
-    IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/analytics/CMakeLists.txt")
-      ADD_SUBDIRECTORY (analytics)
-    ENDIF ()
-
-    # Analytics UI
-    IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/cbas-ui")
-      ADD_SUBDIRECTORY (cbas-ui)
-    ENDIF ()
+      # Analytics UI
+      IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/cbas-ui")
+        ADD_SUBDIRECTORY (cbas-ui)
+      ENDIF ()
+    ENDIF()
 
     IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/backup)
     ENDIF()
 
-    IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/plasma")
+    IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/plasma" AND NOT BUILD_ONLY_TOOLS)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/plasma)
     ENDIF()
 
@@ -274,13 +297,15 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ADD_SUBDIRECTORY(libcouchbase)
     ENDIF()
 
-    IF (BUILD_ENTERPRISE AND CB_ENABLE_EVENTING)
-      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing)
-    ENDIF()
+    IF (NOT BUILD_ONLY_TOOLS)
+      IF (BUILD_ENTERPRISE AND CB_ENABLE_EVENTING)
+        ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing)
+      ENDIF()
 
-    IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbsummary")
-      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbsummary)
-    ENDIF()
+      IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbsummary")
+        ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbsummary)
+      ENDIF()
+    ENDIF ()
 
     IF (EXISTS "${PROJECT_SOURCE_DIR}/voltron/CMakeLists.txt")
       ADD_SUBDIRECTORY(voltron)
