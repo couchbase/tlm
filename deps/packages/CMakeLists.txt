@@ -169,12 +169,12 @@ _ADD_DEP_PACKAGE(flatbuffers 1.10.0 v1.10.0 2)
 
 _ADD_DEP_PACKAGE(json 3.1.2 v3.1.2 1)
 _ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 3)
-IF (WIN32 OR APPLE)
-  # Note: we build libevent with support for SSL, so whenever
-  # OpenSSL is upgraded with an API breaking change we probably
-  # need to rebuild libevent as well.
-  _ADD_DEP_PACKAGE(openssl 1.1.1a OpenSSL_1_1_1a 1)
-ENDIF (WIN32 OR APPLE)
+
+# Note: we build libevent with support for SSL, so whenever
+# OpenSSL is upgraded with an API breaking change we probably
+# need to rebuild libevent and erlang as well.
+_ADD_DEP_PACKAGE(openssl 1.1.1b OpenSSL_1_1_1b 2)
+
 _ADD_DEP_PACKAGE(libcouchbase 2.10.0 2.10.0 1)
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
   IF (PLATFORM STREQUAL "fedora26" OR PLATFORM STREQUAL "fedora27")
