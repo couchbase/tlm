@@ -157,11 +157,11 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 _ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 2)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 2)
-_ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 5)
+_ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 8)
 _ADD_DEP_PACKAGE(v8 7.1 7.1.321 4)
 _ADD_DEP_PACKAGE(jemalloc 5.1.0 5.1.0-couchbase 4)
 
-_ADD_DEP_PACKAGE(erlang OTP-20.3.8.11 OTP-20.3.8.11 1)
+_ADD_DEP_PACKAGE(erlang OTP-20.3.8.11 OTP-20.3.8.11 4)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 

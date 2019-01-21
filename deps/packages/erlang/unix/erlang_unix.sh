@@ -6,38 +6,22 @@ PLATFORM=$3
 CBDEPS_OPENSSL_DIR=$4
 
 case "$PLATFORM" in
-    debian9|fedora26)
-        # We need to do a private build of OpenSSL as the version
-        # on debian 9 is too new for Erlang R16B03-1. Use our
-        # vendored 1.0.2k source.
-        echo .........................
-        echo BUILDING OPENSSL 1.0.2k
-        echo .........................
-        OPENSSL_DIR=`pwd`/openssl-1.0.2k/install
-        mkdir -p $OPENSSL_DIR
-        (
-            cd openssl-1.0.2k
-            git clone -b OpenSSL_1_0_2k --depth 1 git://github.com/couchbasedeps/openssl
-            cd openssl
-            # OpenSSL's config script uses RELEASE to override the value
-            # of uname -r, which breaks things when this script runs as
-            # part of the cbdeps-platform-build Jenkins job. So, unset it.
-            unset RELEASE
-            ./config --prefix=$OPENSSL_DIR \
-                shared no-comp no-ssl2 no-ssl3
-            make depend
-            make # parallel build might fail
-            make install
-        )
-        OPENSSL_FLAGS="--disable-dynamic-ssl-lib --with-ssl=$OPENSSL_DIR"
-        ;;
     macosx)
         export MACOSX_DEPLOYMENT_TARGET=10.10
-        OPENSSL_FLAGS="--disable-dynamic-ssl-lib --with-ssl=$CBDEPS_OPENSSL_DIR"
         ;;
     *)
-        OPENSSL_FLAGS="--with-ssl"
-        ;;
+	# Arg.. you got to hate autoconf and trying to get something
+	# as simple as $ORIGIN passed down to the linker ;)
+	# the crypto module in Erlang use openssl for crypto routines,
+	# and it is installed in
+	#  ${INSTALL_DIR}/lib/erlang/lib/crypto-4.2.2.2/priv/lib/crypto.so
+	# so we need to tell the runtime linker how to find libssl.so
+	# at runtime (which is located in ${INSTALL_DIR}/..
+	# We could of course do this by adding /opt/couchbase/lib,
+	# but that would break "non-root" installation (and people
+	# trying to build the sw themselves and run from a dev dir).
+	SSL_RPATH=--with-ssl-rpath=\'\$\$ORIGIN/../../../../..\'
+	;;
 esac
 
 ./otp_build autoconf
@@ -51,7 +35,8 @@ esac
       --without-debugger \
       --without-megaco \
       --without-observer \
-      $OPENSSL_FLAGS \
+      --with-ssl=$CBDEPS_OPENSSL_DIR \
+      $SSL_RPATH \
       CFLAGS="-fno-strict-aliasing -O3 -ggdb3"
 
 make -j4

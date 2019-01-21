@@ -10,7 +10,7 @@ http://erlang.org/doc/installation_guide/INSTALL-WIN32.html)
      - NSIS (at least 2.51)
      - JDK 8
      - msys2 (http://repo.msys2.org/distrib/x86_64/msys2-x86_64-20180531.exe)
-  - Installed version of OpenSSL 1.0.2p in C:\OpenSSL-Win64
+  - Installed version of OpenSSL 1.1.1b in C:\OpenSSL-Win64
   - Use Cygwin GUI to install extra packages: make, automake, autoconf, wget
 
 Once the VM is ready, copy the 'cygwin.bash_profile' to the user homedir

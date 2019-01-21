@@ -1,15 +1,29 @@
 # Downloads the declared version of libevent source code and builds it.
 
-if (APPLE OR WIN32)
-  # We bundle OpenSSL on MacOS X and Windows, and we want support
-  # for OpenSSL in libevent so we need to install the OpenSSL Package
-  SET (_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/unused")
-  SET (_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
-  SET (CMAKE_INSTALL_PREFIX "${_openssl_install}")
-  DECLARE_DEP(openssl VERSION 1.0.2k-cb2 PLATFORMS windows_msvc windows_msvc2012 windows_msvc2013 windows_msvc2015 windows_msvc2017 macosx)
-  SET (CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
-  SET (_libevent_extra_options -D "OPENSSL_ROOT_DIR=${CMAKE_BINARY_DIR}/libevent/openssl.exploded")
-endif (APPLE OR WIN32)
+# We bundle OpenSSL, and we want support for OpenSSL in libevent
+# so we need to install the OpenSSL Package
+
+set(_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/unused")
+set(_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
+set(CMAKE_INSTALL_PREFIX "${_openssl_install}")
+declare_dep(openssl VERSION 1.1.1b-cb2
+            PLATFORMS amzn2
+                      centos7
+                      debian8 debian9
+                      macosx
+                      suse12 suse15
+                      ubuntu16.04 ubuntu18.04
+                      windows_msvc2017)
+set(CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
+set(_libevent_extra_options -D "OPENSSL_ROOT_DIR=${CMAKE_BINARY_DIR}/libevent/openssl.exploded")
+
+IF (UNIX AND NOT APPLE)
+  # We want to set the RUNPATH to ${ORIGIN} to make sure that it search
+  # the current directory first for the dependencies (openssl etc)
+  set(_libevent_extra_options
+      ${_libevent_extra_options}
+      -DCMAKE_INSTALL_RPATH=\$ORIGIN)
+ENDIF()
 
 include(ExternalProject)
 
