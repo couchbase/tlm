@@ -25,52 +25,38 @@
 #  OPENSSL_INCLUDE_DIR, where to find the OpenSSL headers
 
 if (NOT DEFINED OPENSSL_FOUND)
+    include(PlatformIntrospection)
+    cb_get_supported_platform(_supported_platform)
+    if (_supported_platform)
+        # Supported platforms should only use the provided hints and pick it up
+        # from cbdeps
+        set(_openssl_no_default_path NO_DEFAULT_PATH)
+    endif ()
+
     set(_openssl_exploded ${CMAKE_BINARY_DIR}/tlm/deps/openssl.exploded)
     set(_openssl_libraries "ssl;libssl32;ssleay32;crypto;libeay32")
 
-    if (WIN32 OR APPLE)
-        # For Windows and Apple we bundle the version of OpenSSL we want
-        # to use (See the NO_DEFAULT_PATH)
-        find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h
-                  HINTS ${_openssl_exploded}
-                  PATH_SUFFIXES include
-                  NO_CMAKE_PATH
-                  NO_CMAKE_ENVIRONMENT_PATH
-                  NO_DEFAULT_PATH)
+    find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h
+              HINTS ${_openssl_exploded}
+              PATH_SUFFIXES include
+              NO_CMAKE_PATH
+              NO_CMAKE_ENVIRONMENT_PATH
+              ${_openssl_no_default_path})
 
-        string(STRIP ${OPENSSL_INCLUDE_DIR} OPENSSL_INCLUDE_DIR)
-        if (NOT OPENSSL_LIBRARIES)
-            foreach (_mylib ${_openssl_libraries})
-                unset(_the_lib CACHE)
-                find_library(_the_lib
-                             NAMES ${_mylib}
-                             HINTS ${CMAKE_INSTALL_PREFIX}/lib
-                             NO_DEFAULT_PATH)
-                if (_the_lib)
-                    list(APPEND _openssl_libs_found ${_the_lib})
-                endif (_the_lib)
-            endforeach (_mylib)
-            set(OPENSSL_LIBRARIES ${_openssl_libs_found} CACHE STRING "OpenSSL Libraries" FORCE)
-        endif (NOT OPENSSL_LIBRARIES)
-    else (WIN32 OR APPLE)
-        # We're using the OS provided version of OpenSSL on Linux
-        find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h
-                  HINTS ENV OPENSSL_DIR
-                  PATH_SUFFIXES include)
-
-        if (NOT OPENSSL_LIBRARIES)
-            foreach (_mylib ${_openssl_libraries})
-                unset(_the_lib CACHE)
-                find_library(_the_lib
-                             NAMES ${_mylib}
-                             HINTS ENV OPENSSL_DIR)
-                if (_the_lib)
-                    list(APPEND _openssl_libs_found ${_the_lib})
-                endif (_the_lib)
-            endforeach (_mylib)
-            set(OPENSSL_LIBRARIES ${_openssl_libs_found} CACHE STRING "OpenSSL Libraries" FORCE)
-        endif (NOT OPENSSL_LIBRARIES)
-    endif (WIN32 OR APPLE)
+    string(STRIP ${OPENSSL_INCLUDE_DIR} OPENSSL_INCLUDE_DIR)
+    if (NOT OPENSSL_LIBRARIES)
+        foreach (_mylib ${_openssl_libraries})
+            unset(_the_lib CACHE)
+            find_library(_the_lib
+                         NAMES ${_mylib}
+                         HINTS ${CMAKE_INSTALL_PREFIX}/lib
+                         ${_openssl_no_default_path})
+            if (_the_lib)
+                list(APPEND _openssl_libs_found ${_the_lib})
+            endif (_the_lib)
+        endforeach (_mylib)
+        set(OPENSSL_LIBRARIES ${_openssl_libs_found} CACHE STRING "OpenSSL Libraries" FORCE)
+    endif (NOT OPENSSL_LIBRARIES)
 
     if (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
         message(STATUS "Found OpenSSL headers in: ${OPENSSL_INCLUDE_DIR}")
