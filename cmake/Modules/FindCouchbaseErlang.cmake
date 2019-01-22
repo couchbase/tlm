@@ -82,15 +82,21 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
   # current source directory, and a target named <target>-clean to run
   # "rebar clean". <target>-clean will be added as a dependency to
   # the <clean_hook> target (defaults to "realclean").
+  #
+  # If <eunit> is passed, a <target>-eunit target will be created that calls
+  # "rebar compile_only=true eunit" to compile a separate version of the code
+  # for tests only. <eunit_depends> will be added as dependencies to the eunit
+  # target in addition to the regular dependencies passed via <depends>. Extra
+  # options can be passed to rebar via <eunit_opts>.
   MACRO (Rebar)
     IF (NOT ESCRIPT_EXECUTABLE)
       MESSAGE (FATAL_ERROR "escript not found, therefore Rebar() "
         "cannot function.")
     ENDIF (NOT ESCRIPT_EXECUTABLE)
 
-    PARSE_ARGUMENTS (Rebar "DEPENDS;REBAR_OPTS"
+    PARSE_ARGUMENTS (Rebar "DEPENDS;REBAR_OPTS;EUNIT_OPTS;EUNIT_DEPENDS"
       "TARGET;REBAR_SCRIPT;CLEAN_HOOK"
-      "NOCLEAN;NOALL" ${ARGN})
+      "NOCLEAN;NOALL;EUNIT" ${ARGN})
 
     SET (rebar_script "${REBAR_SCRIPT}")
     IF (Rebar_REBAR_SCRIPT)
@@ -116,6 +122,25 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
       "${ESCRIPT_EXECUTABLE}" "${rebar_script}" ${Rebar_REBAR_OPTS} compile
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
 
+    IF (Rebar_EUNIT)
+      SET(_eunit_target "${Rebar_TARGET}-eunit")
+      ADD_CUSTOM_TARGET ("${_eunit_target}"
+        "${ESCRIPT_EXECUTABLE}" "${rebar_script}"
+        compile_only=true ${Rebar_EUNIT_OPTS} eunit
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
+
+      # There's a bug in "rebar eunit" implementation: it doesn't generate
+      # .erl files out of .xrl and .yrl files. The only workaround that I
+      # found is to depend on the regular "rebar compile" target. That way the
+      # latter generates all the sources that the former then can use.
+      ADD_DEPENDENCIES (${_eunit_target} ${Rebar_TARGET})
+
+      SET(_eunit_deps ${Rebar_DEPENDS} ${Rebar_EUNIT_DEPENDS})
+      IF (_eunit_deps)
+        ADD_DEPENDENCIES (${_eunit_target} ${_eunit_deps})
+      ENDIF (_eunit_deps)
+    ENDIF (Rebar_EUNIT)
+
     IF (Rebar_DEPENDS)
       ADD_DEPENDENCIES (${Rebar_TARGET} ${Rebar_DEPENDS})
     ENDIF (Rebar_DEPENDS)
@@ -124,6 +149,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
       ADD_CUSTOM_TARGET ("${Rebar_TARGET}-clean"
         "${ESCRIPT_EXECUTABLE}" "${rebar_script}" clean
         COMMAND "${CMAKE_COMMAND}" -E remove_directory ebin
+        COMMAND "${CMAKE_COMMAND}" -E remove_directory .eunit
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
 
       IF (TARGET ${Rebar_CLEAN_HOOK})
