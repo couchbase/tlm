@@ -81,14 +81,15 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
   # Adds a target named <target> which runs "rebar compile" in the
   # current source directory, and a target named <target>-clean to run
   # "rebar clean". <target>-clean will be added as a dependency to
-  # "realclean".
+  # the <clean_hook> target (defaults to "realclean").
   MACRO (Rebar)
     IF (NOT ESCRIPT_EXECUTABLE)
       MESSAGE (FATAL_ERROR "escript not found, therefore Rebar() "
         "cannot function.")
     ENDIF (NOT ESCRIPT_EXECUTABLE)
 
-    PARSE_ARGUMENTS (Rebar "DEPENDS;REBAR_OPTS" "TARGET;REBAR_SCRIPT"
+    PARSE_ARGUMENTS (Rebar "DEPENDS;REBAR_OPTS"
+      "TARGET;REBAR_SCRIPT;CLEAN_HOOK"
       "NOCLEAN;NOALL" ${ARGN})
 
     SET (rebar_script "${REBAR_SCRIPT}")
@@ -102,6 +103,10 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
         "Set variable -DREBAR_SCRIPT to correct location to enable, "
         "or pass path using Rebar (... REBAR_SCRIPT /full/path)")
     ENDIF (NOT EXISTS "${rebar_script}")
+
+    IF (NOT Rebar_CLEAN_HOOK)
+      SET (Rebar_CLEAN_HOOK "realclean")
+    ENDIF (NOT Rebar_CLEAN_HOOK)
 
     SET (_all ALL)
     IF (Rebar_NOALL)
@@ -120,9 +125,10 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
         "${ESCRIPT_EXECUTABLE}" "${rebar_script}" clean
         COMMAND "${CMAKE_COMMAND}" -E remove_directory ebin
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
-      IF (TARGET realclean)
-        ADD_DEPENDENCIES (realclean "${Rebar_TARGET}-clean")
-      ENDIF (TARGET realclean)
+
+      IF (TARGET ${Rebar_CLEAN_HOOK})
+        ADD_DEPENDENCIES (${Rebar_CLEAN_HOOK} "${Rebar_TARGET}-clean")
+      ENDIF (TARGET ${Rebar_CLEAN_HOOK})
     ENDIF (NOT Rebar_NOCLEAN)
 
   ENDMACRO (Rebar)
