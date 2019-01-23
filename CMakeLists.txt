@@ -282,6 +282,9 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbsummary)
     ENDIF()
 
+    IF (EXISTS "${PROJECT_SOURCE_DIR}/voltron/CMakeLists.txt")
+      ADD_SUBDIRECTORY(voltron)
+    ENDIF ()
 ENDIF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
 
 IF (NOT WIN32)

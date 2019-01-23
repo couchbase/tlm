@@ -20,7 +20,7 @@
 
 IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   SET (COUCHBASE_PYTHON_INCLUDED 1)
-  SET (PYTHON_VERSION 3.6.6)
+  SET (PYTHON_VERSION 3.6.7)
   # Expected output files - might not exist yet
   IF (WIN32)
     SET (PYTHON_VENV "${PROJECT_BINARY_DIR}/tlm/python.venv/python${PYTHON_VERSION}-amd64")
@@ -34,6 +34,9 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
 
   IF (NOT EXISTS "${PYTHON_VENV}")
     MESSAGE (STATUS "Creating Python ${PYTHON_VERSION} venv")
+    IF (NOT WIN32)
+      SET (ENV{PYTHON_CONFIGURE_OPTS} --enable-shared)
+    ENDIF ()
     EXECUTE_PROCESS (
       COMMAND "${CBDEP}" install
         -d "${PROJECT_BINARY_DIR}/tlm/python.venv"
@@ -66,19 +69,23 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   #
   # TARGET - name of CMake target
   #
-  # SCRIPT - Python script
+  # SCRIPT - Python script (path either relative to current script dir, or
+  # an absolute path)
   #
   # Optional arguments:
   #
   # OUTPUT - name of output binary (will be created in CMAKE_CURRENT_BINARY_DIR)
   # (default value is same as TARGET)
   #
-  # INSTALL_PATH - creates a CMake INSTALL() directive to install the OUTPUT
-  # into CMAKE_INSTALL_PREFIX in a directory with this name
+  # INSTALL_PATH - the files resulting from running PyInstaller will always be
+  # installed into ${CMAKE_INSTALL_PREFIX}/lib (${CMAKE_INSTALL_PREFiX}/bin on
+  # Windows) so that there need not be multiple copies of .so files. If this
+  # option is specified, a symlink will be created in
+  # ${CMAKE_INSTALL_PREFIX}/INSTALL_PATH pointing to the executable.
   #
-  # DEPENDS - list of files (other than SCRIPT, Pipfile, and Pipfile.lock)
-  # that should cause this target to re-run if they are newer than OUTPUT.
-  # May also list CMake targets that must be executed prior to this one.
+  # DEPENDS - list of files (other than SCRIPT) that should cause this target to
+  # re-run if they are newer than OUTPUT. May also list CMake targets that must
+  # be executed prior to this one.
   #
   # IMPORTS - list of python packages that the script imports. PyInstaller can
   # normally introspect this, but there are occasions when it cannot; you can
@@ -103,22 +110,28 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
     ENDIF ()
 
     # Local output file and build directory
-    SET (_pyoutput "${CMAKE_CURRENT_BINARY_DIR}/${Py_OUTPUT}")
     SET (_pyinstallerdir "${CMAKE_CURRENT_BINARY_DIR}/${Py_TARGET}.pyinstaller")
+    SET (_pyoutput "${_pydistdir}/lib/${Py_OUTPUT}/${Py_OUTPUT}")
+    SET (_ext "")
+    IF (WIN32)
+      SET (_ext ".exe")
+      SET (_pyoutput "${_pyoutput}${_ext}")
+    ENDIF ()
     SET (_pyvenv "${CMAKE_CURRENT_BINARY_DIR}/pyvenv")
+    GET_FILENAME_COMPONENT (_scriptfile "${Py_SCRIPT}" ABSOLUTE)
     GET_FILENAME_COMPONENT (_dirname "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
     ADD_CUSTOM_COMMAND (OUTPUT "${_pyoutput}"
       COMMAND "${CMAKE_COMMAND}"
         -D "VENV_DIR=${_pyvenv}"
         -D "BUILD_DIR=${_pyinstallerdir}"
-        -D "SCRIPTFILE=${CMAKE_CURRENT_SOURCE_DIR}/${Py_SCRIPT}"
+        -D "SCRIPTFILE=${_scriptfile}"
         -D "HIDDENIMPORTS=${Py_IMPORTS}"
         -D "LIBRARY_DIRS=${Py_LIBRARY_DIRS}"
         -D "EXTRA_BIN=${Py_EXTRA_BIN}"
-        -D "OUTPUT=${Py_OUTPUT}"
+        -D "NAME=${Py_OUTPUT}"
         -P "${TLM_MODULES_DIR}/py-install.cmake"
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      MAIN_DEPENDENCY "${Py_SCRIPT}"
+      MAIN_DEPENDENCY "${_scriptfile}"
       DEPENDS ${Py_DEPENDS}
         "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
         "${_dirname}-venv"
@@ -130,13 +143,42 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
 
     # Clean target
     ADD_CUSTOM_TARGET ("${Py_TARGET}-clean"
-      COMMAND "${CMAKE_COMMAND}" -E remove "${_pyoutput}"
       COMMAND "${CMAKE_COMMAND}" -E remove_directory "${_pyinstallerdir}")
     ADD_DEPENDENCIES (realclean "${Py_TARGET}-clean")
 
     # Install directive
     IF (Py_INSTALL_PATH)
-      INSTALL (PROGRAMS "${_pyoutput}" DESTINATION "${Py_INSTALL_PATH}")
+      # We need to install into the same directory as all the existing libs,
+      # otherwise we'll end up wasting a lot of disk space
+      IF (WIN32)
+        SET (_installdir bin)
+      ELSE ()
+        SET (_installdir lib)
+      ENDIF ()
+
+      INSTALL (DIRECTORY "${_pyinstallerdir}/lib/${Py_OUTPUT}/"
+        DESTINATION "${_installdir}" USE_SOURCE_PERMISSIONS)
+
+      # Compute relative path for symlink
+      FILE (MAKE_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${Py_INSTALL_PATH}")
+      SET (_finalexe "${CMAKE_INSTALL_PREFIX}/${Py_INSTALL_PATH}/${Py_OUTPUT}${_ext}")
+      FILE (RELATIVE_PATH _relpath
+        "${CMAKE_INSTALL_PREFIX}/${Py_INSTALL_PATH}"
+        "${CMAKE_INSTALL_PREFIX}/${_installdir}/${Py_OUTPUT}${_ext}"
+      )
+      IF (NOT _relpath STREQUAL "${Py_OUTPUT}${_ext}")
+        IF (WIN32)
+          # QQQ Not sure if there's a way around this. "mklink" doesn't work.
+          MESSAGE (FATAL_ERROR "INSTALL_PATH other than 'bin' does not work on Windows")
+        ELSE ()
+          INSTALL(CODE "execute_process( \
+            COMMAND ${CMAKE_COMMAND} -E create_symlink \
+              ${_relpath} \
+              ${_finalexe} \
+            )"
+          )
+        ENDIF ()
+      ENDIF ()
     ENDIF ()
     MESSAGE (STATUS "Added Python build target '${Py_TARGET}'")
 
@@ -151,9 +193,7 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   #
   # Optional arguments:
   #
-  # DEPENDS - list of files (other than SCRIPT, Pipfile, and Pipfile.lock)
-  # that should cause this target to re-run if they are newer than OUTPUT.
-  # May also list CMake targets that must be executed prior to this one.
+  # DEPENDS - list of CMake targets that must be executed prior to this one.
   #
   # LIBRARY_DIRS, INCLUDE_DIRS - lists of directories where C-linkage pip
   # requirements may look for libraries / header files.
@@ -161,8 +201,7 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   MACRO (PyVenv)
 
     PARSE_ARGUMENTS (Py "DEPENDS;LIBRARY_DIRS;INCLUDE_DIRS"
-      "TARGET"
-      "" ${ARGN})
+      "" "" ${ARGN})
 
     # Local output file and build directory
     SET (_pyvenv "${CMAKE_CURRENT_BINARY_DIR}/pyvenv")

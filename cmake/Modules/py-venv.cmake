@@ -28,7 +28,11 @@ python (-m venv "${VENV_DIR}")
 SET (ENV{VIRTUAL_ENV} "${VENV_DIR}")
 
 # Use our "new" python
-SET (PYTHON_EXE "${VENV_DIR}/bin/python")
+IF (WIN32)
+  SET (PYTHON_EXE "${VENV_DIR}/Scripts/python.exe")
+ELSE ()
+  SET (PYTHON_EXE "${VENV_DIR}/bin/python")
+ENDIF ()
 
 # Touch 'created' file
 FILE (TOUCH "${VENV_DIR}/created")

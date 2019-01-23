@@ -1,9 +1,12 @@
 MACRO (exec COMMAND)
-  EXECUTE_PROCESS (RESULT_VARIABLE _result
+  EXECUTE_PROCESS (
     COMMAND "${COMMAND}" ${ARGN}
+    RESULT_VARIABLE _result
+    OUTPUT_VARIABLE _output
+    ERROR_VARIABLE _output
   )
   IF (_result)
-    MESSAGE (FATAL_ERROR "Error running ${COMMAND} ${ARGN}!")
+    MESSAGE (FATAL_ERROR "Error running ${COMMAND} ${ARGN}!\n${_output}")
   ENDIF ()
 ENDMACRO (exec)
 
@@ -13,7 +16,11 @@ ENDMACRO (python)
 
 # Set VIRTUAL_ENV the way activating a venv does.
 SET (ENV{VIRTUAL_ENV} "${VENV_DIR}")
-SET (PYTHON_EXE "${VENV_DIR}/bin/python")
+IF (WIN32)
+  SET (PYTHON_EXE "${VENV_DIR}/Scripts/python.exe")
+ELSE ()
+  SET (PYTHON_EXE "${VENV_DIR}/bin/python")
+ENDIF ()
 
 # Compute script directory and corresponding binary directory
 GET_FILENAME_COMPONENT (SCRIPT_DIR "${SCRIPTFILE}" DIRECTORY)
@@ -28,7 +35,6 @@ ENDFOREACH ()
 FOREACH (BINARY ${EXTRA_BIN})
   LIST (APPEND _extrabin --add-binary ${BINARY}:.)
 ENDFOREACH ()
-MESSAGE (STATUS "Hidden imports is ${_pyimports}; extra bins is ${_extrabin}")
 
 # Export LD_LIBRARY_PATH / DYLD_LIBRARY_PATH / PATH so PyInstaller can
 # find all dependent libraries
@@ -40,20 +46,22 @@ ELSE ()
     SET (ENV{DYLD_LIBRARY_PATH} "${_libs}")
   ELSE ()
     SET (ENV{LD_LIBRARY_PATH} "${_libs}")
-    MESSAGE (STATUS "ldlibpath $ENV{LD_LIBRARY_PATH}")
   ENDIF ()
 ENDIF ()
 
-# Run PyInstaller to produce output binary
+# Tell PyInstaller to use a different cache dir for each build as well
+SET (ENV{PYINSTALLER_CONFIG_DIR} "${BUILD_DIR}/cache")
+
+# Run PyInstaller to produce output into lib/python/ directory
 python (-m PyInstaller
   --log-level INFO
   --workpath ${BUILD_DIR}
   --specpath ${BUILD_DIR}
-  --distpath ${BUILD_DIR}/..
+  --distpath ${BUILD_DIR}/lib
   --paths ${SCRIPT_DIR}
   --paths ${BINARY_DIR}
   ${_pyimports}
   ${_extrabin}
-  --name ${OUTPUT}
-  --onefile
+  --name "${NAME}"
+  --onedir --noconfirm
   ${SCRIPTFILE})
