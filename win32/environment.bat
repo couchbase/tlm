@@ -1,14 +1,10 @@
 @echo off
 
-if defined tools_version goto tools_set
-if exist "C:\Program Files (x86)\Microsoft Visual Studio 14.0" (
-  set tools_version=14.0
-) else (
-  set tools_version=12.0
+if not defined tools_version (
+    set tools_version=14.0
 )
 
-:tools_set
-if "%tools_version%" == "15.0" (
+if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build" (
   set "tools_dir=C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build"
 ) else (
   set "tools_dir=C:\Program Files (x86)\Microsoft Visual Studio %tools_version%\VC"
