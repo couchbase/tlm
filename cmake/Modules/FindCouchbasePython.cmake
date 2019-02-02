@@ -74,8 +74,11 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   #
   # Optional arguments:
   #
-  # OUTPUT - name of output binary (will be created in CMAKE_CURRENT_BINARY_DIR)
-  # (default value is same as TARGET)
+  # OUTPUT - name of output binary (default value is same as TARGET)
+  #
+  # SYMLINK_DIR - if specified, will create a symlink in the specified
+  # directory to the output binary in the build tree. Note: this option is
+  # ignored on Windows.
   #
   # INSTALL_PATH - the files resulting from running PyInstaller will always be
   # installed into ${CMAKE_INSTALL_PREFIX}/lib (${CMAKE_INSTALL_PREFiX}/bin on
@@ -96,7 +99,7 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   MACRO (PyInstall)
 
     PARSE_ARGUMENTS (Py "DEPENDS;IMPORTS;LIBRARY_DIRS;EXTRA_BIN"
-      "TARGET;OUTPUT;SCRIPT;INSTALL_PATH"
+      "TARGET;OUTPUT;SYMLINK_DIR;SCRIPT;INSTALL_PATH"
       "" ${ARGN})
 
     IF (NOT Py_TARGET)
@@ -129,6 +132,7 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
         -D "LIBRARY_DIRS=${Py_LIBRARY_DIRS}"
         -D "EXTRA_BIN=${Py_EXTRA_BIN}"
         -D "NAME=${Py_OUTPUT}"
+        -D "SYMLINK_DIR=${Py_SYMLINK_DIR}"
         -P "${TLM_MODULES_DIR}/py-install.cmake"
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       MAIN_DEPENDENCY "${_scriptfile}"

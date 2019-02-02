@@ -52,7 +52,7 @@ ENDIF ()
 # Tell PyInstaller to use a different cache dir for each build as well
 SET (ENV{PYINSTALLER_CONFIG_DIR} "${BUILD_DIR}/cache")
 
-# Run PyInstaller to produce output into lib/python/ directory
+# Run PyInstaller to produce output into lib/ directory
 python (-m PyInstaller
   --log-level INFO
   --workpath ${BUILD_DIR}
@@ -65,3 +65,13 @@ python (-m PyInstaller
   --name "${NAME}"
   --onedir --noconfirm
   ${SCRIPTFILE})
+
+# Create local symlink if requested
+IF (NOT WIN32)
+  IF (SYMLINK_DIR)
+    exec ("${CMAKE_COMMAND}"
+      -E create_symlink
+      "${BUILD_DIR}/lib/${NAME}/${NAME}"
+      "${SYMLINK_DIR}/${NAME}")
+  ENDIF ()
+ENDIF ()
