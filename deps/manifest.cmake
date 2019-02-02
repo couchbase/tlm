@@ -46,7 +46,8 @@ DECLARE_DEP (numactl VERSION 2.0.11-cb1 PLATFORMS amzn2 centos6 centos7 debian7 
 DECLARE_DEP (openjdk-rt VERSION 1.8.0.171-cb1 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (openssl VERSION 1.0.2k-cb2 PLATFORMS windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (openssl VERSION 1.0.2k-cb3 PLATFORMS macosx)
-DECLARE_DEP (pcre VERSION 8.42-cb1 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
+DECLARE_DEP (pcre VERSION 8.42-cb1 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04)
+DECLARE_DEP (pcre VERSION 8.42-cb2 PLATFORMS windows_msvc2017)
 DECLARE_DEP (rocksdb VERSION 5.12.5-cb1 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04)
 # TODO: cbdeps-build is not building for ubuntu18 (issue tracked in MB-31199), so use the previous dep for now. Remove this as soon as cbdeps-build has been fixed.
 DECLARE_DEP (rocksdb VERSION 5.8.0-cb2 PLATFORMS ubuntu18.04)
