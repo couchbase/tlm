@@ -111,7 +111,7 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
 
     # Local output file and build directory
     SET (_pyinstallerdir "${CMAKE_CURRENT_BINARY_DIR}/${Py_TARGET}.pyinstaller")
-    SET (_pyoutput "${_pydistdir}/lib/${Py_OUTPUT}/${Py_OUTPUT}")
+    SET (_pyoutput "${_pyinstallerdir}/lib/${Py_OUTPUT}/${Py_OUTPUT}")
     SET (_ext "")
     IF (WIN32)
       SET (_ext ".exe")
