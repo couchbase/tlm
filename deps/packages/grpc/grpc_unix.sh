@@ -8,6 +8,7 @@ VERSION=$3
 rm -rf /tmp/grpc /tmp/install && mkdir /tmp/grpc && cp -a . /tmp/grpc
 cd /tmp/grpc
 make prefix=/tmp/install install
+cd third_party/protobuf && make prefix=/tmp/install install
 cp -a /tmp/install/* ${INSTALL_DIR}
 cd
 rm -rf /tmp/install
