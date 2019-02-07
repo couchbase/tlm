@@ -6,3 +6,12 @@ mkdir build
 cd build
 cmake .. -DPACKAGE=${PACKAGE}
 cmake --build . --target ${PACKAGE}
+
+if [ x$1 = xinstall ]
+then
+    cd deps/*/*
+    tgz=`ls *.tgz`
+    md5=`ls *.md5`
+    cp $tgz ~/.cbdepscache
+    cp $md5 ~/.cbdepscache/$tgz.md5
+fi
