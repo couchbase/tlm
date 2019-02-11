@@ -81,10 +81,10 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   # ignored on Windows.
   #
   # INSTALL_PATH - the files resulting from running PyInstaller will always be
-  # installed into ${CMAKE_INSTALL_PREFIX}/lib (${CMAKE_INSTALL_PREFiX}/bin on
-  # Windows) so that there need not be multiple copies of .so files. If this
-  # option is specified, a symlink will be created in
-  # ${CMAKE_INSTALL_PREFIX}/INSTALL_PATH pointing to the executable.
+  # installed into ${CMAKE_INSTALL_PREFIX}/lib/python (Unix / MacOS) or
+  # ${CMAKE_INSTALL_PREFiX}/bin (Windows) so that there need not be multiple
+  # copies of .so / .dll files. If this option is specified, a symlink will be
+  # created in ${CMAKE_INSTALL_PREFIX}/INSTALL_PATH pointing to the executable.
   #
   # DEPENDS - list of files (other than SCRIPT) that should cause this target to
   # re-run if they are newer than OUTPUT. May also list CMake targets that must
@@ -157,7 +157,7 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
       IF (WIN32)
         SET (_installdir bin)
       ELSE ()
-        SET (_installdir lib)
+        SET (_installdir lib/python)
       ENDIF ()
 
       INSTALL (DIRECTORY "${_pyinstallerdir}/lib/${Py_OUTPUT}/"
