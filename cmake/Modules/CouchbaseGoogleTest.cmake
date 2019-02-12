@@ -416,17 +416,26 @@ function(gtest_discover_tests TARGET)
   set(ctest_file_base "${CMAKE_CURRENT_BINARY_DIR}/${TARGET}[${counter}]")
   set(ctest_include_file "${ctest_file_base}_include.cmake")
   set(ctest_tests_file "${ctest_file_base}_tests.cmake")
-  get_property(crosscompiling_emulator
+  get_property(test_executor
     TARGET ${TARGET}
     PROPERTY CROSSCOMPILING_EMULATOR
   )
+
+  # MB-32484: Allow a custom test executor to be specified to run the test
+  # under. Example use-case: Running under `timeout` to raise a custom signal
+  # upon timeout.
+  get_property(test_executor
+    TARGET ${TARGET}
+    PROPERTY CB_TEST_EXECUTOR
+  )
+
   add_custom_command(
     TARGET ${TARGET} POST_BUILD
     BYPRODUCTS "${ctest_tests_file}"
     COMMAND "${CMAKE_COMMAND}"
             -D "TEST_TARGET=${TARGET}"
             -D "TEST_EXECUTABLE=$<TARGET_FILE:${TARGET}>"
-            -D "TEST_EXECUTOR=${crosscompiling_emulator}"
+            -D "TEST_EXECUTOR=${test_executor}"
             -D "TEST_WORKING_DIR=${_WORKING_DIRECTORY}"
             -D "TEST_EXTRA_ARGS=${_EXTRA_ARGS}"
             -D "TEST_PROPERTIES=${_PROPERTIES}"
