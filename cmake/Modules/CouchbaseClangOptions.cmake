@@ -78,13 +78,6 @@ list(APPEND _cb_cxx_flags
      -Werror=missing-braces
      -ftemplate-depth=900)
 
-# Required from clang 3.9 if sized deletion is desired and still required in at
-# least version 7.0.1 (current latest release version).
-check_cxx_compiler_flag(-fsized-deallocation HAVE_SIZED_DEALLOCATION)
-if (HAVE_SIZED_DEALLOCATION)
-    list (APPEND _cb_cxx_flags -fsized-deallocation)
-endif()
-
 # https://bugs.llvm.org/show_bug.cgi?id=31815: Clang issues spurious
 # Wunused-lambda-capture warnings. Disable this warning until the fix is
 # picked up in the versions of clang we use.
