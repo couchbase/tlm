@@ -85,11 +85,6 @@ if (HAVE_SIZED_DEALLOCATION)
     list (APPEND _cb_cxx_flags -fsized-deallocation)
 endif()
 
-# https://bugs.llvm.org/show_bug.cgi?id=31815: Clang issues spurious
-# Wunused-lambda-capture warnings. Disable this warning until the fix is
-# picked up in the versions of clang we use.
-list(APPEND _cb_cxx_flags -Wno-unused-lambda-capture)
-
 # Convert the list to a string
 string(REPLACE ";" " " _cb_cxx_options "${_cb_cxx_flags}")
 
