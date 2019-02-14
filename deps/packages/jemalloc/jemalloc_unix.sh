@@ -8,6 +8,7 @@ CPPFLAGS=-I/usr/local/include ./configure \
     --with-jemalloc-prefix=je_ \
     --disable-cache-oblivious \
     --disable-zone-allocator \
+    --disable-initial-exec-tls \
     --enable-prof || exit 1
 make build_lib_shared && make install_lib_shared install_include install_bin
 

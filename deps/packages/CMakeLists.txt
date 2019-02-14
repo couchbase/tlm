@@ -164,7 +164,7 @@ _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 2)
 _ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 5)
 _ADD_DEP_PACKAGE(v8 5.9 5.9.223 7)
-_ADD_DEP_PACKAGE(jemalloc 5.1.0 5.1.0 1)
+_ADD_DEP_PACKAGE(jemalloc 5.1.0 5.1.0 2)
 _ADD_DEP_PACKAGE(curl 7.61.1 curl-7_61_1 3)
 
 _ADD_DEP_PACKAGE(erlang OTP-20.3.8.11 OTP-20.3.8.11 1)
