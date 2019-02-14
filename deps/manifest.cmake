@@ -33,7 +33,7 @@ DECLARE_DEP (grpc VERSION 1.17.2-cb3 PLATFORMS amzn2 centos7 debian8 debian9 mac
 DECLARE_DEP (icu4c VERSION 59.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 ubuntu14.04 ubuntu16.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (icu4c VERSION 59.1-cb2 PLATFORMS amzn2 suse15 ubuntu18.04)
 DECLARE_DEP (jemalloc VERSION 4.1.0-cb2 PLATFORMS windows_msvc2015 windows_msvc2017)
-DECLARE_DEP (jemalloc VERSION 4.5.0.1-cb1 PLATFORMS amzn2 centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
+DECLARE_DEP (jemalloc VERSION 5.1.0-cb2 PLATFORMS amzn2 centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (json VERSION 3.1.2-cb1 PLATFORMS amzn2 centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (libevent VERSION 2.1.8-cb4 PLATFORMS amzn2 centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (libevent VERSION 2.1.8-cb5 PLATFORMS ubuntu18.04)
