@@ -20,40 +20,39 @@
 
 IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   SET (COUCHBASE_PYTHON_INCLUDED 1)
-  SET (PYTHON_VERSION 3.6.7)
+  SET (MINICONDA_VERSION 4.5.4)
   # Expected output files - might not exist yet
+  SET (PYTHON_VENV "${PROJECT_BINARY_DIR}/tlm/python.install/miniconda3-${MINICONDA_VERSION}")
   IF (WIN32)
-    SET (PYTHON_VENV "${PROJECT_BINARY_DIR}/tlm/python.venv/python${PYTHON_VERSION}-amd64")
-    SET (_pybindir "${PYTHON_VENV}/Scripts")
-    SET (_pyexe "${_pybindir}/python.exe")
+    SET (_pybindir "${PYTHON_VENV}")
+    SET (_pyexe "${PYTHON_VENV}/python.exe")
   ELSE ()
-    SET (PYTHON_VENV "${PROJECT_BINARY_DIR}/tlm/python.venv/python${PYTHON_VERSION}")
-    SET (_pybindir "${PYTHON_VENV}/bin")
-    SET (_pyexe "${_pybindir}/python")
+    SET (_pyexe "${PYTHON_VENV}/bin/python")
   ENDIF ()
 
-  IF (NOT EXISTS "${PYTHON_VENV}")
-    MESSAGE (STATUS "Creating Python ${PYTHON_VERSION} venv")
-    IF (NOT WIN32)
-      SET (ENV{PYTHON_CONFIGURE_OPTS} --enable-shared)
-    ENDIF ()
+  IF (NOT EXISTS "${_pyexe}")
+    MESSAGE (STATUS "Creating Miniconda3 ${MINICONDA_VERSION} venv")
+    FILE (REMOVE_RECURSE "${PYTHON_VENV}")
     EXECUTE_PROCESS (
       COMMAND "${CBDEP}" install
-        -d "${PROJECT_BINARY_DIR}/tlm/python.venv"
-        python ${PYTHON_VERSION}
+        -d "${PROJECT_BINARY_DIR}/tlm/python.install"
+        miniconda3 ${MINICONDA_VERSION}
       RESULT_VARIABLE _cbdep_result
-      OUTPUT_VARIABLE _cbdep_out
       ERROR_VARIABLE _cbdep_out
     )
-    IF (_cbdep_result)
+    IF (_cbdep_result OR NOT EXISTS "${_pyexe}")
       FILE (REMOVE_RECURSE "${PYTHON_VENV}")
-      MESSAGE (FATAL_ERROR "Failed to create Python venv: ${_cbdep_out}")
+      MESSAGE (FATAL_ERROR "Failed to create Python venv!")
     ENDIF ()
-
   ENDIF ()
 
   SET (PYTHON_EXE "${_pyexe}" CACHE INTERNAL "Path to python interpretter")
   SET (ENV{VIRTUAL_ENV} "${PYTHON_VENV}")
+
+  EXECUTE_PROCESS (
+    COMMAND "${_pyexe}" -c "import platform; print (platform.python_version())"
+    OUTPUT_VARIABLE PYTHON_VERSION
+  )
   MESSAGE (STATUS "Using Python ${PYTHON_VERSION} from ${PYTHON_EXE}")
 
   # Have to remember cwd when this find is INCLUDE()d
@@ -123,6 +122,15 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
     SET (_pyvenv "${CMAKE_CURRENT_BINARY_DIR}/pyvenv")
     GET_FILENAME_COMPONENT (_scriptfile "${Py_SCRIPT}" ABSOLUTE)
     GET_FILENAME_COMPONENT (_dirname "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
+
+    # On some Linux platforms, PyInstaller and Anaconda don't get along -
+    # PyInstaller can't find libpython.so. See
+    # https://github.com/pyinstaller/pyinstaller/issues/3885 . A work-around
+    # is to add the Python lib/ directory to LIBRARY_DIRS (which ends up
+    # on LD_LIBRARY_PATH).
+    IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+      LIST (APPEND Py_LIBRARY_DIRS "${PYTHON_VENV}/lib")
+    ENDIF ()
     ADD_CUSTOM_COMMAND (OUTPUT "${_pyoutput}"
       COMMAND "${CMAKE_COMMAND}"
         -D "VENV_DIR=${_pyvenv}"
