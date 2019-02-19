@@ -29,7 +29,7 @@ DECLARE_DEP (flex VERSION 2.5.4a-cb1 PLATFORMS windows_msvc2015 windows_msvc2017
 DECLARE_DEP (flex VERSION 2.6.4-cb4 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (folly VERSION v2018.08.13.00-cb1 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (glog VERSION 0.3.5-cb1 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
-DECLARE_DEP (grpc VERSION 1.17.2-cb3 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
+DECLARE_DEP (grpc VERSION 1.12.0-cb1 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (icu4c VERSION 59.1-cb1 PLATFORMS centos6 centos7 debian7 debian8 debian9 macosx suse11 suse12 ubuntu14.04 ubuntu16.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (icu4c VERSION 59.1-cb2 PLATFORMS amzn2 suse15 ubuntu18.04)
 DECLARE_DEP (jemalloc VERSION 4.1.0-cb2 PLATFORMS windows_msvc2015 windows_msvc2017)
