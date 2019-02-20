@@ -306,7 +306,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
   ENDFUNCTION (GET_GO_VERSION)
 
   # Start of CBDeps 2.0 - download and cache the new 'cbdep' tool
-  SET (CBDEP_VERSION 0.9.0)
+  SET (CBDEP_VERSION 0.9.1)
   FUNCTION (GET_CBDEP)
     _DETERMINE_PLATFORM (_platform)
     STRING (SUBSTRING "${_platform}" 0 6 _platform_head)
@@ -332,6 +332,33 @@ IF (NOT CBDownloadDeps_INCLUDED)
       FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE)
     MESSAGE (STATUS "Using cbdep at ${CBDEP}")
   ENDFUNCTION (GET_CBDEP)
+
+  # Generic function for installing a cbdep (2.0) package to a given directory
+  # Required arguments:
+  #   PACKAGE - package to install
+  #   VERSION - version number of package (must be understood by 'cbdep' tool)
+  # Optional arguments:
+  #   INSTALL_DIR - where to install to; defaults to CMAKE_CURRENT_BINARY_DIR
+  MACRO (CBDEP_INSTALL)
+    PARSE_ARGUMENTS (cbdep "" "INSTALL_DIR;PACKAGE;VERSION" "" ${ARGN})
+
+    IF (NOT cbdep_INSTALL_DIR)
+      SET (cbdep_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}")
+    ENDIF ()
+    MESSAGE (STATUS "Downloading and caching ${cbdep_PACKAGE}-${cbdep_VERSION}")
+    EXECUTE_PROCESS (
+      COMMAND "${CBDEP}" install
+        -d "${cbdep_INSTALL_DIR}"
+        ${cbdep_PACKAGE} ${cbdep_VERSION}
+      RESULT_VARIABLE _cbdep_result
+      OUTPUT_VARIABLE _cbdep_out
+      ERROR_VARIABLE _cbdep_out
+    )
+    IF (_cbdep_result)
+      FILE (REMOVE_RECURSE "${cbdep_INSTALL_DIR}")
+      MESSAGE (FATAL_ERROR "Failed installing cbdep ${cbdep_PACKAGE} ${cbdep_VERSION}: ${_cbdep_out}")
+    ENDIF ()
+  ENDMACRO (CBDEP_INSTALL)
 
   CB_GET_SUPPORTED_PLATFORM (_supported_platform)
   IF (_supported_platform)

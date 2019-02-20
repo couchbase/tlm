@@ -33,17 +33,8 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   IF (NOT EXISTS "${_pyexe}")
     MESSAGE (STATUS "Creating Miniconda3 ${MINICONDA_VERSION} venv")
     FILE (REMOVE_RECURSE "${PYTHON_VENV}")
-    EXECUTE_PROCESS (
-      COMMAND "${CBDEP}" install
-        -d "${PROJECT_BINARY_DIR}/tlm/python.install"
-        miniconda3 ${MINICONDA_VERSION}
-      RESULT_VARIABLE _cbdep_result
-      ERROR_VARIABLE _cbdep_out
-    )
-    IF (_cbdep_result OR NOT EXISTS "${_pyexe}")
-      FILE (REMOVE_RECURSE "${PYTHON_VENV}")
-      MESSAGE (FATAL_ERROR "Failed to create Python venv!")
-    ENDIF ()
+    CBDEP_INSTALL(INSTALL_DIR "${PROJECT_BINARY_DIR}/tlm/python.install"
+        PACKAGE miniconda3 VERSION ${MINICONDA_VERSION})
   ENDIF ()
 
   SET (PYTHON_EXE "${_pyexe}" CACHE INTERNAL "Path to python interpretter")
