@@ -96,6 +96,9 @@ OPTION (CB_DEVELOPER_BUILD "Produce Developer builds" ON)
 # 'Production builds' are those built by the official Couchbase build jobs
 OPTION (CB_PRODUCTION_BUILD "Official production build" OFF)
 
+# Option to build JsEvaluator
+OPTION(CB_ENABLE_JSEVALUATOR "Enable JsEvaluator" OFF)
+
 # Add option to build tools only
 SET(BUILD_ONLY_TOOLS False)
 IF ($ENV{CB_TOOLS_ONLY})
@@ -299,6 +302,10 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     IF (NOT BUILD_ONLY_TOOLS)
       IF (BUILD_ENTERPRISE)
         ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing)
+      ENDIF()
+
+      IF (BUILD_ENTERPRISE AND CB_ENABLE_JSEVALUATOR)
+        ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing-ee)
       ENDIF()
 
       IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbsummary")
