@@ -134,6 +134,7 @@ INCLUDE(FindCouchbaseValgrind)
 INCLUDE(FindCouchbaseV8)
 INCLUDE(FindCouchbaseNlohmannJson)
 INCLUDE(FindCouchbaseRocksDB)
+INCLUDE(FindCouchbaseOpentracing)
 
 if (BUILD_ENTERPRISE)
     # libuv is currently only used by the enterpise builds
