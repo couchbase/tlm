@@ -14,7 +14,7 @@ building Couchbase on multiple platforms.
 ## Software requirements
 
 * C/C++ compiler:
-  * Visual Studio 2015
+  * Visual Studio 2017
   * clang
   * gcc
 * ccache may speed up the development cycle when clang / gcc is used)
@@ -98,30 +98,40 @@ the bash shell provided with git (remember to enable support for creating
 symbolic links for your user: "Windows Settings", "Security Settings",
 "Local policies", "User Rights assignment" and locate the "Create symbolic
 links" and add the user). I'm performing all of the build steps
-through `command.com`.
+through `cmd.exe`.
 
 I've only tested this on Windows 10PRO, but it may work with other (newer)
 versions of windows:
 
-* Install Microsoft Visual Studio 2015
+* Install Microsoft Visual Studio 2017
 * Install git from https://git-scm.com (I configured it to only be available from within bash)
 * Install google repo (use the one from github.com/esrlabs/git-repo)
 * Install cmake
-* Install mingw via Chocolatey package manager (http://chocolatey.org) and
-  add `c:\tools\mingw64\bin` to PATH
+* Install mingw (`choco install mingw`) via Chocolatey package manager (http://chocolatey.org) and
+  add `C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin` to PATH
+* Install `ninja` if you want to use the [Ninja build system](https://ninja-build.org/) over `nmake`, 
+this can be done using Chocolatey: `choco install ninja` 
 
-Before you can start the build process you need to set a lot of environemnt
+Before you can start the build process you need to set a lot of environment
 variables, and all of them is located in `tlm\win32\environment.bat`. Open
-up `command.com` and run the command above in the root of the source directory.
+up `cmd.exe` and run the command above in the root of the source directory.
 
-You could now be able to build Couchbase by executing:
+You could now be able to build Couchbase using `nmake` by executing:
 
     C:\compile> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
     C:\compile> repo sync
     C:\compile> tlm\win32\environment.bat
     C:\compile> nmake
 
-And that should be it
+You can also use `ninja` build system to build Couchbase by executing:
+
+    C:\compile> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
+    C:\compile> repo sync
+    C:\compile> tlm\win32\environment.bat
+    C:\compile> mkdir build 
+    C:\compile> cd build
+    C:\compile> cmake -G "Ninja" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl ..
+    C:\compile> cmake --build . --target install
 
 ## Static Analysis
 
