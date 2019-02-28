@@ -46,6 +46,19 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   )
   MESSAGE (STATUS "Using Python ${PYTHON_VERSION} from ${PYTHON_EXE}")
 
+  # Save miniconda installer and add to installation image
+  SET (MINICONDA_EXE "${PROJECT_BINARY_DIR}/miniconda3-${MINICONDA_VERSION}-installer")
+  IF (WIN32)
+    SET (MINICONDA_EXE "${MINICONDA_EXE}.exe")
+  ENDIF ()
+  IF (NOT EXISTS "${MINICONDA_EXE}")
+    EXECUTE_PROCESS (
+      COMMAND "${CBDEP}" install -n -o "${MINICONDA_EXE}"
+      miniconda3 ${MINICONDA_VERSION}
+    )
+  ENDIF ()
+  INSTALL (FILES "${MINICONDA_EXE}" DESTINATION lib/python)
+
   # Have to remember cwd when this find is INCLUDE()d
   SET (TLM_MODULES_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
