@@ -1,0 +1,17 @@
+name: cbpy
+version: 1.0.0
+installer_filename: cbpy-installer
+
+install_in_dependency_order: True
+
+channels:
+  - http://repo.anaconda.com/pkgs/main/
+
+specs:
+  - python 3.6.8*
+  - natsort
+  - python-snappy
+
+exclude:
+  - tk        [not win]
+  - ncurses   [not win]

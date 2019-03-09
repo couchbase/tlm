@@ -13,237 +13,136 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# Installs a local fixed Python interpretter, and provides a CMake function
-# to create a standalone executable using PyInstaller.
+# Provides CMake functions for installing Python 3 programs. This works
+# in conjunction with the targets in tlm/python/CMakeLists.txt which
+# install a local Python and build a bespoke Python installer for
+# shipping with Couchbase Server.
 
 # Note: This file should eventually replace FindCouchbasePythonInterp.cmake.
 
 IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   SET (COUCHBASE_PYTHON_INCLUDED 1)
-  SET (MINICONDA_VERSION 4.5.4)
+
   # Expected output files - might not exist yet
-  SET (PYTHON_VENV "${PROJECT_BINARY_DIR}/tlm/python.install/miniconda3-${MINICONDA_VERSION}")
+
+  SET (PYTHON_ROOT "${PROJECT_BINARY_DIR}/tlm/python")
+
+  # Base directory for cbpy install - used by out-of-build programs such
+  # as the non-installed wrapper scripts created by PyWrapper(). Note that
+  # this directory is actually created by a target in
+  # tlm/python/CMakeLists.txt.
+  SET (CBPY_PATH lib/python/runtime)
+  SET (CBPY_INSTALL "${CMAKE_INSTALL_PREFIX}/${CBPY_PATH}")
+
   IF (WIN32)
-    SET (_pybindir "${PYTHON_VENV}")
-    SET (_pyexe "${PYTHON_VENV}/python.exe")
+    SET (_localpy "${CBPY_INSTALL}/python3.exe")
   ELSE ()
-    SET (_pyexe "${PYTHON_VENV}/bin/python")
+    SET (_localpy "${CBPY_INSTALL}/bin/python3")
   ENDIF ()
-
-  IF (NOT EXISTS "${_pyexe}")
-    MESSAGE (STATUS "Creating Miniconda3 ${MINICONDA_VERSION} venv")
-    FILE (REMOVE_RECURSE "${PYTHON_VENV}")
-    CBDEP_INSTALL(INSTALL_DIR "${PROJECT_BINARY_DIR}/tlm/python.install"
-        PACKAGE miniconda3 VERSION ${MINICONDA_VERSION})
-  ENDIF ()
-
-  SET (PYTHON_EXE "${_pyexe}" CACHE INTERNAL "Path to python interpretter")
-  SET (ENV{VIRTUAL_ENV} "${PYTHON_VENV}")
-
-  EXECUTE_PROCESS (
-    COMMAND "${_pyexe}" -c "import platform; print (platform.python_version())"
-    OUTPUT_VARIABLE PYTHON_VERSION
-  )
-  MESSAGE (STATUS "Using Python ${PYTHON_VERSION} from ${PYTHON_EXE}")
-
-  # Save miniconda installer and add to installation image
-  SET (MINICONDA_EXE "${PROJECT_BINARY_DIR}/miniconda3-${MINICONDA_VERSION}-installer")
-  IF (WIN32)
-    SET (MINICONDA_EXE "${MINICONDA_EXE}.exe")
-  ENDIF ()
-  IF (NOT EXISTS "${MINICONDA_EXE}")
-    EXECUTE_PROCESS (
-      COMMAND "${CBDEP}" install -n -o "${MINICONDA_EXE}"
-      miniconda3 ${MINICONDA_VERSION}
-    )
-  ENDIF ()
-  INSTALL (FILES "${MINICONDA_EXE}" DESTINATION lib/python)
+  SET (PYTHON_EXE "${_localpy}" CACHE INTERNAL "Path to python interpreter")
 
   # Have to remember cwd when this find is INCLUDE()d
   SET (TLM_MODULES_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
+  # Creates a wrapper script from a template, in an OS-specific manner.
+  FUNCTION (ConfigureWrapper CODE_REL LIB_REL PY_REL OUTPUT_FILE)
+    IF (WIN32)
+      SET (_wrapper py-wrapper.bat)
+    ELSE ()
+      IF (APPLE)
+        SET (LIB_PATH_VAR DYLD_LIBRARY_PATH)
+      ELSE ()
+        SET (LIB_PATH_VAR LD_LIBRARY_PATH)
+      ENDIF ()
+      SET (_wrapper py-wrapper.sh)
+    ENDIF ()
+
+    # Convert any absolute paths to relative
+    IF (IS_ABSOLUTE "${CODE_REL}")
+      FILE (RELATIVE_PATH CODE_REL "${OUTPUT_FILE}/.." "${CODE_REL}")
+    ENDIF ()
+    IF (IS_ABSOLUTE "${LIB_REL}")
+      FILE (RELATIVE_PATH LIB_REL "${OUTPUT_FILE}/.." "${LIB_REL}")
+    ENDIF ()
+    IF (IS_ABSOLUTE "${PY_REL}")
+      FILE (RELATIVE_PATH PY_REL "${OUTPUT_FILE}/.." "${PY_REL}")
+    ENDIF ()
+
+    # Have to use OS-native paths
+    FILE (TO_NATIVE_PATH "${CODE_REL}" CODE_REL)
+    FILE (TO_NATIVE_PATH "${LIB_REL}" LIB_REL)
+    FILE (TO_NATIVE_PATH "${PY_REL}" PY_REL)
+
+    CONFIGURE_FILE (
+      "${TLM_MODULES_DIR}/${_wrapper}.tmpl"
+      "${OUTPUT_FILE}"
+      @ONLY
+    )
+  ENDFUNCTION (ConfigureWrapper)
+
+  # Create the master wrapper script for PyWrapper(), since all installed
+  # programs can use the same one (same relative paths from wrapper script
+  # to the code, libs, and python)
+  IF (WIN32)
+    SET (MASTER_WRAPPER "${PYTHON_ROOT}/py-wrapper.bat")
+    ConfigureWrapper (../lib/python ../bin ../${CBPY_PATH}
+      "${MASTER_WRAPPER}")
+  ELSE ()
+    SET (MASTER_WRAPPER "${PYTHON_ROOT}/py-wrapper.sh")
+    ConfigureWrapper (../lib/python ../lib ../${CBPY_PATH}
+      "${MASTER_WRAPPER}")
+  ENDIF ()
+
   INCLUDE (ParseArguments)
 
-  # Adds a target which builds an executable from a Python program
-  # using PyInstaller. It is assumed that the current directory
-  # contains a requirements.txt.
+  # Installs Python scripts into lib/python, and creates a wrapper in bin/
+  # for executing them with the bundled Anaconda Python installation.
   #
   # Required arguments:
   #
-  # TARGET - name of CMake target
-  #
-  # SCRIPT - Python script (path either relative to current script dir, or
-  # an absolute path)
+  # SCRIPTS - name(s) of python script(s)
   #
   # Optional arguments:
   #
-  # OUTPUT - name of output binary (default value is same as TARGET)
-  #
-  # SYMLINK_DIR - if specified, will create a symlink in the specified
-  # directory to the output binary in the build tree. Note: this option is
-  # ignored on Windows.
-  #
-  # INSTALL_PATH - the files resulting from running PyInstaller will always be
-  # installed into ${CMAKE_INSTALL_PREFIX}/lib/python (Unix / MacOS) or
-  # ${CMAKE_INSTALL_PREFiX}/bin (Windows) so that there need not be multiple
-  # copies of .so / .dll files. If this option is specified, a symlink will be
-  # created in ${CMAKE_INSTALL_PREFIX}/INSTALL_PATH pointing to the executable.
-  #
-  # DEPENDS - list of files (other than SCRIPT) that should cause this target to
-  # re-run if they are newer than OUTPUT. May also list CMake targets that must
-  # be executed prior to this one.
-  #
-  # IMPORTS - list of python packages that the script imports. PyInstaller can
-  # normally introspect this, but there are occasions when it cannot; you can
-  # add extra ones here as necessary.
-  #
-  # EXTRA_BIN - list of extra binaries to include in the resulting binary
+  # BUILD_DIR - absolute path to directory in build tree to also create a
+  #   wrapper script in. If specified, a custom wrapper will be created for
+  #   each named script. This script will launch Python 3 using the locally-
+  #   installed cbpy installation in $BUILD_DIR/tlm/python/cbpy, created
+  #   by targets in tlm/python/CMakeLists.txt.
 
-  MACRO (PyInstall)
+  MACRO (PyWrapper)
+    PARSE_ARGUMENTS (Py "SCRIPTS" "BUILD_DIR" "" ${ARGN})
 
-    PARSE_ARGUMENTS (Py "DEPENDS;IMPORTS;LIBRARY_DIRS;EXTRA_BIN"
-      "TARGET;OUTPUT;SYMLINK_DIR;SCRIPT;INSTALL_PATH"
-      "" ${ARGN})
-
-    IF (NOT Py_TARGET)
-      MESSAGE (FATAL_ERROR "TARGET is required!")
-    ENDIF ()
-    IF (NOT Py_OUTPUT)
-      SET (Py_OUTPUT ${Py_TARGET})
-    ENDIF ()
-    IF (NOT Py_SCRIPT)
-      MESSAGE (FATAL_ERROR "SCRIPT is required!")
+    IF (NOT Py_SCRIPTS)
+      MESSAGE (FATAL_ERROR "SCRIPTS is required!")
     ENDIF ()
 
-    # Local output file and build directory
-    SET (_pyinstallerdir "${CMAKE_CURRENT_BINARY_DIR}/${Py_TARGET}.pyinstaller")
-    SET (_pyoutput "${_pyinstallerdir}/lib/${Py_OUTPUT}/${Py_OUTPUT}")
-    SET (_ext "")
-    IF (WIN32)
-      SET (_ext ".exe")
-      SET (_pyoutput "${_pyoutput}${_ext}")
-    ENDIF ()
-    SET (_pyvenv "${CMAKE_CURRENT_BINARY_DIR}/pyvenv")
-    GET_FILENAME_COMPONENT (_scriptfile "${Py_SCRIPT}" ABSOLUTE)
-    GET_FILENAME_COMPONENT (_dirname "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
+    # Install the scripts themselves into lib/python
+    INSTALL (PROGRAMS ${Py_SCRIPTS} DESTINATION lib/python)
 
-    # On some Linux platforms, PyInstaller and Anaconda don't get along -
-    # PyInstaller can't find libpython.so. See
-    # https://github.com/pyinstaller/pyinstaller/issues/3885 . A work-around
-    # is to add the Python lib/ directory to LIBRARY_DIRS (which ends up
-    # on LD_LIBRARY_PATH).
-    IF (${CMAKE_SYSTEM_NAME} MATCHES "Linux")
-      LIST (APPEND Py_LIBRARY_DIRS "${PYTHON_VENV}/lib")
-    ENDIF ()
-    ADD_CUSTOM_COMMAND (OUTPUT "${_pyoutput}"
-      COMMAND "${CMAKE_COMMAND}"
-        -D "VENV_DIR=${_pyvenv}"
-        -D "BUILD_DIR=${_pyinstallerdir}"
-        -D "SCRIPTFILE=${_scriptfile}"
-        -D "HIDDENIMPORTS=${Py_IMPORTS}"
-        -D "LIBRARY_DIRS=${Py_LIBRARY_DIRS}"
-        -D "EXTRA_BIN=${Py_EXTRA_BIN}"
-        -D "NAME=${Py_OUTPUT}"
-        -D "SYMLINK_DIR=${Py_SYMLINK_DIR}"
-        -P "${TLM_MODULES_DIR}/py-install.cmake"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      MAIN_DEPENDENCY "${_scriptfile}"
-      DEPENDS ${Py_DEPENDS}
-        "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
-        "${_dirname}-venv"
-      COMMENT "Building Python target ${Py_TARGET} using Python ${PYTHON_VERSION}"
-      VERBATIM)
-
-    # Python target
-    ADD_CUSTOM_TARGET ("${Py_TARGET}" ALL DEPENDS "${_pyoutput}")
-
-    # Clean target
-    ADD_CUSTOM_TARGET ("${Py_TARGET}-clean"
-      COMMAND "${CMAKE_COMMAND}" -E remove_directory "${_pyinstallerdir}")
-    ADD_DEPENDENCIES (realclean "${Py_TARGET}-clean")
-
-    # Install directive
-    IF (Py_INSTALL_PATH)
-      # We need to install into the same directory as all the existing libs,
-      # otherwise we'll end up wasting a lot of disk space
+    # Create and install wrapper script for each program
+    FOREACH (_script ${Py_SCRIPTS})
+      GET_FILENAME_COMPONENT (_scriptname "${_script}" NAME)
       IF (WIN32)
-        SET (_installdir bin)
-      ELSE ()
-        SET (_installdir lib/python)
+        SET (_scriptname "${_scriptname}.bat")
       ENDIF ()
 
-      INSTALL (DIRECTORY "${_pyinstallerdir}/lib/${Py_OUTPUT}/"
-        DESTINATION "${_installdir}" USE_SOURCE_PERMISSIONS)
+      INSTALL (PROGRAMS "${MASTER_WRAPPER}"
+        DESTINATION bin
+        RENAME "${_scriptname}")
 
-      # Compute relative path for symlink
-      FILE (MAKE_DIRECTORY "${CMAKE_INSTALL_PREFIX}/${Py_INSTALL_PATH}")
-      SET (_finalexe "${CMAKE_INSTALL_PREFIX}/${Py_INSTALL_PATH}/${Py_OUTPUT}${_ext}")
-      FILE (RELATIVE_PATH _relpath
-        "${CMAKE_INSTALL_PREFIX}/${Py_INSTALL_PATH}"
-        "${CMAKE_INSTALL_PREFIX}/${_installdir}/${Py_OUTPUT}${_ext}"
-      )
-      IF (NOT _relpath STREQUAL "${Py_OUTPUT}${_ext}")
-        IF (WIN32)
-          # QQQ Not sure if there's a way around this. "mklink" doesn't work.
-          MESSAGE (FATAL_ERROR "INSTALL_PATH other than 'bin' does not work on Windows")
-        ELSE ()
-          INSTALL(CODE "execute_process( \
-            COMMAND ${CMAKE_COMMAND} -E create_symlink \
-              ${_relpath} \
-              ${_finalexe} \
-            )"
-          )
-        ENDIF ()
+      IF (Py_BUILD_DIR)
+        GET_FILENAME_COMPONENT (_scriptdir "${_script}/.." ABSOLUTE)
+
+        ConfigureWrapper (
+          "${_scriptdir}"
+          "${CMAKE_INSTALL_PREFIX}/lib"
+          "${CBPY_INSTALL}"
+          "${Py_BUILD_DIR}/${_scriptname}"
+        )
       ENDIF ()
-    ENDIF ()
-    MESSAGE (STATUS "Added Python build target '${Py_TARGET}'")
+    ENDFOREACH ()
 
-  ENDMACRO (PyInstall)
-
-  # Adds a target which initializes a Python venv. It is assumed that the
-  # current directory contains a requirements.txt.
-  #
-  # Required arguments:
-  #
-  #   (none)
-  #
-  # Optional arguments:
-  #
-  # DEPENDS - list of CMake targets that must be executed prior to this one.
-  #
-  # LIBRARY_DIRS, INCLUDE_DIRS - lists of directories where C-linkage pip
-  # requirements may look for libraries / header files.
-
-  MACRO (PyVenv)
-
-    PARSE_ARGUMENTS (Py "DEPENDS;LIBRARY_DIRS;INCLUDE_DIRS"
-      "" "" ${ARGN})
-
-    # Local output file and build directory
-    SET (_pyvenv "${CMAKE_CURRENT_BINARY_DIR}/pyvenv")
-    SET (_pyvenvoutput "${_pyvenv}/created")
-    GET_FILENAME_COMPONENT (_dirname "${CMAKE_CURRENT_SOURCE_DIR}" NAME)
-    ADD_CUSTOM_COMMAND (OUTPUT "${_pyvenvoutput}"
-      COMMAND "${CMAKE_COMMAND}"
-        -D "PYTHON_EXE=${PYTHON_EXE}"
-        -D "VENV_DIR=${_pyvenv}"
-        -D "LIBRARY_DIRS=${Py_LIBRARY_DIRS}"
-        -D "INCLUDE_DIRS=${Py_INCLUDE_DIRS}"
-        -P "${TLM_MODULES_DIR}/py-venv.cmake"
-      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-      DEPENDS ${Py_DEPENDS}
-        "${CMAKE_CURRENT_SOURCE_DIR}/requirements.txt"
-      COMMENT "Building Python venv ${_dirname} using Python ${PYTHON_VERSION}"
-      VERBATIM)
-
-    # Venv target
-    ADD_CUSTOM_TARGET ("${_dirname}-venv" ALL DEPENDS "${_pyvenvoutput}")
-
-    # Clean target
-    ADD_CUSTOM_TARGET ("${_dirname}-venv-clean"
-      COMMAND "${CMAKE_COMMAND}" -E remove_directory "${_pyvenv}")
-    ADD_DEPENDENCIES (realclean "${_dirname}-venv-clean")
-
-  ENDMACRO (PyVenv)
+  ENDMACRO (PyWrapper)
 
 ENDIF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)

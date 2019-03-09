@@ -1,0 +1,19 @@
+@echo off
+setlocal
+set "WRAPPER_PATH=%~dp0"
+set "WRAPPER_NAME=%~n0"
+
+call :ResolvePath CODEDIR "%WRAPPER_PATH%@CODE_REL@"
+call :ResolvePath PYDIR "%WRAPPER_PATH%@PY_REL@"
+call :ResolvePath LIBDIR "%WRAPPER_PATH%@LIB_REL@"
+
+set "PYTHONPATH=%CODEDIR%;%PYTHONPATH%"
+set "PATH=%LIBDIR%;%PATH%"
+
+"%PYDIR%\python.exe" "%CODEDIR%\%WRAPPER_NAME%" %*
+
+exit /b
+
+:ResolvePath
+  set %1=%~dpfn2
+  exit /b
