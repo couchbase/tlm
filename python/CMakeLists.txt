@@ -78,7 +78,7 @@ ELSE ()
   ADD_CUSTOM_COMMAND (OUTPUT "${PYTHON_EXE}"
     COMMENT "Installing local cbpy"
     DEPENDS cbpy-installer
-    COMMAND "${_installer}" -b -p "${CBPY_INSTALL}"
+    COMMAND "${_installer}" -u -b -p "${CBPY_INSTALL}"
     VERBATIM)
 ENDIF()
 
