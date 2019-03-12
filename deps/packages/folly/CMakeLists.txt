@@ -56,6 +56,8 @@ if(WIN32)
    # Windows PATH from inside CMake; so solve this by simply copying
    # the runtime dependancies into the Folly build directory.
    set(folly_patch_command ${CMAKE_COMMAND} -E copy_directory ${_folly_deps_install}/bin <SOURCE_DIR>)
+else()
+   set(folly_extra_cache_args "-DCMAKE_CXX_FLAGS:STRING=-fPIC")
 endif()
 
 ExternalProject_Add(folly
