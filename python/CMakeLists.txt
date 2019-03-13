@@ -1,11 +1,14 @@
 INCLUDE (FindCouchbasePython)
 INCLUDE (CBDownloadDeps)
 
+# Our desired tool versions.
+SET (MINICONDA_VERSION 4.5.4)
+SET (CONSTRUCTOR_VERSION 2.3.0)
+
 # Target to download and install stock Miniconda3. This python
 # installation is used ONLY to install Constructor, which is then
 # used to build our bespoke cbpy installer.
 
-SET (MINICONDA_VERSION 4.5.4)
 SET (_miniconda_install "${CMAKE_CURRENT_BINARY_DIR}/miniconda3-${MINICONDA_VERSION}")
 IF (WIN32)
   SET (_pyexe "${_miniconda_install}/python.exe")
@@ -41,7 +44,7 @@ ADD_CUSTOM_COMMAND (OUTPUT "${_constructor}"
   COMMENT "Installing Anaconda Constructor"
   DEPENDS miniconda3
   COMMAND "${CMAKE_COMMAND}" -E env --unset=SUDO_UID
-    "${CONDA_EXE}" install -y constructor
+    "${CONDA_EXE}" install -y constructor=${CONSTRUCTOR_VERSION}
   VERBATIM)
 
 # Target to create our "microconda" installer
