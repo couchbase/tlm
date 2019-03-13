@@ -9,7 +9,7 @@ channels:
 
 specs:
   - python 3.6.8*
-  - natsort
+  - natsort 5.5.0
   - python-snappy
 
 exclude:
