@@ -1,9 +1,20 @@
 #!/bin/sh
 
-D0=$(dirname "$0")
-codedir="$(cd "$D0/@CODE_REL@" && pwd)"
-pydir="$(cd "$D0/@PY_REL@" && pwd)"
-libdir="$(cd "$D0/@LIB_REL@" && pwd)"
+D0=$(cd "$(dirname "$0")" && pwd)
+codedir=$(cd "$D0/@CODE_REL@" && pwd)
+libdir=$(cd "$D0/@LIB_REL@" && pwd)
+
+# Mostly for MacOS - if cbpy isn't installed in expected location,
+# check in user-specific location, and install it fresh if necessary.
+pydir="$D0/@PY_REL@"
+if [ ! -x "$pydir"/bin/python3 ]; then
+  cbpyinstaller=$(dirname "$pydir")/cbpy-installer.sh
+  pydir="$HOME/Library/Python/cbpy-@CB_VERSION@"
+  if [ ! -x "$pydir"/bin/python3 ]; then
+    echo "Installing Python 3 - one moment..." 1>&2
+    sh "${cbpyinstaller}" -b -u -p "$pydir" > /dev/null
+  fi
+fi
 
 PYTHONPATH="$codedir:$PYTHONPATH"
 export PYTHONPATH
