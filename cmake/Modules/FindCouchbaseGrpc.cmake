@@ -3,6 +3,9 @@
 #  GRPC_FOUND
 #  GRPC_LIBRARIES, library path and libs
 #  GRPC_INCLUDE_DIR, where to find the headers
+#  PROTOC, protoc compiler
+#  GRPC_CPP_PLUGIN_PATH, plugin for generating C++ gRPC client and server
+#  PROTOC_GEN_GO_PATH, plugin for generating Go gRPC client and server
 
 if (NOT DEFINED GRPC_FOUND)
     include(PlatformIntrospection)
@@ -13,13 +16,31 @@ if (NOT DEFINED GRPC_FOUND)
     endif ()
 
     set(_grpc_exploded ${CMAKE_BINARY_DIR}/tlm/deps/grpc.exploded)
+    set(_protoc_gen_go_exploded ${CMAKE_BINARY_DIR}/tlm/deps/protoc-gen-go.exploded)
 
     find_path(GRPC_INCLUDE_DIR grpc
             HINTS ${_grpc_exploded}/include
             ${_grpc_no_default_path})
-
     if (NOT GRPC_INCLUDE_DIR)
         message(FATAL_ERROR "Failed to locate gRPC headers")
+    endif ()
+
+    find_program(PROTOC protoc
+            HINTS ${_grpc_exploded}/bin)
+    if (NOT PROTOC)
+        message(FATAL_ERROR "Failed to locate protoc")
+    endif ()
+
+    find_path(GRPC_CPP_PLUGIN_PATH grpc_cpp_plugin
+            HINTS ${_grpc_exploded}/bin)
+    if (NOT GRPC_CPP_PLUGIN_PATH)
+        message(FATAL_ERROR "Failed to locate grpc_cpp_plugin")
+    endif ()
+
+    find_path(PROTOC_GEN_GO_PATH protoc-gen-go
+            HINTS ${_protoc_gen_go_exploded}/bin)
+    if (NOT PROTOC_GEN_GO_PATH)
+        message(FATAL_ERROR "Failed to locate protoc-gen-go")
     endif ()
 
     if (NOT GRPC_LIBRARIES)
@@ -47,5 +68,5 @@ if (NOT DEFINED GRPC_FOUND)
     endif (GRPC_LIBRARIES)
 
     set(GRPC_FOUND true CACHE BOOL "Found gRPC" FORCE)
-    mark_as_advanced(GRPC_FOUND GRPC_INCLUDE_DIR GRPC_LIBRARIES)
+    mark_as_advanced(GRPC_FOUND GRPC_INCLUDE_DIR GRPC_LIBRARIES PROTOC GRPC_CPP_PLUGIN_PATH PROTOC_GEN_GO_PATH)
 endif (NOT DEFINED GRPC_FOUND)
