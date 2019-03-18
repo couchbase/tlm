@@ -49,6 +49,13 @@ This would install the build software in a subdirectory named
 
     trond@ok source> make EXTRA_CMAKE_OPTIONS='-DCMAKE_INSTALL_PREFIX=/opt/couchbase'
 
+If you want to build the Enterprise Edition (requires access to
+git repositories containing closed source) you need to tell repo
+to fetch additional source by adding `-g enterprise,default` to
+repo init:
+
+    trond@ok source> repo init -u git://github.com/couchbase/manifest -m branch-master.xml -g enterprise,default
+
 ### Customize your builds
 
 CMake offers a wide range of customizations, and this chapter won't
