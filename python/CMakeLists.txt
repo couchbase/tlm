@@ -90,7 +90,7 @@ ADD_CUSTOM_TARGET (local-cbpy ALL DEPENDS "${PYTHON_EXE}")
 # Clean targets
 
 ADD_CUSTOM_TARGET ("miniconda3-clean"
-  COMMAND "${CMAKE_COMMAND}" -E remove_recurse "${_miniconda_install}"
+  COMMAND "${CMAKE_COMMAND}" -E remove_directory "${_miniconda_install}"
   VERBATIM)
 
 ADD_CUSTOM_TARGET ("cbpy-installer-clean"
@@ -98,7 +98,7 @@ ADD_CUSTOM_TARGET ("cbpy-installer-clean"
   VERBATIM)
 
 ADD_CUSTOM_TARGET ("local-cbpy-clean"
-  COMMAND "${CMAKE_COMMAND}" -E remove_recurse "${CBPY_INSTALL}"
+  COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CBPY_INSTALL}"
   VERBATIM)
 
 ADD_DEPENDENCIES (realclean miniconda3-clean cbpy-installer-clean local-cbpy-clean)
