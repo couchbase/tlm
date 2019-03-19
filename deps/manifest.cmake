@@ -12,11 +12,7 @@
 # you may use the cmake macro CB_GET_SUPPORTED_PLATFORM to
 # check if this is a supported platform.
 #
-DECLARE_DEP (breakpad VERSION 20160926-cb1 PLATFORMS debian9 ubuntu16.04 windows_msvc2015 windows_msvc2017)
-# breakpad 20160926-cb2 rebuilt using GCC 7.2.0.
-DECLARE_DEP (breakpad VERSION 20160926-cb2 PLATFORMS centos6 centos7 debian8 suse11 suse12 ubuntu14.04)
-# breakpad 20160926-cb3 suse15 ubuntu18.04
-DECLARE_DEP (breakpad VERSION 20160926-cb3 PLATFORMS amzn2 suse15 ubuntu18.04)
+DECLARE_DEP (breakpad V2 VERSION 0.1.0 BUILD 3 PLATFORMS amzn2 centos7 debian8 debian9 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (boost VERSION 1.67.0-cb3 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 # curl 7.60.0-cb1 debian7 suse11
 DECLARE_DEP (curl VERSION 7.60.0-cb1 PLATFORMS debian7 suse11)
