@@ -25,10 +25,10 @@ case "$PLATFORM" in
         ;;
 esac
 
-# Get our vendored copy of Google's depot_tools.
-# The v8-5.9 branch in our mirror is set to the version as of
-# early September 2017, when this v8 package was created.
-git clone -b couchbasedeps-v8-5.9 git://github.com/couchbasedeps/depot_tools
+# Get Google's depot_tools; checkout from October 18th, 2018,
+# which worked for the SuSE platforms on the last build.
+git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
+pushd depot_tools && git checkout 93277a7 && popd
 export PATH=`pwd`/depot_tools:$PATH
 
 # Disable gclient auto-update (won't work anyway since we're using a

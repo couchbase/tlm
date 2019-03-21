@@ -1,0 +1,68 @@
+diff --git a/src/idl_gen_general.cpp b/src/idl_gen_general.cpp
+index 7e8e8c5..fb80761 100644
+--- a/src/idl_gen_general.cpp
++++ b/src/idl_gen_general.cpp
+@@ -326,7 +326,7 @@ Type DestinationType(const Type &type, bool vectorelem) {
+     case BASE_TYPE_VECTOR:
+       if (vectorelem)
+         return DestinationType(type.VectorType(), vectorelem);
+-      // else fall thru:
++      // else fall thru
+     default: return type;
+   }
+ }
+@@ -372,7 +372,7 @@ std::string DestinationMask(const Type &type, bool vectorelem) {
+     case BASE_TYPE_VECTOR:
+       if (vectorelem)
+         return DestinationMask(type.VectorType(), vectorelem);
+-      // else fall thru:
++      // else fall thru
+     default: return "";
+   }
+ }
+diff --git a/src/idl_parser.cpp b/src/idl_parser.cpp
+index d845b83..c054a66 100644
+--- a/src/idl_parser.cpp
++++ b/src/idl_parser.cpp
+@@ -215,7 +215,7 @@ std::string Parser::TokenToStringId(int t) {
+ // Parses exactly nibbles worth of hex digits into a number, or error.
+ CheckedError Parser::ParseHexNum(int nibbles, int64_t *val) {
+   for (int i = 0; i < nibbles; i++)
+-    if (!isxdigit(static_cast<const unsigned char>(cursor_[i])))
++    if (!isxdigit(static_cast<unsigned char>(cursor_[i])))
+       return Error("escape code must be followed by " + NumToString(nibbles) +
+                    " hex digits");
+   std::string target(cursor_, cursor_ + nibbles);
+@@ -252,7 +252,7 @@ CheckedError Parser::Next() {
+       case '{': case '}': case '(': case ')': case '[': case ']':
+       case ',': case ':': case ';': case '=': return NoError();
+       case '.':
+-        if(!isdigit(static_cast<const unsigned char>(*cursor_))) return NoError();
++        if(!isdigit(static_cast<unsigned char>(*cursor_))) return NoError();
+         return Error("floating point constant can\'t start with \".\"");
+       case '\"':
+       case '\'': {
+diff --git a/src/reflection.cpp b/src/reflection.cpp
+index 8f2fc69..9be210b 100644
+--- a/src/reflection.cpp
++++ b/src/reflection.cpp
+@@ -419,8 +419,8 @@ Offset<const Table *> CopyTable(FlatBufferBuilder &fbb,
+               offset = fbb.CreateVector(elements).o;
+               break;
+             }
+-            // FALL-THRU:
+           }
++          // FALL-THRU
+           default: {  // Scalars and structs.
+             auto element_size = GetTypeSize(element_base_type);
+             if (elemobjectdef && elemobjectdef->is_struct())
+@@ -457,8 +457,8 @@ Offset<const Table *> CopyTable(FlatBufferBuilder &fbb,
+                      subobjectdef.bytesize());
+           break;
+         }
+-        // else: FALL-THRU:
+       }
++      // ELSE FALL-THRU
+       case reflection::Union:
+       case reflection::String:
+       case reflection::Vector:

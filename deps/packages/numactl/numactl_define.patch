@@ -1,0 +1,12 @@
+diff --git a/affinity.c b/affinity.c
+index 9fbd6af..5343df0 100644
+--- a/affinity.c
++++ b/affinity.c
+@@ -39,6 +39,7 @@
+ #include <dirent.h>
+ #include <linux/rtnetlink.h>
+ #include <linux/netlink.h>
+ #include <sys/types.h>
++#include <sys/sysmacros.h>
+ #include <ctype.h>
+ #include <assert.h>

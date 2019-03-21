@@ -5,7 +5,7 @@ PLATFORM=$2
 CBDEPS_OPENSSL_DIR=$3
 
 case "$PLATFORM" in
-    debian9|fedora26)
+    debian9|fedora26|rhel8)
         # We need to do a private build of OpenSSL as the version
         # on debian 9 is too new for Erlang R16B03-1. Use our
         # vendored 1.0.2k source.

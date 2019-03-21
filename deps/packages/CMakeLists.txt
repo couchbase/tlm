@@ -155,15 +155,15 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 # And here is the set of "latest" dependencies.
 #
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
-   _ADD_DEP_PACKAGE(breakpad 20160926 20160926-couchbase 2)
+   _ADD_DEP_PACKAGE(breakpad 20160926 20160926-couchbase 3)
 ELSE (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
    MESSAGE(STATUS "Skipping breakpad for ${CMAKE_SYSTEM_NAME}")
 ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
-_ADD_DEP_PACKAGE(snappy 1.1.6 1.1.6 1)
+_ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 2)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
-_ADD_DEP_PACKAGE(icu4c 59.1 r59.1 1)
+_ADD_DEP_PACKAGE(icu4c 59.1 r59.1 2)
 _ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 4)
-_ADD_DEP_PACKAGE(v8 5.9 5.9.223 6)
+_ADD_DEP_PACKAGE(v8 5.9 5.9.223 8)
 # jemalloc comes from "stable-4" branch, which is a bit later than their
 # 4.5.0 release, so we call it 4.5.0.1.
 _ADD_DEP_PACKAGE(jemalloc 4.5.0.1 stable-4 1)
@@ -190,9 +190,9 @@ _ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase 11)
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
 IF (PLATFORM STREQUAL "fedora26" OR PLATFORM STREQUAL "fedora27")
-  _ADD_DEP_PACKAGE(flatbuffers 1.7.1 v1.7.1 1)
+  _ADD_DEP_PACKAGE(flatbuffers 1.7.1 v1.7.1 2)
 ELSE ()
-  _ADD_DEP_PACKAGE(flatbuffers 1.4.0 v1.4.0 1)
+  _ADD_DEP_PACKAGE(flatbuffers 1.4.0 v1.4.0 2)
 ENDIF ()
 
 _ADD_DEP_PACKAGE(json 1.1.0 v1.1.0 1)

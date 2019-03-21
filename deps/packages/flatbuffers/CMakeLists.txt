@@ -6,6 +6,7 @@ include(ExternalProject)
 ExternalProject_Add(flatbuffers
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
+  PATCH_COMMAND git apply ${CMAKE_CURRENT_LIST_DIR}/fix_warnings.patch
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install -D FLATBUFFERS_BUILD_TESTS=OFF
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND $(MAKE) install
