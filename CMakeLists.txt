@@ -96,9 +96,6 @@ OPTION (CB_DEVELOPER_BUILD "Produce Developer builds" ON)
 # 'Production builds' are those built by the official Couchbase build jobs
 OPTION (CB_PRODUCTION_BUILD "Official production build" OFF)
 
-# Temporary option to enable building eventing before it is fully phased into vulcan
-OPTION (CB_ENABLE_EVENTING "Enable eventing features" ON)
-
 # Add option to build tools only
 SET(BUILD_ONLY_TOOLS False)
 IF ($ENV{CB_TOOLS_ONLY})
@@ -300,7 +297,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     ENDIF()
 
     IF (NOT BUILD_ONLY_TOOLS)
-      IF (BUILD_ENTERPRISE AND CB_ENABLE_EVENTING)
+      IF (BUILD_ENTERPRISE)
         ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing)
       ENDIF()
 
