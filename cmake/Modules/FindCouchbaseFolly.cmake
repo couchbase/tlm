@@ -25,8 +25,21 @@ if (NOT DEFINED FOLLY_FOUND)
             PATHS ${_folly_exploded}
             ${_folly_no_default_path})
 
+    # Somebody working on folly decided to add a template parameter to
+    # SharedMutex that defaults to whether or not folly was compiled with or
+    # without TSan. This is a pain for us because we will need different symbols
+    # based on whether or not we are compiling with TSan. If we generally use
+    # TSan on a given platform then we should have created an additional
+    # library named 'libfollytsan.a' that we should link against instead of the
+    # normal library 'libfolly.a' if we are building with TSan enabled.
+    if(CB_THREADSANITIZER)
+        set(folly_lib follytsan)
+    else(CB_THREADSANITIZER)
+        set(folly_lib folly)
+    endif(CB_THREADSANITIZER)
+
     find_library(FOLLY_LIBRARIES
-            NAMES folly
+            NAMES ${folly_lib}
             HINTS ${_folly_exploded}/lib
             ${_folly_no_default_path})
 
