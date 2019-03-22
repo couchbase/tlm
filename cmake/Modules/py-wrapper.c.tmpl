@@ -1,0 +1,129 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <process.h>
+#include <windows.h>
+#include <libloaderapi.h>
+
+/**
+ * Appends a relative path to a base (file) path
+ */
+void relPath(char* base, char* rel) {
+  char* cp = strrchr(base, '\\');
+  if(cp) {
+    // Point to the char just following the final slash.
+    cp++;
+  } else {
+    // I give up.  I'll have no path information.
+    cp = base;
+  }
+  strcpy(cp, rel);
+}
+
+/**
+ * Prepends a value (;-delimited) to an environment variable.
+ */
+void prependEnv(char* envvar, char* value) {
+  char* newval;
+  char* curenv = getenv(envvar);
+  if (!curenv) {
+     newval = malloc(strlen(envvar) + strlen(value) + 2);
+     sprintf(newval, "%s=%s", envvar, value);
+  } else {
+    newval = malloc(strlen(envvar) + strlen(value) + strlen(curenv) + 3);
+    sprintf(newval, "%s=%s;%s", envvar, value, curenv);
+  }
+  _putenv(newval);
+}
+
+int main(int argc, char** argv) {
+  char codePath[_MAX_FNAME], pyExe[_MAX_FNAME], libDir[_MAX_FNAME], exeName[64];
+  char* cp;
+
+  /* Path to current executable */
+  GetModuleFileName(NULL, libDir, sizeof(libDir));
+
+  /* Copy out the basename of the executable */
+  cp = strrchr(libDir, '\\');
+  cp++;
+  strcpy(exeName, cp);
+
+  /* Strip the extension */
+  cp = strrchr(exeName, '.');
+  *cp = '\0';
+
+  /* Copy full path to other locations */
+  strcpy(pyExe, libDir);
+  strcpy(codePath, libDir);
+
+  /* Compute relative paths */
+  relPath(codePath, "@CODE_REL@");
+  relPath(pyExe, "@PY_REL@\\python.exe");
+  relPath(libDir, "@LIB_REL@");
+
+  /* If pyExe is missing, abort */
+  DWORD dwAttrib = GetFileAttributes(pyExe);
+  if (dwAttrib == INVALID_FILE_ATTRIBUTES ||
+      (dwAttrib & FILE_ATTRIBUTE_DIRECTORY)) {
+    printf("%s does not exist!\n", pyExe);
+    exit(1);
+  }
+
+  /* Update environment */
+  prependEnv("PATH", libDir);
+  prependEnv("PYTHONPATH", codePath);
+
+  /* Stick program name on end of codePath */
+  strcat(codePath, "\\");
+  strcat(codePath, exeName);
+
+  /* Get current full command-line, and jump past argv[0] */
+  char* cmdLine = GetCommandLine();
+  char *s = cmdLine;
+  if (*s == '"') {
+    ++s;
+    while (*s)
+      if (*s++ == '"')
+        break;
+  } else {
+    while (*s && *s != ' ' && *s != '\t')
+      ++s;
+  }
+  cmdLine = s;
+
+  /* Form final command line, with all the requisite quotes and spaces */
+  char pyCmdLine[32768];
+  sprintf(pyCmdLine, "\"%s\" \"%s\" %s", pyExe, codePath, cmdLine);
+
+  /* Exec real python */
+  STARTUPINFO si;
+  PROCESS_INFORMATION pi;
+  ZeroMemory(&si, sizeof(si));
+  si.cb = sizeof(si);
+  ZeroMemory(&pi, sizeof(pi));
+
+  if( !CreateProcess( NULL,   // No module name (use command line)
+      pyCmdLine,      // Command line
+      NULL,           // Process handle not inheritable
+      NULL,           // Thread handle not inheritable
+      FALSE,          // Set handle inheritance to FALSE
+      0,              // No creation flags
+      NULL,           // Use parent's environment block
+      NULL,           // Use parent's starting directory
+      &si,            // Pointer to STARTUPINFO structure
+      &pi )           // Pointer to PROCESS_INFORMATION structure
+  ) {
+    printf("CreateProcess failed (%d).\n", GetLastError());
+    exit(1);
+  }
+
+  /* Wait until child process exits */
+  DWORD exitCode;
+  WaitForSingleObject(pi.hProcess, INFINITE);
+  GetExitCodeProcess(pi.hProcess, &exitCode);
+
+  /* Close process and thread handles */
+  CloseHandle(pi.hProcess);
+  CloseHandle(pi.hThread);
+
+  exit(exitCode);
+}

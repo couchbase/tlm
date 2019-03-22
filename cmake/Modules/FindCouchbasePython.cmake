@@ -45,9 +45,13 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
   SET (TLM_MODULES_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
   # Creates a wrapper script from a template, in an OS-specific manner.
-  FUNCTION (ConfigureWrapper CODE_REL LIB_REL PY_REL OUTPUT_FILE)
+  # Note: OUTPUT_FILE should be an absolute path to a file with no extension.
+  # On Linux and MacOS, the resulting file will be named as such with no
+  # extension. On Windows, the resulting file will have a .exe extension,
+  # built from py-wrapper.c.
+  MACRO (ConfigureWrapper CODE_REL_ARG LIB_REL_ARG PY_REL_ARG OUTPUT_FILE)
     IF (WIN32)
-      SET (_wrapper py-wrapper.bat)
+      SET (_wrapper py-wrapper.c)
     ELSE ()
       IF (APPLE)
         SET (LIB_PATH_VAR DYLD_LIBRARY_PATH)
@@ -56,6 +60,11 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
       ENDIF ()
       SET (_wrapper py-wrapper.sh)
     ENDIF ()
+
+    # CMake is weird - need to create our own "local" versions of formal args
+    SET (CODE_REL "${CODE_REL_ARG}")
+    SET (LIB_REL "${LIB_REL_ARG}")
+    SET (PY_REL "${PY_REL_ARG}")
 
     # Convert any absolute paths to relative
     IF (IS_ABSOLUTE "${CODE_REL}")
@@ -73,25 +82,46 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
     FILE (TO_NATIVE_PATH "${LIB_REL}" LIB_REL)
     FILE (TO_NATIVE_PATH "${PY_REL}" PY_REL)
 
+    # And Windows sucks
+    IF (WIN32)
+      STRING (REPLACE "\\" "\\\\" CODE_REL "${CODE_REL}")
+      STRING (REPLACE "\\" "\\\\" LIB_REL "${LIB_REL}")
+      STRING (REPLACE "\\" "\\\\" PY_REL "${PY_REL}")
+    ENDIF (WIN32)
+
+    IF (WIN32)
+      SET (_output "${OUTPUT_FILE}.c")
+    ELSE ()
+      SET (_output "${OUTPUT_FILE}")
+    ENDIF ()
+
     STRING (REGEX REPLACE "-.*" "" CB_VERSION "${PRODUCT_VERSION}")
     CONFIGURE_FILE (
       "${TLM_MODULES_DIR}/${_wrapper}.tmpl"
-      "${OUTPUT_FILE}"
+      "${_output}"
       @ONLY
     )
-  ENDFUNCTION (ConfigureWrapper)
+
+    # Windows-specific compilation target
+    IF (WIN32)
+      GET_FILENAME_COMPONENT (_output_name "${OUTPUT_FILE}" NAME)
+      ADD_EXECUTABLE ("${_output_name}" "${_output}")
+      # Ensure in expected output directory
+      GET_FILENAME_COMPONENT (_output_dir "${OUTPUT_FILE}" DIRECTORY)
+      SET_TARGET_PROPERTIES ("${_output_name}" PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY "${_output_dir}")
+    ENDIF ()
+
+  ENDMACRO (ConfigureWrapper)
 
   # Create the master wrapper script for PyWrapper(), since all installed
   # programs can use the same one (same relative paths from wrapper script
   # to the code, libs, and python)
+  SET (MASTER_WRAPPER "${PYTHON_ROOT}/install-py-wrapper")
+  ConfigureWrapper (../lib/python ../lib ../${CBPY_PATH}
+    "${MASTER_WRAPPER}")
   IF (WIN32)
-    SET (MASTER_WRAPPER "${PYTHON_ROOT}/py-wrapper.bat")
-    ConfigureWrapper (../lib/python ../bin ../${CBPY_PATH}
-      "${MASTER_WRAPPER}")
-  ELSE ()
-    SET (MASTER_WRAPPER "${PYTHON_ROOT}/py-wrapper.sh")
-    ConfigureWrapper (../lib/python ../lib ../${CBPY_PATH}
-      "${MASTER_WRAPPER}")
+    SET (MASTER_WRAPPER "${MASTER_WRAPPER}.exe")
   ENDIF ()
 
   INCLUDE (ParseArguments)
@@ -125,12 +155,14 @@ IF (NOT DEFINED COUCHBASE_PYTHON_INCLUDED)
     FOREACH (_script ${Py_SCRIPTS})
       GET_FILENAME_COMPONENT (_scriptname "${_script}" NAME)
       IF (WIN32)
-        SET (_scriptname "${_scriptname}.bat")
+        SET (_installname "${_scriptname}.exe")
+      ELSE ()
+        SET (_installname "${_scriptname}")
       ENDIF ()
 
       INSTALL (PROGRAMS "${MASTER_WRAPPER}"
         DESTINATION bin
-        RENAME "${_scriptname}")
+        RENAME "${_installname}")
 
       IF (Py_BUILD_DIR)
         GET_FILENAME_COMPONENT (_scriptdir "${_script}/.." ABSOLUTE)
