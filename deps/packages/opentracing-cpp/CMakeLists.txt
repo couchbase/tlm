@@ -18,5 +18,15 @@ ExternalProject_Add(opentracing-cpp
           COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt <INSTALL_DIR>/CMakeLists.txt
 )
 
+IF (WIN32)
+  # Hide the .dll so that the build will only find it in the installed
+  # location, not in the exploded dir
+  ExternalProject_Add_Step(opentracing-cpp hide-lib
+    COMMAND ${CMAKE_COMMAND} -E make_directory <INSTALL_DIR>/dll
+    COMMAND ${CMAKE_COMMAND} -E rename <INSTALL_DIR>/lib/opentracing.dll <INSTALL_DIR>/dll/opentracing.dll
+    DEPENDEES install
+  )
+ENDIF ()
+
 # cbdeps boilerplate
 _ADD_PACKAGE_STEP()
