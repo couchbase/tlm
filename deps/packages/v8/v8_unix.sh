@@ -28,6 +28,13 @@ EOF
 
 gclient sync
 
+# Apply change to enable RPATH (runpath) for libraries/binaries on Linux
+if [[ $PLATFORM != "macosx" ]]; then
+    pushd v8/build
+    git apply $SCRIPTPATH/v8_linux_runpath.patch
+    popd
+fi
+
 # Actual v8 configure and build steps - we build debug and release.
 cd v8
 V8_ARGS='target_cpu="x64" is_component_build=true v8_enable_backtrace=true v8_use_external_startup_data=false'
