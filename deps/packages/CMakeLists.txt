@@ -159,11 +159,7 @@ _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 2)
 _ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 5)
 _ADD_DEP_PACKAGE(v8 7.1 7.1.321 4)
-IF (WIN32)
-_ADD_DEP_PACKAGE(jemalloc 4.1.0 4.1.0 3)
-ELSE ()
-_ADD_DEP_PACKAGE(jemalloc 5.1.0 5.1.0 2)
-ENDIF()
+_ADD_DEP_PACKAGE(jemalloc 5.1.0 5.1.0-couchbase 3)
 
 _ADD_DEP_PACKAGE(erlang OTP-20.3.8.11 OTP-20.3.8.11 1)
 
