@@ -10,3 +10,6 @@ make install_lib_shared install_include install_bin
 
 rem The standard install rules don't install the import library or PDB files - do it manually.
 cp lib\jemalloc.lib lib\jemalloc.pdb %INSTALL_DIR%\lib
+
+rem Need strings.h and more on Windows. Jemalloc supplies it, copy manually.
+cp -r include\msvc_compat %INSTALL_DIR%\include
