@@ -3,6 +3,8 @@
 
 include(ProcessorCount)
 
+cmake_policy(SET CMP0054 NEW)
+
 # Returns a simple string describing the current architecture. Possible
 # return values currently include: amd64, x86_64, x86.
 MACRO (_DETERMINE_ARCH var)
@@ -145,9 +147,9 @@ MACRO (_DETERMINE_LINUX_DISTRO _distro)
     ELSE ()
       SET (_ver 16.04)
     ENDIF ()
-  ELSEIF (_id STREQUAL "debian" OR _id STREQUAL "centos" )
-    # Just use the major version from the CentOS/Debian identifier - we don't
-    # need different builds for different minor versions.
+  ELSEIF (_id STREQUAL "debian" OR _id STREQUAL "centos" OR _id STREQUAL "rhel")
+    # Just use the major version from the CentOS/Debian/RHEL identifier;
+    # we don't need different builds for different minor versions.
     STRING (REGEX MATCH "[0-9]+" _ver "${_ver}")
   ELSEIF (_id STREQUAL "fedora" AND _ver VERSION_LESS 26)
     SET (_id "centos")
@@ -200,6 +202,7 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
        "centos6" "centos7"
        "debian7" "debian8" "debian9"
        "macosx"
+       "rhel8"
        "suse11" "suse12" "suse15"
        "ubuntu14.04" "ubuntu16.04" "ubuntu18.04"
        "windows_msvc2015"
