@@ -1,12 +1,3 @@
-#
-# Choose deployment target on MacOS
-#
-if (APPLE)
-    # See http://www.couchbase.com/issues/browse/MB-11442
-    set(CMAKE_OSX_DEPLOYMENT_TARGET "10.7" CACHE STRING
-        "Minimum supported version of MacOS X")
-endif (APPLE)
-
 # Create a list of all of the directories we would like to be treated
 # as system headers (and not report compiler warnings from (if the
 # compiler supports it). This is used by the compiler-specific Options

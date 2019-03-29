@@ -22,6 +22,13 @@ IF (NOT DEFINED CMAKE_BUILD_TYPE)
        FORCE)
 ENDIF ()
 
+#
+# Choose deployment target on macOS.
+# As of Mad-Hatter, minimum supported is High Sierra (10.13).
+#
+SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.13" CACHE STRING
+    "Minimum supported version of MacOS X")
+
 PROJECT("Couchbase")
 
 OPTION(COUCHBASE_KV_COMMIT_VALIDATION
