@@ -24,6 +24,7 @@ ADD_CUSTOM_COMMAND (OUTPUT "${CONDA_EXE}"
   COMMAND "${CMAKE_COMMAND}" -E remove_directory "${_miniconda_install}"
   COMMAND "${CBDEP}" install -d "${CMAKE_CURRENT_BINARY_DIR}"
       miniconda3 ${MINICONDA_VERSION}
+  COMMAND "${_miniconda_install}/bin/conda" config --set auto_update_conda False
   VERBATIM)
 
 ADD_CUSTOM_TARGET(miniconda3 ALL DEPENDS "${CONDA_EXE}")
