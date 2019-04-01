@@ -13,9 +13,11 @@ SET (_miniconda_install "${CMAKE_CURRENT_BINARY_DIR}/miniconda3-${MINICONDA_VERS
 IF (WIN32)
   SET (_pyexe "${_miniconda_install}/python.exe")
   SET (_condaexe "${_miniconda_install}/Scripts/conda.exe")
+  SET (_condapath "Scripts")
 ELSE ()
   SET (_pyexe "${_miniconda_install}/bin/python")
   SET (_condaexe "${_miniconda_install}/bin/conda")
+  SET (_condapath "bin")
 ENDIF ()
 SET (CONDA_EXE "${_condaexe}" CACHE INTERNAL "Path to conda program")
 
@@ -24,7 +26,7 @@ ADD_CUSTOM_COMMAND (OUTPUT "${CONDA_EXE}"
   COMMAND "${CMAKE_COMMAND}" -E remove_directory "${_miniconda_install}"
   COMMAND "${CBDEP}" install -d "${CMAKE_CURRENT_BINARY_DIR}"
       miniconda3 ${MINICONDA_VERSION}
-  COMMAND "${_miniconda_install}/bin/conda" config --set auto_update_conda False
+  COMMAND "${_miniconda_install}/${_condapath}/conda" config --set auto_update_conda False
   VERBATIM)
 
 ADD_CUSTOM_TARGET(miniconda3 ALL DEPENDS "${CONDA_EXE}")
