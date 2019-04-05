@@ -64,8 +64,13 @@ IF (CB_THREADSANITIZER)
                SET(_name ${ARGV0})
             ENDIF()
             _ADD_TEST(${ARGV})
+
+            SET(tsan_options "suppressions=${CMAKE_SOURCE_DIR}/tlm/tsan.suppressions second_deadlock_stack=1 history_size=7")
+            # On some platforms (at least macOS Mojave), mutex deadlocking is
+            # not enabled by default.
+            SET(tsan_options "${tsan_options} detect_deadlocks=1")
             SET_TESTS_PROPERTIES(${_name} PROPERTIES ENVIRONMENT
-                                 "TSAN_OPTIONS=suppressions=${CMAKE_SOURCE_DIR}/tlm/tsan.suppressions second_deadlock_stack=1 history_size=7")
+                                 "TSAN_OPTIONS=${tsan_options}")
         ENDFUNCTION()
 
         MESSAGE(STATUS "ThreadSanitizer enabled - forcing use of 'system' memory allocator.")
