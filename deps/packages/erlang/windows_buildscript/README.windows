@@ -1,24 +1,21 @@
-Currently the Windows build is not integrated into the system fully.
-You need to use a specially configured Windows VM with the following:
-(Details of all required tools to build Erlang:
-http://erlang.org/doc/installation_guide/INSTALL-WIN32.html)
-  - MSVC 2013 (yes, 2013, not 2015)
-     - Also need version 8.1 of SDK (goes with MSVC 2013)
-  - Latest versions of:
-     - Cygwin
-     - ActiveState Perl
-     - NSIS (at least 2.51)
-     - JDK 8
-     - msys2 (http://repo.msys2.org/distrib/x86_64/msys2-x86_64-20180531.exe)
-  - Installed version of OpenSSL 1.1.1b in C:\OpenSSL-Win64
-  - Use Cygwin GUI to install extra packages: make, automake, autoconf, wget
+Currently the Windows build is not integrated into the cbdeps system fully.
 
-Once the VM is ready, copy the 'cygwin.bash_profile' to the user homedir
-running for Cygwin terminal as '.bash_profile', then copy the scripts
-'erlang-windows.sh' - some changes for the latter might need to be made
-for the tarball naming and version, so review it carefully.  Once that's
-done, open a Cygwin terminal and set ERL_TOP to '$HOME/otp_src_<release>'
-(currently release is 'OTP-20.3.8.8') and export it, then run the script.
+We have an ansible playbook setup for window2016 to build Erlang R20
+https://github.com/couchbase/build-infra/tree/master/ansible/windows/erlang
+
+Following are steps to build Erlang R20 on window2016 VM
+1. Start up a zz-Windows-2016-Ansible-Template
+2. Installed a downloaded version of OpenSSL 1.0.2r (current versios of now) from http://slproweb.com/products/Win32OpenSSL.html (Win64 OpenSSL v1.0.2r)
+3. Install the downloaded .exe from step 2 to C:\OpenSSL-Win64
+4. To build manually on the VM (the following build steps should be done inside cygwin terminal)
+    a. Copy the 'cygwin.bash_profile' from https://github.com/couchbase/tlm/blob/master/deps/packages/erlang/windows_buildscript/cygwin.bash_profile
+    b. Copy the scripts 'erlang-windows.sh' from https://github.com/couchbase/tlm/blob/master/deps/packages/erlang/windows_buildscript/erlang_windows.sh.  Some changes might need to be made for the tarball naming and version, so review it carefully.
+    c. Ensure https://github.com/couchbasedeps/erlang has the correct/latest tags required for the build
+    d. cd /home/Administrator/; mkdir workspace
+    e. git clone git://github.com/couchbasedeps/erlang opt_src_OTP-20.3.8.11
+    f. cd opt_src_OTP-20.3.8.11; git checkout OTP-20.3.8.11
+    g. ../erlang_windows.sh 9.3.3.5 20 OTP-20.3.8.11 (see http://server.jenkins.couchbase.com/view/cbdeps/job/cbdeps-erlang-window-build for reference)
+
 If successful, a '.tgz' file should be at the top-level of the homedir,
 which can then be copied into place in the releases directory on latest-
 builds.

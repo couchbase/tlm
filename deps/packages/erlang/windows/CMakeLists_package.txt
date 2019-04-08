@@ -1,4 +1,0 @@
-# Just copy contents to CMAKE_INSTALL_PREFIX
-FILE (COPY bin erts-9.3 lib releases usr DESTINATION "${CMAKE_INSTALL_PREFIX}")
-# And install erl.ini with correct paths
-CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/erl.ini.in ${CMAKE_INSTALL_PREFIX}/bin/erl.ini)
