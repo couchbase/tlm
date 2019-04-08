@@ -22,6 +22,8 @@ IF (CB_THREADSANITIZER)
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${THREAD_SANITIZER_FLAG}")
         SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${THREAD_SANITIZER_FLAG}")
 
+        use_rpath_for_sanitizers()
+
         # TC/jemalloc are incompatible with ThreadSanitizer - force
         # the use of the system allocator.
         SET(COUCHBASE_MEMORY_ALLOCATOR system CACHE STRING "Memory allocator to use")
@@ -30,6 +32,11 @@ IF (CB_THREADSANITIZER)
         SET(MEMORYCHECK_TYPE ThreadSanitizer)
 
         ADD_DEFINITIONS(-DTHREAD_SANITIZER)
+
+        # Need to install libtsan to be able to run sanitized
+        # binaries on a machine different to the build machine
+        # (for example for RPM sanitized packages).
+        install_sanitizer_library(TSan libtsan.so.0 ${CMAKE_INSTALL_PREFIX}/lib)
 
         # Override the normal ADD_TEST macro to set the TSAN_OPTIONS
         # environment variable - this allows us to specify the

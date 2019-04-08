@@ -59,6 +59,11 @@ IF (CB_UNDEFINEDSANITIZER GREATER 0)
             SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${UNDEFINED_SANITIZER_FLAG} -fno-omit-frame-pointer")
             SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${UNDEFINED_SANITIZER_FLAG}")
 	    ADD_DEFINITIONS(-DUNDEFINED_SANITIZER)
+
+            # Need to install libuban to be able to run sanitized
+            # binaries on a machine different to the build machine
+            # (for example for RPM sanitized packages).
+	    install_sanitizer_library(UBSan libubsan.so.0 ${CMAKE_INSTALL_PREFIX}/lib)
 	endif()
 
         MESSAGE(STATUS "UndefinedBehaviorSanitizer enabled (mode ${CB_UNDEFINEDSANITIZER})")

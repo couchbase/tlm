@@ -71,8 +71,15 @@ IF (CB_ADDRESSSANITIZER)
             SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDRESS_SANITIZER_FLAG} -fno-omit-frame-pointer")
             SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${ADDRESS_SANITIZER_FLAG}")
 
+            use_rpath_for_sanitizers()
+
             ADD_DEFINITIONS(-DADDRESS_SANITIZER)
-        endif()
+
+            # Need to install libasan to be able to run sanitized
+            # binaries on a machine different to the build machine
+            # (for example for RPM sanitized packages).
+	    install_sanitizer_library(ASan libasan.so.4 ${CMAKE_INSTALL_PREFIX}/lib)
+        endif ()
 
         MESSAGE(STATUS "AddressSanitizer enabled (mode ${CB_ADDRESSSANITIZER})")
     ELSE()
