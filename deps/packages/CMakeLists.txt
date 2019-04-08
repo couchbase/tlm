@@ -154,7 +154,7 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 #
 # And here is the set of "latest" dependencies.
 #
-_ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 2)
+_ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 3)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 2)
 _ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 8)
@@ -206,6 +206,6 @@ _ADD_DEP_PACKAGE(gflags 2.2.1 v2.2.1 2)
 _ADD_DEP_PACKAGE(glog 0.3.5 v0.3.5 1)
 
 _ADD_DEP_PACKAGE(folly v2019.03.18.00 v2019.03.18.00-couchbase 2)
-_ADD_DEP_PACKAGE(grpc 1.12.0 v1.12.0 1)
-_ADD_DEP_PACKAGE(pcre 8.42 v8.42 2)
+_ADD_DEP_PACKAGE(grpc 1.12.0 v1.12.0 2)
+_ADD_DEP_PACKAGE(pcre 8.42 v8.42 3)
 _ADD_DEP_PACKAGE(opentracing-cpp v1.5.1 v1.5.1 2)

@@ -20,7 +20,7 @@ ExternalProject_Add(snappy
           COMMAND rm -rf <INSTALL_DIR>/share
           COMMAND rm -f <INSTALL_DIR>/lib/libsnappy.la
 
-  COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib include DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
 )
 
 # OS X-only: Custom post-build step to set the shared library install name.
