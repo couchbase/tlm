@@ -37,7 +37,9 @@ if (NOT DEFINED Boost_FOUND)
 
     set(BOOST_ROOT ${CMAKE_BINARY_DIR}/tlm/deps/boost.exploded)
 
-    find_package(Boost REQUIRED)
+    find_package(Boost
+            REQUIRED
+            COMPONENTS system thread)
 
     if(Boost_INCLUDE_DIR)
         message(STATUS "Found Boost in ${Boost_INCLUDE_DIR}")
