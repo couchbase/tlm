@@ -18,7 +18,7 @@ if(WIN32)
 else(WIN32)
    declare_dep(snappy VERSION 1.1.1-cb2 PLATFORMS ${PLATFORM})
 endif(WIN32)
-declare_dep(zlib VERSION 1.2.11-3 PLATFORMS ${PLATFORM})
+declare_dep(zlib V2 VERSION 1.2.11 BUILD 4 PLATFORMS ${PLATFORM})
 
 if(WIN32)
    declare_dep(openssl VERSION 1.0.2k-cb2 PLATFORMS windows_msvc2017)
