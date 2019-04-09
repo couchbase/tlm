@@ -34,7 +34,7 @@ if (NOT DEFINED OPENSSL_FOUND)
     endif ()
 
     set(_openssl_exploded ${CMAKE_BINARY_DIR}/tlm/deps/openssl.exploded)
-    set(_openssl_libraries "ssl;libssl32;ssleay32;crypto;libeay32")
+    set(_openssl_libraries "ssl;libssl;crypto;libcrypto")
 
     find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h
               HINTS ${_openssl_exploded}

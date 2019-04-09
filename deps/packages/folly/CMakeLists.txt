@@ -12,18 +12,14 @@ declare_dep(double-conversion VERSION 3.0.0-cb2 PLATFORMS ${PLATFORM})
 declare_dep(gflags VERSION 2.2.1-cb2 PLATFORMS ${PLATFORM})
 declare_dep(glog VERSION 0.3.5-cb1 PLATFORMS ${PLATFORM})
 declare_dep(jemalloc VERSION 5.1.0-cb4 PLATFORMS ${PLATFORM})
-declare_dep(libevent VERSION 2.1.8-cb4 PLATFORMS ${PLATFORM})
+declare_dep(libevent VERSION 2.1.8-cb8 PLATFORMS ${PLATFORM})
+declare_dep(zlib V2 VERSION 1.2.11 BUILD 4 PLATFORMS ${PLATFORM})
+declare_dep(openssl VERSION 1.1.1b-cb2 PLATFORMS ${PLATFORM})
+
 if(WIN32)
    declare_dep(snappy VERSION 1.1.1 PLATFORMS ${PLATFORM})
 else(WIN32)
    declare_dep(snappy VERSION 1.1.1-cb2 PLATFORMS ${PLATFORM})
-endif(WIN32)
-declare_dep(zlib V2 VERSION 1.2.11 BUILD 4 PLATFORMS ${PLATFORM})
-
-if(WIN32)
-   declare_dep(openssl VERSION 1.0.2k-cb2 PLATFORMS windows_msvc2017)
-else(WIN32)
-   declare_dep(openssl VERSION 1.1.1b-cb2 PLATFORMS centos7 debian8 macosx)
 endif(WIN32)
 
 # Restore the INSTALL_PREFIX
@@ -76,21 +72,6 @@ endif()
 # not we are compiling with TSan. Solve this problem by building and shipping
 # a 'libfollytsan.a' compiled with an additional '-fsanitize=thread' flag that
 # we can link additionally on the platforms where we will run TSan.
-
-# Not designed to be built independently of the normal folly package build. The
-# build will only install the package and not the source.
-ExternalProject_Add(follytsan
-        GIT_REPOSITORY ${_git_repo}
-        GIT_TAG ${_git_rev}
-        PATCH_COMMAND ${folly_patch_command}
-        CMAKE_CACHE_ARGS ${cache_args}
-            -DCMAKE_CXX_FLAGS:STRING=${cxx_flags}\ -fsanitize=thread
-        BUILD_IN_SOURCE 1
-        INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-        INSTALL_COMMAND mkdir ${CMAKE_CURRENT_BINARY_DIR}/install/lib &&
-        cp libfolly.a ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libfollytsan.a
-        )
-
 ExternalProject_Add(folly
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
@@ -104,6 +85,19 @@ ExternalProject_Add(folly
 # required. Only build the TSan package on ubuntu and macos platforms to save
 # time.
 if (${PLATFORM} MATCHES "ubuntu" OR ${PLATFORM} MATCHES "macos")
+   # Not designed to be built independently of the normal folly package build. The
+   # build will only install the package and not the source.
+   ExternalProject_Add(follytsan
+        GIT_REPOSITORY ${_git_repo}
+        GIT_TAG ${_git_rev}
+        PATCH_COMMAND ${folly_patch_command}
+        CMAKE_CACHE_ARGS ${cache_args}
+            -DCMAKE_CXX_FLAGS:STRING=${cxx_flags}\ -fsanitize=thread
+        BUILD_IN_SOURCE 1
+        INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
+        INSTALL_COMMAND mkdir ${CMAKE_CURRENT_BINARY_DIR}/install/lib &&
+        cp libfolly.a ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libfollytsan.a
+        )
    ExternalProject_Add_StepDependencies(folly download follytsan)
 endif()
 
