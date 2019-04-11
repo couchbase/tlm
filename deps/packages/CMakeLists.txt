@@ -161,7 +161,7 @@ _ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 9)
 _ADD_DEP_PACKAGE(v8 7.1 7.1.321 4)
 _ADD_DEP_PACKAGE(jemalloc 5.1.0 5.1.0-couchbase 5)
 
-_ADD_DEP_PACKAGE(erlang OTP-20.3.8.11 OTP-20.3.8.11 4)
+_ADD_DEP_PACKAGE(erlang OTP-20.3.8.11 OTP-20.3.8.11 5)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
@@ -183,7 +183,6 @@ IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     _ADD_DEP_PACKAGE(libcxx 3.9.1 release_39 2)
   ENDIF ()
 ENDIF ()
-_ADD_DEP_PACKAGE(libuv 1.20.3 v1.20.3 1)
 IF (WIN32)
   _ADD_DEP_PACKAGE(flex 2.5.4a master 1)
 ELSE ()
@@ -192,7 +191,7 @@ ENDIF ()
 _ADD_DEP_PACKAGE(numactl 2.0.11 v2.0.11 2)
 
 IF (NOT WIN32)
-    _ADD_DEP_PACKAGE(rocksdb 5.12.5 v5.12.5 1)
+    _ADD_DEP_PACKAGE(rocksdb 5.12.5 v5.12.5 2)
 ENDIF ()
 _ADD_DEP_PACKAGE(lz4 1.8.0 v1.8.0 3)
 # maven 3.5.2-cb3 and 3.5.2-cb4 exist as attempts to make Windows work,
@@ -205,6 +204,6 @@ _ADD_DEP_PACKAGE(gflags 2.2.1 v2.2.1 3)
 _ADD_DEP_PACKAGE(glog 0.3.5 v0.3.5 2)
 
 _ADD_DEP_PACKAGE(folly v2019.04.01.00 v2019.04.01.00-couchbase 1)
-_ADD_DEP_PACKAGE(grpc 1.12.0 v1.12.0 2)
+_ADD_DEP_PACKAGE(grpc 1.12.0 v1.12.0 3)
 _ADD_DEP_PACKAGE(pcre 8.42 v8.42 4)
 _ADD_DEP_PACKAGE(opentracing-cpp v1.5.1 v1.5.1 3)
