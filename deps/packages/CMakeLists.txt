@@ -191,7 +191,7 @@ ENDIF ()
 _ADD_DEP_PACKAGE(numactl 2.0.11 v2.0.11 2)
 
 IF (NOT WIN32)
-    _ADD_DEP_PACKAGE(rocksdb 5.12.5 v5.12.5 2)
+    _ADD_DEP_PACKAGE(rocksdb 5.18.3 v5.18.3 1)
 ENDIF ()
 _ADD_DEP_PACKAGE(lz4 1.8.0 v1.8.0 3)
 # maven 3.5.2-cb3 and 3.5.2-cb4 exist as attempts to make Windows work,
