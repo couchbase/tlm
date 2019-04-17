@@ -47,7 +47,7 @@ ExternalProject_Add(rocksdb
 # OS X-only: Custom post-build step to set the shared library install name.
 if (APPLE)
   ExternalProject_Add_Step(rocksdb install_name
-    COMMAND install_name_tool -id @rpath/librocksdb.5.12.5.dylib <BINARY_DIR>/librocksdb.5.12.5.dylib
+    COMMAND install_name_tool -id @rpath/librocksdb.5.18.3.dylib <BINARY_DIR>/librocksdb.5.18.3.dylib
 
     DEPENDEES build
     DEPENDERS install
