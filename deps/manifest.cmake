@@ -68,7 +68,7 @@ DECLARE_DEP (pcre VERSION 8.42-cb3 PLATFORMS amzn2 centos7 debian8 debian9 macos
 DECLARE_DEP (pcre VERSION 8.42-cb4 PLATFORMS rhel8)
 DECLARE_DEP (protoc-gen-go V2 VERSION 1.3.0 BUILD 5 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (protoc-gen-go V2 VERSION 1.3.0 BUILD 6 PLATFORMS rhel8)
-DECLARE_DEP (rocksdb VERSION 5.18.3-cb1 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx rhel8 suse11 suse12 suse15 ubuntu14.04 ubuntu16.04)
+DECLARE_DEP (rocksdb VERSION 5.18.3-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx rhel8 suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (snappy VERSION 1.1.1-cb3 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (snappy VERSION 1.1.1-cb4 PLATFORMS rhel8)
