@@ -7,6 +7,7 @@
 # Folly required dependancies:
 INCLUDE(FindCouchbaseDoubleConversion)
 INCLUDE(FindCouchbaseGlog)
+INCLUDE(FindCouchbaseLibevent)
 
 if (NOT DEFINED FOLLY_FOUND)
     include(PlatformIntrospection)
@@ -61,7 +62,8 @@ if (NOT DEFINED FOLLY_FOUND)
                 ${GLOG_LIBRARIES}
                 ${CMAKE_DL_LIBS}
                 ${Boost_SYSTEM_LIBRARY}
-                ${Boost_THREAD_LIBRARY})
+                ${Boost_THREAD_LIBRARY}
+                ${LIBEVENT_LIBRARIES})
         set(FOLLY_LIBRARIES ${FOLLY_LIBRARIES} CACHE STRING "Folly libraries" FORCE)
 
         set(FOLLY_FOUND true CACHE BOOL "Found Facebook Folly" FORCE)
