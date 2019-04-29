@@ -161,7 +161,7 @@ _ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 9)
 _ADD_DEP_PACKAGE(v8 7.1 7.1.321 5)
 _ADD_DEP_PACKAGE(jemalloc 5.1.0 5.1.0-couchbase 5)
 
-_ADD_DEP_PACKAGE(erlang OTP-20.3.8.11 OTP-20.3.8.11 5)
+_ADD_DEP_PACKAGE(erlang OTP-20.3.8.11 couchbase-madhatter 6)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 

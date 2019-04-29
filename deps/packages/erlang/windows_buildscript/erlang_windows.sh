@@ -9,7 +9,7 @@ package_name_tgz="erlang-windows_msvc2015-amd64-$package_name.tgz"
 package_name_md5="erlang-windows_msvc2015-amd64-$package_name.md5"
 
 # Convert dos2unix
-find . -type f |xargs /cygdrive/c/Users/Administrator/Downloads/dos2unix-7.4.0-win64/bin/dos2unix.exe
+find . -type f |xargs dos2unix
 
 ## build the source, as per instructions
 eval `./otp_build env_win32 x64`
@@ -35,7 +35,7 @@ installdir=/cygdrive/c/Program\ Files/erl${version}
 ## cbdeps consumption. We could check the files in with placeholder
 ## tokens for version. But I am just generating them here dynamically
 ## because they are tiny files
-echo $release > VERSION.txt
+echo $release_tag > VERSION.txt
 echo "[erlang]
 Bindir=\${CMAKE_INSTALL_PREFIX}/erts-${version}/bin
 Progname=erl
@@ -53,10 +53,11 @@ cp VERSION.txt erl.ini.in CMakeLists.txt "${installdir}"
 cd "${installdir}"
 tar --exclude="Install.exe" --exclude="Install.ini" --exclude="Uninstall.exe" -zcf ${thisdir}/${package_name_tgz} *
 printf $(md5sum ${thisdir}/${package_name_tgz}) > ${thisdir}/${package_name_md5}
-
 rm -f VERSION.txt erl.ini.in CMakeLists.txt
 
 ## uninstall the erlang installation
 "${installdir}/Uninstall.exe" /S
+
+rm -f VERSION.txt erl.ini.in CMakeLists.txt
 
 echo end build at `date`
