@@ -167,7 +167,7 @@ _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
 _ADD_DEP_PACKAGE(flatbuffers 1.10.0 v1.10.0 3)
 
-_ADD_DEP_PACKAGE(json 3.1.2 v3.1.2 2)
+_ADD_DEP_PACKAGE(json 3.5.0 v3.5.0 1)
 _ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 5)
 
 # Note: we build libevent with support for SSL, so whenever
