@@ -173,7 +173,7 @@ _ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 5)
 # Note: we build libevent with support for SSL, so whenever
 # OpenSSL is upgraded with an API breaking change we probably
 # need to rebuild libevent and erlang as well.
-_ADD_DEP_PACKAGE(openssl 1.1.1b OpenSSL_1_1_1b 2)
+_ADD_DEP_PACKAGE(openssl 1.1.1b OpenSSL_1_1_1b 3)
 
 _ADD_DEP_PACKAGE(libcouchbase 2.10.0 2.10.0 1)
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")

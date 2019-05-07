@@ -25,7 +25,6 @@ esac
             shared \
             threads \
             no-tests \
-            no-comp \
             no-ssl \
             no-ssl2 \
             no-ssl3 \
