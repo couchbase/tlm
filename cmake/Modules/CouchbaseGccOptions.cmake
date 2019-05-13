@@ -49,6 +49,7 @@ set(CMAKE_C_FLAGS_RELEASE        "-O3 -DNDEBUG")
 set(CMAKE_C_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g")
 set(CMAKE_C_FLAGS_DEBUG          "-Og -g")
 set(CB_C_FLAGS_NO_OPTIMIZE       "-O0")
+set(CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG -Og)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_cb_c_options}")
 
 # Configure the C++ compiler

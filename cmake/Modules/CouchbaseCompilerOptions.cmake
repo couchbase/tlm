@@ -110,3 +110,18 @@ if (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
         endif ()
     endif (CCACHE)
 endif (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
+
+# Much of the unit test code is expensive to compile with production-level
+# optimization, either simply due to its size, or things like GMock / GTest
+# template instantiation.
+# We don't care _that_ much about how fast the functional unit tests run,
+# therefore this function sets the default compiler optimization flags to
+# 'optimise for debug' for the current directory (and subdirectories) if this
+# isn't already a Debug build - i.e. only enable optimizations which don't
+# have a significant effect on compile time (but should still result in
+# modestly fast code runtime).
+function(add_compile_options_disable_optimization)
+    if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
+        add_compile_options("${CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG}")
+    endif()
+endfunction()

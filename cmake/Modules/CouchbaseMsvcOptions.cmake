@@ -5,6 +5,10 @@ set(CMAKE_C_FLAGS_RELWITHDEBINFO "/MD /O2 /Ob2 /D NDEBUG /Zi")
 set(CMAKE_C_FLAGS_DEBUG          "/MDd /Od /Ob0 /Zi")
 set(CB_C_FLAGS_NO_OPTIMIZE       "/Od /Ob0")
 
+# Just use an empty value for CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG - MSVC build
+# times for Release / RelWithDebInfo levels haven't thus far been an issue.
+set(CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG)
+
 # we've created wrappers of some of the typical header files
 # provided on Linux/Unix to avoid having to deal with #ifdef's
 include_directories(AFTER ${CMAKE_SOURCE_DIR}/platform/include/win32)
