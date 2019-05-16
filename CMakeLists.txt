@@ -13,6 +13,9 @@ IF (NOT modified_binary_dir STREQUAL CMAKE_BINARY_DIR)
   MESSAGE(FATAL_ERROR "Couchbase cannot be built in a build directory containing a space character")
 ENDIF (NOT modified_binary_dir STREQUAL CMAKE_BINARY_DIR)
 
+if ($ENV{COUCHBASE_DISABLE_DEBUG_OPTIMIZATION})
+   SET(COUCHBASE_DISABLE_DEBUG_OPTIMIZATION True CACHE BOOL "Disable optimization for Debug target")
+endif ($ENV{COUCHBASE_DISABLE_DEBUG_OPTIMIZATION})
 
 # The PROJECT() macro sets it's own default build type, so need to specify
 # ours first.
