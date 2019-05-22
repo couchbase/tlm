@@ -1,3 +1,5 @@
+include(CheckCXXCompilerFlag)
+
 # Helper function used by CouchbaseAddressSanitizer / UndefinedSanitizer.
 # Searches for a sanitizer_lib_name, returning the path in the variable named <path_var>
 function(find_sanitizer_library path_var sanitizer_lib_name)
@@ -10,6 +12,57 @@ function(find_sanitizer_library path_var sanitizer_lib_name)
   find_file(${path_var} ${sanitizer_lib_name}
     PATHS ${cc_library_dirs})
 endfunction()
+
+# Helper function to workaround a problem with ASan/TSan, dlopen and
+# RPATH:
+#
+# Background:
+#
+# Couchbase server (e.g. engine_testapp) makes use of dlopen()
+# to load the engine and the testsuite. The runtime linker
+# determines the search path to use by looking at the values
+# of RPATH and RUNPATH in the executable (e.g. engine_testapp)
+#
+# - RUNPATH is the "older" property, it is used by the
+#   executable and _any other libraries the executable loads_
+#   to locate dlopen()ed files.
+#
+# - RPATH is the "newer" (and more secure) property - is is
+#   only used when the executable itself loads a library -
+#   i.e. it isn't inherited by opened libraries like RUNPATH.
+#
+# (Summary, see `man dlopen` for full details of search
+# order).
+#
+# CMake will set RPATH / RUNPATH (via linker arg -Wl) to the
+# set of directories where all dependancies reside - and this
+# is necessary for engine_testapp to load the engine and
+# testsuite.
+#
+# Problem:
+#
+# When running under Asan/TSan, *San intercepts dlopen()
+# and related functions, which results in the dlopen()
+# appearing to come from libtsan.so. Given the above, this
+# means that if RPATH is used, then the dlopen() for engine
+# and testsuite fails, as libtsan doesn't have the path to
+# ep.so for example embedded in it, and with RPATH the paths
+# arn't inherited from the main executable.
+#
+# Newer versions of ld (at least Ubuntu 17.10) now use RPATH
+# by default (as it is more secure), which means that we hit
+# the above problem. To avoid this, use RUNPATH instead when
+# running on a system which recognises the flag.
+check_cxx_compiler_flag("-Wl,--disable-new-dtags" COMPILER_SUPPORTS_DISABLE_NEW_DTAGS)
+function(use_runpath_for_sanitizers)
+  if(COMPILER_SUPPORTS_DISABLE_NEW_DTAGS)
+    set(CMAKE_EXE_LINKER_FLAGS
+      "${CMAKE_EXE_LINKER_FLAGS} -Wl,--disable-new-dtags" PARENT_SCOPE)
+    set(CMAKE_SHARED_LINKER_FLAGS
+      "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--disable-new-dtags" PARENT_SCOPE)
+  endif()
+endfunction()
+
 
 include(CouchbaseAddressSanitizer)
 include(CouchbaseThreadSanitizer)

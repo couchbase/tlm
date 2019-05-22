@@ -24,50 +24,7 @@ IF (CB_THREADSANITIZER)
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${THREAD_SANITIZER_FLAG}")
         SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${THREAD_SANITIZER_FLAG}")
 
-        # Workaround a problem with ThreadSanitizer, dlopen and RPATH:
-        #
-        # Background:
-        #
-        # Couchbase server (e.g. engine_testapp) makes use of dlopen()
-        # to load the engine and the testsuite. The runtime linker
-        # determines the search path to use by looking at the values
-        # of RPATH and RUNPATH in the executable (e.g. engine_testapp)
-        #
-        # - RUNPATH is the "older" property, it is used by the
-        #   executable and _any other libraries the executable loads_
-        #   to locate dlopen()ed files.
-        #
-        # - RPATH is the "newer" (and more secure) property - is is
-        #   only used when the executable itself loads a library -
-        #   i.e. it isn't inherited by opened libraries like RUNPATH.
-        #
-        # (Summary, see `man dlopen` for full details of search
-        # order).
-        #
-        # CMake will set RPATH / RUNPATH (via linker arg -Wl) to the
-        # set of directories where all dependancies reside - and this
-        # is necessary for engine_testapp to load the engine and
-        # testsuite.
-        #
-        # Problem:
-        #
-        # When running under ThreadSanitizer, TSan intercepts dlopen()
-        # and related functions, which results in the dlopen()
-        # appearing to come from libtsan.so. Given the above, this
-        # means that if RPATH is used, then the dlopen() for engine
-        # and testsuite fails, as libtsan doesn't have the path to
-        # ep.so for example embedded in it, and with RPATH the paths
-        # arn't inherited from the main executable.
-        #
-        # Newer versions of ld (at least Ubuntu 17.10) now use RPATH
-        # by default (as it is more secure), which means that we hit
-        # the above problem. To avoid this, use RUNPATH instead when
-        # running on a system which recognises the flag.
-        CHECK_CXX_COMPILER_FLAG("-Wl,--disable-new-dtags" COMPILER_SUPPORTS_DISABLE_NEW_DTAGS)
-        IF(COMPILER_SUPPORTS_DISABLE_NEW_DTAGS)
-          SET(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--disable-new-dtags")
-          SET(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--disable-new-dtags")
-        ENDIF()
+        use_runpath_for_sanitizers()
 
         # TC/jemalloc are incompatible with ThreadSanitizer - force
         # the use of the system allocator.
