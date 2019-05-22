@@ -154,26 +154,26 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 #
 # And here is the set of "latest" dependencies.
 #
-_ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 4)
+_ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 5)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
-_ADD_DEP_PACKAGE(icu4c 59.1 r59.1 3)
-_ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 9)
+_ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
+_ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 10)
 _ADD_DEP_PACKAGE(v8 7.1 7.1.321 5)
-_ADD_DEP_PACKAGE(jemalloc 5.1.0 5.1.0-couchbase 5)
+_ADD_DEP_PACKAGE(jemalloc 5.1.0 5.1.0-couchbase 6)
 
-_ADD_DEP_PACKAGE(erlang OTP-20.3.8.11 couchbase-madhatter 6)
+_ADD_DEP_PACKAGE(erlang OTP-20.3.8.11 couchbase-madhatter 7)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
-_ADD_DEP_PACKAGE(flatbuffers 1.10.0 v1.10.0 3)
+_ADD_DEP_PACKAGE(flatbuffers 1.10.0 v1.10.0 4)
 
-_ADD_DEP_PACKAGE(json 3.5.0 v3.5.0 1)
-_ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 5)
+_ADD_DEP_PACKAGE(json 3.5.0 v3.5.0 2)
+_ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 6)
 
 # Note: we build libevent with support for SSL, so whenever
 # OpenSSL is upgraded with an API breaking change we probably
 # need to rebuild libevent and erlang as well.
-_ADD_DEP_PACKAGE(openssl 1.1.1b OpenSSL_1_1_1b 3)
+_ADD_DEP_PACKAGE(openssl 1.1.1b OpenSSL_1_1_1b 4)
 
 _ADD_DEP_PACKAGE(libcouchbase 2.10.0 2.10.0 1)
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -186,24 +186,24 @@ ENDIF ()
 IF (WIN32)
   _ADD_DEP_PACKAGE(flex 2.5.4a master 1)
 ELSE ()
-  _ADD_DEP_PACKAGE(flex 2.6.4 master 5)
+  _ADD_DEP_PACKAGE(flex 2.6.4 master 6)
 ENDIF ()
-_ADD_DEP_PACKAGE(numactl 2.0.11 v2.0.11 2)
+_ADD_DEP_PACKAGE(numactl 2.0.11 v2.0.11 3)
 
 IF (NOT WIN32)
-    _ADD_DEP_PACKAGE(rocksdb 5.18.3 5.18.3-couchbase 3)
+    _ADD_DEP_PACKAGE(rocksdb 5.18.3 5.18.3-couchbase 4)
 ENDIF ()
-_ADD_DEP_PACKAGE(lz4 1.8.0 v1.8.0 3)
+_ADD_DEP_PACKAGE(lz4 1.8.0 v1.8.0 4)
 # maven 3.5.2-cb3 and 3.5.2-cb4 exist as attempts to make Windows work,
 # but are not correct.
 _ADD_DEP_PACKAGE(maven 3.5.2 master 6)
 _ADD_DEP_PACKAGE(openjdk-rt 1.8.0.171 UNUSED 2)
 
-_ADD_DEP_PACKAGE(double-conversion 3.0.0 v3.0.0 3)
-_ADD_DEP_PACKAGE(gflags 2.2.1 v2.2.1 3)
-_ADD_DEP_PACKAGE(glog 0.3.5 v0.3.5 2)
+_ADD_DEP_PACKAGE(double-conversion 3.0.0 v3.0.0 4)
+_ADD_DEP_PACKAGE(gflags 2.2.1 v2.2.1 4)
+_ADD_DEP_PACKAGE(glog 0.3.5 v0.3.5 3)
 
-_ADD_DEP_PACKAGE(folly v2019.04.01.00 v2019.04.01.00-couchbase 2)
-_ADD_DEP_PACKAGE(grpc 1.12.0 v1.12.0 3)
-_ADD_DEP_PACKAGE(pcre 8.42 v8.42 4)
-_ADD_DEP_PACKAGE(opentracing-cpp v1.5.1 v1.5.1 3)
+_ADD_DEP_PACKAGE(folly v2019.04.01.00 v2019.04.01.00-couchbase 3)
+_ADD_DEP_PACKAGE(grpc 1.12.0 v1.12.0 4)
+_ADD_DEP_PACKAGE(pcre 8.42 v8.42 5)
+_ADD_DEP_PACKAGE(opentracing-cpp v1.5.1 v1.5.1 4)
