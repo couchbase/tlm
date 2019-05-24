@@ -1,3 +1,10 @@
+# #################################
+#
+# IMPORTANT: If you make any changes to this file, you must also bump
+# CBPY_BLD_NUM in CMakeLists.txt in this directory!
+#
+# #################################
+
 name: cbpy
 version: 1.0.0
 installer_filename: cbpy-installer
@@ -11,7 +18,7 @@ specs:
 # These are the packages we explicitly depend on.
 # If you change these (packages OR versions), be sure
 # to experimentally update the transitive dependencies below!
-  - python 3.6.8*
+  - python 3.7.3*
   - natsort 5.5.0
   - python-snappy 0.5.3
 # These are transitive dependencies of the above. We keep
@@ -19,8 +26,9 @@ specs:
 # installed. Where possible we pin them to the same version
 # in cbdeps.
   - snappy 1.1.7
-  - sqlite 3.26.0
+  - sqlite 3.27.2
   - ca-certificates 2019.1.23
+  - wincertstore 0.2 [win]
   - libgcc-ng 8.2.0 [linux]
   - libstdcxx-ng 8.2.0 [linux]
   - libcxx 4.0.1 [osx]

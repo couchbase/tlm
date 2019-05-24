@@ -9,7 +9,7 @@ libdir=$(cd "$D0/@LIB_REL@" && pwd)
 pydir="$D0/@PY_REL@"
 if [ ! -x "$pydir"/bin/python3 ]; then
   cbpyinstaller=$(dirname "$pydir")/cbpy-installer.sh
-  pydir="$HOME/Library/Python/couchbase-py/@CB_VERSION@"
+  pydir="$HOME/Library/Python/couchbase-py/@CB_VERSION@-py@CBPY_BLD_NUM@"
   if [ ! -x "$pydir"/bin/python3 ]; then
     mkdir -p "$pydir"
     echo "Installing Python 3 - one moment..." 1>&2

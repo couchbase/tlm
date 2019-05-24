@@ -36,14 +36,18 @@ void prependEnv(char* envvar, char* value) {
 }
 
 int main(int argc, char** argv) {
-  char codePath[_MAX_FNAME], pyExe[_MAX_FNAME], libDir[_MAX_FNAME], exeName[64];
+  char codePath[_MAX_FNAME], pyExe[_MAX_FNAME], pyLibDir[_MAX_FNAME], cbLibDir[_MAX_FNAME], exeName[64];
   char* cp;
 
-  /* Path to current executable */
-  GetModuleFileName(NULL, libDir, sizeof(libDir));
+  /* Path to current executable - serves as relative base for all paths */
+  /* Populate this full path into all path buffers */
+  GetModuleFileName(NULL, cbLibDir, sizeof(cbLibDir));
+  strcpy(pyExe, cbLibDir);
+  strcpy(pyLibDir, cbLibDir);
+  strcpy(codePath, cbLibDir);
 
   /* Copy out the basename of the executable */
-  cp = strrchr(libDir, '\\');
+  cp = strrchr(cbLibDir, '\\');
   cp++;
   strcpy(exeName, cp);
 
@@ -51,14 +55,11 @@ int main(int argc, char** argv) {
   cp = strrchr(exeName, '.');
   *cp = '\0';
 
-  /* Copy full path to other locations */
-  strcpy(pyExe, libDir);
-  strcpy(codePath, libDir);
-
   /* Compute relative paths */
   relPath(codePath, "@CODE_REL@");
   relPath(pyExe, "@PY_REL@\\python.exe");
-  relPath(libDir, "@LIB_REL@");
+  relPath(pyLibDir, "@PY_REL@\\Library\\bin");
+  relPath(cbLibDir, "@LIB_REL@");
 
   /* If pyExe is missing, abort */
   DWORD dwAttrib = GetFileAttributes(pyExe);
@@ -69,7 +70,8 @@ int main(int argc, char** argv) {
   }
 
   /* Update environment */
-  prependEnv("PATH", libDir);
+  prependEnv("PATH", cbLibDir);
+  prependEnv("PATH", pyLibDir);
   prependEnv("PYTHONPATH", codePath);
 
   /* Stick program name on end of codePath */

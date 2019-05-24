@@ -9,4 +9,4 @@ production.
 
 The generated installer will also be installed locally in
 $BUILD_DIR/tlm/python/cbpy, for use by local scripts such as those created
-by PyWrapper() (defined in tlm/cmake/Modules/FindCouchbasePython.cmake).
+by PyWrapper() (defined in PyWrapperFunctions.cmake).
