@@ -154,6 +154,8 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 #
 # And here is the set of "latest" dependencies.
 #
+# Note: Snappy 1.1.1-cb6 was used for Alice only;
+# next master build (if needed) should be -cb7
 _ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 5)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
