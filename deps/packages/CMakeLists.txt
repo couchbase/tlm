@@ -155,19 +155,20 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 # And here is the set of "latest" dependencies.
 #
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
-   _ADD_DEP_PACKAGE(breakpad 20160926 20160926-couchbase 3)
+   _ADD_DEP_PACKAGE(breakpad 20160926 20160926-couchbase 4)
 ELSE (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
    MESSAGE(STATUS "Skipping breakpad for ${CMAKE_SYSTEM_NAME}")
 ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Linux" OR CMAKE_SYSTEM_NAME STREQUAL "Windows")
-_ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 2)
-_ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
+_ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 6)
+# python-snappy c97d633-cb3 was published by mistake, do not use
+_ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 4)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 2)
 _ADD_DEP_PACKAGE(libevent 2.1.8 release-2.1.8-stable-cb 4)
-_ADD_DEP_PACKAGE(v8 5.9 5.9.223 9)
+_ADD_DEP_PACKAGE(v8 5.9 5.9.223 10)
 # jemalloc comes from "stable-4" branch, which is a bit later than their
 # 4.5.0 release, so we call it 4.5.0.1.
-_ADD_DEP_PACKAGE(jemalloc 4.5.0.1 stable-4 1)
-_ADD_DEP_PACKAGE(curl 7.60.0 curl-7_60_0 1)
+_ADD_DEP_PACKAGE(jemalloc 4.5.0.1 stable-4 2)
+_ADD_DEP_PACKAGE(curl 7.60.0 curl-7_60_0 2)
 
 # erlang R16B03-1-couchbase / branch: couchbase-watson
 # - SHA 96430ba for R16B03-couchbase-cb1 release
@@ -185,18 +186,19 @@ _ADD_DEP_PACKAGE(curl 7.60.0 curl-7_60_0 1)
 # - SHA 6d69bef for R16B03-1-couchbase-cb9 (MB-31362 - all platforms, but macOS)
 # - SHA 6d69bef for R16B03-1-couchbase-cb10 (MB-31362 - macOS - DO NOT USE)
 # - SHA 6d69bef for R16B03-1-couchbase-cb11 (MB-31362 - for MacOS only, moves to OpenSSL 1.0.2k)
-_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase 11)
+# - SHA 6d69bef for R16B03-1-couchbase-cb12 (RHEL8 GA only)
+_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase 12)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
 IF (PLATFORM STREQUAL "fedora26" OR PLATFORM STREQUAL "fedora27")
   _ADD_DEP_PACKAGE(flatbuffers 1.7.1 v1.7.1 2)
 ELSE ()
-  _ADD_DEP_PACKAGE(flatbuffers 1.4.0 v1.4.0 2)
+  _ADD_DEP_PACKAGE(flatbuffers 1.4.0 v1.4.0 3)
 ENDIF ()
 
-_ADD_DEP_PACKAGE(json 1.1.0 v1.1.0 1)
-_ADD_DEP_PACKAGE(boost 1.62.0 v1.62.0 3)
+_ADD_DEP_PACKAGE(json 1.1.0 v1.1.0 2)
+_ADD_DEP_PACKAGE(boost 1.62.0 v1.62.0 4)
 IF (WIN32 OR APPLE)
   # Note: we build libevent with support for SSL, so whenever
   # OpenSSL is upgraded with an API breaking change we probably
@@ -211,17 +213,17 @@ IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     _ADD_DEP_PACKAGE(libcxx 3.9.1 release_39 2)
   ENDIF ()
 ENDIF ()
-_ADD_DEP_PACKAGE(libuv 1.13.1 v1.13.1 4)
+_ADD_DEP_PACKAGE(libuv 1.13.1 v1.13.1 5)
 IF (WIN32)
   _ADD_DEP_PACKAGE(flex 2.5.4a master 1)
 ELSE ()
   _ADD_DEP_PACKAGE(flex 2.6.4 master 4)
 ENDIF ()
-_ADD_DEP_PACKAGE(zlib 1.2.11 v1.2.11 3)
+_ADD_DEP_PACKAGE(zlib 1.2.11 v1.2.11 4)
 _ADD_DEP_PACKAGE(numactl 2.0.11 v2.0.11 1)
 
 IF (NOT WIN32)
-    _ADD_DEP_PACKAGE(rocksdb 5.8.0 v5.8 4)
+    _ADD_DEP_PACKAGE(rocksdb 5.8.0 v5.8 5)
 ENDIF ()
 _ADD_DEP_PACKAGE(lz4 1.8.0 v1.8.0 2)
 # maven 3.5.2-cb3 and 3.5.2-cb4 exist as attempts to make Windows work,
