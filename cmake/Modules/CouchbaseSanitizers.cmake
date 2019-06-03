@@ -1,4 +1,5 @@
 include(CheckCXXCompilerFlag)
+include(CMakePushCheckState)
 
 # Helper function used by CouchbaseAddressSanitizer / UndefinedSanitizer.
 # Searches for a sanitizer_lib_name, returning the path in the variable named <path_var>
@@ -53,7 +54,11 @@ endfunction()
 # by default (as it is more secure), which means that we hit
 # the above problem. To avoid this, use RUNPATH instead when
 # running on a system which recognises the flag.
+cmake_push_check_state()
+set(CMAKE_REQUIRED_LINK_OPTIONS "-Wl,--disable-new-dtags")
 check_cxx_compiler_flag("-Wl,--disable-new-dtags" COMPILER_SUPPORTS_DISABLE_NEW_DTAGS)
+cmake_pop_check_state()
+
 function(use_runpath_for_sanitizers)
   if(COMPILER_SUPPORTS_DISABLE_NEW_DTAGS)
     set(CMAKE_EXE_LINKER_FLAGS
