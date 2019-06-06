@@ -20,47 +20,58 @@
 #  ICU_INCLUDE_DIR, where to find the ICU headers
 
 if (NOT DEFINED ICU_FOUND)
-    include(PlatformIntrospection)
-
-    cb_get_supported_platform(_supported_platform)
-    if (_supported_platform)
-        # Supported platforms should only use the provided hints and pick it up
-        # from cbdeps
-        set(_icu_no_default_path NO_DEFAULT_PATH)
+    # CBD-2634: We use ICU from V8 build as most uses of ICU is with V8
+    if (NOT DEFINED V8_FOUND)
+        include(FindCouchbaseV8)
     endif ()
 
-    set(_icu_exploded ${CMAKE_BINARY_DIR}/tlm/deps/icu4c.exploded)
-
     find_path(ICU_INCLUDE_DIR unicode/utypes.h
-              HINTS ${_icu_exploded}
-              PATH_SUFFIXES include
+              HINTS ${V8_INCLUDE_DIR}
               NO_CMAKE_PATH
               NO_CMAKE_ENVIRONMENT_PATH
-              ${_icu_no_default_path})
+              NO_DEFAULT_PATH)
 
     if (NOT ICU_INCLUDE_DIR)
         message(FATAL_ERROR "Failed to locate unicode/utypes.h (ICU)")
     endif ()
 
-    string(STRIP ${ICU_INCLUDE_DIR} ICU_INCLUDE_DIR)
-    string(STRIP "${ICU_LIB_HINT_DIR}" ICU_LIB_HINT_DIR)
+    if (WIN32)
+        if (CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo" OR CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
+            set(_build_type "Release")
+        else ()
+            set(_build_type ${CMAKE_BUILD_TYPE})
+        ENDIF()
 
-    if (NOT ICU_LIBRARIES)
-        set(_icu_libraries "icuuc;icudata;icui18n;icucdt;icuin")
-        foreach (_mylib ${_icu_libraries})
-            unset(_the_lib CACHE)
-            find_library(_the_lib
-                         NAMES ${_mylib}
-                         HINTS
-                         ${ICU_LIB_HINT_DIR}
-                         ${CMAKE_INSTALL_PREFIX}/lib
-                         ${_icu_no_default_path})
-            if (_the_lib)
-                list(APPEND _icu_libs_found ${_the_lib})
-            endif (_the_lib)
-        endforeach (_mylib)
-        set(ICU_LIBRARIES ${_icu_libs_found} CACHE STRING "V8 Libraries" FORCE)
-    endif ()
+        if (NOT ICU_LIBRARIES)
+            set(_icu_libraries "icuuc.dll;icudata.dll;icui18n.dll;icucdt.dll;icuin.dll")
+            foreach (_mylib ${_icu_libraries})
+                unset(_the_lib CACHE)
+                find_library(_the_lib
+                            NAMES ${_mylib}
+                            HINTS ${_v8_exploded}/lib/${_build_type}
+                            NO_DEFAULT_PATH)
+                if (_the_lib)
+                    list(APPEND _icu_libs_found ${_the_lib})
+                endif (_the_lib)
+            endforeach (_mylib)
+            set(ICU_LIBRARIES ${_icu_libs_found} CACHE STRING "V8 Libraries" FORCE)
+        endif (NOT ICU_LIBRARIES)
+    else (WIN32)
+        if (NOT ICU_LIBRARIES)
+            set(_icu_libraries "icuuc;icudata;icui18n;icucdt;icuin")
+            foreach (_mylib ${_icu_libraries})
+                unset(_the_lib CACHE)
+                find_library(_the_lib
+                            NAMES ${_mylib}
+                            HINTS ${CMAKE_INSTALL_PREFIX}/lib
+                            NO_DEFAULT_PATH)
+                if (_the_lib)
+                    list(APPEND _icu_libs_found ${_the_lib})
+                endif (_the_lib)
+            endforeach (_mylib)
+            set(ICU_LIBRARIES ${_icu_libs_found} CACHE STRING "V8 Libraries" FORCE)
+        endif (NOT ICU_LIBRARIES)
+    endif (WIN32)
 
     if (NOT ICU_LIBRARIES)
         message(FATAL_ERROR "Failed to locate any of the ICU libraries")
