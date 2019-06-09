@@ -39,7 +39,7 @@ if (NOT DEFINED Boost_FOUND)
 
     find_package(Boost
             REQUIRED
-            COMPONENTS system thread)
+            COMPONENTS system thread context)
 
     if(Boost_INCLUDE_DIR)
         message(STATUS "Found Boost in ${Boost_INCLUDE_DIR}")
