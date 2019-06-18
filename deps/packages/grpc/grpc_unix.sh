@@ -1,27 +1,45 @@
-#!/bin/bash
+#!/bin/bash -ex
 
 INSTALL_DIR=$1
 PLATFORM=$2
 VERSION=$3
+CBDEPS_DIR=$4
 
-# Build in /tmp due to grpc's header install being braindead
-rm -rf /tmp/grpc /tmp/install && mkdir /tmp/grpc && cp -a . /tmp/grpc
-cd /tmp/grpc
-make prefix=/tmp/install install
-cd third_party/protobuf && make prefix=/tmp/install install
-cp -a /tmp/install/* ${INSTALL_DIR}
-cd
-rm -rf /tmp/install
+# Build and install cares and protobuf from third_party
+cd third_party/protobuf/cmake
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+  -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+  -Dprotobuf_BUILD_TESTS=OFF \
+  -D CMAKE_PREFIX_PATH="${CBDEPS_DIR}/zlib.exploded" \
+  ..
+make -j8 install
+cd ../../../..
 
-# For MacOS, tweak install_name, along with dependent libraries
-if [ $(uname -s) = "Darwin" ]; then
-    for grpc_lib in libgrpc_cronet.dylib libaddress_sorting.dylib libgrpc++_error_details.dylib libgrpc.dylib libgrpc++.dylib libgrpc_unsecure.dylib libgpr.dylib libgrpc++_cronet.dylib libgrpc++_unsecure.dylib libgrpc++_reflection.dylib libgrpcpp_channelz.dylib; do
-        grpc_lib_full_path=${INSTALL_DIR}/lib/${grpc_lib}
-        install_name_tool -id @rpath/${grpc_lib} ${grpc_lib_full_path}
+cd third_party/cares/cares
+mkdir build
+cd build
+cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
+  -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+  -DCARES_STATIC=ON -DCARES_STATIC_PIC=ON -DCARES_SHARED=OFF \
+  ..
+make -j8 install
+cd ../../../..
 
-        # Ensure any gRPC dependent libraries are corrected as well
-        for dep_lib in $(otool -L ${grpc_lib_full_path} | awk 'NR > 3 {print $1}' | grep '^lib'); do
-            install_name_tool -change ${dep_lib} @rpath/${dep_lib} ${grpc_lib_full_path}
-        done
-    done
-fi
+# Build grpc binaries and libraries
+mkdir .build
+cd .build
+cmake -D CMAKE_BUILD_TYPE=RelWithDebInfo \
+  -D CMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+  -D CMAKE_PREFIX_PATH="${CBDEPS_DIR}/zlib.exploded;${CBDEPS_DIR}/openssl.exploded;${INSTALL_DIR}" \
+  -DgRPC_INSTALL=ON \
+  -DgRPC_BUILD_TESTS=OFF \
+  -DgRPC_PROTOBUF_PROVIDER=package \
+  -DgRPC_ZLIB_PROVIDER=package \
+  -DgRPC_CARES_PROVIDER=package \
+  -DgRPC_SSL_PROVIDER=package \
+  ..
+make -j8 install
+
+exit 0
