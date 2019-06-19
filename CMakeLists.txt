@@ -135,7 +135,6 @@ INCLUDE(FindCouchbaseDtrace)
 INCLUDE(FindCouchbaseGo)
 INCLUDE(FindCouchbaseBreakpad)
 INCLUDE(FindCouchbaseFlatbuffers)
-INCLUDE(FindCouchbasePCRE)
 INCLUDE(FindCouchbaseValgrind)
 INCLUDE(FindCouchbaseV8)
 INCLUDE(FindCouchbaseNlohmannJson)
@@ -145,6 +144,8 @@ INCLUDE(FindCouchbaseOpentracing)
 if (BUILD_ENTERPRISE)
     # libuv is currently only used by the enterpise builds
     include(FindCouchbaseLibuv)
+    # pcre also only used by EE builds
+    INCLUDE(FindCouchbasePCRE)
 endif()
 
 # Declare PRODUCT_VERSION in cache, but then override user-defined value
