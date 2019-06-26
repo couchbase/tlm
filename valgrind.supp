@@ -226,3 +226,40 @@
    fun:_ZN2v88internal8compiler9TypeCache3GetEv
    ...
 }
+{
+   MB-34743 Ignore global ICU data library init allocs
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:*/libicuuc.so
+   ...
+   obj:*/libv8.so
+   ...
+   fun:initV8
+   fun:mapreduce_init
+   ...
+}
+{
+   MB-34743 temporarily suppress below is investigated
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:*/libv8.so
+   ...
+   fun:_Z9runReduceB5cxx11P15mapreduce_ctx_tRK21mapreduce_json_list_tS3_
+   fun:mapreduce_reduce_all
+   fun:test_timeout
+   ...
+}
+{
+   MB-34743 temporarily suppress below
+   Memcheck:Leak
+   match-leak-kinds: reachable
+   fun:malloc
+   obj:*/libv8.so
+   ...
+   fun:_Z6mapDocP15mapreduce_ctx_tRK16mapreduce_json_tS3_P27mapreduce_map_result_list_t
+   fun:mapreduce_map
+   fun:test_timeout
+   ...
+}
