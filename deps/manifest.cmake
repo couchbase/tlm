@@ -64,8 +64,13 @@ DECLARE_DEP (pcre VERSION 8.42-cb3 PLATFORMS amzn2 centos7 debian8 debian9 macos
 DECLARE_DEP (pcre VERSION 8.42-cb5 PLATFORMS rhel8)
 DECLARE_DEP (pcre VERSION 8.42-cb7 PLATFORMS windows_msvc2017)
 DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 1 PLATFORMS amzn2 centos7 debian8 debian9 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
+# We don't want RocksDB to end up in shipped production builds.
+# NB: I don't indent this IF() block just in case, because I know that some
+# scripts (such as escrow) parse this file manually.
+IF (NOT CB_PRODUCTION_BUILD)
 DECLARE_DEP (rocksdb VERSION 5.18.3-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (rocksdb VERSION 5.18.3-cb4 PLATFORMS rhel8)
+ENDIF (NOT CB_PRODUCTION_BUILD)
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (snappy VERSION 1.1.1-cb3 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (snappy VERSION 1.1.1-cb5 PLATFORMS rhel8)
