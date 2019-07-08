@@ -1,38 +1,93 @@
-# tlm - Top-level Makefile
+# tlm - "Top-level Makefile" for Couchbase Server
 
-What's this, then? The tlm project contains the make information for
-building Couchbase on multiple platforms.
-
-**Table of Contents**
-
-- [How to build](#user-content-how-to-build)
-	- [Simple](#user-content-simple-build)
-	- [Customize your builds](#user-content-customize-your-builds)
-	- [Microsoft Windows](#user-content-microsoft-windows)
-- [Static Analysis](#user-content-static-analysis)
+This repository contains a number of tools and scripts for building
+Couchbase Server. The main interesting part is the top-level CMakeLists.txt,
+which is the entry point for a complete Server build. There are also a number
+of utility CMake libraries in cmake/Modules.
 
 ## Software requirements
 
-* C/C++ compiler:
-  * Visual Studio 2017
+* C/C++ compiler; one of:
+  * gcc 7.3 or newer
+  * Visual Studio 2017 or newer
+  * Xcode
   * clang
-  * gcc
-* ccache may speed up the development cycle when clang / gcc is used)
-* CMake
+* CMake 3.12 or newer
 * Google repo (in order to fetch all of the source code)
+* A build tool such as Make or Ninja
+* ccache may speed up the development cycle when clang / gcc is used
+
+Our production builds currently use gcc 7.3.0 on most Linux platforms;
+Visual Studio 2017 on Windows; and Xcode 9.3.1 on MacOS.
+
+### Requirements on Windows
+
+In addition to Visual Studio, gcc must be installed and on the PATH for
+building some of the Go language tools. We use a recent version of MinGW for
+this.
+
+Couchbase uses Google repo to stitch together all of the individual git
+repositories. Repo is implemented in python, but it's unfortunately using
+features not available on python for windows. We use a modified version of
+repo from http://github.com/esrlabs/git-repo.
+
+It is important to set the git config option `core.longpaths` to `true`.
+
+In general it is quite challenging to get a Windows box configured perfectly
+for building Couchbase Server. If you are familiar with Ansible, it may be
+useful to look at the Ansible scripts we use to configure our build VMs.
+They are available here: https://github.com/couchbase/build-infra/tree/master/ansible/windows/couchbase-server/window2016
+
+### Additional software requirements on unsupported platforms
+
+Couchbase Server requires a great many libraries, computer languages, and
+build tools to successfully build. The list in the previous section should
+be all that is required to be installed prior to starting building, however.
+The remaining packages are pre-built by Couchbase and downloaded as part of
+the build on supported platforms.
+
+Supported platforms include, at this time of writing:
+
+* Windows (10, 2016, or newer)
+* MacOS (10.12 or newer)
+* Linux
+  * Ubuntu 16.04 or 18.04
+  * Debian 8 or 9
+  * SUSE 12 or 15
+  * Centos 7 or 8
+  * Amazon Linux 2
+
+If you are building on another platform, you will need to also provide all
+of the required tools and libraries. The canonical list of these packages
+can be found in the file `tlm\deps\manifest.cmake`. For the most part, if
+you install these tools and then ensure that `CMAKE_PREFIX_PATH` points to
+their installation directories, CMake will pick them up as part of the
+build. It is however beyond the scope of this document to cover exactly how
+all of those tools must be built and installed for use in a Couchbase Server
+build. We strongly recommend restricting building to supported platforms.
+
+If you are building on a platform which is similar to a supported platform
+but not exactly the same, you may be able to "lie" to the build about what
+platform you are on and have it download the supported pre-built binaries for
+a different platform. For instance, if you are building on Ubuntu 18.10,
+it may work to tell the build system that you're actually on Ubuntu 18.04 and
+have it download the required packages for you. To do this, set the CMake
+variable `CB_DOWNLOAD_DEPS_PLATFORM` to one of the platform strings from
+`manifest.cmake`, eg.
+
+    cmake -D CB_DOWNLOAD_DEPS_PLATFORM=ubuntu18.04 .....
 
 ## How to build
 
-Couchbase utilizes [CMake][cmake_link] in order to provide build
-support for a wide range of platforms. CMake isn't a build system
-like GNU Autotools, but a tool that generates build information for
-external systems like: Visual Studio projects, XCode projects and
-Makefiles to name a few. The nightly build of Couchbase (and hence
-what we test) is using Makefiles (and ninja on Windows). Other
-systems _may_ however work, but you're pretty much on your own if
-you try to use them.
+Couchbase utilizes [CMake][cmake_link] in order to provide build support for
+a wide range of platforms. CMake isn't a build system like GNU Autotools,
+but a tool that generates build information for external systems like:
+Visual Studio projects, XCode projects and Makefiles to name a few. Internal
+builds of Couchbase (and hence what we test) use Makefiles on Linux and
+MacOS and Ninja on Windows. Other systems _may_ however work, but you're
+pretty much on your own if you try to use them.
 
-### Simple build
+### Simple build (Linux and MacOS)
 
 If you just want to build Couchbase and without any special
 configuration, you may use the Makefile we've supplied for your
@@ -55,6 +110,24 @@ to fetch additional source by adding `-g enterprise,default` to
 repo init:
 
     trond@ok source> repo init -u git://github.com/couchbase/manifest -m branch-master.xml -g enterprise,default
+
+### Simple build (Windows)
+
+The build is not optimized for Windows, but the following steps should work. Start with the
+same "repo init" and "repo sync" steps as above, then run:
+
+    tlm\win32\environment.bat
+    mkdir build
+    cd build
+    cmake -G Ninja -D CMAKE_C_COMPILER=cl -D CMAKE_CXX_COMPILER=cl -D CMAKE_BUILD_TYPE=RelWithDebInfo ..
+    ninja install
+
+# End of the basic build information
+
+The remainder of this document covers certain special cases for building
+Couchbase Server. You likely will not be interested in anything beyond this
+point unless you work for Couchbase and have specific development issues to
+work on.
 
 ### Customize your builds
 
@@ -93,52 +166,6 @@ for tools/libraries if they are stored in "non-standard"
 locations. Ex:
 
     CMAKE_PREFIX_PATH="/opt/r14b04;/opt/couchbase;/opt/local"
-
-### Microsoft Windows
-
-Couchbase use google repo to stich together all of the individual git
-repositories. Repo is implemented in python, but it's unfortunately using
-features not available on python for windows. The workaround I've been using
-(and tested) is by using repo from http://github.com/esrlabs/git-repo. To
-avoid any "problems" I'm performing all of the repo / git steps through
-the bash shell provided with git (remember to enable support for creating
-symbolic links for your user: "Windows Settings", "Security Settings",
-"Local policies", "User Rights assignment" and locate the "Create symbolic
-links" and add the user). I'm performing all of the build steps
-through `cmd.exe`.
-
-I've only tested this on Windows 10PRO, but it may work with other (newer)
-versions of windows:
-
-* Install Microsoft Visual Studio 2017
-* Install git from https://git-scm.com (I configured it to only be available from within bash)
-* Install google repo (use the one from github.com/esrlabs/git-repo)
-* Install cmake
-* Install mingw (`choco install mingw`) via Chocolatey package manager (http://chocolatey.org) and
-  add `C:\ProgramData\chocolatey\lib\mingw\tools\install\mingw64\bin` to PATH
-* Install `ninja` if you want to use the [Ninja build system](https://ninja-build.org/) over `nmake`, 
-this can be done using Chocolatey: `choco install ninja` 
-
-Before you can start the build process you need to set a lot of environment
-variables, and all of them is located in `tlm\win32\environment.bat`. Open
-up `cmd.exe` and run the command above in the root of the source directory.
-
-You could now be able to build Couchbase using `nmake` by executing:
-
-    C:\compile> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
-    C:\compile> repo sync
-    C:\compile> tlm\win32\environment.bat
-    C:\compile> nmake
-
-You can also use `ninja` build system to build Couchbase by executing:
-
-    C:\compile> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
-    C:\compile> repo sync
-    C:\compile> tlm\win32\environment.bat
-    C:\compile> mkdir build 
-    C:\compile> cd build
-    C:\compile> cmake -G "Ninja" -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl ..
-    C:\compile> cmake --build . --target install
 
 ## Static Analysis
 
