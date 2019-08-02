@@ -18,7 +18,7 @@ IF (CB_THREADSANITIZER)
     IF(HAVE_FLAG_SANITIZE_THREAD_C AND HAVE_FLAG_SANITIZE_THREAD_CXX)
         SET(THREAD_SANITIZER_FLAG "-fsanitize=thread")
 
-        SET(THREAD_SANITIZER_FLAG_DISABLE "-fno-sanitize=address")
+        SET(THREAD_SANITIZER_FLAG_DISABLE "-fno-sanitize=thread")
 
         SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${THREAD_SANITIZER_FLAG}")
         SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${THREAD_SANITIZER_FLAG}")
@@ -81,3 +81,16 @@ IF (CB_THREADSANITIZER)
     ENDIF()
 ENDIF()
 
+# Disable ThreadSanitizer for specific target. No-op if
+# CB_THREADSANITIZER is not enabled.
+# Typically used via remove_sanitizers()
+function(remove_sanitize_thread TARGET)
+    if (NOT CB_THREADSANITIZER)
+        return()
+    endif ()
+
+    set_property(TARGET ${TARGET} APPEND_STRING
+        PROPERTY COMPILE_FLAGS "${THREAD_SANITIZER_FLAG_DISABLE}")
+    set_property(TARGET ${TARGET} APPEND_STRING
+        PROPERTY LINK_FLAGS " ${THREAD_SANITIZER_FLAG_DISABLE}")
+endfunction()

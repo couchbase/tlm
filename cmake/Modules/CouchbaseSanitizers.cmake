@@ -92,5 +92,6 @@ endfunction()
 # No-op if one of the sanitizers are enabled.
 function(remove_sanitizers TARGET)
     remove_sanitize_memory(${TARGET})
+    remove_sanitize_thread(${TARGET})
     remove_sanitize_undefined(${TARGET})
 endfunction()
