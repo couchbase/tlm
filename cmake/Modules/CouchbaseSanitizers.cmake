@@ -24,16 +24,17 @@ endfunction()
 # determines the search path to use by looking at the values
 # of RPATH and RUNPATH in the executable (e.g. engine_testapp)
 #
-# - RUNPATH is the "older" property, it is used by the
+# - RPATH is the "older" property, it is used by the
 #   executable and _any other libraries the executable loads_
 #   to locate dlopen()ed files.
 #
-# - RPATH is the "newer" (and more secure) property - is is
+# - RUNPATH is the "newer" (and more secure) property - is is
 #   only used when the executable itself loads a library -
-#   i.e. it isn't inherited by opened libraries like RUNPATH.
+#   i.e. it isn't inherited by opened libraries like RPATH.
 #
 # (Summary, see `man dlopen` for full details of search
-# order).
+#  order. There's also a good blog post on the full details at:
+#  https://blog.qt.io/blog/2011/10/28/rpath-and-runpath/)
 #
 # CMake will set RPATH / RUNPATH (via linker arg -Wl) to the
 # set of directories where all dependancies reside - and this
@@ -45,21 +46,26 @@ endfunction()
 # When running under Asan/TSan, *San intercepts dlopen()
 # and related functions, which results in the dlopen()
 # appearing to come from libtsan.so. Given the above, this
-# means that if RPATH is used, then the dlopen() for engine
+# means that if RUNPATH is used, then the dlopen() for engine
 # and testsuite fails, as libtsan doesn't have the path to
-# ep.so for example embedded in it, and with RPATH the paths
+# ep.so for example embedded in it, and with RUNPATH the paths
 # arn't inherited from the main executable.
 #
-# Newer versions of ld (at least Ubuntu 17.10) now use RPATH
+# Newer versions of ld (at least Ubuntu 17.10) now use RUNPATH
 # by default (as it is more secure), which means that we hit
-# the above problem. To avoid this, use RUNPATH instead when
+# the above problem. To avoid this, use RPATH instead when
 # running on a system which recognises the flag.
+#
+# (To check what dynamic linker variable is used in a binary, run:
+#     readelf --dynamic <binary>
+# and look for the presence of RPATH / RUNPATH.
+#
 cmake_push_check_state()
 set(CMAKE_REQUIRED_LINK_OPTIONS "-Wl,--disable-new-dtags")
 check_cxx_compiler_flag("-Wl,--disable-new-dtags" COMPILER_SUPPORTS_DISABLE_NEW_DTAGS)
 cmake_pop_check_state()
 
-function(use_runpath_for_sanitizers)
+function(use_rpath_for_sanitizers)
   if(COMPILER_SUPPORTS_DISABLE_NEW_DTAGS)
     set(CMAKE_EXE_LINKER_FLAGS
       "${CMAKE_EXE_LINKER_FLAGS} -Wl,--disable-new-dtags" PARENT_SCOPE)

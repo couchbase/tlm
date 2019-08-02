@@ -73,7 +73,7 @@ IF (CB_ADDRESSSANITIZER)
             SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDRESS_SANITIZER_FLAG} -fno-omit-frame-pointer")
             SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${ADDRESS_SANITIZER_FLAG}")
 
-            use_runpath_for_sanitizers()
+            use_rpath_for_sanitizers()
 
             ADD_DEFINITIONS(-DADDRESS_SANITIZER)
 
