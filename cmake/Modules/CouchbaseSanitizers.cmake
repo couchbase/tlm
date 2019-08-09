@@ -2,16 +2,75 @@ include(CheckCXXCompilerFlag)
 include(CMakePushCheckState)
 
 # Helper function used by CouchbaseAddressSanitizer / UndefinedSanitizer.
-# Searches for a sanitizer_lib_name, returning the path in the variable named <path_var>
-function(find_sanitizer_library path_var sanitizer_lib_name)
+# Searches for a sanitizer_lib_name, and once found installs it
+# into sanitizer_dest
+function(install_sanitizer_library _name sanitizer_lib_name sanitizer_dest)
   execute_process(COMMAND ${CMAKE_C_COMPILER} -print-search-dirs
     OUTPUT_VARIABLE cc_search_dirs)
   # Extract the line listing the library paths
   string(REGEX MATCH "libraries: =(.*)\n" _ ${cc_search_dirs})
   # CMAKE expects lists to be semicolon-separated instead of colon.
   string(REPLACE ":" ";" cc_library_dirs ${CMAKE_MATCH_1})
-  find_file(${path_var} ${sanitizer_lib_name}
+  find_file(${_name}_path ${sanitizer_lib_name}
     PATHS ${cc_library_dirs})
+  if (${_name}_path)
+    message(STATUS "Found ${_name} at: ${${_name}_path} installing to: ${sanitizer_dest}")
+    file(COPY ${${_name}_path}
+         DESTINATION ${sanitizer_dest})
+    if (IS_SYMLINK ${${_name}_path})
+      # Often a shared library is actually a symlink to a versioned file - e.g.
+      # libtsan.so.1 -> libtsan.so.1.0.0
+      # In which case we also need to install the real file.
+      get_filename_component(${_name}_realpath ${${_name}_path} REALPATH)
+      file(COPY ${${_name}_realpath} DESTINATION ${sanitizer_dest})
+    endif ()
+    set(installed_${_name}_path ${sanitizer_dest}/${sanitizer_lib_name})
+
+    # One some distros (at least Ubuntu18.04), the sanitizer library
+    # inclues a RUNPATH in the dynamic linker section. This
+    # breaks the ability to use the RPATH from the base
+    # executable (see description of function
+    # use_rpath_for_sanitizers() for full details).
+    #
+    # To fix this problem, we need to modify our copy of
+    # lib<SAN>.so to remove the RUNPATH directive.
+    find_program(readelf NAMES readelf)
+    if (NOT readelf)
+      message(FATAL_ERROR "Unable to locate 'readelf' program to check ${sanitizer_lib_name}'s dynamic linker section.")
+    endif()
+    execute_process(COMMAND ${readelf} -d ${installed_${_name}_path}
+                    COMMAND grep RUNPATH
+                    RESULT_VARIABLE runpath_status
+                    OUTPUT_VARIABLE runpath_output
+                    ERROR_VARIABLE runpath_output)
+    if (runpath_status GREATER 1)
+      message(FATAL_ERROR "Failed to check for presence of RUNPATH using readelf. Status:${runpath_status} Output: ${runpath_output}")
+    endif()
+
+    if (runpath_status EQUAL 0)
+      # RUNPATH directive found. Time to delete it using
+      # chrpath. (Ideally we'd do something less disruptive
+      # like convert to RPATH but chrpath doesn't support
+      # that :(
+      message(STATUS "Found RUNPATH directive in ${sanitizer_lib_name} (${installed_${_name}_path}) - removing RUNPATH")
+      find_program(chrpath NAMES chrpath)
+      if (NOT chrpath)
+        message(FATAL_ERROR "Unable to locate 'chrpath' program to fix libtsan.so's dynamic linker section.")
+      endif()
+      execute_process(COMMAND ${chrpath} -d ${installed_${_name}_path}
+                      RESULT_VARIABLE chrpath_status
+                      OUTPUT_VARIABLE chrpath_output
+                      ERROR_VARIABLE chrpath_output)
+      if (NOT chrpath_status EQUAL 0)
+        message(FATAL_ERROR "Unable to remove RUNPATH using 'chrpath' Status:${chrpath_status} Output: ${chrpath_output}")
+      endif()
+    endif()
+  else ()
+    # Only raise error if building for linux
+    if (UNIX AND NOT APPLE)
+      message(FATAL_ERROR "${_name} library not found.")
+    endif ()
+  endif ()
 endfunction()
 
 # Helper function to workaround a problem with ASan/TSan, dlopen and

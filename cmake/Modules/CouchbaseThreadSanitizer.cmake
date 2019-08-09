@@ -38,66 +38,7 @@ IF (CB_THREADSANITIZER)
         # Need to install libtsan to be able to run sanitized
         # binaries on a machine different to the build machine
         # (for example for RPM sanitized packages).
-        find_sanitizer_library(tsan_lib libtsan.so.0)
-        if (tsan_lib)
-            message(STATUS "Found libtsan at: ${tsan_lib}")
-            file(COPY ${tsan_lib}
-                 DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-            if (IS_SYMLINK ${tsan_lib})
-                # Often a shared library is actually a symlink to a versioned file - e.g.
-                # libtsan.so.1 -> libtsan.so.1.0.0
-                # In which case we also need to install the real file.
-                get_filename_component(tsan_lib_realpath ${tsan_lib} REALPATH)
-                file(COPY ${tsan_lib_realpath} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-            endif ()
-            set(installed_tsan_lib ${CMAKE_INSTALL_PREFIX}/lib/libtsan.so.0)
-            # One some distros (at least Ubuntu18.04), libtsan.so
-            # inclues a RUNPATH in the dynamic linker section. This
-            # breaks the ability to use the RPATH from the base
-            # executable (see description of function
-            # use_rpath_for_sanitizers() for full details).
-            #
-            # To fix this problem, we need to modify our copy of
-            # libtsan.so to remove the RUNPATH directive.
-            find_program(readelf NAMES readelf)
-            if (NOT readelf)
-                message(FATAL_ERROR "Unable to locate 'readelf' program to check libtsan.so's dynamic linker section.")
-            endif()
-            execute_process(
-                COMMAND ${readelf} -d ${installed_tsan_lib}
-                COMMAND grep RUNPATH
-                RESULT_VARIABLE runpath_status
-                OUTPUT_VARIABLE runpath_output
-                ERROR_VARIABLE runpath_output)
-            if (runpath_status GREATER 1)
-                message(FATAL_ERROR "Failed to check for presence of RUNPATH using readelf. Status:${runpath_status} Output: ${runpath_output}")
-            endif()
-
-            if (runpath_status EQUAL 0)
-                # RUNPATH directive found. Time to delete it using
-                # chrpath. (Ideally we'd do something less disruptive
-                # like convert to RPATH but chrpath doesn't support
-                # that :(
-                message(STATUS "Found RUNPATH directive in libtsan.so (${installed_tsan_lib}) - removing RUNPATH")
-                find_program(chrpath NAMES chrpath)
-                if (NOT chrpath)
-                    message(FATAL_ERROR "Unable to locate 'chrpath' program to fix libtsan.so's dynamic linker section.")
-                endif()
-                execute_process(COMMAND ${chrpath} -d ${installed_tsan_lib}
-                RESULT_VARIABLE chrpath_status
-                OUTPUT_VARIABLE chrpath_output
-                ERROR_VARIABLE chrpath_output)
-
-                if (NOT chrpath_status EQUAL 0)
-                    message(FATAL_ERROR "Unable to remove RUNPATH using 'chrpath' Status:${chrpath_status} Output: ${chrpath_output}")
-                endif()
-            endif()
-        else ()
-            # Only raise error if building for linux
-            if (UNIX AND NOT APPLE)
-                message(FATAL_ERROR "TSan library not found.")
-            endif ()
-        endif ()
+        install_sanitizer_library(TSan libtsan.so.0 ${CMAKE_INSTALL_PREFIX}/lib)
 
         # Override the normal ADD_TEST macro to set the TSAN_OPTIONS
         # environment variable - this allows us to specify the

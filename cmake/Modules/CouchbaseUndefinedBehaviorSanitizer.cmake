@@ -67,23 +67,7 @@ IF (CB_UNDEFINEDSANITIZER GREATER 0)
             # Need to install libuban to be able to run sanitized
             # binaries on a machine different to the build machine
             # (for example for RPM sanitized packages).
-            find_sanitizer_library(ubsan_lib libubsan.so.0)
-            if (ubsan_lib)
-                message(STATUS "Found libubsan at: ${ubsan_lib}")
-                install(FILES ${ubsan_lib} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-                if (IS_SYMLINK ${ubsan_lib})
-                    # Often a shared library is actually a symlink to a versioned file - e.g.
-                    # libubsan.so.1 -> libubsan.so.1.0.0
-                    # In which case we also need to install the real file.
-                    get_filename_component(ubsan_lib_realpath ${ubsan_lib} REALPATH)
-                    install(FILES ${ubsan_lib_realpath} DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
-                endif ()
-            else ()
-                # Only raise error if building for linux
-                if (UNIX AND NOT APPLE)
-                    message(FATAL_ERROR "UBSan library not found.")
-                endif ()
-            endif ()
+	    install_sanitizer_library(UBSan libubsan.so.0 ${CMAKE_INSTALL_PREFIX}/lib)
 	endif()
 
         MESSAGE(STATUS "UndefinedBehaviorSanitizer enabled (mode ${CB_UNDEFINEDSANITIZER})")
