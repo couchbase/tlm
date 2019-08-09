@@ -25,6 +25,11 @@ IF (NOT DEFINED CMAKE_BUILD_TYPE)
        FORCE)
 ENDIF ()
 
+# Include our custom build type (DebugOptimized) in the list.
+SET(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
+    "Choose the type of build, options are: Debug DebugOptimized Release RelWithDebInfo MinSizeRel."
+    FORCE)
+
 #
 # Choose deployment target on macOS.
 # As of Mad-Hatter, minimum supported is High Sierra (10.13).

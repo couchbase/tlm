@@ -111,15 +111,46 @@ if (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
     endif (CCACHE)
 endif (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
 
+# Add variables for our custom 'DebugOptimized' build type.
+#
+# DebugOptimized is a trade-off between compilation speed and runtime execution
+# speed, which aims to strike a balance between:
+# - Relatively fast compile times (faster than Release but slower than Debug)
+# - Relatively fast runtime speed (slower than Release but faster than Debug)
+# - While still preserving the ability to debug the code.
+#
+# The primary use-case for this build type is automated commit-validation jobs.
+# Given commit-validation jobs compile once and run once, we want to be able
+# to balanace compile time and execution time of the unit tests:
 # Much of the unit test code is expensive to compile with production-level
 # optimization, either simply due to its size, or things like GMock / GTest
-# template instantiation.
-# We don't care _that_ much about how fast the functional unit tests run,
-# therefore this function sets the default compiler optimization flags to
-# 'optimise for debug' for the current directory (and subdirectories) if this
-# isn't already a Debug build - i.e. only enable optimizations which don't
-# have a significant effect on compile time (but should still result in
-# modestly fast code runtime).
+# template instantiation, so it's undesirable to compile with Release-level
+# optimization, however without _any_ optimizations the unit test code can
+# take a long time to execute.
+set(CMAKE_CXX_FLAGS_DEBUGOPTIMIZED "${CMAKE_CXX_FLAGS_DEBUG} ${CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG}"
+        CACHE
+        STRING "Flags used by the C++ compiler during DebugOptimized builds."
+        FORCE )
+set(CMAKE_C_FLAGS_DEBUGOPTIMIZED "${CMAKE_C_FLAGS_DEBUG} ${CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG}"
+        CACHE
+        STRING "Flags used by the C compiler during DebugOptimized builds."
+        FORCE )
+set(CMAKE_EXE_LINKER_FLAGS_DEBUGOPTIMIZED
+        "${CMAKE_EXE_LINKER_FLAGS_DEBUG}" CACHE
+        STRING "Flags used for linking binaries during DebugOptimized builds."
+        FORCE )
+set(CMAKE_SHARED_LINKER_FLAGS_DEBUGOPTIMIZED
+        "${CMAKE_SHARED_LINKER_FLAGS_DEBUG}" CACHE
+        STRING "Flags used by the shared libraries linker during DebugOptimized builds."
+        FORCE )
+mark_as_advanced(
+        CMAKE_CXX_FLAGS_DEBUGOPTIMIZED
+        CMAKE_C_FLAGS_DEBUGOPTIMIZED
+        CMAKE_EXE_LINKER_FLAGS_DEBUGOPTIMIZED
+        CMAKE_SHARED_LINKER_FLAGS_DEBUGOPTIMIZED )
+
+# Override the normal compile options for a directory and build with
+# CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG if the build type isn't Debug.
 function(add_compile_options_disable_optimization)
     if(NOT CMAKE_BUILD_TYPE STREQUAL "Debug")
         add_compile_options("${CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG}")

@@ -87,6 +87,7 @@ string(REPLACE ";" " " _cb_cxx_options "${_cb_cxx_flags}")
 set(CMAKE_CXX_FLAGS_RELEASE        "-O3 -DNDEBUG")
 set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O3 -DNDEBUG -g")
 set(CMAKE_CXX_FLAGS_DEBUG          "-Og -g")
+set(CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG -Og)
 set(CB_CXX_FLAGS_NO_OPTIMIZE       "-O0")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_cb_cxx_options}")
 
