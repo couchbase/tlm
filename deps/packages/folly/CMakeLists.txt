@@ -24,7 +24,7 @@ DECLARE_DEP (jemalloc VERSION 5.1.0-cb6 PLATFORMS rhel8)
 DECLARE_DEP (libevent VERSION 2.1.8-cb8 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (libevent VERSION 2.1.8-cb10 PLATFORMS rhel8)
 DECLARE_DEP (openssl VERSION 1.1.1b-cb2 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
-DECLARE_DEP (openssl VERSION 1.1.1b-cb4)
+DECLARE_DEP (openssl VERSION 1.1.1b-cb4 PLATFORMS rhel8)
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (snappy VERSION 1.1.1-cb5 PLATFORMS rhel8)
@@ -43,7 +43,7 @@ file(GLOB folly_library_paths
 list(APPEND folly_library_paths ${_folly_deps_install}/lib)
 
 # Create a list of args that we want to pass to any folly build.
-set(cxx_flags "-fPIC")
+set(cxx_flags "-fPIC -fvisibility=hidden")
 set(cache_args -DCMAKE_LIBRARY_PATH:STRING=${folly_library_paths})
 list(APPEND cache_args -DCMAKE_INCLUDE_PATH:STRING=${folly_include_paths})
 list(APPEND cache_args "-DCMAKE_PREFIX_PATH:STRING=\
