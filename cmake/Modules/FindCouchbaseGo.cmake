@@ -309,6 +309,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       -D "GOPATH=${Go_GOPATH}"
       -D "WORKSPACE=${_workspace}"
       -D "REPOSYNC=${TLM_MODULES_DIR}/../../.."
+      -D "CGO_CFLAGS=${CMAKE_CGO_CFLAGS}"
       -D "CGO_LDFLAGS=${CMAKE_CGO_LDFLAGS}"
       -D "GCFLAGS=${Go_GCFLAGS}"
       -D "GOTAGS=${Go_GOTAGS}"
