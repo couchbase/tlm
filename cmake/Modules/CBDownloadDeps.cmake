@@ -300,8 +300,10 @@ IF (NOT CBDownloadDeps_INCLUDED)
     EXPLODE_ARCHIVE ("${_cachefile}" "${_explode_dir}")
 
     IF (NOT EXISTS "${_goexe}")
+      FILE (REMOVE "${_cachefile}")
       MESSAGE (FATAL_ERROR "Downloaded go archive ${_gofile}"
-        " failed to unpack correctly - ${_goexe} does not exist!")
+        " failed to unpack correctly - ${_goexe} does not exist!"
+        " (archive removed from download cache)")
     ENDIF ()
   ENDFUNCTION (GET_GO_VERSION)
 
