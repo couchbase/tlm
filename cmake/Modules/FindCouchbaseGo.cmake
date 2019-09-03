@@ -109,7 +109,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # On MacOS, to ensure compatibility with MacOS Mojave, we must enforce
   # a minimum version of Go. MB-31436.
   # And for notarization to work, we need to use Go 1.12. CBD-3006.
-  SET (GO_MAC_MINIMUM_VERSION 1.12.4)
+  SET (GO_MAC_MINIMUM_VERSION 1.12.6)
 
   # This macro is called by GoInstall() / GoYacc() / etc. to find the
   # appropriate Go compiler to use, based on whether or not Multi-Go mode
