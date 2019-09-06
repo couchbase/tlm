@@ -1,13 +1,28 @@
 echo start build at `date`
 
-thisdir=`pwd`
+set -xe
+
+## These should be the only things you need to change per build
 version="5.10.4.0.0.1"
 release="R16B03-1"
+cbnum=cb13
+
+thisdir=`pwd`
+
+source cygwin.bash_profile
 
 ## get the source code
-git clone git://github.com/couchbasedeps/erlang otp_src_${release}
-cd otp_src_${release}
-git checkout couchbase
+export otp_dir=otp_src_${release}
+git -c core.autocrlf=false -c core.eol=lf \
+  clone git://github.com/couchbasedeps/erlang ${otp_dir}
+
+export OTP_TOP=$(pwd)/${otp_dir}
+cd ${OTP_TOP}
+git checkout couchbase-alice
+
+# Couldn't get git to do this automatically :(
+echo Converting files to LF endings for Cygin...
+find . -type f -print0 | xargs -0 dos2unix >& /dev/null
 
 ## per instructions, get tcl from erlang website
 ## without this the build will fail
@@ -56,7 +71,7 @@ CONFIGURE_FILE(\${CMAKE_CURRENT_SOURCE_DIR}/erl.ini.in \${CMAKE_INSTALL_PREFIX}/
 ## tar 'em up
 cp VERSION.txt erl.ini.in CMakeLists.txt "${installdir}"
 cd "${installdir}"
-tar --exclude="Install.exe" --exclude="Install.ini" --exclude="Uninstall.exe" -zcf ${thisdir}/erlang-windows_msvc2015-amd64-${release}-couchbase-cb9.tgz *
+tar --exclude="Install.exe" --exclude="Install.ini" --exclude="Uninstall.exe" -zcf ${thisdir}/erlang-windows_msvc2015-amd64-${release}-couchbase-${cbnum}.tgz *
 rm -f VERSION.txt erl.ini.in CMakeLists.txt
 
 ## uninstall the erlang installation

@@ -12,12 +12,13 @@ You need to use a specially configured Windows VM with the following:
 There's a 'windows-erlang' VM (IP 172.23.113.156) with this configuration
 (as of 2017/12/27) that can be used, but should be updated regularly.
 
-Once the VM is ready, copy the 'cygwin.bash_profile' to the user homedir
-running for Cygwin terminal as '.bash_profile', then copy the scripts
-'erlang-windows.sh' - some changes for the latter might need to be made
-for the tarball naming and version, so review it carefully.  Once that's
-done, open a Cygwin terminal and set ERL_TOP to '$HOME/otp_src_<release>'
-(currently release is 'R16B03-1') and export it, then run the script.
-If successful, a '.tgz' file should be at the top-level of the homedir,
-which can then be copied into place in the releases directory on latest-
-builds.
+Once the VM is ready, you should be able to open a Cygwin shell and checkout
+the 'tlm' repository (this one), cd into this directory, and run the script
+'erlang_windows.sh'.
+
+Note: when updating the Erlang build, be sure to tweak the variables at the
+top of erlang_windows.sh accordingly. No other variables should be required
+to be changed.
+
+If successful, a '.tgz' file should be at the current directory, which can
+then be copied into place in the releases directory on latest- builds.
