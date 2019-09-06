@@ -5,7 +5,7 @@ set -xe
 ## These should be the only things you need to change per build
 version="5.10.4.0.0.1"
 release="R16B03-1"
-cbnum=cb13
+cbnum=cb14
 
 thisdir=`pwd`
 
@@ -18,7 +18,8 @@ git -c core.autocrlf=false -c core.eol=lf \
 
 export OTP_TOP=$(pwd)/${otp_dir}
 cd ${OTP_TOP}
-git checkout couchbase-alice
+# R16 is built from "couchbase" branch
+git checkout couchbase
 
 # Couldn't get git to do this automatically :(
 echo Converting files to LF endings for Cygin...

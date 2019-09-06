@@ -187,9 +187,14 @@ _ADD_DEP_PACKAGE(curl 7.60.0 curl-7_60_0 2)
 # - SHA 6d69bef for R16B03-1-couchbase-cb10 (MB-31362 - macOS - DO NOT USE)
 # - SHA 6d69bef for R16B03-1-couchbase-cb11 (MB-31362 - for MacOS only, moves to OpenSSL 1.0.2k)
 # - SHA 6d69bef for R16B03-1-couchbase-cb12 (RHEL8 GA only)
-# cb13 is on couchbase-alice branch (branch off of "couchbase")
+# cb13 was created from a misnamed 'couchbase-alice' branch which was branched from
+# an older 'couchbase-watson' branch. That git branch has been renamed
+# 'couchbase-donotuse'.
 # - SHA c52409a for R16B03-1-couchbase-cb13 (MB-35781 - all platforms)
-_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase-alice 13)
+# cb14 moved back to the 'couchbase' branch, with the change for MB-35781
+# cherry-picked over
+# - SHA 378cfab for R16B03-1-couchbase-cb14 (MB-35781 - all platforms)
+_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase 14)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
