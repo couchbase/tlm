@@ -194,7 +194,8 @@ _ADD_DEP_PACKAGE(curl 7.60.0 curl-7_60_0 2)
 # cb14 moved back to the 'couchbase' branch, with the change for MB-35781
 # cherry-picked over
 # - SHA 378cfab for R16B03-1-couchbase-cb14 (MB-35781 - all platforms)
-_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase 14)
+# - SHA 378cfab for R16B03-1-couchbase-cb15 (MB-35781 - ubuntu18 only, build with packaged openssl)
+_ADD_DEP_PACKAGE(erlang R16B03-1-couchbase couchbase 15)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
