@@ -100,12 +100,12 @@ function(add_header_object_library)
     # (e.g. #include "foo.h") which reside in the same directory as
     # the header may not work (if that directory was not otherwise on
     # the include path). As such; explicitly add the directory the
-    # header resides in to the INCLUDE_DIRECTORIES of the .h.cc
+    # header resides in to the "quote" include search of the .h.cc
     # 'source' file.
     get_filename_component(_directory
       ${CMAKE_CURRENT_SOURCE_DIR}/${_path} DIRECTORY)
     set_source_files_properties(${_header_cc} PROPERTIES
-      INCLUDE_DIRECTORIES "${_directory}")
+      COMPILE_OPTIONS "-iquote;${_directory}")
   endforeach()
 
   add_library(${arg_NAME} OBJECT ${_headers_cc})
