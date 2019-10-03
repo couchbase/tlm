@@ -172,10 +172,16 @@ _ADD_DEP_PACKAGE(flatbuffers 1.10.0 v1.10.0 4)
 _ADD_DEP_PACKAGE(json 3.5.0 v3.5.0 2)
 _ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 6)
 
-# Note: we build libevent with support for SSL, so whenever
-# OpenSSL is upgraded with an API breaking change we probably
-# need to rebuild libevent and erlang as well.
-_ADD_DEP_PACKAGE(openssl 1.1.1b OpenSSL_1_1_1b 4)
+# Note: we build a number of packages against openssl,
+# including Erlang, libevent, folly, and grpc. Those packages
+# have a DECLARE_DEP(openssl) in their own CMakeLists.txt.
+# None of those packages *include* openssl, so it isn't
+# strictly necessary to rebuild them all when we update
+# OpenSSL itself unless it includes a breaking API change.
+# Additional Note: when updating OpenSSL itself, try to
+# also fix the version included in our Anaconda Python
+# package, in tlm/python/construct.yaml.
+_ADD_DEP_PACKAGE(openssl 1.1.1d OpenSSL_1_1_1d 1)
 
 _ADD_DEP_PACKAGE(libcouchbase 2.10.0 2.10.0 1)
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
