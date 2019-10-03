@@ -1,0 +1,2 @@
+deps/packages/erlang/erlang_windows.sh text eol=lf
+deps/packages/erlang/cygwin.bash_profile text eol=lf

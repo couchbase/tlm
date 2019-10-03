@@ -1,5 +1,4 @@
-#
-#     Copyright 2018 Couchbase, Inc.
+#     Copyright 2019 Couchbase, Inc.
 #
 #   Licensed under the Apache License, Version 2.0 (the "License");
 #   you may not use this file except in compliance with the License.
@@ -47,7 +46,7 @@ if (NOT DEFINED LUA_FOUND)
                  /opt/lua
                  /opt)
 
-    if (LUA_LIBRARIES)
+    if (LUA_LIBRARIES AND LUA_INCLUDE_DIR)
         set(LUA_FOUND true CACHE BOOL "Found LUA" FORCE)
         message(STATUS "Found lua headers in: ${LUA_INCLUDE_DIR}")
         message(STATUS "           libraries: ${LUA_LIBRARIES}")
