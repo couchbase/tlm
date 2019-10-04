@@ -52,9 +52,7 @@ DECLARE_DEP (openssl VERSION 1.1.1d-cb1 PLATFORMS amzn2 centos7 debian8 debian9 
 DECLARE_DEP (opentracing-cpp VERSION v1.5.1-cb1 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse11 suse12 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (opentracing-cpp VERSION v1.5.1-cb2 PLATFORMS windows_msvc2017)
 DECLARE_DEP (opentracing-cpp VERSION v1.5.1-cb4 PLATFORMS rhel8)
-DECLARE_DEP (pcre VERSION 8.42-cb3 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04)
-DECLARE_DEP (pcre VERSION 8.42-cb5 PLATFORMS rhel8)
-DECLARE_DEP (pcre VERSION 8.42-cb7 PLATFORMS windows_msvc2017)
+DECLARE_DEP (pcre VERSION 8.43-cb1 PLATFORMS amzn2 centos7 debian8 debian9 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 1 PLATFORMS amzn2 centos7 debian8 debian9 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 # We don't want RocksDB to end up in shipped production builds.
 # NB: I don't indent this IF() block just in case, because I know that some
