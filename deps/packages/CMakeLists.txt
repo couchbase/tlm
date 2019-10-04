@@ -175,6 +175,8 @@ _ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 6)
 # Note: we build a number of packages against openssl,
 # including Erlang, libevent, folly, and grpc. Those packages
 # have a DECLARE_DEP(openssl) in their own CMakeLists.txt.
+# Similarly, curl (cbdeps V2) uses the 'cbdep' tool to
+# download the openssl cbdeps package.
 # None of those packages *include* openssl, so it isn't
 # strictly necessary to rebuild them all when we update
 # OpenSSL itself unless it includes a breaking API change.
