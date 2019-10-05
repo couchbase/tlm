@@ -5,15 +5,15 @@
 SET (_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/ignored")
 SET (_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 SET (CMAKE_INSTALL_PREFIX "${_openssl_install}")
-DECLARE_DEP (openssl VERSION 1.1.1b-cb2
+DECLARE_DEP (openssl VERSION 1.1.1d-cb1
              PLATFORMS amzn2
-                       centos7
-                       debian8 debian9
+                       centos7 centos8
+                       debian8 debian9 debian10
                        macosx
+                       rhel8
                        suse12 suse15
                        ubuntu16.04 ubuntu18.04
                        windows_msvc2017)
-DECLARE_DEP (openssl VERSION 1.1.1b-cb4 PLATFORMS rhel8)
 SET (CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 
 INCLUDE (ExternalProject)

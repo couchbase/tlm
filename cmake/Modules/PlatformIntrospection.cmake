@@ -199,13 +199,12 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
   # .. and check it against the list, returning it if found.
   SET (_supported_platforms
        "amzn2"
-       "centos6" "centos7"
-       "debian7" "debian8" "debian9"
+       "centos7" "centos8"
+       "debian8" "debian9" "debian10"
        "macosx"
        "rhel8"
-       "suse11" "suse12" "suse15"
-       "ubuntu14.04" "ubuntu16.04" "ubuntu18.04"
-       "windows_msvc2015"
+       "suse12" "suse15"
+       "ubuntu16.04" "ubuntu18.04"
        "windows_msvc2017")
   LIST (FIND _supported_platforms ${_platform} _index)
   IF (_index GREATER "-1")
