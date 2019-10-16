@@ -186,10 +186,14 @@ ENDMACRO (_DETERMINE_CPU_COUNT)
 
 # Sets _platform to the name of the current platform if it is a supported
 # platform, or a False value otherwise.
+# _platform is in the same format as _DETERMINE_PLATFORM().
 # "Supported" means that we produce and distribute builds to
 # customers on that platform.
 # QQQ This list should come from manifest/product-config.json ultimately.
-# _platform is in the same format as _DETERMINE_PLATFORM().
+# Until that time, note that this list should contain platforms we support
+# for *any* product that uses cbdeps 1.0 - eg, centos6 is still here
+# because couchbase-lite-core needs it, even though couchbase-server no
+# longer supports it.
 MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
   SET (${_supported_platform} 0)
 
@@ -199,7 +203,7 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
   # .. and check it against the list, returning it if found.
   SET (_supported_platforms
        "amzn2"
-       "centos7" "centos8"
+       "centos6" "centos7" "centos8"
        "debian8" "debian9" "debian10"
        "macosx"
        "rhel8"
