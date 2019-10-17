@@ -183,7 +183,7 @@ _ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 6)
 # Additional Note: when updating OpenSSL itself, try to
 # also fix the version included in our Anaconda Python
 # package, in tlm/python/construct.yaml.
-_ADD_DEP_PACKAGE(openssl 1.1.1d OpenSSL_1_1_1d 1)
+_ADD_DEP_PACKAGE(openssl 1.1.1d OpenSSL_1_1_1d 2)
 
 _ADD_DEP_PACKAGE(libcouchbase 2.10.0 2.10.0 1)
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")

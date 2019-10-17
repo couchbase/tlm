@@ -12,7 +12,7 @@ case "$OS" in
         ;;
     Linux)
         target=linux-x86_64
-        extra_flags=-Wl,--enable-new-dtags,-rpath,'$(ORIGIN)/../lib/'
+        extra_flags=-Wl,--enable-new-dtags,-rpath,\''$$ORIGIN/../lib/'\'
         ;;
     *)
         echo "Unknown platform"
