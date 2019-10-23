@@ -80,7 +80,9 @@ SET (GCFLAGS "-trimpath=${REPOSYNC}" ${GCFLAGS})
 SET (ASMFLAGS "-trimpath=${REPOSYNC}")
 
 # Execute "go install".
-MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} install ${_bits_str} -tags=\"${GOTAGS}\" -buildmode=\"${GOBUILDMODE}\" -gcflags=\"${GCFLAGS}\" -asmflags=\"${ASMFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${_go_race} ${PACKAGE}")
+IF (DEFINED ENV{VERBOSE})
+  MESSAGE (STATUS "Executing: \"${GO_EXECUTABLE}\" install ${_bits_str} \"-tags=${GOTAGS}\" \"-gcflags=${GCFLAGS}\" \"-asmflags=${ASMFLAGS}\" \"-ldflags=${LDFLAGS}\" ${_go_debug} ${_go_race} \"${PACKAGE}\"")
+endif()
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
   COMMAND "${GO_EXECUTABLE}" install ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} ${_go_race} "${PACKAGE}")
   IF (CB_GO_CODE_COVERAGE)
