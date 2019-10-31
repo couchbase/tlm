@@ -57,7 +57,8 @@ if (NOT DEFINED BREAKPAD_FOUND)
             set(BREAKPAD_LIBRARIES
                 ${BREAKPAD_EXCEPTION_HANDLER_LIBRARY}
                 ${BREAKPAD_CRASH_GENERATION_LIBRARY}
-                ${BREAKPAD_COMMON_LIBRARY})
+                ${BREAKPAD_COMMON_LIBRARY}
+                CACHE FILEPATH "Breakpad library path")
 
             # not used, just set to simplify the test below
             set(MINIDUMP2CORE true)
