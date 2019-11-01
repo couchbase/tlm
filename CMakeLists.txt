@@ -94,7 +94,7 @@ ADD_SUBDIRECTORY(tlm/deps)
 INCLUDE(CouchbaseDefaultValues)
 
 # If the user has synced any closed-source code, assume building EE
-IF (EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
+IF (EXISTS "${PROJECT_SOURCE_DIR}/analytics")
   SET (_ee_found ON)
 ELSE ()
   SET (_ee_found OFF)
@@ -288,7 +288,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ENDIF ()
     ENDIF()
 
-    IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
+    IF (EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/backup)
     ENDIF()
 
