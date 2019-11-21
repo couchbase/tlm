@@ -8,7 +8,6 @@
 INCLUDE(FindCouchbaseDoubleConversion)
 INCLUDE(FindCouchbaseGlog)
 INCLUDE(FindCouchbaseLibevent)
-INCLUDE(FindCouchbaseGflags)
 
 if (NOT DEFINED FOLLY_FOUND)
     include(PlatformIntrospection)
@@ -55,16 +54,12 @@ if (NOT DEFINED FOLLY_FOUND)
 
         # Append Folly's depenancies to the include / lib variables so users
         # of Folly pickup the dependancies automatically.
-        list(APPEND FOLLY_INCLUDE_DIR
-             ${DOUBLE_CONVERSION_INCLUDE_DIR}
-             ${GLOG_INCLUDE_DIR}
-             ${GFLAGS_INCLUDE_DIR})
+        list(APPEND FOLLY_INCLUDE_DIR ${DOUBLE_CONVERSION_INCLUDE_DIR} ${GLOG_INCLUDE_DIR})
         set(FOLLY_INCLUDE_DIR ${FOLLY_INCLUDE_DIR} CACHE STRING "Folly include directories" FORCE)
 
         list(APPEND FOLLY_LIBRARIES
                 ${DOUBLE_CONVERSION_LIBRARIES}
                 ${GLOG_LIBRARIES}
-                ${GFLAGS_LIBRARIES}
                 ${CMAKE_DL_LIBS}
                 ${Boost_SYSTEM_LIBRARY}
                 ${Boost_THREAD_LIBRARY}

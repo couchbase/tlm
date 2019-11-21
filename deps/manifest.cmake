@@ -26,7 +26,8 @@ DECLARE_DEP (flex VERSION 2.5.4a-cb1 PLATFORMS windows_msvc2015 windows_msvc2017
 DECLARE_DEP (flex VERSION 2.6.4-cb4 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (flex VERSION 2.6.4-cb6 PLATFORMS centos8 debian10 rhel8)
 DECLARE_DEP (folly VERSION v2019.08.12.00-cb1 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
-DECLARE_DEP (gflags VERSION 2.2.1-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
+## Define folly's gflag dependency for Escrow build purpose, gflag is not required in Server's build
+DECLARE_DEP (gflags VERSION 2.2.1-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017 SKIP)
 DECLARE_DEP (gflags VERSION 2.2.1-cb4 PLATFORMS centos8 debian10 rhel8)
 DECLARE_DEP (glog VERSION 0.3.5-cb1 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (glog VERSION 0.3.5-cb3 PLATFORMS centos8 debian10 rhel8)
