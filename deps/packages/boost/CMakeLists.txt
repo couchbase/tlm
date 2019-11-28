@@ -6,10 +6,12 @@ include(ExternalProject)
 
 if (WIN32)
    set(boost_bootstrap bootstrap.bat)
-   set(boost_cxx_version "")
+   set(boost_extra_flags "")
+   set(boost_variant "debug,release")
 else (WIN32)
    set(boost_bootstrap bootstrap.sh)
-   set(boost_cxx_version "cxxflags=-std=c++14")
+   set(boost_extra_flags cxxflags=-std=c++14 cflags=-fno-omit-frame-pointer cxxflags=-fno-omit-frame-pointer)
+   set(boost_variant "release")
 endif (WIN32)
 
 ExternalProject_Add(boost
@@ -22,13 +24,11 @@ ExternalProject_Add(boost
       -j 4
       --prefix=<INSTALL_DIR>
       address-model=64
-      ${boost_cxx_version}
-      cflags=-fno-omit-frame-pointer
-      cxxflags=-fno-omit-frame-pointer
+      ${boost_extra_flags}
       link=static
       runtime-link=shared
       threading=multi
-      variant=release
+      variant=${boost_variant}
       install
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   # CB Server and Folly (particulary) require most of Boost's submodules;
