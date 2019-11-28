@@ -11,14 +11,12 @@ set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 # (previously using GCC 8.2.1), the following temporary conditionals
 # are needed for said platform, and can be removed once things are
 # resynced with a later build.
-DECLARE_DEP (boost VERSION 1.67.0-cb3 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
-DECLARE_DEP (boost VERSION 1.67.0-cb6 PLATFORMS centos8 debian10 rhel8)
+DECLARE_DEP (boost VERSION 1.67.0-cb7 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS centos8 debian10 rhel8)
 DECLARE_DEP (gflags VERSION 2.2.1-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (gflags VERSION 2.2.1-cb4 PLATFORMS centos8 debian10 rhel8)
-DECLARE_DEP (glog VERSION 0.3.5-cb1 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
-DECLARE_DEP (glog VERSION 0.3.5-cb3 PLATFORMS centos8 debian10 rhel8)
+DECLARE_DEP (glog VERSION 0.3.5-cb4 PLATFORMS amzn2 centos6 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (jemalloc VERSION 5.2.1-cb1 PLATFORMS amzn2 centos7 centos8 debian7 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (libevent VERSION 2.1.8-cb8 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (libevent VERSION 2.1.8-cb10 PLATFORMS centos8 debian10 rhel8)
@@ -106,6 +104,22 @@ if (${PLATFORM} MATCHES "ubuntu" OR ${PLATFORM} MATCHES "macos")
         cp libfolly.a ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libfollytsan.a
         )
    ExternalProject_Add_StepDependencies(folly download follytsan)
+endif()
+
+# Additionally build a Debug variant on Windows, as for a debug build of
+# CB Server we need all dependancies _also_ linked against Debug CRT.
+if (WIN32)
+   ExternalProject_Add(folly_WinDebugCRT
+        GIT_REPOSITORY ${_git_repo}
+        GIT_TAG ${_git_rev}
+        PATCH_COMMAND ${folly_patch_command}
+        CMAKE_CACHE_ARGS ${cache_args}
+            -DCMAKE_BUILD_TYPE:STRING=Debug
+        BUILD_IN_SOURCE 1
+        INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
+        INSTALL_COMMAND cmake -E copy folly.lib ${CMAKE_CURRENT_BINARY_DIR}/install/lib/follyd.lib
+        )
+   ExternalProject_Add_StepDependencies(folly download folly_WinDebugCRT)
 endif()
 
 # cbdeps boilerplate
