@@ -1,8 +1,19 @@
-FILE (COPY lib DESTINATION "${CMAKE_INSTALL_PREFIX}")
 FILE (COPY bin/jeprof DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
 IF (WIN32)
-    # jemalloc.dll is created in lib/ dir but DLLs need to be in bin/
-    FILE (COPY lib/jemalloc.dll DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
+    # Different binaries for Release and Debug builds.
+    # Copy DLL for seelcted CMAKE_BUILD_TYPE into bin dir (in path).
+    # Stub library (.lib) is not copied into install dir as only
+    # needed at compile-time.
+    IF (CMAKE_BUILD_TYPE IN_LIST DEBUG_CONFIGURATIONS)
+        FILE (REMOVE "${CMAKE_INSTALL_PREFIX}/bin/jemalloc.dll")
+        FILE (COPY bin/Debug/jemallocd.dll DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
+    ELSE ()
+        FILE (REMOVE "${CMAKE_INSTALL_PREFIX}/bin/jemallocd.dll")
+        FILE (COPY bin/Release/jemalloc.dll DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
+    ENDIF ()
+ELSE()
+    # On non-Windows platforms, .so copied to install/lib
+    FILE (COPY lib DESTINATION "${CMAKE_INSTALL_PREFIX}")
 ENDIF()
 
 SET_PROPERTY (GLOBAL APPEND PROPERTY CBDEPS_PREFIX_PATH "${CMAKE_CURRENT_SOURCE_DIR}")
