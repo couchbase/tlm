@@ -16,66 +16,74 @@
 # Locate jemalloc library
 # This module defines
 #  JEMALLOC_FOUND, if false, do not try to link with jemalloc
-#  JEMALLOC_LIBRARIES, Library path and libs
+#  JEMALLOC_LIBRARIES, path to selected (Debug / Release) library variant
 #  JEMALLOC_INCLUDE_DIR, where to find the jemalloc headers
 
 INCLUDE(CheckFunctionExists)
+include(CMakePushCheckState)
+include(CheckSymbolExists)
+include(FindPackageHandleStandardArgs)
+include(PlatformIntrospection)
 
-# Wrap the content of the file to avoid having the
-# system log the same information multiple times
-# if the file gets included from multiple files
-if (NOT DEFINED JEMALLOC_FOUND)
-    include(CMakePushCheckState)
-    include(CheckSymbolExists)
-    include(PlatformIntrospection)
+cb_get_supported_platform(_supported_platform)
+if (_supported_platform)
+    # Supported platforms should only use the provided hints and pick it up
+    # from cbdeps
+    set(_jemalloc_no_default_path NO_DEFAULT_PATH)
+endif ()
 
-    cb_get_supported_platform(_supported_platform)
-    if (_supported_platform)
-        # Supported platforms should only use the provided hints and pick it up
-        # from cbdeps
-        set(_jemalloc_no_default_path NO_DEFAULT_PATH)
-    endif ()
+set(_jemalloc_exploded ${CMAKE_BINARY_DIR}/tlm/deps/jemalloc.exploded)
 
-    set(_jemalloc_exploded ${CMAKE_BINARY_DIR}/tlm/deps/jemalloc.exploded)
+find_path(JEMALLOC_INCLUDE_DIR jemalloc/jemalloc.h
+          HINTS ${_jemalloc_exploded}/include
+          ${_jemalloc_no_default_path})
 
-    find_path(JEMALLOC_INCLUDE_DIR jemalloc/jemalloc.h
-              HINTS ${_jemalloc_exploded}/include
-              ${_jemalloc_no_default_path})
+if (NOT JEMALLOC_INCLUDE_DIR)
+    message(FATAL_ERROR "Failed to locate jemalloc/jemalloc.h")
+endif ()
 
-    if (NOT JEMALLOC_INCLUDE_DIR)
-        message(FATAL_ERROR "Failed to locate jemalloc/jemalloc.h")
-    endif ()
+# find the Release library and Debug library (if it exists).
+#
+# We need to put _jemalloc_exploded/lib/* as hints as we don't
+# install the .lib file to ${CMAKE_INSTALL_PREFIX} on Windows-
+# they are left in the exploded directory.
+find_library(JEMALLOC_LIBRARY_RELEASE
+             NAMES jemalloc libjemalloc
+             HINTS ${CMAKE_INSTALL_PREFIX}/lib
+                   ${_jemalloc_exploded}/lib/Release
+                   ${_jemalloc_exploded}/lib
+             ${_jemalloc_no_default_path})
 
-    # We need to put _jemalloc_exploded/lib as a hint as we don't
-    # install the .lib file to ${CMAKE_INSTALL_PREFIX} on Windows
-    find_library(JEMALLOC_LIBRARIES
-                 NAMES jemalloc libjemalloc
-                 HINTS ${CMAKE_INSTALL_PREFIX}/lib
-                 ${_jemalloc_exploded}/lib
-                 ${_jemalloc_no_default_path})
+find_library(JEMALLOC_LIBRARY_DEBUG
+             NAMES jemalloc jemallocd libjemalloc
+             HINTS ${CMAKE_INSTALL_PREFIX}/lib
+                   ${_jemalloc_exploded}/lib/Debug
+             ${_jemalloc_no_default_path})
 
-    if (NOT JEMALLOC_LIBRARIES)
-        message(FATAL_ERROR "Failed to locate jemalloc library")
-    endif ()
+# Set JEMALLOC_LIBRARIES to the correct Debug / Release lib based on the
+# current BUILD_TYPE
+if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND JEMALLOC_LIBRARY_DEBUG)
+    set (JEMALLOC_LIBRARIES ${JEMALLOC_LIBRARY_DEBUG})
+else ()
+    set (JEMALLOC_LIBRARIES ${JEMALLOC_LIBRARY_RELEASE})
+endif ()
 
-    message(STATUS "Found jemalloc headers in: ${JEMALLOC_INCLUDE_DIR}")
-    message(STATUS "                  library: ${JEMALLOC_LIBRARIES}")
+find_package_handle_standard_args(JEMALLOC
+  REQUIRED_VARS JEMALLOC_LIBRARIES JEMALLOC_INCLUDE_DIR)
 
-    # Check that the found jemalloc library has it's symbols prefixed with 'je_'
-    cmake_push_check_state(RESET)
-    set(CMAKE_REQUIRED_LIBRARIES ${JEMALLOC_LIBRARIES})
-    set(CMAKE_REQUIRED_INCLUDES ${JEMALLOC_INCLUDE_DIR})
-    if (WIN32)
-        list(APPEND CMAKE_REQUIRED_INCLUDES ${JEMALLOC_INCLUDE_DIR}/msvc_compat)
-    endif ()
-    check_symbol_exists(je_malloc "stdbool.h;jemalloc/jemalloc.h" HAVE_JE_SYMBOLS)
-    check_symbol_exists(je_sdallocx "stdbool.h;jemalloc/jemalloc.h" HAVE_JEMALLOC_SDALLOCX)
-    cmake_pop_check_state()
+# Check that the found jemalloc library has it's symbols prefixed with 'je_'
+cmake_push_check_state(RESET)
+set(CMAKE_REQUIRED_LIBRARIES ${JEMALLOC_LIBRARIES})
+set(CMAKE_REQUIRED_INCLUDES ${JEMALLOC_INCLUDE_DIR})
+if (WIN32)
+    list(APPEND CMAKE_REQUIRED_INCLUDES ${JEMALLOC_INCLUDE_DIR}/msvc_compat)
+endif ()
+check_symbol_exists(je_malloc "stdbool.h;jemalloc/jemalloc.h" HAVE_JE_SYMBOLS)
+check_symbol_exists(je_sdallocx "stdbool.h;jemalloc/jemalloc.h" HAVE_JEMALLOC_SDALLOCX)
+cmake_pop_check_state()
 
-    if (NOT HAVE_JE_SYMBOLS)
-        message(FATAL_ERROR "Found jemalloc in ${JEMALLOC_LIBRARIES}, but was built without 'je_' prefix on symbols so cannot be used.")
-    endif ()
+if (NOT HAVE_JE_SYMBOLS)
+    message(FATAL_ERROR "Found jemalloc in ${JEMALLOC_LIBRARIES}, but was built without 'je_' prefix on symbols so cannot be used.")
+endif ()
 
-    set(JEMALLOC_FOUND true CACHE BOOL "Found jemalloc" FORCE)
-    mark_as_advanced(JEMALLOC_FOUND JEMALLOC_INCLUDE_DIR JEMALLOC_LIBRARIES)
-endif (NOT DEFINED JEMALLOC_FOUND)
+mark_as_advanced(JEMALLOC_INCLUDE_DIR)
