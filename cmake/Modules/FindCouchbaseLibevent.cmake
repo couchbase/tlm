@@ -75,37 +75,36 @@ if (NOT DEFINED LIBEVENT_FOUND)
         message(FATAL_ERROR "Failed to locate event_extra")
     endif ()
 
-    # The libevent built by cbdeps don't need this library, but in case
-    # the user tries to use a global one we need to link with the pthreads
-    # one for those platforms
-    if (NOT _supported_platform)
+    find_library(LIBEVENT_OPENSSL_LIB
+                 NAMES event_openssl
+                 HINTS ${_libevent_library_dir}/lib
+                 ${NO_DEFAULT_PATH})
+    if (NOT LIBEVENT_OPENSSL_LIB)
+        message(FATAL_ERROR "Failed to locate event_openssl")
+    endif ()
+
+    if (NOT WIN32)
         find_library(LIBEVENT_THREAD_LIB
                      NAMES event_pthreads
                      HINTS ${_libevent_library_dir}/lib
                      ${NO_DEFAULT_PATH})
-        find_library(LIBEVENT_OPENSSL_LIB
-                     NAMES event_openssl
-                     HINTS ${_libevent_library_dir}/lib
-                     ${NO_DEFAULT_PATH})
+
+        if (NOT LIBEVENT_THREAD_LIB)
+            message(FATAL_ERROR "Failed to locate event_pthreads")
+        endif ()
+        get_directory(_libevent_pthreads_dir ${LIBEVENT_THREAD_LIB})
     endif ()
 
     get_directory(_libevent_core_dir ${LIBEVENT_CORE_LIB})
     get_directory(_libevent_extra_dir ${LIBEVENT_EXTRA_LIB})
-    if (LIBEVENT_THREAD_LIB)
-        get_directory(_libevent_pthreads_dir ${LIBEVENT_THREAD_LIB})
-    endif ()
-    if (LIBEVENT_OPENSSL_LIB)
-        get_directory(_libevent_openssl_dir ${LIBEVENT_OPENSSL_LIB})
-    endif ()
+    get_directory(_libevent_openssl_dir ${LIBEVENT_OPENSSL_LIB})
 
     message(STATUS "Found libevent headers in: ${LIBEVENT_INCLUDE_DIR}")
     message(STATUS "                     core: ${LIBEVENT_CORE_LIB}")
     message(STATUS "                    extra: ${LIBEVENT_EXTRA_LIB}")
-    if (LIBEVENT_THREAD_LIB)
+    message(STATUS "                  openssl: ${LIBEVENT_OPENSSL_LIB}")
+    if (NOT WIN32)
         message(STATUS "                 pthreads: ${LIBEVENT_THREAD_LIB}")
-    endif ()
-    if (LIBEVENT_OPENSSL_LIB)
-        message(STATUS "                  openssl: ${LIBEVENT_OPENSSL_LIB}")
     endif ()
 
     # Set LIBEVENT_LIBRARIES to list all of the libevent libraries.
