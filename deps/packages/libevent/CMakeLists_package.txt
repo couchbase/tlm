@@ -1,6 +1,22 @@
-IF (EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/bin")
-   # Install dll-files into the bin directory on windows
-   FILE (COPY bin DESTINATION ${CMAKE_INSTALL_PREFIX})
-ENDIF ()
+# Install the libraries to the lib directory. On windows the dll's should
+# go in the bin directory (same directory as the executable or in the PATH)
+# to be found by the runtime linker during program startup
+if (WIN32)
+    # The .lib files should go in the lib directory
+    FILE(COPY lib/event_core.lib DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+    FILE(COPY lib/event_extra.lib DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+    FILE(COPY lib/event.lib DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
+    FILE(COPY lib/event_openssl.lib DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 
-FILE (COPY lib DESTINATION ${CMAKE_INSTALL_PREFIX})
+    # The dll's should go in the bin directory
+    if (NOT EXISTS ${CMAKE_INSTALL_PREFIX}/bin)
+        FILE(MAKE_DIRECTORY ${CMAKE_INSTALL_PREFIX}/bin)
+    endif()
+
+    FILE(COPY lib/event_core.dll DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+    FILE(COPY lib/event.dll DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+    FILE(COPY lib/event_extra.dll DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+    FILE(COPY lib/event_openssl.dll DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+else (WIN32)
+    FILE (COPY lib DESTINATION ${CMAKE_INSTALL_PREFIX})
+endif (WIN32)
