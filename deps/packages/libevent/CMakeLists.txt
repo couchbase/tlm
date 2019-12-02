@@ -6,14 +6,15 @@
 set(_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/unused")
 set(_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 set(CMAKE_INSTALL_PREFIX "${_openssl_install}")
-declare_dep(openssl VERSION 1.1.1b-cb2
+declare_dep(openssl VERSION 1.1.1d-cb2
             PLATFORMS amzn2
-                      centos7
-                      debian8 debian9
-                      macosx
+                      centos7 centos8
+                      debian8 debian9 debian10
+                      rhel8
                       suse12 suse15
-                      ubuntu16.04 ubuntu18.04
-                      windows_msvc2017)
+                      ubuntu16.04 ubuntu18.04)
+declare_dep (openssl VERSION 1.1.1d-cb1 PLATFORMS macosx windows_msvc2017)
+
 set(CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 set(_libevent_extra_options -D "OPENSSL_ROOT_DIR=${CMAKE_BINARY_DIR}/libevent/openssl.exploded")
 
@@ -51,9 +52,11 @@ ExternalProject_Add(libevent
 # OS X-only: Custom post-build step to set the shared library install name.
 if (APPLE)
   ExternalProject_Add_Step(libevent install_name
-    COMMAND install_name_tool -id @rpath/libevent.2.1.8.dylib <BINARY_DIR>/lib/libevent.2.1.8.dylib
-    COMMAND install_name_tool -id @rpath/libevent_core.2.1.8.dylib <BINARY_DIR>/lib/libevent_core.2.1.8.dylib
-    COMMAND install_name_tool -id @rpath/libevent_extra.2.1.8.dylib <BINARY_DIR>/lib/libevent_extra.2.1.8.dylib
+    COMMAND install_name_tool -id @rpath/libevent-2.1.7.dylib <BINARY_DIR>/lib/libevent-2.1.7.dylib
+    COMMAND install_name_tool -id @rpath/libevent_core-2.1.7.dylib <BINARY_DIR>/lib/libevent_core-2.1.7.dylib
+    COMMAND install_name_tool -id @rpath/libevent_extra-2.1.7.dylib <BINARY_DIR>/lib/libevent_extra-2.1.7.dylib
+    COMMAND install_name_tool -id @rpath/libevent_openssl-2.1.7.dylib <BINARY_DIR>/lib/libevent_openssl-2.1.7.dylib
+    COMMAND install_name_tool -id @rpath/libevent_pthreads-2.1.7.dylib <BINARY_DIR>/lib/libevent_pthreads-2.1.7.dylib
     DEPENDEES build
     DEPENDERS install
     WORKING_DIRECTORY <BINARY_DIR>
