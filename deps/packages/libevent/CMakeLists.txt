@@ -27,8 +27,12 @@ if (APPLE)
       COMMAND install_name_tool -id @rpath/libevent-2.1.7.dylib <INSTALL_DIR>/lib/libevent-2.1.7.dylib
       COMMAND install_name_tool -id @rpath/libevent_core-2.1.7.dylib <INSTALL_DIR>/lib/libevent_core-2.1.7.dylib
       COMMAND install_name_tool -id @rpath/libevent_extra-2.1.7.dylib <INSTALL_DIR>/lib/libevent_extra-2.1.7.dylib
+      COMMAND install_name_tool -change <INSTALL_DIR>/lib/libevent_core-2.1.7.dylib @rpath/libevent_core-2.1.7.dylib <INSTALL_DIR>/lib/libevent_extra-2.1.7.dylib
+
       COMMAND install_name_tool -id @rpath/libevent_openssl-2.1.7.dylib <INSTALL_DIR>/lib/libevent_openssl-2.1.7.dylib
+      COMMAND install_name_tool -change <INSTALL_DIR>/lib/libevent_core-2.1.7.dylib @rpath/libevent_core-2.1.7.dylib <INSTALL_DIR>/lib/libevent_openssl-2.1.7.dylib
       COMMAND install_name_tool -id @rpath/libevent_pthreads-2.1.7.dylib <INSTALL_DIR>/lib/libevent_pthreads-2.1.7.dylib
+      COMMAND install_name_tool -change <INSTALL_DIR>/lib/libevent_core-2.1.7.dylib @rpath/libevent_core-2.1.7.dylib <INSTALL_DIR>/lib/libevent_pthreads-2.1.7.dylib
       )
 elseif(UNIX)
   # We want to set the RUNPATH to ${ORIGIN} to make sure that it search
