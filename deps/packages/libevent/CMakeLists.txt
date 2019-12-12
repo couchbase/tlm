@@ -50,6 +50,12 @@ elseif(UNIX)
       COMMAND ${CMAKE_COMMAND} -E remove -f <INSTALL_DIR>/lib/libevent_pthreads.a)
 endif()
 
+if (WIN32)
+  set(_libevent_build_type RelWithDebInfo)
+else()
+  set(_libevent_build_type Debug)
+endif()
+
 include(ExternalProject)
 
 ### Download, configure and build libevent ####################################
@@ -58,8 +64,7 @@ ExternalProject_Add(libevent
   GIT_TAG ${_git_rev}
 
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
-             -D CMAKE_BUILD_TYPE=RelWithDebInfo
-             -D EVENT__DISABLE_DEBUG_MODE=ON
+             -D CMAKE_BUILD_TYPE=${_libevent_build_type}
              -D EVENT__DISABLE_BENCHMARK=ON
              -D EVENT__DISABLE_TESTS=ON
              -D EVENT__DISABLE_REGRESS=ON
