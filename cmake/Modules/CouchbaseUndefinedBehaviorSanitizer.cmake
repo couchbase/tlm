@@ -18,7 +18,7 @@ OPTION(CB_UNDEFINEDSANITIZER "Enable UndefinedBehaviorSanitizer memory error det
 
 IF (CB_UNDEFINEDSANITIZER GREATER 0)
 
-    SET(UNDEFINED_SANITIZER_FLAG "-fsanitize=undefined -fno-sanitize=alignment -fno-sanitize-recover=all")
+    SET(UNDEFINED_SANITIZER_FLAG "-fsanitize=undefined -fno-sanitize=alignment -fno-sanitize-recover=all -fno-sanitize=float-divide-by-zero")
 
     CMAKE_PUSH_CHECK_STATE(RESET)
     SET(CMAKE_REQUIRED_FLAGS ${UNDEFINED_SANITIZER_FLAG}) # Also needs to be a link flag for test to pass
