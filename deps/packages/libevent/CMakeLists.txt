@@ -50,11 +50,7 @@ elseif(UNIX)
       COMMAND ${CMAKE_COMMAND} -E remove -f <INSTALL_DIR>/lib/libevent_pthreads.a)
 endif()
 
-if (WIN32)
-  set(_libevent_build_type RelWithDebInfo)
-else()
-  set(_libevent_build_type Debug)
-endif()
+set(_libevent_build_type RelWithDebInfo)
 
 include(ExternalProject)
 
