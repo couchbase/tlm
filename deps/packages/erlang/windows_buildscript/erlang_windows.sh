@@ -1,20 +1,36 @@
+#!/bin/bash
+set -ex
+
 echo start build at `date`
 
 thisdir=`pwd`
 version=$1
 release=$2
 release_tag=$3
-package_name=$4
-package_name_tgz="erlang-windows_msvc2015-amd64-$package_name.tgz"
-package_name_md5="erlang-windows_msvc2015-amd64-$package_name.md5"
+cb_buildnumber=$4
+package_name="${release_tag}-${cb_buildnumber}"
+package_name_tgz="erlang-windows_msvc2017-amd64-$package_name.tgz"
+package_name_md5="erlang-windows_msvc2017-amd64-$package_name.md5"
+
+# Ensure build uses correct libraries with OpenSSL 1.1.1d
+patch_ssl() {
+    sed -i "s/SSL_CRYPTO_LIBNAME = @SSL_CRYPTO_LIBNAME@/SSL_CRYPTO_LIBNAME = libcrypto64MD/g" ./lib/crypto/c_src/Makefile.in
+    sed -i "s/SSL_SSL_LIBNAME = @SSL_SSL_LIBNAME@/SSL_SSL_LIBNAME = libssl64MD/g" ./lib/crypto/c_src/Makefile.in
+}
 
 # Convert dos2unix
-find . -type f |xargs dos2unix
+echo "Converting line endings"
+find . -type f |xargs dos2unix &>/dev/null
+
+installdir="/cygdrive/c/Program Files/erl${version}"
+mkdir -p "${installdir}"
 
 ## build the source, as per instructions
 eval `./otp_build env_win32 x64`
 ./otp_build autoconf 2>&1 | tee autoconf.out
-./otp_build configure  --with-ssl=/cygdrive/c/OpenSSL-Win64 2>&1 | tee configure.out
+# Hardcode library names in Makefile template to allow building against OpenSSL 1.1.1d
+patch_ssl
+./otp_build configure  --with-ssl=/cygdrive/c/OpenSSL 2>&1 | tee configure.out
 ./otp_build boot -a 2>&1 | tee boot.out
 ./otp_build release -a 2>&1 | tee release.out
 #####./otp_build debuginfo_win32 -a 2>&1 | tee dbginfo.out
@@ -28,8 +44,6 @@ eval `./otp_build env_win32 x64`
 ## location
 ./otp_build installer_win32 2>&1 | tee installerwin32.out
 ./release/win32/otp_win64_${release}.exe /S
-
-installdir=/cygdrive/c/Program\ Files/erl${version}
 
 ## we need VERSION.txt, erl.in.ini and CMakeLists.txt for our internal
 ## cbdeps consumption. We could check the files in with placeholder
@@ -51,6 +65,9 @@ CONFIGURE_FILE(\${CMAKE_CURRENT_SOURCE_DIR}/erl.ini.in \${CMAKE_INSTALL_PREFIX}/
 ## tar 'em up
 cp VERSION.txt erl.ini.in CMakeLists.txt "${installdir}"
 cd "${installdir}"
+
+printf "# Contents of installdir:\n%s\n" "$(ls -la)"
+
 tar --exclude="Install.exe" --exclude="Install.ini" --exclude="Uninstall.exe" -zcf ${thisdir}/${package_name_tgz} *
 printf $(md5sum ${thisdir}/${package_name_tgz}) > ${thisdir}/${package_name_md5}
 rm -f VERSION.txt erl.ini.in CMakeLists.txt
@@ -60,4 +77,7 @@ rm -f VERSION.txt erl.ini.in CMakeLists.txt
 
 rm -f VERSION.txt erl.ini.in CMakeLists.txt
 
-echo end build at `date`
+echo "Build dir:"
+ls -la "${thisdir}"
+
+echo "end build at $(date)"

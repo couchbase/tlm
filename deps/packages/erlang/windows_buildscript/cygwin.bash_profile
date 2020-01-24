@@ -62,11 +62,11 @@ JAVA_BIN=$PRG_FLS64/Java/jdk1.8.0_172/bin
 VCPATH=$VISUAL_STUDIO_ROOT/VC/bin/amd64:$VISUAL_STUDIO_ROOT/VC/vcpackages:$VISUAL_STUDIO_ROOT/Common7/IDE:$VISUAL_STUDIO_ROOT/Common7/Tools:$SDK/bin/x86
 
 ## Microsoft SDK libs
-LIBPATH=$WIN_VISUAL_STUDIO_ROOT\\VC\\lib\\amd64
+LIBPATH="$WIN_VISUAL_STUDIO_ROOT\\VC\\lib\\amd64;C:\\OpenSSL\\lib;C:\\OpenSSL\\lib\\vc;C:\\OpenSSL\\lib\\vc\\static"
 
-LIB=$WIN_VISUAL_STUDIO_ROOT\\VC\\lib\\amd64\;$WIN_SDK\\lib\\winv6.3\\um\\x64
+LIB="$WIN_VISUAL_STUDIO_ROOT\\VC\\lib\\amd64\;$WIN_SDK\\lib\\winv6.3\\um\\x64;C:\\OpenSSL\\lib;C:\\OpenSSL\\lib\\vc;C:\\OpenSSL\\lib\\vc\\static"
 
-INCLUDE=$WIN_VISUAL_STUDIO_ROOT\\VC\\include\;$WIN_SDK\\include\\shared\;$WIN_SDK\\include\\um\;$WIN_SDK\\include\\winrt\;$WIN_SDK\\include\\um\\gl
+INCLUDE="$WIN_VISUAL_STUDIO_ROOT\\VC\\include\;$WIN_SDK\\include\\shared\;$WIN_SDK\\include\\um\;$WIN_SDK\\include\\winrt\;$WIN_SDK\\include\\um\\gl;C:\\OpenSSL\\include"
 
 # Put nsis, c compiler and java in path
 export PATH=$VCPATH:$PATH:$JAVA_BIN:$NSIS_BIN:$PRG_FLS64/Git/bin
