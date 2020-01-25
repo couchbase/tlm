@@ -4,11 +4,17 @@ set -ex
 echo start build at `date`
 
 thisdir=`pwd`
-version=$1
-release=$2
-release_tag=$3
-cb_buildnumber=$4
-package_name="${release_tag}-${cb_buildnumber}"
+
+otp_version=$1
+cb_buildnumber=$2
+
+# Parse erts_version out of erts/vsn.mk
+eval $(grep '^VSN' erts/vsn.mk | sed -e 's/ //g')
+erts_version=${VSN}
+
+# Derived parameters
+otp_release=$(echo ${otp_version} | sed -e 's/OTP-\([0-9]*\).*/\1/')
+package_name="${otp_version}-${cb_buildnumber}"
 package_name_tgz="erlang-windows_msvc2017-amd64-$package_name.tgz"
 package_name_md5="erlang-windows_msvc2017-amd64-$package_name.md5"
 
@@ -22,7 +28,7 @@ patch_ssl() {
 echo "Converting line endings"
 find . -type f |xargs dos2unix &>/dev/null
 
-installdir="/cygdrive/c/Program Files/erl${version}"
+installdir="/cygdrive/c/Program Files/erl${erts_version}"
 mkdir -p "${installdir}"
 
 ## build the source, as per instructions
@@ -49,15 +55,15 @@ patch_ssl
 ## cbdeps consumption. We could check the files in with placeholder
 ## tokens for version. But I am just generating them here dynamically
 ## because they are tiny files
-echo $release_tag > VERSION.txt
+echo ${otp_version} > VERSION.txt
 echo "[erlang]
-Bindir=\${CMAKE_INSTALL_PREFIX}/erts-${version}/bin
+Bindir=\${CMAKE_INSTALL_PREFIX}/erts-${erts_version}/bin
 Progname=erl
 Rootdir=\${CMAKE_INSTALL_PREFIX}
 " > erl.ini.in
 
 echo "# Just copy contents to CMAKE_INSTALL_PREFIX
-FILE (COPY bin erts-${version} lib releases usr DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")
+FILE (COPY bin erts-${erts_version} lib releases usr DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")
 # And install erl.ini with correct paths
 CONFIGURE_FILE(\${CMAKE_CURRENT_SOURCE_DIR}/erl.ini.in \${CMAKE_INSTALL_PREFIX}/bin/erl.ini)
 " > CMakeLists.txt
