@@ -49,7 +49,7 @@ patch_ssl
 ## so, generate an installer and use that to install it to default
 ## location
 ./otp_build installer_win32 2>&1 | tee installerwin32.out
-./release/win32/otp_win64_${release}.exe /S
+./release/win32/otp_win64_${otp_release}.exe /S
 
 ## we need VERSION.txt, erl.in.ini and CMakeLists.txt for our internal
 ## cbdeps consumption. We could check the files in with placeholder
