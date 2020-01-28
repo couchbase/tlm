@@ -4,7 +4,7 @@ IF (WIN32)
     # Copy DLL for seelcted CMAKE_BUILD_TYPE into bin dir (in path).
     # Stub library (.lib) is not copied into install dir as only
     # needed at compile-time.
-    IF (CMAKE_BUILD_TYPE IN_LIST DEBUG_CONFIGURATIONS)
+    IF (CMAKE_BUILD_TYPE STREQUAL "Debug")
         FILE (REMOVE "${CMAKE_INSTALL_PREFIX}/bin/jemalloc.dll")
         FILE (COPY bin/Debug/jemallocd.dll DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
     ELSE ()
