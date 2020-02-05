@@ -161,13 +161,13 @@ _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
 _ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 6)
 _ADD_DEP_PACKAGE(v8 7.1 7.1.321 5)
-_ADD_DEP_PACKAGE(jemalloc 5.2.1 5.2.1 3)
+_ADD_DEP_PACKAGE(jemalloc 5.2.1 5.2.1 4)
 
 _ADD_DEP_PACKAGE(erlang OTP-20.3.8.11 couchbase-madhatter 10)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
-_ADD_DEP_PACKAGE(flatbuffers 1.10.0 v1.10.0 4)
+_ADD_DEP_PACKAGE(flatbuffers 1.10.0 v1.10.0 5)
 
 _ADD_DEP_PACKAGE(json 3.5.0 v3.5.0 2)
 _ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 7)
