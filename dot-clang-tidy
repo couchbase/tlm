@@ -1,0 +1,12 @@
+Checks:          '-*,modernize-use-emplace,modernize-use-nullptr,modernize-use-auto,modernize-use-override,bugprone-use-after-move,bugprone-unhandled-self-assignment'
+WarningsAsErrors: ''
+HeaderFilterRegex: ''
+AnalyzeTemporaryDtors: false
+FormatStyle:     none
+CheckOptions:
+  - key:             modernize-use-auto.RemoveStars
+    value:           '0'
+  - key:             modernize-use-auto.MinTypeNameLength
+    value:           '5'
+  - key:             modernize-use-nullptr.NullMacros
+    value:           'NULL'
