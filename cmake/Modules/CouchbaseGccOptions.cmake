@@ -53,11 +53,6 @@ set(CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG -Og)
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_cb_c_options}")
 
 # Configure the C++ compiler
-#   (Ideally we shouldn't be setting -std=c++14 here as we try to use
-#   set(CMAKE_CXX_STANDARD 14), but the option isn't added to the
-#   check_cxx_source_compiles causing such tests to fail.
-#   Keep the flag here until we've safely removed all of these
-#   checks)
 list(APPEND _cb_cxx_flags
      -pedantic
      -Wall
@@ -69,10 +64,6 @@ list(APPEND _cb_cxx_flags
 SET(CB_GNU_CXX11_OPTION "-std=gnu++11")
 
 if (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 6.9.9)
-   #Disable aligned-new warning
-   list(APPEND _cb_cxx_flags -Wno-aligned-new)
-   message(STATUS "Disabling aligned-new warning as we don't support C++17 (yet)")
-
    # Disable stringop-overflow warnings as there seem to be a fair few bugs in that area (GCC 7.2)
    # There are multiple bugs files regarding false positives.
    # See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=79095 and https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83239
