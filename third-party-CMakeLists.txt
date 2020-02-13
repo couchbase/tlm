@@ -7,6 +7,10 @@
 # This setting is specifically required for HdrHistogram_c.
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+set(gtest_force_shared_crt ON CACHE BOOL
+     "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
+add_subdirectory(googletest EXCLUDE_FROM_ALL)
+
 add_subdirectory(gsl-lite)
 target_include_directories(gsl_lite INTERFACE ${gsl_lite_SOURCE_DIR}/include)
 
