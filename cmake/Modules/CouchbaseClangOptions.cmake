@@ -93,6 +93,14 @@ if (HAVE_NO_UNUSED_LAMBDA_CAPTURE)
   list(APPEND _cb_cxx_flags -Wno-unused-lambda-capture)
 endif()
 
+# Googletest makes use of variadic macros which it is valid to be empty.
+# By default clang warns about this, so disable the warning as it doesn't
+# add much value and results in hundreds of warnings across our unit tests.
+check_cxx_compiler_flag(-Wno-gnu-zero-variadic-macro-arguments HAVE_NO_GNU_ZERO_VARIADIC_MACRO_ARGUMENTS)
+if (HAVE_NO_GNU_ZERO_VARIADIC_MACRO_ARGUMENTS)
+    list(APPEND _cb_cxx_flags -Wno-gnu-zero-variadic-macro-arguments)
+endif()
+
 # Convert the list to a string
 string(REPLACE ";" " " _cb_cxx_options "${_cb_cxx_flags}")
 
