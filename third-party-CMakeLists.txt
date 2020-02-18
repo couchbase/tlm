@@ -11,8 +11,19 @@ set(gtest_force_shared_crt ON CACHE BOOL
      "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
 add_subdirectory(googletest EXCLUDE_FROM_ALL)
 
-add_subdirectory(gsl-lite)
-target_include_directories(gsl_lite INTERFACE ${gsl_lite_SOURCE_DIR}/include)
+add_subdirectory(gsl-lite EXCLUDE_FROM_ALL)
+# Migration to gsl-lite v0.36:
+if(TARGET gsl::gsl-lite)
+  # a) We refer to the old name of gsl-lite - "gsl_lite" in a number of
+  # places in CMakeLists.txt. Add an alias to assist in migration.
+  add_library(gsl_lite ALIAS gsl-lite)
+else()
+  # b) the older version (0.25) of gsl-lite requires we add our own
+  # include_directories().  There's no explicit version number for
+  # gsl-lite exposed at this level, so instead check for the presence
+  # of gsl::gsl-lite library (which is only present in 0.36).
+  target_include_directories(gsl_lite INTERFACE ${gsl_lite_SOURCE_DIR}/include)
+endif()
 
 add_subdirectory(HdrHistogram_c)
 add_subdirectory(spdlog)
