@@ -63,6 +63,11 @@ set(CB_CXX_FLAGS_NO_OPTIMIZE     "-O0")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_cb_c_options}")
 
 # Configure the C++ compiler
+#   (Ideally we shouldn't be setting -std=c++14 here as we try to use
+#   set(CMAKE_CXX_STANDARD 14), but the option isn't added to the
+#   check_cxx_source_compiles causing such tests to fail.
+#   Keep the flag here until we've safely removed all of these
+#   checks)
 list(APPEND _cb_cxx_flags
      -Qunused-arguments
      -Wall
