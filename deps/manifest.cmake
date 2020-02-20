@@ -14,7 +14,7 @@
 #
 DECLARE_DEP (breakpad V2 VERSION 0.1.0 BUILD 4 PLATFORMS amzn2 centos7 debian8 debian9 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (breakpad V2 VERSION 0.1.0 BUILD 6 PLATFORMS centos8 debian10 rhel8)
-DECLARE_DEP (boost VERSION 1.67.0-cb8 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
+DECLARE_DEP (boost VERSION 1.67.0-cb7 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (curl V2 VERSION 7.66.0 BUILD 4 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS centos8 debian10 rhel8)
@@ -24,7 +24,7 @@ DECLARE_DEP (flatbuffers VERSION 1.10.0-cb5 PLATFORMS amzn2 centos7 centos8 debi
 DECLARE_DEP (flex VERSION 2.5.4a-cb1 PLATFORMS windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (flex VERSION 2.6.4-cb4 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (flex VERSION 2.6.4-cb6 PLATFORMS centos8 debian10 rhel8)
-DECLARE_DEP (folly VERSION v2019.08.12.00-cb3 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
+DECLARE_DEP (folly VERSION v2019.08.12.00-cb2 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (gflags VERSION 2.2.1-cb5 PLATFORMS amzn2 centos7 debian8 debian9 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (glog VERSION 0.3.5-cb4 PLATFORMS amzn2 centos6 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (grpc VERSION 1.12.0-cb10 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
