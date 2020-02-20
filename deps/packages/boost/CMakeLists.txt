@@ -10,7 +10,7 @@ if (WIN32)
    set(boost_variant "debug,release")
 else (WIN32)
    set(boost_bootstrap bootstrap.sh)
-   set(boost_extra_flags cxxflags=-std=c++14 cflags=-fno-omit-frame-pointer cxxflags=-fno-omit-frame-pointer)
+   set(boost_extra_flags cxxflags=-std=c++17 cflags=-fno-omit-frame-pointer cxxflags=-fno-omit-frame-pointer cxxflags=-fPIC)
    set(boost_variant "release")
 endif (WIN32)
 

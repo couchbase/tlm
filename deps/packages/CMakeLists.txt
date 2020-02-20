@@ -170,7 +170,7 @@ _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 _ADD_DEP_PACKAGE(flatbuffers 1.10.0 v1.10.0 5)
 
 _ADD_DEP_PACKAGE(json 3.5.0 v3.5.0 2)
-_ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 7)
+_ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 8)
 
 # Note: we build a number of packages against openssl,
 # including Erlang, libevent, folly, and grpc. Those packages
