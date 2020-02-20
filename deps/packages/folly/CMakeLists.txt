@@ -11,7 +11,7 @@ set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 # (previously using GCC 8.2.1), the following temporary conditionals
 # are needed for said platform, and can be removed once things are
 # resynced with a later build.
-DECLARE_DEP (boost VERSION 1.67.0-cb7 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
+DECLARE_DEP (boost VERSION 1.67.0-cb8 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS centos8 debian10 rhel8)
 DECLARE_DEP (gflags VERSION 2.2.1-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
@@ -51,7 +51,7 @@ ${CMAKE_CURRENT_BINARY_DIR}/install")
 list(APPEND cache_args -DBUILD_SHARED_LIBS:STRING=OFF)
 list(APPEND cache_args -DBoost_DETAILED_FAILURE_MSG:STRING=ON)
 list(APPEND cache_args -DBoost_USE_STATIC_LIBS:STRING=ON)
-list(APPEND cache_args -DCXX_STD:STRING=c++14)
+list(APPEND cache_args -DCXX_STD:STRING=c++17)
 
 if(WIN32)
    # GFlags / Glog: we build it statically, but gflags / glog headers default
@@ -71,6 +71,8 @@ if(WIN32)
            ${_folly_deps_install}/bin <SOURCE_DIR>)
 endif()
 
+_DETERMINE_CPU_COUNT(_parallelism)
+
 # Somebody working on folly decided to add a template parameter to SharedMutex
 # that defaults to whether or not folly was compiled with or without TSan. This
 # is a pain for us because we will need different symbols based on whether or
@@ -82,6 +84,7 @@ ExternalProject_Add(folly
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
         CMAKE_CACHE_ARGS ${cache_args}
+        BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
         )
@@ -98,9 +101,10 @@ if (${PLATFORM} MATCHES "ubuntu" OR ${PLATFORM} MATCHES "macos")
         PATCH_COMMAND ${folly_patch_command}
         CMAKE_CACHE_ARGS ${cache_args}
             -DCMAKE_CXX_FLAGS:STRING=${cxx_flags}\ -fsanitize=thread
+        BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-        INSTALL_COMMAND mkdir ${CMAKE_CURRENT_BINARY_DIR}/install/lib &&
+        INSTALL_COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/install/lib &&
         cp libfolly.a ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libfollytsan.a
         )
    ExternalProject_Add_StepDependencies(folly download follytsan)
@@ -115,6 +119,7 @@ if (WIN32)
         PATCH_COMMAND ${folly_patch_command}
         CMAKE_CACHE_ARGS ${cache_args}
             -DCMAKE_BUILD_TYPE:STRING=Debug
+        BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
         INSTALL_COMMAND cmake -E copy folly.lib ${CMAKE_CURRENT_BINARY_DIR}/install/lib/follyd.lib

@@ -6,8 +6,10 @@
 
 # Folly required dependancies:
 INCLUDE(FindCouchbaseDoubleConversion)
+INCLUDE(FindCouchbaseGFlags)
 INCLUDE(FindCouchbaseGlog)
 INCLUDE(FindCouchbaseLibevent)
+INCLUDE(FindCouchbaseOpenSSL)
 
 include(PlatformIntrospection)
 include(SelectLibraryConfigurations)
@@ -21,12 +23,12 @@ endif ()
 
 set(_folly_exploded ${CMAKE_BINARY_DIR}/tlm/deps/folly.exploded)
 
-find_path(FOLLY_INCLUDE_DIR folly/folly-config.h
+find_path(FOLLY_CONFIG_INCLUDE_DIR folly/folly-config.h
           PATH_SUFFIXES include
           PATHS ${_folly_exploded}
           ${_folly_no_default_path})
 
-if (NOT FOLLY_INCLUDE_DIR)
+if (NOT FOLLY_CONFIG_INCLUDE_DIR)
     message(FATAL_ERROR "Failed to locate folly include directory")
 endif ()
 
@@ -55,13 +57,15 @@ find_library(FOLLY_LIBRARY_DEBUG
 
 # Defines FOLLY_LIBRARY / LIBRARIES to the correct Debug / Release
 # lib based on the current BUILD_TYPE
+unset(FOLLY_LIBRARY CACHE)
+unset(FOLLY_LIBRARIES CACHE)
 select_library_configurations(FOLLY)
 
 if (NOT FOLLY_LIBRARIES)
     message(FATAL_ERROR "Failed to locate folly library")
 endif ()
 
-MESSAGE(STATUS "Found Facebook Folly headers: ${FOLLY_INCLUDE_DIR}")
+MESSAGE(STATUS "Found Facebook Folly headers: ${FOLLY_CONFIG_INCLUDE_DIR}")
 MESSAGE(STATUS "                   libraries: ${FOLLY_LIBRARIES}")
 
 if(NOT DOUBLE_CONVERSION_INCLUDE_DIR OR NOT DOUBLE_CONVERSION_LIBRARIES)
@@ -70,15 +74,21 @@ endif()
 
 # Append Folly's depenancies to the include / lib variables so users
 # of Folly pickup the dependancies automatically.
-list(APPEND FOLLY_INCLUDE_DIR ${DOUBLE_CONVERSION_INCLUDE_DIR} ${GLOG_INCLUDE_DIR})
-set(FOLLY_INCLUDE_DIR ${FOLLY_INCLUDE_DIR} CACHE STRING "Folly include directories" FORCE)
+list(APPEND FOLLY_INCLUDE_DIR )
+set(FOLLY_INCLUDE_DIR ${FOLLY_CONFIG_INCLUDE_DIR} ${DOUBLE_CONVERSION_INCLUDE_DIR} ${GLOG_INCLUDE_DIR}
+    CACHE STRING "Folly include directories" FORCE)
 
 list(APPEND FOLLY_LIBRARIES
             ${DOUBLE_CONVERSION_LIBRARIES}
             ${GLOG_LIBRARIES}
             ${CMAKE_DL_LIBS}
-            ${Boost_SYSTEM_LIBRARY}
-            ${Boost_THREAD_LIBRARY}
-            ${LIBEVENT_LIBRARIES})
+            Boost::filesystem
+            Boost::regex
+            Boost::program_options
+            Boost::system
+            Boost::thread
+            gflags
+            ${LIBEVENT_LIBRARIES}
+            ${OPENSSL_LIBRARIES})
 
 mark_as_advanced(FOLLY_INCLUDE_DIR FOLLY_LIBRARIES)
