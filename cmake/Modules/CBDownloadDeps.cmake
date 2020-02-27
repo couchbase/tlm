@@ -327,7 +327,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
     IF (NOT EXISTS "${CBDEP_CACHE}")
       MESSAGE (STATUS "Downloading cbdep ${CBDEP_VERSION}")
       _DOWNLOAD_FILE (
-        "http://packages.couchbase.com/cbdep/${CBDEP_VERSION}/${_cbdepfile}"
+        "https://packages.couchbase.com/cbdep/${CBDEP_VERSION}/${_cbdepfile}"
         "${CBDEP_CACHE}")
     ENDIF ()
     FILE (COPY "${CBDEP_CACHE}" DESTINATION "${PROJECT_BINARY_DIR}/tlm"
@@ -365,14 +365,14 @@ IF (NOT CBDownloadDeps_INCLUDED)
   CB_GET_SUPPORTED_PLATFORM (_supported_platform)
   IF (_supported_platform)
     SET (CB_DOWNLOAD_DEPS_REPO
-      "http://packages.couchbase.com/couchbase-server/deps"
+      "https://packages.couchbase.com/couchbase-server/deps"
       CACHE STRING "URL of third-party dependency repository")
   ELSE ()
     SET (CB_DOWNLOAD_DEPS_REPO
-      "http://packages.couchbase.com/couchbase-server/deps-unsupported"
+      "https://packages.couchbase.com/couchbase-server/deps-unsupported"
       CACHE STRING "URL of third-party dependency repository")
   ENDIF ()
-  SET (GO_DOWNLOAD_REPO "http://storage.googleapis.com/golang"
+  SET (GO_DOWNLOAD_REPO "https://storage.googleapis.com/golang"
     CACHE STRING "URL of Golang downloads repository")
 
   # Default download cache in user's home directory; may be overridden

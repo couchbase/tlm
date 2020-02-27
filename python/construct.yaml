@@ -12,7 +12,7 @@ installer_filename: cbpy-installer
 install_in_dependency_order: True
 
 channels:
-  - http://repo.anaconda.com/pkgs/main/
+  - https://repo.anaconda.com/pkgs/main/
 
 specs:
 # These are the packages we explicitly depend on.
