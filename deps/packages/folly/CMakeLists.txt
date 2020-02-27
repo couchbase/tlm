@@ -14,8 +14,6 @@ set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 DECLARE_DEP (boost VERSION 1.67.0-cb8 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS centos8 debian10 rhel8)
-DECLARE_DEP (gflags VERSION 2.2.1-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
-DECLARE_DEP (gflags VERSION 2.2.1-cb4 PLATFORMS centos8 debian10 rhel8)
 DECLARE_DEP (glog VERSION 0.3.5-cb4 PLATFORMS amzn2 centos6 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (jemalloc VERSION 5.2.1-cb1 PLATFORMS amzn2 centos7 centos8 debian7 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (libevent VERSION 2.1.8-cb8 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
@@ -42,8 +40,6 @@ list(APPEND folly_library_paths ${_folly_deps_install}/lib)
 set(cxx_flags "-fPIC -fvisibility=hidden")
 set(cache_args -DCMAKE_LIBRARY_PATH:STRING=${folly_library_paths})
 list(APPEND cache_args -DCMAKE_INCLUDE_PATH:STRING=${folly_include_paths})
-list(APPEND cache_args "-DCMAKE_PREFIX_PATH:STRING=\
-${CMAKE_CURRENT_BINARY_DIR}/gflags.exploded")
 list(APPEND cache_args -DCMAKE_CXX_FLAGS:STRING=${cxx_flags})
 list(APPEND cache_args -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo)
 list(APPEND cache_args "-DCMAKE_INSTALL_PREFIX:PATH=\
@@ -54,13 +50,11 @@ list(APPEND cache_args -DBoost_USE_STATIC_LIBS:STRING=ON)
 list(APPEND cache_args -DCXX_STD:STRING=c++17)
 
 if(WIN32)
-   # GFlags / Glog: we build it statically, but gflags / glog headers default
+   # Glog: we build it statically, but glog headers default
    # to defining all public symbols as dllimport which results in linker
    # errors - the compiler is expecting dll(shared) symbols and not static.
-   # Explicitly define GFLAGS_DLL_DEFINE_FLAG / GOOGLE_GLOG_DLL_DECL as
-   # empty to avoid this.
-   list(APPEND cache_args "-DCMAKE_CXX_FLAGS:STRING= -DGFLAGS_DLL_DEFINE_FLAG= \
-    -DGOOGLE_GLOG_DLL_DECL=")
+   # Explicitly define GOOGLE_GLOG_DLL_DECL as empty to avoid this.
+   list(APPEND cache_args "-DCMAKE_CXX_FLAGS:STRING= -DGOOGLE_GLOG_DLL_DECL=")
 
    # Folly code generation (GenerateFingerprintTables.exe) needs to run
    # at build-time; and to do so it needs the runtime dependancies of folly
@@ -83,6 +77,8 @@ ExternalProject_Add(folly
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
+              COMMAND git reset --hard
+              COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/folly_gflags_optional.patch
         CMAKE_CACHE_ARGS ${cache_args}
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
@@ -99,6 +95,8 @@ if (${PLATFORM} MATCHES "ubuntu" OR ${PLATFORM} MATCHES "macos")
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
+              COMMAND git reset --hard
+              COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/folly_gflags_optional.patch
         CMAKE_CACHE_ARGS ${cache_args}
             -DCMAKE_CXX_FLAGS:STRING=${cxx_flags}\ -fsanitize=thread
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
@@ -117,6 +115,8 @@ if (WIN32)
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
+              COMMAND git reset --hard
+              COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/folly_gflags_optional.patch
         CMAKE_CACHE_ARGS ${cache_args}
             -DCMAKE_BUILD_TYPE:STRING=Debug
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
