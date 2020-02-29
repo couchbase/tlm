@@ -6,6 +6,7 @@
 
 # Folly required dependancies:
 INCLUDE(FindCouchbaseDoubleConversion)
+INCLUDE(FindCouchbaseGFlags)
 INCLUDE(FindCouchbaseGlog)
 INCLUDE(FindCouchbaseLibevent)
 INCLUDE(FindCouchbaseOpenSSL)
@@ -86,6 +87,7 @@ list(APPEND FOLLY_LIBRARIES
             Boost::program_options
             Boost::system
             Boost::thread
+            gflags
             ${LIBEVENT_LIBRARIES}
             ${OPENSSL_LIBRARIES})
 
