@@ -26,7 +26,6 @@ DECLARE_DEP (erlang VERSION R16B03-1-couchbase-cb6 PLATFORMS sunos ubuntu17.04 f
 DECLARE_DEP (erlang VERSION R16B03-1-couchbase-cb4 PLATFORMS freebsd windows_msvc2017)
 DECLARE_DEP (flatbuffers VERSION 1.4.0-cb1 PLATFORMS freebsd sunos ubuntu17.04 windows_msvc2017)
 DECLARE_DEP (flatbuffers VERSION 1.7.1-cb1 PLATFORMS fedora26 fedora27)
-DECLARE_DEP (flex VERSION 2.6.4-cb3 PLATFORMS freebsd sunos fedora26 fedora27)
 DECLARE_DEP (icu4c VERSION 54.1.0 PLATFORMS windows_msvc2017)
 DECLARE_DEP (icu4c VERSION 54.1-cb10 PLATFORMS freebsd sunos ubuntu17.04)
 DECLARE_DEP (icu4c VERSION 59.1-cb1 PLATFORMS fedora26)
