@@ -29,6 +29,10 @@ if (NOT DEFINED Boost_FOUND)
         # Supported platforms should only use the provided hints and pick it up
         # from cbdeps
         set(Boost_NO_SYSTEM_PATHS ON)
+        # We don't want to use any system-provided boost package configuration
+        # files (Boost 1.70.0 upwards) on supported platforms - just our own
+        # cbdep.
+        set(Boost_NO_BOOST_CMAKE ON)
     endif ()
 
     set(Boost_ADDITIONAL_VERSIONS "1.67")
