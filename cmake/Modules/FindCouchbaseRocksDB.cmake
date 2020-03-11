@@ -13,6 +13,14 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+# We build a separate TSan library for RocksDB as we otherwise end up with some
+# odd issues if the linker picks up unannotated symbols.
+if (CB_THREADSANITIZER)
+    set(rocksdb_lib rocksdbtsan)
+else(CB_THREADSANITIZER)
+    set(rocksdb_lib rocksdb)
+endif(CB_THREADSANITIZER)
+
 # Locate RocksDB library
 # This module defines
 #  ROCKSDB_FOUND, if false, do not try to link with rocksdb
@@ -36,7 +44,7 @@ if (NOT DEFINED ROCKSDB_FOUND)
               ${_rocksdb_no_default_path})
 
     find_library(ROCKSDB_LIBRARIES
-                 NAMES rocksdb
+                 NAMES ${rocksdb_lib}
                  HINTS ${CMAKE_INSTALL_PREFIX}/lib
                  ${_rocksdb_no_default_path})
 

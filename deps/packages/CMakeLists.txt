@@ -196,7 +196,10 @@ ENDIF ()
 _ADD_DEP_PACKAGE(numactl 2.0.11 v2.0.11 3)
 
 IF (NOT WIN32)
-    _ADD_DEP_PACKAGE(rocksdb 5.18.3 5.18.3-couchbase 4)
+    # As the output package for rocksdb contains the version in the name, it is
+    # also necessary to update the package name in
+    # deps/packages/rocksdb/CmakeLists.txt which we use to copy/rename the lib
+    _ADD_DEP_PACKAGE(rocksdb 5.18.3 5.18.3-couchbase 5)
 ENDIF ()
 _ADD_DEP_PACKAGE(lz4 1.8.0 v1.8.0 4)
 # maven 3.5.2-cb3 and 3.5.2-cb4 exist as attempts to make Windows work,
