@@ -114,5 +114,5 @@ endif ()
 set(CMAKE_CXX_FLAGS_DEBUG "-g")
 set(CB_CXX_FLAGS_NO_OPTIMIZE -O0)
 
-set(CB_GNU_CXX11_OPTION "-std=gnu++11")
+set(CB_GNU_CXX11_OPTION "-std=gnu++17")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_cb_cxx_options}")

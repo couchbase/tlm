@@ -61,7 +61,7 @@ list(APPEND _cb_cxx_flags
      -fno-strict-aliasing
      -Werror=switch)
 
-SET(CB_GNU_CXX11_OPTION "-std=gnu++11")
+SET(CB_GNU_CXX11_OPTION "-std=gnu++17")
 
 if (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 6.9.9)
    # Disable stringop-overflow warnings as there seem to be a fair few bugs in that area (GCC 7.2)
