@@ -68,7 +68,7 @@ ADD_CUSTOM_COMMAND (OUTPUT "${CONDA_EXE}"
   COMMAND "${CMAKE_COMMAND}" -E remove_directory "${_miniconda_install}"
   COMMAND "${CBDEP}" install -d "${CMAKE_CURRENT_BINARY_DIR}"
       miniconda3 ${MINICONDA_VERSION}
-  COMMAND "${_miniconda_install}/${_condapath}/conda" config --set auto_update_conda False
+  COMMAND "${CMAKE_COMMAND}" -E echo "auto_update_conda: False" > "${_miniconda_install}/.condarc"
   VERBATIM)
 
 ADD_CUSTOM_TARGET(miniconda3 ALL DEPENDS "${CONDA_EXE}")
@@ -85,10 +85,15 @@ ENDIF ()
 # build environment is launched via sudo. This breaks conda for dumb
 # reasons (https://github.com/conda/conda/issues/7267). Workaround is
 # to unset SUDO_UID when invoking.
+# MB-37289: Also unset some Conda environment variables in case the
+# user has a different installation of conda, and override HOME so it
+# can't read the user's ~/.condarc.
 ADD_CUSTOM_COMMAND (OUTPUT "${_constructor}"
   COMMENT "Installing Anaconda Constructor"
   DEPENDS miniconda3
-  COMMAND "${CMAKE_COMMAND}" -E env --unset=SUDO_UID
+  COMMAND "${CMAKE_COMMAND}" -E env
+    --unset=SUDO_UID
+    --unset=CONDA_PREFIX --unset=CONDA_DEFAULT_ENV "HOME=${_miniconda_install}"
     "${CONDA_EXE}" install -y constructor=${CONSTRUCTOR_VERSION}
   VERBATIM)
 
