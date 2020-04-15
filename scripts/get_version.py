@@ -1,22 +1,13 @@
 #!/usr/bin/env python
 
 import xml.etree.ElementTree as ET
+from subprocess import check_output
 
-tree = ET.parse('.repo/manifest.xml')
-root = tree.getroot()
+manifest = check_output(['repo', 'manifest'])
+root = ET.fromstring(manifest.decode('utf-8'))
 
-version = None
-buildnum = None
-
-for project in root.findall('project'):
-    if project.get('name') == 'build':
-        for annotation in project.findall('annotation'):
-            if annotation.get('name') == 'VERSION':
-                print '%s-0000' % (annotation.get('value'),)
-                break
-        else:
-            print '0.0.0-9999'
-
-        break
+verattr = root.find('project[@name="build"]/annotation[@name="VERSION"]')
+if verattr is not None:
+    print ('%s-0000' % (verattr.get('value'),))
 else:
-    print '0.0.0-9999'
+    print ('0.0.0-9999')

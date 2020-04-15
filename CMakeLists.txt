@@ -158,6 +158,7 @@ endif()
 # if it is an empty string
 SET (PRODUCT_VERSION "" CACHE STRING "Product version with build number")
 IF ("${PRODUCT_VERSION}" STREQUAL "")
+  SET (_product_version)
   IF (PYTHON_EXECUTABLE)
     # Try to determine product version from manifest
     EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_version.py
@@ -165,9 +166,10 @@ IF ("${PRODUCT_VERSION}" STREQUAL "")
       OUTPUT_VARIABLE _product_version
       ERROR_QUIET
       OUTPUT_STRIP_TRAILING_WHITESPACE)
-  ELSE (PYTHON_EXECUTABLE)
-    SET(_product_version "0.0.0-9999")
-  ENDIF (PYTHON_EXECUTABLE)
+  ENDIF ()
+  IF (NOT _product_version)
+    SET (_product_version "0.0.0-9999")
+  ENDIF ()
   SET (PRODUCT_VERSION ${_product_version} CACHE STRING "Product version with build number" FORCE)
 ENDIF ("${PRODUCT_VERSION}" STREQUAL "")
 
