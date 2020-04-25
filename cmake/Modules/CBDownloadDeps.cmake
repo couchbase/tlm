@@ -39,9 +39,19 @@ IF (NOT CBDownloadDeps_INCLUDED)
   # First checks the cache for an up-to-date copy based on md5.
   # Sets the variable named by "var" to the locally-cached path.
   FUNCTION (_DOWNLOAD_URL_TO_CACHE url var)
-    # Compute local name for cache.
+    # First compute the URL for the .md5. For historical reasons, if the
+    # url's extension is ".tgz", the MD5 url will be same as the url with
+    # ".tgz" replaced by ".md5". Otherwise, the MD5 url will simply be the url
+    # with an additional ".md5" extension.
+    IF (url MATCHES "\\.tgz$")
+      STRING (REGEX REPLACE "\\.tgz$" ".md5" _md5url "${url}")
+    ELSE ()
+      SET (_md5url "${_url}.md5")
+    ENDIF ()
+
+    # Compute local filenames for cache.
     GET_FILENAME_COMPONENT (_file "${url}" NAME)
-    SET (_md5file "${_file}.md5")
+    GET_FILENAME_COMPONENT (_md5file "${_md5url}" NAME)
 
     # Compute local full paths to cached files.
     SET (_cache_file_path "${CB_DOWNLOAD_DEPS_CACHE}/${_file}")
@@ -58,15 +68,6 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
     # File not found in cache or cache corrupt - download new.
 
-    # First compute the URL for the .md5 and download it. For historical
-    # reasons, if the url's extension is ".tgz", the MD5 url will be same as
-    # the url with ".tgz" replaced by ".md5". Otherwise, the MD5 url will
-    # simply be the url with an additional ".md5" extension.
-    IF (url MATCHES "\\.tgz$")
-      STRING (REGEX REPLACE "\\.tgz$" ".md5" _md5url "${url}")
-    ELSE ()
-      SET (_md5url "${_url}.md5")
-    ENDIF ()
     MESSAGE (STATUS "Downloading dependency md5: ${_md5file}")
     _DOWNLOAD_FILE ("${_md5url}" "${_cache_md5file_path}")
     MESSAGE (STATUS "Downloading dependency: ${_file}")
@@ -87,12 +88,12 @@ IF (NOT CBDownloadDeps_INCLUDED)
           MESSAGE (STATUS "Dependency '${path}' found in cache")
           SET(${var} TRUE PARENT_SCOPE)
           RETURN ()
-        ELSE (_md5equal)
+        ELSE ()
           MESSAGE (WARNING "Cached download for dependency '${path}' has "
             "incorrect MD5! Will re-download!")
-        ENDIF (_md5equal)
+        ENDIF ()
       ELSE (EXISTS "${md5path}")
-        MESSAGE (WARNING "Cached download for dependency '${md5path}' is missing "
+        MESSAGE (WARNING "Cached download for dependency '${path}' is missing "
           "md5 file! Will re-download!")
       ENDIF (EXISTS "${md5path}")
     ENDIF (EXISTS "${path}")
@@ -179,7 +180,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
         # check if we maybe have locally built dep file
         _GET_DEP_FILENAME("${name}" "${_dep_fullver}" _dep_filename)
         SET(_dep_path "${CB_DOWNLOAD_DEPS_CACHE}/${_dep_filename}")
-        SET(_dep_md5path "${CB_DOWNLOAD_DEPS_CACHE}/${_dep_filename}.md5")
+        STRING(REGEX REPLACE "\\.tgz$" ".md5" _dep_md5path "${_dep_path}")
 
         _CHECK_CACHED_DEP_FILE("${_dep_path}" "${_dep_md5path}" _dep_found)
 
