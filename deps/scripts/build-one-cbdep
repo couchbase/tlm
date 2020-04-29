@@ -9,5 +9,5 @@ cmake --build . --target ${PACKAGE}
 
 if [ x$1 = xinstall ]
 then
-    cp deps/*/*.tgz deps/*/*.md5 ~/.cbdepscache
+    cp deps/*/*/*.tgz deps/*/*/*.md5 ~/.cbdepscache
 fi
