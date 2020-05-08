@@ -31,6 +31,8 @@ ninja install || goto error
 cd ..\..\..\..
 
 rem Build grpc binaries and libraries
+rem Protobuf_USE_STATIC_LIBS necessary due to bug in CMake:
+rem https://gitlab.kitware.com/paraview/paraview/issues/19527
 mkdir .build
 cd .build
 cmake -G Ninja ^
@@ -44,6 +46,12 @@ cmake -G Ninja ^
   -DgRPC_ZLIB_PROVIDER=package ^
   -DgRPC_CARES_PROVIDER=package ^
   -DgRPC_SSL_PROVIDER=package ^
+  -DgRPC_BUILD_GRPC_RUBY_PLUGIN=OFF ^
+  -DgRPC_BUILD_GRPC_PHP_PLUGIN=OFF ^
+  -DgRPC_BUILD_GRPC_OBJECTIVE_C_PLUGIN=OFF ^
+  -DgRPC_BUILD_GRPC_CSHARP_PLUGIN=OFF ^
+  -DgRPC_BUILD_GRPC_NODE_PLUGIN=OFF ^
+  -DProtobuf_USE_STATIC_LIBS=ON ^
   .. || goto error
 ninja install || goto error
 

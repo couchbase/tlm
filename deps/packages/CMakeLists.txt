@@ -211,6 +211,6 @@ _ADD_DEP_PACKAGE(double-conversion 3.0.0 v3.0.0 4)
 _ADD_DEP_PACKAGE(glog 0.3.5 v0.3.5 4)
 
 _ADD_DEP_PACKAGE(folly v2019.08.12.00 v2019.08.12.00 4)
-_ADD_DEP_PACKAGE(grpc 1.12.0 v1.12.0 10)
+_ADD_DEP_PACKAGE(grpc 1.28.1 v1.28.1 1)
 _ADD_DEP_PACKAGE(pcre 8.43 v8.43 2)
 _ADD_DEP_PACKAGE(opentracing-cpp v1.5.1 v1.5.1 4)
