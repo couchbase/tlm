@@ -3,15 +3,44 @@
 INSTALL_DIR=$1
 PLATFORM=$2
 
-pushd `dirname $0` > /dev/null
-SCRIPTPATH=`pwd -P`
+pushd $(dirname $0) > /dev/null
+SCRIPTPATH=$(pwd -P)
 popd > /dev/null
+
+DEPS=/tmp/deps
+rm -rf ${DEPS}
+mkdir -p ${DEPS}
+
+# Download cbdep to get python2 (still required for this build sadly).
+CBDEP_TOOL_VER=0.9.15
+MINICONDA_VER=4.7.12.1
+
+# Download cbdep, unless it's already available in the local .cbdepscache
+OPSYS=$(uname -s | tr "[:upper:]" "[:lower:]")
+CBDEP_BIN_CACHE=/home/couchbase/.cbdepscache/cbdep/${CBDEP_TOOL_VER}/cbdep-${CBDEP_TOOL_VER}-${OPSYS}
+
+if [[ -f ${CBDEP_BIN_CACHE} ]]; then
+    cp ${CBDEP_BIN_CACHE} /tmp/cbdep
+else
+    CBDEP_URL=https://packages.couchbase.com/cbdep/${CBDEP_TOOL_VER}/cbdep-${CBDEP_TOOL_VER}-${OPSYS}
+    curl -o /tmp/cbdep ${CBDEP_URL}
+fi
+
+chmod +x /tmp/cbdep
+
+# Use cbdep to install miniconda2. Add to PATH *last* (so it only adds
+# python2, not overriding anything). Also add to LD_LIBRARY_PATH as the
+# "vpython" script the build uses creates a copy of "python2" but doesn't
+# copy libpython2 as well.
+/tmp/cbdep install -d ${DEPS} miniconda2 ${MINICONDA_VER}
+export PATH=${PATH}:${DEPS}/miniconda2-${MINICONDA_VER}/bin
+export LD_LIBRARY_PATH=${DEPS}/miniconda2-${MINICONDA_VER}/lib
 
 # Get Google's depot_tools; checkout from October 18th, 2018,
 # which worked for the SuSE platforms on the last build.
 git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 pushd depot_tools && git checkout 93277a7 && popd
-export PATH=`pwd`/depot_tools:$PATH
+export PATH=$(pwd)/depot_tools:$PATH
 
 # Set up gclient config for tag to pull for v8, then do sync
 # (this handles the 'fetch v8' done by the usual process)

@@ -14,6 +14,7 @@ DECLARE_DEP (openssl VERSION 1.1.1d-cb1
                        suse12 suse15
                        ubuntu16.04 ubuntu18.04
                        windows_msvc2017)
+DECLARE_DEP (openssl VERSION 1.1.1d-cb2 PLATFORMS ubuntu20.04)
 SET (CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 
 INCLUDE (ExternalProject)
