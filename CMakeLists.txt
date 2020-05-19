@@ -142,6 +142,7 @@ INCLUDE(FindCouchbaseNlohmannJson)
 INCLUDE(FindCouchbaseRocksDB)
 INCLUDE(FindCouchbaseOpentracing)
 INCLUDE(FindCouchbasePCRE)
+INCLUDE(FindCouchbasePrometheus)
 INCLUDE(FindCouchbaseNuma)
 
 if (BUILD_ENTERPRISE)
