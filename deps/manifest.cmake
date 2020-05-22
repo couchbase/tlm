@@ -12,6 +12,10 @@
 # you may use the cmake macro CB_GET_SUPPORTED_PLATFORM to
 # check if this is a supported platform.
 #
+# IMPORTANT: If you add a new package here or update an existing package
+# version, you must also update couchbase-server-black-duck-manifest.json
+# in this same directory!
+#
 DECLARE_DEP (breakpad V2 VERSION 20200430 BUILD 1 PLATFORMS amzn2 centos7 centos8 debian9 debian10 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (boost VERSION 1.67.0-cb8 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (curl V2 VERSION 7.66.0 BUILD 7 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)

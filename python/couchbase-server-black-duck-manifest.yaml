@@ -1,0 +1,4 @@
+components:
+
+    # Since we ship this, include it in Black Duck reports
+    continuumio/conda: [ 4.6.14 ]
