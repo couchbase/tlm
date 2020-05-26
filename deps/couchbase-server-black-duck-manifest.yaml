@@ -1,0 +1,59 @@
+components:
+
+    #
+    # Classic cbdeps first
+    #
+
+
+    boost:
+        bd-name: Boost C++ Libraries
+        versions: [ 1.67.0 ]
+    # Note: breakpad doesn't really have "releases". I picked this version from
+    # Black Duck's history as being moderately close to the date of the code we
+    # use.
+    breakpad: [ svn-r0 ]
+    curl:
+        bd-name: libcurl
+        versions: [ 7.66.0 ]
+    double-conversion: [ v3.0.0 ]
+    erlang: [ OTP-20.3.8.11 ]
+    flatbuffers: [ v1.10.0 ]
+    folly:
+        bd-name: Facebook Folly
+        versions: [ v2019.08.12.00 ]
+    glog: [ 0.3.5 ]
+    grpc: [ 1.12.0 ]
+    jemalloc: [ 5.2.1 ]
+    json:
+        bd-name: JSON for Modern C++
+        versions: [ 3.5.0 ]
+    libevent:
+        bd-name: libevent - an event notification library
+        versions: [ 2.1.8 ]
+    libuv: [ 1.20.3 ]
+    lz4: [ 1.8.0 ]
+    numactl: [ 2.0.11 ]
+    openjdk: [ 1.8.0.171 ]
+    openssl: [ 1.1.1d ]
+    opentracing-cpp: [ v1.5.1 ]
+    pcre: [ 8.43 ]
+    snappy: [ 1.1.1 ]
+    v8:
+        bd-name: Google V8 Javascript engine
+        versions: [ 7.1.321 ]
+    zlib: [ 1.2.11 ]
+
+    #
+    # End classic cbdeps. Note: the following cbdeps packags are build-only
+    # requirements and hence aren't captured for the Black Duck report:
+    #     maven
+    #     protoc-gen-go
+    #
+    # We also don't include RocksDB as it is only used by internal testing
+    # builds, not shipped.
+    #
+
+    # Include these here even though they're actually included in the builds
+    # by server-linux-build.sh.
+    libgcc: [ 7.3.1 ]
+    libstdc++: [ 7.3.1 ]
