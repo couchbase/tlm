@@ -65,14 +65,11 @@ ENDIF (CB_GO_RACE_DETECTOR)
 SET (ENV{GOROOT} "${GOROOT}")
 SET (GO_EXECUTABLE "${GOROOT}/bin/go")
 
-# For Go 1.5 or better, use -pkgdir to separate the compiled bits out
+# Use -pkgdir to separate the compiled bits out
 # of the source directories - separate directories per Go version, to
 # prevent conflicts.
-SET (_bits)
-IF ("${GOVERSION}" VERSION_GREATER 1.4.9)
-  SET (_bits -pkgdir "${GO_BINARY_DIR}")
-  STRING (REPLACE ";" " " _bits_str "${_bits}")
-ENDIF ()
+SET (_bits -pkgdir "${GO_BINARY_DIR}")
+STRING (REPLACE ";" " " _bits_str "${_bits}")
 
 # Attempt to hide build-system-specific paths in resulting binaries.
 get_filename_component(REPOSYNC "${REPOSYNC}" REALPATH)
