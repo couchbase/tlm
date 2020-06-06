@@ -62,14 +62,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
   # Set up clean targets. Note: the hardcoded godeps and goproj is kind of
   # a hack; it should build that up from the GOPATHs passed to GoInstall.
-  # Also, the pkg directories are only necessary for Go 1.4.x support since
-  # all 1.5+ go artifacts are redirected to GO_BINARY_DIR.
   SET (GO_BINARY_DIR "${CMAKE_BINARY_DIR}/gopkg")
   ADD_CUSTOM_TARGET (go_realclean
     COMMAND "${CMAKE_COMMAND}" -E remove_directory "${GO_BINARY_DIR}"
-    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_SOURCE_DIR}/godeps/pkg"
     COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_SOURCE_DIR}/godeps/bin"
-    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_SOURCE_DIR}/goproj/pkg"
     COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_SOURCE_DIR}/goproj/bin")
   ADD_DEPENDENCIES (realclean go_realclean)
 
@@ -244,6 +240,156 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF (Go_INSTALL_PATH)
 
   ENDMACRO (GoInstall)
+
+  # Adds a target named TARGET which (always) calls "go build
+  # PACKAGE".  This delegates incremental-build responsibilities to
+  # the go compiler, which is generally what you want. This target
+  # presumes that the package in question is using Go modules to
+  # declare itself and its dependencies. One consequence of this
+  # is that there must be go.mod and go.sum files in the source
+  # directory that calls GoModBuild() or some parent directory.
+  #
+  # Required arguments:
+  #
+  # TARGET - name of CMake target to create
+  #
+  # PACKAGE - A single Go package to build. This should produce a single
+  # executable as output.
+  #
+  # GOVERSION - the version of the Go compiler required for this target.
+  # See file header comment.
+  #
+  # Optional arguments:
+  #
+  # GCFLAGS - flags that will be passed (via -gcflags) to all compile
+  # steps; should be a single string value, with spaces if necessary
+  #
+  # GOTAGS - tags that will be passed (viga -tags) to all compile
+  # steps; should be a single string value, with spaces as necessary
+  #
+  # LDFLAGS - flags that will be passed (via -ldflags) to all compile
+  # steps; should be a single string value, with spaces if necessary
+  #
+  # NOCONSOLE - for targets that should not launch a console at runtime
+  # (on Windows - silently ignored on other platforms)
+  #
+  # DEPENDS - list of other CMake targets on which TARGET will depend
+  #
+  # INSTALL_PATH - if specified, a CMake INSTALL() directive will be
+  # created to install the output into the named path
+  #
+  # OUTPUT - name of the produced executable. Default value is the basename of
+  # PACKAGE, per the go compiler. On Windows, ".exe" will be appended.
+  #
+  # CGO_INCLUDE_DIRS - path(s) to directories to search for C include files
+  #
+  # CGO_LIBRARY_DIRS - path(s) to libraries to search for C link libraries
+  #
+  MACRO (GoModBuild)
+
+    PARSE_ARGUMENTS (Go "DEPENDS;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
+        "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GOVERSION;GCFLAGS;GOTAGS;GOBUILDMODE;LDFLAGS"
+      "NOCONSOLE" ${ARGN})
+
+    IF (NOT Go_TARGET)
+      MESSAGE (FATAL_ERROR "TARGET is required!")
+    ENDIF ()
+    IF (NOT Go_PACKAGE)
+      MESSAGE (FATAL_ERROR "PACKAGE is required!")
+    ENDIF ()
+    IF (NOT Go_GOVERSION)
+      MESSAGE (FATAL_ERROR "GOVERSION is required!")
+    ENDIF ()
+    IF (NOT Go_GOBUILDMODE)
+        SET(Go_GOBUILDMODE "default")
+    ENDIF ()
+
+    # Extract the binary name from the package, and tweak for Windows.
+    IF (Go_OUTPUT)
+      SET (_exe "${Go_OUTPUT}")
+    ELSE ()
+      GET_FILENAME_COMPONENT (_exe "${Go_PACKAGE}" NAME)
+    ENDIF ()
+    SET (_exe "${CMAKE_CURRENT_BINARY_DIR}/${_exe}")
+    IF (WIN32)
+      SET (_exe "${_exe}.exe")
+    ENDIF ()
+
+    # Concatenate NOCONSOLE with LDFLAGS
+    IF (WIN32 AND ${Go_NOCONSOLE})
+      SET (_ldflags "-H windowsgui ${Go_LDFLAGS}")
+    ELSE ()
+      SET (_ldflags "${Go_LDFLAGS}")
+    ENDIF ()
+
+    # If Sanitizers are enabled then add a runtime linker path to
+    # locate libasan.so / libubsan.so etc.
+    # This isn't usually needed if we are running on the same machine
+    # as we built (as the sanitizer libraries are typically in
+    # /usr/lib/ or similar), however when creating a packaged build
+    # which will be installed and run on a different machine we need
+    # to ensure that the runtime linker knows how to find our copies
+    # of libasan.so etc in $PREFIX/lib.
+    IF (CB_ADDRESSSANITIZER OR CB_UNDEFINED_SANITIZER)
+      SET (_ldflags "${_ldflags} -r \$ORIGIN/../lib")
+    ENDIF()
+
+    # Compute path to Go compiler
+    GET_GOROOT ("${Go_GOVERSION}" _goroot _gover)
+    SET (_goexe "${_goroot}/bin/go")
+
+    # Path to go binary dir for this target
+    SET (_gobindir "${GO_BINARY_DIR}/go-${_gover}")
+
+    # Go install target
+    ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
+      COMMAND "${CMAKE_COMMAND}"
+        -D "GOEXE=${_goexe}"
+        -D "GOVERSION=${_gover}"
+        -D "GO_BINARY_DIR=${_gobindir}"
+        -D "CMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
+        -D "REPOSYNC=${TLM_MODULES_DIR}/../../.."
+        -D "CGO_CFLAGS=${CMAKE_CGO_CFLAGS}"
+        -D "CGO_LDFLAGS=${CMAKE_CGO_LDFLAGS}"
+        -D "GCFLAGS=${Go_GCFLAGS}"
+        -D "GOTAGS=${Go_GOTAGS}"
+        -D "GOBUILDMODE=${Go_GOBUILDMODE}"
+        -D "LDFLAGS=${_ldflags}"
+        -D "PACKAGE=${Go_PACKAGE}"
+        -D "OUTPUT=${_exe}"
+        -D "CGO_INCLUDE_DIRS=${Go_CGO_INCLUDE_DIRS}"
+        -D "CGO_LIBRARY_DIRS=${Go_CGO_LIBRARY_DIRS}"
+        -D "CB_GO_CODE_COVERAGE=${CB_GO_CODE_COVERAGE}"
+        -D "CB_GO_RACE_DETECTOR=${CB_GO_RACE_DETECTOR}"
+        -P "${TLM_MODULES_DIR}/go-modbuild.cmake"
+      WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+      COMMENT "Building Go Modules target ${Go_TARGET} using Go ${_gover}"
+      VERBATIM)
+    IF (Go_DEPENDS)
+      ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
+    ENDIF ()
+    MESSAGE (STATUS "Added Go Modules build target '${Go_TARGET}' using Go ${_gover}")
+
+    # QQQ Delete when we're sure it's not necessary
+    # We expect multiple go targets to be operating over the same
+    # GOPATH.  It seems like the go compiler doesn't like be invoked
+    # in parallel in this case, as would happen if we parallelize the
+    # Couchbase build (eg., 'make -j8'). Since the go compiler itself
+    # does parallel building, we want to serialize all go targets. So,
+    # we make them all depend on any earlier Go targets.
+    #GET_PROPERTY (_go_targets GLOBAL PROPERTY CB_GO_TARGETS)
+    #IF (_go_targets)
+    #  ADD_DEPENDENCIES(${Go_TARGET} ${_go_targets})
+    #ENDIF (_go_targets)
+    #SET_PROPERTY (GLOBAL APPEND PROPERTY CB_GO_TARGETS ${Go_TARGET})
+
+    # go-modbuild.cmake will produce the output executable in the
+    # current binary dir. Install it from there if requested.
+    IF (Go_INSTALL_PATH)
+      INSTALL (PROGRAMS "${_exe}" DESTINATION "${Go_INSTALL_PATH}")
+    ENDIF ()
+
+  ENDMACRO (GoModBuild)
 
   # Adds a test named NAME which calls go test in the DIR
   # Required arguments:
