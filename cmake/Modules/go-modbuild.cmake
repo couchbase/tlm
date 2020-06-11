@@ -51,6 +51,10 @@ IF (CB_GO_RACE_DETECTOR)
   SET (_go_race -race)
 ENDIF (CB_GO_RACE_DETECTOR)
 
+# Unset GOROOT in the environment (which will make Go figure it out from
+# the path to the go compiler on disk, which is what we want)
+SET (ENV{GOROOT})
+
 # Use GOPATH to tell Go where to store downloaded and cached Go modules.
 # It will put things into pkg/mod.
 SET (ENV{GOPATH} "${GO_BINARY_DIR}")
