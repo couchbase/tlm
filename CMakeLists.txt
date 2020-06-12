@@ -291,10 +291,6 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/backup)
     ENDIF()
 
-    IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/cbbs")
-        ADD_SUBDIRECTORY(cbbs)
-    ENDIF()
-
     IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/plasma" AND NOT BUILD_ONLY_TOOLS)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/plasma)
     ENDIF()
