@@ -81,9 +81,10 @@ list(APPEND FOLLY_LIBRARIES
             ${DOUBLE_CONVERSION_LIBRARIES}
             ${GLOG_LIBRARIES}
             ${CMAKE_DL_LIBS}
+            Boost::context
             Boost::filesystem
-            Boost::regex
             Boost::program_options
+            Boost::regex
             Boost::system
             Boost::thread
             ${LIBEVENT_LIBRARIES}
