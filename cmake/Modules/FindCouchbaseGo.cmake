@@ -349,6 +349,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
         -D "GO_BINARY_DIR=${_gobindir}"
         -D "CMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
         -D "REPOSYNC=${TLM_MODULES_DIR}/../../.."
+        -D "CB_PRODUCTION_BUILD=${CB_PRODUCTION_BUILD}"
         -D "CGO_CFLAGS=${CMAKE_CGO_CFLAGS}"
         -D "CGO_LDFLAGS=${CMAKE_CGO_LDFLAGS}"
         -D "GCFLAGS=${Go_GCFLAGS}"
