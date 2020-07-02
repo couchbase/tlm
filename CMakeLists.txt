@@ -288,8 +288,8 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ENDIF ()
     ENDIF()
 
-    IF (EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/backup")
-      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/backup)
+    IF (EXISTS "${PROJECT_SOURCE_DIR}/backup")
+      ADD_SUBDIRECTORY(backup)
     ENDIF()
 
     IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/cbbs")
