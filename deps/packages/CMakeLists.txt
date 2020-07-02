@@ -50,8 +50,9 @@ MACRO (_ADD_PACKAGE_STEP)
   _ADD_MD5_FILE_STEP(${_output_file}.tgz ${_output_file}.md5 ${_dep_package})
 
   if (CB_DOWNLOAD_DEPS_CACHE)
-    SET(_cached_file "${CB_DOWNLOAD_DEPS_CACHE}/${_output_file_name}.tgz")
-    SET(_cached_md5 "${_cached_file}.md5")
+    SET(_cached_file_base "${CB_DOWNLOAD_DEPS_CACHE}/${_output_file_name}")
+    SET(_cached_file "${_cached_file_base}.tgz")
+    SET(_cached_md5 "${_cached_file_base}.md5")
     SET(_target build-and-cache-${_dep_package})
 
     _CHECK_CACHED_DEP_FILE("${_cached_file}" "${_cached_md5}" _dep_found)
