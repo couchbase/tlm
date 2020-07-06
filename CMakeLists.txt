@@ -62,13 +62,6 @@ IF ($ENV{JETBRAINS_IDE})
 ENDIF ($ENV{JETBRAINS_IDE})
 
 IF (DEFINED JETBRAINS_CLION_IDE)
-   # CLion tries to autodetect all of the different configuration
-   # types and generate projects for them. That cause a race condition
-   # with the population pf the precompiled binaries we've got
-   # making an incomplete configuration. To work around that,
-   # let's just remove all of the other configurations and just
-   # build a debug build
-   SET(CMAKE_CONFIGURATION_TYPES Debug CACHE STRING "" FORCE)
    ADD_DEFINITIONS(-DJETBRAINS_CLION_IDE)
 ENDIF (DEFINED JETBRAINS_CLION_IDE)
 
