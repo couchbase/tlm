@@ -1,18 +1,21 @@
 include(CheckCXXCompilerFlag)
 include(CMakePushCheckState)
 
-# Helper function used by CouchbaseAddressSanitizer / UndefinedSanitizer.
-# Searches for a sanitizer_lib_name, and once found installs it
-# into sanitizer_dest
-function(install_sanitizer_library _name sanitizer_lib_name sanitizer_dest)
+function(try_search_sanitizer_library variable _name)
   execute_process(COMMAND ${CMAKE_C_COMPILER} -print-search-dirs
-    OUTPUT_VARIABLE cc_search_dirs)
+                  OUTPUT_VARIABLE cc_search_dirs)
   # Extract the line listing the library paths
   string(REGEX MATCH "libraries: =(.*)\n" _ ${cc_search_dirs})
   # CMAKE expects lists to be semicolon-separated instead of colon.
   string(REPLACE ":" ";" cc_library_dirs ${CMAKE_MATCH_1})
-  find_file(${_name}_path ${sanitizer_lib_name}
-    PATHS ${cc_library_dirs})
+  find_file(${variable} ${_name} PATHS ${cc_library_dirs})
+endfunction()
+
+# Helper function used by CouchbaseAddressSanitizer / UndefinedSanitizer.
+# Searches for a sanitizer_lib_name, and once found installs it
+# into sanitizer_dest
+function(install_sanitizer_library _name sanitizer_lib_name sanitizer_dest)
+  try_search_sanitizer_library(${_name}_path ${sanitizer_lib_name})
   if (${_name}_path)
     message(STATUS "Found ${_name} at: ${${_name}_path} installing to: ${sanitizer_dest}")
     file(COPY ${${_name}_path}

@@ -80,7 +80,23 @@ IF (CB_ADDRESSSANITIZER)
             # Need to install libasan to be able to run sanitized
             # binaries on a machine different to the build machine
             # (for example for RPM sanitized packages).
-	    install_sanitizer_library(ASan libasan.so.4 ${CMAKE_INSTALL_PREFIX}/lib)
+
+            if (UNIX AND NOT APPLE)
+                # try to detect the ASAN version to use. The CV currently use
+                # libasan.so.4, but out of the box ubuntu 20.04 want to use
+                # use gcc 9.3 and wants libasan.so.5. To simplify the life for
+                # people just fall back to libasan.so.5 (ideally we should probably
+                # use libasan.so and pick out the version the compiler points to)
+                try_search_sanitizer_library(ASAN4_PATH libasan.so.4)
+                try_search_sanitizer_library(ASAN5_PATH libasan.so.5)
+                if (ASAN4_PATH)
+                    install_sanitizer_library(ASan libasan.so.4 ${CMAKE_INSTALL_PREFIX}/lib)
+                elseif (ASAN5_PATH)
+                    install_sanitizer_library(ASan libasan.so.5 ${CMAKE_INSTALL_PREFIX}/lib)
+                else ()
+                    message(FATAL_ERROR "Could not locate libasan.so.4 of libasan.so.5")
+                endif ()
+            endif ()
         endif ()
 
         MESSAGE(STATUS "AddressSanitizer enabled (mode ${CB_ADDRESSSANITIZER})")
