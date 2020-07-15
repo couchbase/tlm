@@ -407,6 +407,27 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
   ENDMACRO (GoModBuild)
 
+  # Macro which creates an empty Go module (a directory with a 0-byte
+  # go.mod file) only when called during a CE build. This is necessary
+  # to work around issues with closed-source Go modules. CBD-3491
+
+  MACRO (GoPrivateMod)
+
+    PARSE_ARGUMENTS (Go "" "MODULE" "" ${ARGN})
+    IF (NOT Go_MODULE)
+      MESSAGE (FATAL_ERROR "MODULE argument is required!")
+    ENDIF ()
+
+    IF (NOT BUILD_ENTERPRISE)
+      SET (_fakedir "${CMAKE_CURRENT_SOURCE_DIR}/../${Go_MODULE}")
+      MESSAGE (STATUS "Creating directory ${_fakedir} "
+        "with empty go.mod")
+      FILE (MAKE_DIRECTORY "${_fakedir}")
+      FILE (TOUCH "${_fakedir}/go.mod")
+    ENDIF ()
+
+  ENDMACRO (GoPrivateMod)
+
   # Adds a test named NAME which calls go test in the DIR
   # Required arguments:
   #
