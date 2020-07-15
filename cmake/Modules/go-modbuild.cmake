@@ -81,6 +81,7 @@ EXECUTE_PROCESS (
     "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}"
     "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}"
     ${_go_debug} ${_go_race}
+    -mod=readonly
     -o "${OUTPUT}"
     "${PACKAGE}")
 IF (NOT WIN32)

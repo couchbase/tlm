@@ -73,6 +73,9 @@ geocouch-build-for-testing: compile
 	 -D GEOCOUCH_BUILD_FOR_UNIT_TESTS=1 ../../geocouch && \
 	 $(MAKE))
 
+go-mod-tidy: build/Makefile
+	(cd build && make go-mod-tidy)
+
 analytics-install: build/Makefile
 	(cd build && make analytics)
 

@@ -241,6 +241,9 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
   ENDMACRO (GoInstall)
 
+  # Top-level target which depends on all individual -tidy targets.
+  ADD_CUSTOM_TARGET (go-mod-tidy)
+
   # Adds a target named TARGET which (always) calls "go build
   # PACKAGE".  This delegates incremental-build responsibilities to
   # the go compiler, which is generally what you want. This target
@@ -248,6 +251,12 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # declare itself and its dependencies. One consequence of this
   # is that there must be go.mod and go.sum files in the source
   # directory that calls GoModBuild() or some parent directory.
+  #
+  # The first time GoModBuild() is called in a given directory,
+  # an additional target named TARGET-tidy will also be created
+  # that calls "go mod tidy -v" using the appropriate Go version
+  # and modules cache. There is also a global target "go-mod-tidy"
+  # which invokes all such targets.
   #
   # Required arguments:
   #
@@ -341,7 +350,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     # Path to go binary dir for this target
     SET (_gobindir "${GO_BINARY_DIR}/go-${_gover}")
 
-    # Go install target
+    # Go mod build target
     ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
       COMMAND "${CMAKE_COMMAND}"
         -D "GOEXE=${_goexe}"
@@ -371,23 +380,29 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF ()
     MESSAGE (STATUS "Added Go Modules build target '${Go_TARGET}' using Go ${_gover}")
 
-    # QQQ Delete when we're sure it's not necessary
-    # We expect multiple go targets to be operating over the same
-    # GOPATH.  It seems like the go compiler doesn't like be invoked
-    # in parallel in this case, as would happen if we parallelize the
-    # Couchbase build (eg., 'make -j8'). Since the go compiler itself
-    # does parallel building, we want to serialize all go targets. So,
-    # we make them all depend on any earlier Go targets.
-    #GET_PROPERTY (_go_targets GLOBAL PROPERTY CB_GO_TARGETS)
-    #IF (_go_targets)
-    #  ADD_DEPENDENCIES(${Go_TARGET} ${_go_targets})
-    #ENDIF (_go_targets)
-    #SET_PROPERTY (GLOBAL APPEND PROPERTY CB_GO_TARGETS ${Go_TARGET})
-
     # go-modbuild.cmake will produce the output executable in the
     # current binary dir. Install it from there if requested.
     IF (Go_INSTALL_PATH)
       INSTALL (PROGRAMS "${_exe}" DESTINATION "${Go_INSTALL_PATH}")
+    ENDIF ()
+
+    # See if we need to create a -tidy target for this directory.
+    GET_PROPERTY (_tidy_dirs GLOBAL PROPERTY CB_GO_TIDY_DIRS)
+    LIST (FIND _tidy_dirs "${CMAKE_CURRENT_SOURCE_DIR}" _found)
+    IF (_found EQUAL -1)
+      ADD_CUSTOM_TARGET ("${Go_TARGET}-tidy"
+        COMMAND "${CMAKE_COMMAND}"
+          -D "GOEXE=${_goexe}"
+          -D "GO_BINARY_DIR=${_gobindir}"
+          -D "CB_PRODUCTION_BUILD=${CB_PRODUCTION_BUILD}"
+          -P "${TLM_MODULES_DIR}/go-modtidy.cmake"
+        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
+        COMMENT "Tidying go.mod for ${Go_TARGET} using Go ${_gover}"
+        VERBATIM)
+      MESSAGE (STATUS "Added Go mod tidy target ${Go_TARGET}-tidy")
+      ADD_DEPENDENCIES (go-mod-tidy "${Go_TARGET}-tidy")
+      SET_PROPERTY (GLOBAL APPEND PROPERTY CB_GO_TIDY_DIRS
+        "${CMAKE_CURRENT_SOURCE_DIR}")
     ENDIF ()
 
   ENDMACRO (GoModBuild)
