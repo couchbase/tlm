@@ -22,6 +22,7 @@ specs:
   - natsort 5.5.0
   - python-snappy 0.5.3
   - requests 2.21.0
+  - msgpack-python 1.0.0
 # These are transitive dependencies of the above. We keep
 # them pinned to avoid surprises when newer versions are
 # installed. Where possible we pin them to the same version

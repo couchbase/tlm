@@ -25,7 +25,7 @@ STRING (REGEX REPLACE "-.*" "" CB_VERSION "${PRODUCT_VERSION}")
 # so that cbpy will be re-installed into the install/lib/python/runtime
 # directory, and the MacOS wrapper script will install cbpy into a
 # differently-named directory in the user's home dir.
-SET (CBPY_BLD_NUM 1 CACHE INTERNAL "")
+SET (CBPY_BLD_NUM 2 CACHE INTERNAL "")
 
 # Set up various paths and locations for Python-related things:
 
