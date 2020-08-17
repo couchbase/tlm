@@ -7,6 +7,10 @@
 # This setting is specifically required for HdrHistogram_c.
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
+set(BENCHMARK_ENABLE_GTEST_TESTS OFF)
+set(BENCHMARK_ENABLE_INSTALL OFF)
+add_subdirectory(google-benchmark EXCLUDE_FROM_ALL)
+
 set(gtest_force_shared_crt ON CACHE BOOL
      "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
 add_subdirectory(googletest EXCLUDE_FROM_ALL)

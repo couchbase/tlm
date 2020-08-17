@@ -201,8 +201,6 @@ ADD_CUSTOM_TARGET(reset
                   COMMAND repo forall -c "git clean -dfx"
                   VERBATIM)
 
-ADD_SUBDIRECTORY(benchmark EXCLUDE_FROM_ALL)
-
 IF (NOT BUILD_ONLY_TOOLS)
   ADD_SUBDIRECTORY(tlm/python)
   ADD_SUBDIRECTORY(phosphor)
