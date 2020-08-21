@@ -42,14 +42,15 @@ patch_ssl
 #####./otp_build debuginfo_win32 -a 2>&1 | tee dbginfo.out
 
 ## what the "release -a" command generates above in release/win32
-## is not ## what is packaged in the installer executable.
+## is not what is packaged in the installer executable.
 ## the installer executable also has other files like
 ## lib, bin -- some of which are partly also in the release/win32
-## folder but there are some extra files
+## folder but there are some extra files.
 ## so, generate an installer and use that to install it to default
 ## location
+rm -f ./release/win32/otp_win64_*.exe
 ./otp_build installer_win32 2>&1 | tee installerwin32.out
-./release/win32/otp_win64_${otp_release}.exe /S
+./release/win32/otp_win64_*.exe /S
 
 ## we need VERSION.txt, erl.in.ini and CMakeLists.txt for our internal
 ## cbdeps consumption. We could check the files in with placeholder

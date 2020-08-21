@@ -14,13 +14,13 @@ case "$PLATFORM" in
 	# as simple as $ORIGIN passed down to the linker ;)
 	# the crypto module in Erlang use openssl for crypto routines,
 	# and it is installed in
-	#  ${INSTALL_DIR}/lib/erlang/lib/crypto-4.2.2.2/priv/lib/crypto.so
+	#  ${INSTALL_DIR}/lib/erlang/lib/crypto-4.6.5/priv/lib/crypto.so
 	# so we need to tell the runtime linker how to find libssl.so
 	# at runtime (which is located in ${INSTALL_DIR}/..
 	# We could of course do this by adding /opt/couchbase/lib,
 	# but that would break "non-root" installation (and people
 	# trying to build the sw themselves and run from a dev dir).
-	SSL_RPATH=--with-ssl-rpath=\'\$\$ORIGIN/../../../../..\'
+	SSL_RPATH=--with-ssl-rpath="\$$\ORIGIN/../../../../.."
 	;;
 esac
 
@@ -49,7 +49,7 @@ cp ${SCRIPT_DIR}/CMakeLists_package.txt ${INSTALL_DIR}/CMakeLists.txt
 # On MacOS, set up the RPath for the crypto plugin to find our custom OpenSSL
 if [ $(uname -s) = "Darwin" ]; then
     install_name_tool -add_rpath @loader_path/../../../../.. \
-        ${INSTALL_DIR}/lib/erlang/lib/crypto-4.2.2.2/priv/lib/crypto.so
+        ${INSTALL_DIR}/lib/erlang/lib/crypto-4.6.5.1/priv/lib/crypto.so
 fi
 
 # For whatever reason, the special characters in this filename make
