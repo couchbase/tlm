@@ -66,6 +66,9 @@ set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_cb_c_options}")
 list(APPEND _cb_cxx_flags
      -Qunused-arguments
      -Wall
+     -Wextra
+     -Wno-unused-parameter # Enabled via -Wextra, but too noisy as we
+                           # have many unused params
      -pedantic
      -fno-strict-aliasing
      -Werror=switch
