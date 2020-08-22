@@ -173,19 +173,6 @@ _ADD_DEP_PACKAGE(flatbuffers 1.10.0 v1.10.0 5)
 _ADD_DEP_PACKAGE(json 3.5.0 v3.5.0 2)
 _ADD_DEP_PACKAGE(boost 1.67.0 boost-1.67.0 8)
 
-# Note: we build a number of packages against openssl,
-# including Erlang, libevent, folly, and grpc. Those packages
-# have a DECLARE_DEP(openssl) in their own CMakeLists.txt.
-# Similarly, curl (cbdeps V2) uses the 'cbdep' tool to
-# download the openssl cbdeps package.
-# None of those packages *include* openssl, so it isn't
-# strictly necessary to rebuild them all when we update
-# OpenSSL itself unless it includes a breaking API change.
-# Additional Note: when updating OpenSSL itself, try to
-# also fix the version included in our Anaconda Python
-# package, in tlm/python/construct.yaml.
-_ADD_DEP_PACKAGE(openssl 1.1.1d OpenSSL_1_1_1d 2)
-
 _ADD_DEP_PACKAGE(libcouchbase 2.10.0 2.10.0 1)
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
   IF (PLATFORM STREQUAL "fedora26" OR PLATFORM STREQUAL "fedora27")
@@ -212,7 +199,6 @@ _ADD_DEP_PACKAGE(double-conversion 3.0.0 v3.0.0 4)
 _ADD_DEP_PACKAGE(glog 0.3.5 v0.3.5 4)
 
 _ADD_DEP_PACKAGE(folly v2019.08.12.00 v2019.08.12.00 4)
-_ADD_DEP_PACKAGE(grpc 1.28.1 v1.28.1 1)
 _ADD_DEP_PACKAGE(pcre 8.43 v8.43 2)
 _ADD_DEP_PACKAGE(opentracing-cpp v1.5.1 v1.5.1 4)
 _ADD_DEP_PACKAGE(prometheus-cpp v0.9.0 3a8ed550e 1)
