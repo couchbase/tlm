@@ -196,6 +196,7 @@ _ADD_DEP_PACKAGE(maven 3.5.2 master 6)
 _ADD_DEP_PACKAGE(openjdk-rt 1.8.0.171 UNUSED 2)
 
 _ADD_DEP_PACKAGE(double-conversion 3.0.0 v3.0.0 4)
+_ADD_DEP_PACKAGE(fmt 7.0.3 7.0.3 1)
 _ADD_DEP_PACKAGE(glog 0.3.5 v0.3.5 4)
 
 _ADD_DEP_PACKAGE(folly v2019.08.12.00 v2019.08.12.00 4)
