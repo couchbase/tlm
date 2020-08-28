@@ -10,7 +10,6 @@ ExternalProject_Add(glog
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND $(MAKE) install
-          COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/lib/cmake
 )
 
 # Additionally build a Debug variant on Windows, as for a debug build of
@@ -24,7 +23,6 @@ if (WIN32)
                -D CMAKE_BUILD_TYPE=Debug
                -D BUILD_SHARED_LIBS=OFF
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-    INSTALL_COMMAND ${CMAKE_COMMAND} -E copy glog.lib <INSTALL_DIR>/lib/glogd.lib
   )
   ExternalProject_Add_StepDependencies(glog download glog_WinDebugCRT)
 endif()
