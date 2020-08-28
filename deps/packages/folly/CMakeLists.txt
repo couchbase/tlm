@@ -14,12 +14,14 @@ set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 DECLARE_DEP (boost VERSION 1.67.0-cb8 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS centos8 debian10 rhel8 ubuntu20.04)
+DECLARE_DEP (fmt VERSION 7.0.3-cb1 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (glog VERSION 0.3.5-cb4 PLATFORMS amzn2 centos6 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (jemalloc VERSION 5.2.1-cb4 PLATFORMS amzn2 centos7 centos8 debian7 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (libevent VERSION 2.1.8-cb8 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (libevent VERSION 2.1.8-cb10 PLATFORMS centos8 debian10 rhel8)
 DECLARE_DEP (libevent VERSION 2.1.11-cb6 PLATFORMS ubuntu20.04)
-DECLARE_DEP (openssl VERSION 1.1.1d-cb2 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (openssl VERSION 1.1.1d-cb1 PLATFORMS windows_msvc2017)
+DECLARE_DEP (openssl VERSION 1.1.1d-cb2 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04)
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (snappy VERSION 1.1.1-cb5 PLATFORMS centos8 debian10 rhel8 ubuntu20.04)
@@ -48,7 +50,10 @@ ${CMAKE_CURRENT_BINARY_DIR}/install")
 list(APPEND cache_args -DBUILD_SHARED_LIBS:STRING=OFF)
 list(APPEND cache_args -DBoost_DETAILED_FAILURE_MSG:STRING=ON)
 list(APPEND cache_args -DBoost_USE_STATIC_LIBS:STRING=ON)
-list(APPEND cache_args -DCXX_STD:STRING=c++17)
+list(APPEND cache_args -DBoost_NO_SYSTEM_PATHS:BOOL=ON)
+list(APPEND cache_args -DBoost_NO_BOOST_CMAKE:BOOL=ON)
+list(APPEND cache_args -DBOOST_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/boost.exploded)
+list(APPEND cache_args -DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
 
 if(WIN32)
    # Glog: we build it statically, but glog headers default
@@ -79,7 +84,7 @@ ExternalProject_Add(folly
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
               COMMAND git reset --hard
-              COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/folly_gflags_optional.patch
+              COMMAND COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/Benchmark_cinttypes.patch
         CMAKE_CACHE_ARGS ${cache_args}
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
@@ -97,7 +102,7 @@ if (${PLATFORM} MATCHES "ubuntu" OR ${PLATFORM} MATCHES "macos")
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
               COMMAND git reset --hard
-              COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/folly_gflags_optional.patch
+              COMMAND COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/Benchmark_cinttypes.patch
         CMAKE_CACHE_ARGS ${cache_args}
             -DCMAKE_CXX_FLAGS:STRING=${cxx_flags}\ -fsanitize=thread
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
@@ -117,7 +122,7 @@ if (WIN32)
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
               COMMAND git reset --hard
-              COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/folly_gflags_optional.patch
+              COMMAND COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/Benchmark_cinttypes.patch
         CMAKE_CACHE_ARGS ${cache_args}
             -DCMAKE_BUILD_TYPE:STRING=Debug
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
