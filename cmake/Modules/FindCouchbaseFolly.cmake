@@ -74,7 +74,11 @@ endif()
 # Append Folly's depenancies to the include / lib variables so users
 # of Folly pickup the dependancies automatically.
 list(APPEND FOLLY_INCLUDE_DIR )
-set(FOLLY_INCLUDE_DIR ${FOLLY_CONFIG_INCLUDE_DIR} ${DOUBLE_CONVERSION_INCLUDE_DIR} ${GLOG_INCLUDE_DIR}
+set(FOLLY_INCLUDE_DIR
+    ${FOLLY_CONFIG_INCLUDE_DIR}
+    ${Boost_INCLUDE_DIR}
+    ${DOUBLE_CONVERSION_INCLUDE_DIR}
+    ${GLOG_INCLUDE_DIR}
     CACHE STRING "Folly include directories" FORCE)
 
 list(APPEND FOLLY_LIBRARIES
