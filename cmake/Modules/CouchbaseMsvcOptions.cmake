@@ -23,8 +23,8 @@ if (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 19.10)
     list(APPEND _cb_cxx_flags "/Zc:offsetof-")
 endif()
 
-# Don't include most of Windows.h - speeds up build and also reduces
-# symbol / preprocessor clashes with common tokens like ERROR, MIN, ...
+# Don't include most of Windows.h - speeds up build by avoiding preprocessing
+# a bunch of unused code.
 list(APPEND _cb_cxx_flags "/D WIN32_LEAN_AND_MEAN")
 
 # Our code emits tons of warnings due to missing declspec dllimport/export

@@ -43,4 +43,9 @@ endif()
 # DLL declaration).
 add_compile_definitions(GOOGLE_GLOG_DLL_DECL=)
 
+# Set GLOG_NO_ABBREVIATED_SEVERITIES to disable the abbreviated severity macros
+# ERROR, WARNING, etc - which on Windows can collide with macros defined by
+# windgi.h (which is included via Windows.h).
+add_compile_definitions(GLOG_NO_ABBREVIATED_SEVERITIES)
+
 mark_as_advanced(GLOG_INCLUDE_DIR GLOG_LIBRARIES)
