@@ -23,10 +23,6 @@ if (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 19.10)
     list(APPEND _cb_cxx_flags "/Zc:offsetof-")
 endif()
 
-# Don't include most of Windows.h - speeds up build and also reduces
-# symbol / preprocessor clashes with common tokens like ERROR, MIN, ...
-list(APPEND _cb_cxx_flags "/D WIN32_LEAN_AND_MEAN")
-
 # Our code emits tons of warnings due to missing declspec dllimport/export
 # for standard types (std::vector, unordered_map etc).
 # For now let's just mute them.
