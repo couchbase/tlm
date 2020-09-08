@@ -27,7 +27,7 @@ find_library(PROMETHEUS_PULL_LIBRARY
         HINTS ${_prometheus_exploded}/lib
         ${_prometheus_no_default_path})
 
-set(PROMETHEUS_LIBRARIES ${PROMETHEUS_CORE_LIBRARY} ${PROMETHEUS_PULL_LIBRARY})
+set(PROMETHEUS_LIBRARIES ${PROMETHEUS_PULL_LIBRARY} ${PROMETHEUS_CORE_LIBRARY})
 
 if (NOT PROMETHEUS_INCLUDE_DIR)
     message(FATAL_ERROR "Failed to locate prometheus-cpp include directory")
