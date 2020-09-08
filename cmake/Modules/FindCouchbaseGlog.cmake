@@ -2,6 +2,8 @@
 # This module defines
 #  GLOG_LIBRARIES, Library path and libs
 #  GLOG_INCLUDE_DIR, where to find the headers
+
+include(FindPackageHandleStandardArgs)
 include(PlatformIntrospection)
 include(SelectLibraryConfigurations)
 
@@ -14,7 +16,7 @@ endif ()
 
 set(_glog_exploded ${CMAKE_BINARY_DIR}/tlm/deps/glog.exploded)
 
-find_path(GLOG_INCLUDE_DIR glog/config.h
+find_path(GLOG_INCLUDE_DIR glog/logging.h
           PATH_SUFFIXES include
           PATHS ${_glog_exploded}
           ${_glog_no_default_path})
@@ -33,10 +35,8 @@ find_library(GLOG_LIBRARY_DEBUG
 # lib based on the current BUILD_TYPE
 select_library_configurations(GLOG)
 
-if(GLOG_INCLUDE_DIR AND GLOG_LIBRARIES)
-    MESSAGE(STATUS "Found glog headers: ${GLOG_INCLUDE_DIR}")
-    MESSAGE(STATUS "         libraries: ${GLOG_LIBRARIES}")
-endif()
+find_package_handle_standard_args(GLOG
+    REQUIRED_VARS GLOG_LIBRARIES GLOG_INCLUDE_DIR)
 
 # Set GOOGLE_GLOG_DLL_DECL to an empty value to avoid incorrect dllimport
 # decoration (we build static versions of GLOG which should have an empty
