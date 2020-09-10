@@ -81,12 +81,15 @@ IF (CB_ADDRESSSANITIZER)
             # binaries on a machine different to the build machine
             # (for example for RPM sanitized packages).
 
-            if (UNIX AND NOT APPLE)
-                # try to detect the ASAN version to use. The CV currently use
-                # libasan.so.4, but out of the box ubuntu 20.04 want to use
-                # use gcc 9.3 and wants libasan.so.5. To simplify the life for
-                # people just fall back to libasan.so.5 (ideally we should probably
-                # use libasan.so and pick out the version the compiler points to)
+            if (UNIX AND NOT APPLE AND NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+                # Try to detect the ASan runtime shared library version to use.
+                # Note: Clang statically links the ASan runtime so we skip this
+                # for Clang.
+                # GCC 7.3 CV currently uses libasan.so.4, but out of the box
+                # Ubuntu 20.04 wants to use GCC 9.3 and wants libasan.so.5.
+                # To simplify the life for people just fall back to
+                # libasan.so.5 (ideally we should probably use libasan.so and
+                # pick out the version the compiler points to).
                 try_search_sanitizer_library(ASAN4_PATH libasan.so.4)
                 try_search_sanitizer_library(ASAN5_PATH libasan.so.5)
                 if (ASAN4_PATH)
