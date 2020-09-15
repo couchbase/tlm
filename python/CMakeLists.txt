@@ -69,6 +69,7 @@ ADD_CUSTOM_COMMAND (OUTPUT "${CONDA_EXE}"
   COMMAND "${CBDEP}" install -d "${CMAKE_CURRENT_BINARY_DIR}"
       miniconda3 ${MINICONDA_VERSION}
   COMMAND "${CMAKE_COMMAND}" -E echo "auto_update_conda: False" > "${_miniconda_install}/.condarc"
+  COMMAND "${CMAKE_COMMAND}" -E echo "pkgs_dirs: [ ${CB_DOWNLOAD_DEPS_CACHE}/condacache ]" >> "${_miniconda_install}/.condarc"
   VERBATIM)
 
 ADD_CUSTOM_TARGET(miniconda3 ALL DEPENDS "${CONDA_EXE}")
@@ -120,6 +121,7 @@ ENDIF ()
 
 ADD_CUSTOM_COMMAND (OUTPUT "${_installer}"
   COMMAND "${_constructor}" "${CMAKE_CURRENT_SOURCE_DIR}"
+    --cache-dir=${CB_DOWNLOAD_DEPS_CACHE}/condacache
   WORKING_DIRECTORY "${_cwd}"
   COMMAND "${CMAKE_COMMAND}" -E rename cbpy-installer "${_installer}"
   DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/construct.yaml" "${_constructor}"
