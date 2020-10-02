@@ -256,7 +256,12 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # an additional target named TARGET-tidy will also be created
   # that calls "go mod tidy -v" using the appropriate Go version
   # and modules cache. There is also a global target "go-mod-tidy"
-  # which invokes all such targets.
+  # which invokes all such targets. NOTE: this tidy target will
+  # be given the same dependencies as the main build target. If
+  # you need to depend on, say, a target which generates source code
+  # in another project, be sure to include this dependency in the
+  # *first* GoModBuild() call, so that the tidy target will also
+  # know about that dependency.
   #
   # Required arguments:
   #
@@ -390,7 +395,8 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     GET_PROPERTY (_tidy_dirs GLOBAL PROPERTY CB_GO_TIDY_DIRS)
     LIST (FIND _tidy_dirs "${CMAKE_CURRENT_SOURCE_DIR}" _found)
     IF (_found EQUAL -1)
-      ADD_CUSTOM_TARGET ("${Go_TARGET}-tidy"
+      SET (_tidy_target "${Go_TARGET}-tidy")
+      ADD_CUSTOM_TARGET ("${_tidy_target}"
         COMMAND "${CMAKE_COMMAND}"
           -D "GOEXE=${_goexe}"
           -D "GO_BINARY_DIR=${_gobindir}"
@@ -399,8 +405,11 @@ IF (NOT FindCouchbaseGo_INCLUDED)
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         COMMENT "Tidying go.mod for ${Go_TARGET} using Go ${_gover}"
         VERBATIM)
-      MESSAGE (STATUS "Added Go mod tidy target ${Go_TARGET}-tidy")
-      ADD_DEPENDENCIES (go-mod-tidy "${Go_TARGET}-tidy")
+      MESSAGE (STATUS "Added Go mod tidy target ${_tidy_target}")
+      ADD_DEPENDENCIES (go-mod-tidy "${_tidy_target}")
+      IF (Go_DEPENDS)
+        ADD_DEPENDENCIES ("${_tidy_target}" ${Go_DEPENDS})
+      ENDIF ()
       SET_PROPERTY (GLOBAL APPEND PROPERTY CB_GO_TIDY_DIRS
         "${CMAKE_CURRENT_SOURCE_DIR}")
     ENDIF ()
@@ -410,16 +419,28 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # Macro which creates an empty Go module (a directory with a 0-byte
   # go.mod file) only when called during a CE build. This is necessary
   # to work around issues with closed-source Go modules. CBD-3491
+  #
+  # Required arguments:
+  #
+  # MODULE - basename of module, eg. cbftx, query-ee
+  #
+  # Optional arguments:
+  #
+  # PATH - relative path to module as specified in go.mod; defaults
+  #        to ../<MODULE>
 
   MACRO (GoPrivateMod)
 
-    PARSE_ARGUMENTS (Go "" "MODULE" "" ${ARGN})
+    PARSE_ARGUMENTS (Go "" "MODULE;PATH" "" ${ARGN})
     IF (NOT Go_MODULE)
       MESSAGE (FATAL_ERROR "MODULE argument is required!")
     ENDIF ()
+    IF (NOT Go_PATH)
+      SET (Go_PATH "../${Go_MODULE}")
+    ENDIF ()
 
     IF (NOT BUILD_ENTERPRISE)
-      SET (_fakedir "${CMAKE_CURRENT_SOURCE_DIR}/../${Go_MODULE}")
+      SET (_fakedir "${CMAKE_CURRENT_SOURCE_DIR}/${Go_PATH}")
       MESSAGE (STATUS "Creating directory ${_fakedir} "
         "with empty go.mod")
       FILE (MAKE_DIRECTORY "${_fakedir}")
