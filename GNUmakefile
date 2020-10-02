@@ -9,7 +9,8 @@ PREFIX:=$(ROOT)/install
 MAKEFLAGS=--no-print-directory
 
 PASSTHRU_TARGETS=all analytics-install analyze clean clean-all clean-xfd clean-xfd-hard \
-  e2etest e2eviewtests geocouch-build-for-testing go-mod-tidy install reset run-mats test build/Makefile
+  e2etest e2eviewtests geocouch-build-for-testing go-mod-tidy install reset run-mats \
+  test unset-version build/Makefile
 
 $(PASSTHRU_TARGETS):
 	@$(MAKE) -f Makefile \

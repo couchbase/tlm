@@ -143,24 +143,40 @@ if (BUILD_ENTERPRISE)
     include(FindCouchbaseLibuv)
 endif()
 
-# Declare PRODUCT_VERSION in cache, but then override user-defined value
-# if it is an empty string
-SET (PRODUCT_VERSION "" CACHE STRING "Product version with build number")
-IF ("${PRODUCT_VERSION}" STREQUAL "")
+# PRODUCT_VERSION logic:
+# 1. If PRODUCT_VERSION is already defined, that means it's either cached
+#    or was explicitly specified with -D on the command-line. In either
+#    case, force it into the cache so it will be remembered in future runs.
+# 2. Otherwise, we do NOT want to cache PRODUCT_VERSION, which will force
+#    CMake to re-discover it every time. In that case:
+#    2a. If Python can be found, extract VERSION from the manifest and
+#        stick the fake build number -0000 on the end, using get_version.py.
+#    2b. If Python cannot be found, or if get_version.py fails to return a
+#        version, use the fallback default 0.0.0-0000.
+IF (DEFINED PRODUCT_VERSION)
+  SET (PRODUCT_VERSION "${PRODUCT_VERSION}" CACHE STRING "Product version with build number" FORCE)
+ELSE ()
   SET (_product_version)
   IF (PYTHON_EXECUTABLE)
     # Try to determine product version from manifest
-    EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_version.py
+    EXECUTE_PROCESS(
+      COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_version.py
       WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
       OUTPUT_VARIABLE _product_version
-      ERROR_QUIET
+      ERROR_VARIABLE _err_output
       OUTPUT_STRIP_TRAILING_WHITESPACE)
+    IF (_err_output)
+      MESSAGE (WARNING "${_err_output}")
+      # Just in case
+      SET (_product_version)
+    ENDIF ()
+  ENDIF (PYTHON_EXECUTABLE)
+  IF (_product_version)
+    SET (PRODUCT_VERSION ${_product_version})
+  ELSE ()
+    SET (PRODUCT_VERSION "0.0.0-0000")
   ENDIF ()
-  IF (NOT _product_version)
-    SET (_product_version "0.0.0-9999")
-  ENDIF ()
-  SET (PRODUCT_VERSION ${_product_version} CACHE STRING "Product version with build number" FORCE)
-ENDIF ("${PRODUCT_VERSION}" STREQUAL "")
+ENDIF ()
 
 IF (BUILD_ENTERPRISE)
   MESSAGE (STATUS "Building Couchbase Server ${PRODUCT_VERSION} Enterprise Edition")
