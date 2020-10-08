@@ -100,7 +100,9 @@ if (${PLATFORM} MATCHES "ubuntu" OR ${PLATFORM} MATCHES "macos")
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
         CMAKE_CACHE_ARGS ${cache_args}
-            -DCMAKE_CXX_FLAGS:STRING=${cxx_flags}\ -fsanitize=thread
+            "-DCMAKE_C_COMPILER:STRING=clang"
+            "-DCMAKE_CXX_COMPILER:STRING=clang++"
+            "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags} -fsanitize=thread"
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
