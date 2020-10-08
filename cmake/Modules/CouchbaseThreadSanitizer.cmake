@@ -17,13 +17,27 @@ IF (CB_THREADSANITIZER)
 
     IF(HAVE_FLAG_SANITIZE_THREAD_C AND HAVE_FLAG_SANITIZE_THREAD_CXX)
         SET(THREAD_SANITIZER_FLAG "-fsanitize=thread")
+        ADD_COMPILE_OPTIONS(${THREAD_SANITIZER_FLAG})
+        ADD_LINK_OPTIONS(${THREAD_SANITIZER_FLAG})
 
-        SET(THREAD_SANITIZER_FLAG_DISABLE "-fno-sanitize=thread")
+        # MB-41896: Clang links to the TSan runtime library statically
+        # by default. This is problematic as we can have multiple
+        # different libraries linked into a final executable, and hence
+        # end up with multiple copies of the static runtime library.
+        # This causes incorrect behavour when TSan runtime tries to
+        # track locks.
+        # Link to the shared runtime library to avoid this.
+        # (Note: AppleClang defaults to shared linking so doesn't have this problem).
+        IF(CMAKE_C_COMPILER_ID STREQUAL "Clang")
+            ADD_LINK_OPTIONS(-shared-libsan)
+            LINK_LIBRARIES(tsan)
 
-        SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${THREAD_SANITIZER_FLAG}")
-        SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${THREAD_SANITIZER_FLAG}")
-        SET(CMAKE_CGO_CFLAGS "${CMAKE_CGO_CFLAGS} ${THREAD_SANITIZER_FLAG}")
-        SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${THREAD_SANITIZER_FLAG}")
+            # Append extra flags to THREAD_SANITIZER_FLAG, so they can
+            # be correctly removed for unsanitized targets - see
+            # remove_sanitize_thread() below.
+            LIST(APPEND THREAD_SANITIZER_FLAG -shared-libsan)
+            LIST(APPEND THREAD_SANITIZER_FLAG -ltsan)
+        ENDIF()
 
         use_rpath_for_sanitizers()
 
@@ -36,11 +50,12 @@ IF (CB_THREADSANITIZER)
 
         ADD_DEFINITIONS(-DTHREAD_SANITIZER)
 
-        if (UNIX AND NOT APPLE AND NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+        if (NOT CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
             # Need to install libtsan to be able to run sanitized
             # binaries on a machine different to the build machine
             # (for example for RPM sanitized packages).
-            install_sanitizer_library(TSan libtsan.so.0 ${THREAD_SANITIZER_FLAG} ${CMAKE_INSTALL_PREFIX}/lib)
+            # library).
+            install_sanitizer_library(TSan libtsan.so.0 "${THREAD_SANITIZER_FLAG}" ${CMAKE_INSTALL_PREFIX}/lib)
         endif()
 
         # Override the normal ADD_TEST macro to set the TSAN_OPTIONS
@@ -68,6 +83,16 @@ IF (CB_THREADSANITIZER)
     ENDIF()
 ENDIF()
 
+# Check if ELEMENT exists in the list of values for PROPERTY_NAME
+# against TARGET.  If so, remove ELEMENT from the list of values.
+function(remove_from_property TARGET PROPERTY_NAME)
+    get_target_property(property_value ${TARGET} ${PROPERTY_NAME})
+    if (property_value)
+        list(REMOVE_ITEM property_value ${ARGN})
+        set_property(TARGET ${TARGET} PROPERTY ${PROPERTY_NAME} ${property_value})
+    endif()
+endfunction()
+
 # Disable ThreadSanitizer for specific target. No-op if
 # CB_THREADSANITIZER is not enabled.
 # Typically used via remove_sanitizers()
@@ -75,9 +100,13 @@ function(remove_sanitize_thread TARGET)
     if (NOT CB_THREADSANITIZER)
         return()
     endif ()
+    remove_from_property(${TARGET} COMPILE_OPTIONS ${THREAD_SANITIZER_FLAG})
+    remove_from_property(${TARGET} LINK_OPTIONS ${THREAD_SANITIZER_FLAG})
 
-    set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY COMPILE_FLAGS "${THREAD_SANITIZER_FLAG_DISABLE}")
-    set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY LINK_FLAGS " ${THREAD_SANITIZER_FLAG_DISABLE}")
+    # Remove any explicitly added TSan runtime libraries - see
+    # LINK_LIBRARIES(tsan) call above.
+    if(CMAKE_C_COMPILER_ID STREQUAL "Clang" OR CMAKE_C_COMPILER_ID STREQUAL "AppleClang")
+        remove_from_property(${TARGET} LINK_LIBRARIES tsan)
+        remove_from_property(${TARGET} INTERFACE_LINK_LIBRARIES tsan)
+    endif()
 endfunction()
