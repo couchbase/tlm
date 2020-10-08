@@ -7,8 +7,8 @@
 # This setting is specifically required for HdrHistogram_c.
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(BENCHMARK_ENABLE_GTEST_TESTS OFF)
 set(BENCHMARK_ENABLE_INSTALL OFF)
+set(BENCHMARK_ENABLE_TESTING OFF)
 add_subdirectory(google-benchmark EXCLUDE_FROM_ALL)
 
 set(gtest_force_shared_crt ON CACHE BOOL
@@ -29,7 +29,12 @@ else()
   target_include_directories(gsl_lite INTERFACE ${gsl_lite_SOURCE_DIR}/include)
 endif()
 
+# Disable building examples and tests for HdrHistogram.
+set(HDR_HISTOGRAM_BUILD_PROGRAMS)
 add_subdirectory(HdrHistogram_c)
+
+set(SPDLOG_BUILD_EXAMPLES)
+set(SPDLOG_BUILD_TESTING)
 add_subdirectory(spdlog)
 
 # Define macro which renames spdlog's severity levels
