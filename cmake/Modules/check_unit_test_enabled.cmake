@@ -20,7 +20,8 @@
 # The list of modules must be specified in a cmake variable named
 # COUCHBASE_DISABLED_UNIT_TESTS, and if not defined it'll fall back
 # and look for an environment variable with the same name. The format
-# of the value is "module1;module2;module3"
+# of the value is "module1;module2;module3". Alternately, setting
+# the variable to the value "ALL" will skip all unit tests.
 #
 if (NOT COMMAND check_unit_test_enabled)
     # The function accepts two arguments:
@@ -39,8 +40,17 @@ if (NOT COMMAND check_unit_test_enabled)
         endif ()
 
         if (COUCHBASE_DISABLED_UNIT_TESTS)
-            list(FIND COUCHBASE_DISABLED_UNIT_TESTS ${MODULE} _check_unit_test_enabled_index)
-            if (${_check_unit_test_enabled_index} GREATER -1)
+            set(_skip_this_module OFF)
+            if (COUCHBASE_DISABLED_UNIT_TESTS STREQUAL "ALL")
+                set(_skip_this_module ON)
+            else ()
+                list(FIND COUCHBASE_DISABLED_UNIT_TESTS ${MODULE} _check_unit_test_enabled_index)
+                if (${_check_unit_test_enabled_index} GREATER -1)
+                    set(_skip_this_module ON)
+                endif ()
+            endif ()
+
+            if (_skip_this_module)
                 message(WARNING "Skipping unit tests for ${MODULE}")
                 set(_check_unit_test_enabled_mode False)
             endif ()
