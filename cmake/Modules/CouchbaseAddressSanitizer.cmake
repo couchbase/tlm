@@ -87,18 +87,7 @@ IF (CB_ADDRESSSANITIZER)
                 # for Clang.
                 # GCC 7.3 CV currently uses libasan.so.4, but out of the box
                 # Ubuntu 20.04 wants to use GCC 9.3 and wants libasan.so.5.
-                # To simplify the life for people just fall back to
-                # libasan.so.5 (ideally we should probably use libasan.so and
-                # pick out the version the compiler points to).
-                try_search_sanitizer_library(ASAN4_PATH libasan.so.4)
-                try_search_sanitizer_library(ASAN5_PATH libasan.so.5)
-                if (ASAN4_PATH)
-                    install_sanitizer_library(ASan libasan.so.4 ${CMAKE_INSTALL_PREFIX}/lib)
-                elseif (ASAN5_PATH)
-                    install_sanitizer_library(ASan libasan.so.5 ${CMAKE_INSTALL_PREFIX}/lib)
-                else ()
-                    message(FATAL_ERROR "Could not locate libasan.so.4 of libasan.so.5")
-                endif ()
+                install_sanitizer_library(ASan "libasan.so.5;libasan.so.4" ${ADDRESS_SANITIZER_FLAG} ${CMAKE_INSTALL_PREFIX}/lib)
             endif ()
         endif ()
 
