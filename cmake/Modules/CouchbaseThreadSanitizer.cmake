@@ -36,10 +36,12 @@ IF (CB_THREADSANITIZER)
 
         ADD_DEFINITIONS(-DTHREAD_SANITIZER)
 
-        # Need to install libtsan to be able to run sanitized
-        # binaries on a machine different to the build machine
-        # (for example for RPM sanitized packages).
-        install_sanitizer_library(TSan libtsan.so.0 ${CMAKE_INSTALL_PREFIX}/lib)
+        if (UNIX AND NOT APPLE AND NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+            # Need to install libtsan to be able to run sanitized
+            # binaries on a machine different to the build machine
+            # (for example for RPM sanitized packages).
+            install_sanitizer_library(TSan libtsan.so.0 ${THREAD_SANITIZER_FLAG} ${CMAKE_INSTALL_PREFIX}/lib)
+        endif()
 
         # Override the normal ADD_TEST macro to set the TSAN_OPTIONS
         # environment variable - this allows us to specify the

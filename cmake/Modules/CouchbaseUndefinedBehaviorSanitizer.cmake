@@ -64,10 +64,14 @@ IF (CB_UNDEFINEDSANITIZER GREATER 0)
             SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${UNDEFINED_SANITIZER_FLAG}")
 	    ADD_DEFINITIONS(-DUNDEFINED_SANITIZER)
 
-            # Need to install libuban to be able to run sanitized
-            # binaries on a machine different to the build machine
-            # (for example for RPM sanitized packages).
-	    install_sanitizer_library(UBSan libubsan.so.0 ${CMAKE_INSTALL_PREFIX}/lib)
+            if (UNIX AND NOT APPLE AND NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
+                # Need to install libubsan to be able to run sanitized
+                # binaries on a machine different to the build machine
+                # (for example for RPM sanitized packages).
+                # Note: Clang statically links the UBSan runtime so we skip this
+                # for Clang.
+                install_sanitizer_library(UBSan libubsan.so.0 ${UNDEFINED_SANITIZER_FLAG} ${CMAKE_INSTALL_PREFIX}/lib)
+            endif()
 	endif()
 
         MESSAGE(STATUS "UndefinedBehaviorSanitizer enabled (mode ${CB_UNDEFINEDSANITIZER})")

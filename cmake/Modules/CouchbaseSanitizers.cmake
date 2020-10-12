@@ -3,21 +3,49 @@ include(CMakePushCheckState)
 
 # Tries to locate a sanitizer shared library with a name from the list
 # 'lib_names'.  Returns the result in ${variable}.
-function(try_search_sanitizer_library variable lib_names)
-  execute_process(COMMAND ${CMAKE_C_COMPILER} -print-search-dirs
-                  OUTPUT_VARIABLE cc_search_dirs)
-  # Extract the line listing the library paths
-  string(REGEX MATCH "libraries: =(.*)\n" _ ${cc_search_dirs})
-  # CMAKE expects lists to be semicolon-separated instead of colon.
-  string(REPLACE ":" ";" cc_library_dirs ${CMAKE_MATCH_1})
-  find_file(${variable} NAMES ${lib_names} PATHS ${cc_library_dirs})
+function(try_search_sanitizer_library variable lib_names flags)
+  # Trying to determine the location of a shared library
+  # ahead of time complex and error-prone - particulry if multiple
+  # versions of the shared library exist (for example the system
+  # installed GCC-5 version, and our own compiled GCC 7.3.0 one).
+  #
+  # The runtime linker is the one which actually decides which file
+  # should be loaded, so the method used is to compile a test program
+  # which links against the library we are interested in, then examine
+  # where the runtime linker finds it.
+  string(REPLACE ";" " " flags_list "${flags}")
+  try_compile(result
+              ${CMAKE_BINARY_DIR}
+              ${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/try_search_sanitizer_library.c
+              CMAKE_FLAGS -DCOMPILE_DEFINITIONS:STRING=${flags_list}
+              OUTPUT_VARIABLE cc_output
+              COPY_FILE ${CMAKE_BINARY_DIR}/CMakeFiles/try_search_sanitizer_library)
+  if (NOT result)
+    message(WARNING "try_search_sanitizer_library(): Failed to compile: ${cc_output}")
+    return()
+  endif()
+  execute_process(COMMAND ldd ${CMAKE_BINARY_DIR}/CMakeFiles/try_search_sanitizer_library
+                  OUTPUT_VARIABLE ldd_output)
+  file(REMOVE ${CMAKE_BINARY_DIR}/CMakeFiles/try_search_sanitizer_library)
+
+  # Extract the line listing the first found library name.
+  # example format:
+  #     \tlibgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f78dc7d3000)
+  foreach(name ${lib_names})
+    string(REGEX MATCH "\t${name} => ([A-Za-z0-9/.]+)" _ ${ldd_output})
+    if (CMAKE_MATCH_1)
+      set(${variable} ${CMAKE_MATCH_1} PARENT_SCOPE)
+      break()
+    endif()
+  endforeach()
 endfunction()
 
-# Helper function used by CouchbaseAddressSanitizer /
-# UndefinedSanitizer.  Searches for a sanitizer_lib_name (which can be
-# a list of names to try), and once found installs it into sanitizer_dest.
-function(install_sanitizer_library _name sanitizer_lib_name sanitizer_dest)
-  try_search_sanitizer_library(${_name}_path "${sanitizer_lib_name}")
+# Helper function used by
+# Couchbase{Address,Thread,Undefined}Sanitizer.  Searches for a
+# sanitizer_lib_name linked when compiling with sanitizer_flags, and
+# once found installs it into sanitizer_dest.
+function(install_sanitizer_library _name sanitizer_lib_name sanitizer_flags sanitizer_dest)
+  try_search_sanitizer_library(${_name}_path "${sanitizer_lib_name}" "${sanitizer_flags}")
   if (${_name}_path)
     message(STATUS "Found ${_name} at: ${${_name}_path} installing to: ${sanitizer_dest}")
     file(COPY ${${_name}_path}
