@@ -54,6 +54,13 @@ find_library(FOLLY_LIBRARY_DEBUG
              HINTS ${_folly_exploded}/lib
              ${_jemalloc_no_default_path})
 
+if (CB_THREADSANITIZER)
+    find_library(FOLLY_LIBRARIES_UNSANITIZED
+                 NAMES folly
+                 HINTS ${_folly_exploded}/lib
+                 ${_jemalloc_no_default_path})
+endif()
+
 # Defines FOLLY_LIBRARY / LIBRARIES to the correct Debug / Release
 # lib based on the current BUILD_TYPE
 unset(FOLLY_LIBRARY CACHE)
@@ -64,8 +71,15 @@ if (NOT FOLLY_LIBRARIES)
     message(FATAL_ERROR "Failed to locate folly library")
 endif ()
 
+if (CB_THREADSANITIZER AND NOT FOLLY_LIBRARIES_UNSANITIZED)
+    message(FATAL_ERROR "Failed to locate unsanitized folly library for TSan build")
+endif ()
+
 MESSAGE(STATUS "Found Facebook Folly headers: ${FOLLY_CONFIG_INCLUDE_DIR}")
 MESSAGE(STATUS "                   libraries: ${FOLLY_LIBRARIES}")
+if (FOLLY_LIBRARIES_UNSANITIZED)
+    MESSAGE(STATUS "       unsanitized libraries: ${FOLLY_LIBRARIES_UNSANITIZED}")
+endif ()
 
 if(NOT DOUBLE_CONVERSION_INCLUDE_DIR OR NOT DOUBLE_CONVERSION_LIBRARIES)
     MESSAGE(FATAL_ERROR "Can't use Folly without double-conversion library")
@@ -81,7 +95,8 @@ set(FOLLY_INCLUDE_DIR
     ${GLOG_INCLUDE_DIR}
     CACHE STRING "Folly include directories" FORCE)
 
-list(APPEND FOLLY_LIBRARIES
+foreach(variant FOLLY_LIBRARIES FOLLY_LIBRARIES_UNSANITIZED)
+    list(APPEND ${variant}
             ${DOUBLE_CONVERSION_LIBRARIES}
             ${GLOG_LIBRARIES}
             ${CMAKE_DL_LIBS}
@@ -93,5 +108,6 @@ list(APPEND FOLLY_LIBRARIES
             Boost::thread
             ${LIBEVENT_LIBRARIES}
             ${OPENSSL_LIBRARIES})
+endforeach()
 
 mark_as_advanced(FOLLY_INCLUDE_DIR FOLLY_LIBRARIES)
