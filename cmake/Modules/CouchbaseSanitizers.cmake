@@ -32,7 +32,7 @@ function(try_search_sanitizer_library variable lib_names flags)
   # example format:
   #     \tlibgcc_s.so.1 => /lib/x86_64-linux-gnu/libgcc_s.so.1 (0x00007f78dc7d3000)
   foreach(name ${lib_names})
-    string(REGEX MATCH "\t${name} => ([A-Za-z0-9/.]+)" _ ${ldd_output})
+    string(REGEX MATCH "\t${name} => ([A-Za-z0-9/._-]+)" _ ${ldd_output})
     if (CMAKE_MATCH_1)
       set(${variable} ${CMAKE_MATCH_1} PARENT_SCOPE)
       break()
