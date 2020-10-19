@@ -85,6 +85,51 @@ if(NOT DOUBLE_CONVERSION_INCLUDE_DIR OR NOT DOUBLE_CONVERSION_LIBRARIES)
     MESSAGE(FATAL_ERROR "Can't use Folly without double-conversion library")
 endif()
 
+set(folly_dependancies ${DOUBLE_CONVERSION_LIBRARIES}
+            ${GLOG_LIBRARIES}
+            ${CMAKE_DL_LIBS}
+            Boost::context
+            Boost::filesystem
+            Boost::program_options
+            Boost::regex
+            Boost::system
+            Boost::thread
+            ${LIBEVENT_LIBRARIES}
+            ${OPENSSL_LIBRARIES})
+
+# Define 'modern' CMake targets for Folly for targets to depend on. These
+# are simpler than the FOLLY_LIBRARIES / FOLLY_INCLUDE_DIR env vars as
+# targets don't have to explicitly add each one.
+add_library(Folly::folly STATIC IMPORTED)
+set_target_properties(Folly::folly
+    PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${FOLLY_INCLUDE_DIR}"
+        IMPORTED_LOCATION "${FOLLY_LIBRARY}")
+target_link_libraries(Folly::folly INTERFACE ${folly_dependancies})
+
+add_library(Folly::folly_unsanitized STATIC IMPORTED)
+set_target_properties(Folly::folly_unsanitized
+    PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${FOLLY_INCLUDE_DIR}")
+if (FOLLY_LIBRARIES_UNSANITIZED)
+    set_target_properties(Folly::folly_unsanitized
+            PROPERTIES
+            IMPORTED_LOCATION "${FOLLY_LIBRARIES_UNSANITIZED}")
+else()
+    set_target_properties(Folly::folly_unsanitized
+            PROPERTIES
+            IMPORTED_LOCATION "${FOLLY_LIBRARY}")
+endif()
+target_link_libraries(Folly::folly_unsanitized INTERFACE ${folly_dependancies})
+
+# Define an interface library which is just the headers of Folly.
+# This is useful as some targets (e.g. tests) only make use of the
+# portability headers such as portability/GTest.h
+add_library(Folly::headers INTERFACE IMPORTED)
+set_target_properties(Folly::headers
+    PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${FOLLY_INCLUDE_DIR}")
+
 # Append Folly's depenancies to the include / lib variables so users
 # of Folly pickup the dependancies automatically.
 list(APPEND FOLLY_INCLUDE_DIR )
@@ -96,18 +141,7 @@ set(FOLLY_INCLUDE_DIR
     CACHE STRING "Folly include directories" FORCE)
 
 foreach(variant FOLLY_LIBRARIES FOLLY_LIBRARIES_UNSANITIZED)
-    list(APPEND ${variant}
-            ${DOUBLE_CONVERSION_LIBRARIES}
-            ${GLOG_LIBRARIES}
-            ${CMAKE_DL_LIBS}
-            Boost::context
-            Boost::filesystem
-            Boost::program_options
-            Boost::regex
-            Boost::system
-            Boost::thread
-            ${LIBEVENT_LIBRARIES}
-            ${OPENSSL_LIBRARIES})
+    list(APPEND ${variant} ${folly_dependancies})
 endforeach()
 
 mark_as_advanced(FOLLY_INCLUDE_DIR FOLLY_LIBRARIES)
