@@ -83,9 +83,6 @@ ExternalProject_Add(folly
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
-              COMMAND git reset --hard
-              COMMAND COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/Benchmark_cinttypes.patch
-              COMMAND COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/Glog_debug_library.patch
         CMAKE_CACHE_ARGS ${cache_args}
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
@@ -102,9 +99,6 @@ if (${PLATFORM} MATCHES "ubuntu" OR ${PLATFORM} MATCHES "macos")
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
-              COMMAND git reset --hard
-              COMMAND COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/Benchmark_cinttypes.patch
-              COMMAND COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/Glog_debug_library.patch
         CMAKE_CACHE_ARGS ${cache_args}
             -DCMAKE_CXX_FLAGS:STRING=${cxx_flags}\ -fsanitize=thread
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
@@ -123,9 +117,6 @@ if (WIN32)
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
-              COMMAND git reset --hard
-              COMMAND COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/Benchmark_cinttypes.patch
-              COMMAND COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/Glog_debug_library.patch
         CMAKE_CACHE_ARGS ${cache_args}
             -DCMAKE_BUILD_TYPE:STRING=Debug
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
