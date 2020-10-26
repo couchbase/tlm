@@ -273,7 +273,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/indexing)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/goxdcr)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/gometa)
-      ADD_SUBDIRECTORY(godeps/src/github.com/couchbase/cbauth)
+      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbauth)
 
       ADD_SUBDIRECTORY(cbft)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
