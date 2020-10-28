@@ -63,7 +63,7 @@ DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS amzn2 centos6 centos7 debian8 de
 DECLARE_DEP (snappy VERSION 1.1.1-cb6 PLATFORMS rhel8)
 DECLARE_DEP (v8 VERSION 5.9-cb3 PLATFORMS centos7 debian8 macosx suse12.2 ubuntu14.04 ubuntu16.04)
 DECLARE_DEP (v8 VERSION 5.9-cb4 PLATFORMS centos6 suse11.2)
-DECLARE_DEP (v8 VERSION 5.9-cb5 PLATFORMS debian9 ubuntu18.04)
+DECLARE_DEP (v8 VERSION 5.9-cb7 PLATFORMS debian9 ubuntu18.04)
 DECLARE_DEP (v8 VERSION 5.9-cb6 PLATFORMS amzn2 windows_msvc2015)
 DECLARE_DEP (v8 VERSION 5.9-cb10 PLATFORMS rhel8)
 DECLARE_DEP (zlib VERSION 1.2.11-cb3 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11.2 suse12.2 ubuntu14.04 ubuntu16.04 ubuntu18.04 windows_msvc2015)
