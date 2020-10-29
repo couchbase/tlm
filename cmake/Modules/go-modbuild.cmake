@@ -59,6 +59,10 @@ SET (ENV{GOROOT})
 # It will put things into pkg/mod.
 SET (ENV{GOPATH} "${GO_BINARY_DIR}")
 
+# Set GO111MODULE since we're by definition building with modules (just in
+# case it's set to a bad value in the environment)
+SET (ENV{GO111MODULE} "on")
+
 # Use GOCACHE to tell Go where to store intermediate compilation artifacts.
 # It places things directly into this directory, so we append /cache.
 SET (ENV{GOCACHE} "${GO_BINARY_DIR}/cache")

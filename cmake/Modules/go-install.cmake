@@ -65,8 +65,8 @@ ENDIF (CB_GO_RACE_DETECTOR)
 SET (ENV{GOROOT} "${GOROOT}")
 SET (GO_EXECUTABLE "${GOROOT}/bin/go")
 
-# Unset GO111MODULE since we're by definition not building with modules
-SET (ENV{GO111MODULE})
+# Set GO111MODULE to "off" since we're by definition not building with modules
+SET (ENV{GO111MODULE} "off")
 
 # Use -pkgdir to separate the compiled bits out
 # of the source directories - separate directories per Go version, to
