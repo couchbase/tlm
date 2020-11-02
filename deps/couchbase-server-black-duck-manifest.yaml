@@ -11,7 +11,7 @@ components:
     # Note: breakpad doesn't really have "releases". I picked this version from
     # Black Duck's history as being moderately close to the date of the code we
     # use.
-    breakpad: [ svn-r0 ]
+    breakpad: [ r835 ]
     curl:
         bd-name: libcurl
         versions: [ 7.66.0 ]
