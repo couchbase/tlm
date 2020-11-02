@@ -6,7 +6,7 @@ components:
 
 
     boost:
-        bd-name: Boost C++ Libraries
+        bd-name: Boost C++ Libraries - boost
         versions: [ 1.67.0 ]
     # Note: breakpad doesn't really have "releases". I picked this version from
     # Black Duck's history as being moderately close to the date of the code we
