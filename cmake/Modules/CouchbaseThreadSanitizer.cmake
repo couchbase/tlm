@@ -35,9 +35,16 @@ IF (CB_THREADSANITIZER)
             # Append extra flags to THREAD_SANITIZER_FLAG, so they can
             # be correctly removed for unsanitized targets - see
             # remove_sanitize_thread() below.
-            LIST(APPEND THREAD_SANITIZER_FLAG -shared-libsan)
-            LIST(APPEND THREAD_SANITIZER_FLAG -ltsan)
+            LIST(APPEND THREAD_SANITIZER_LDFLAGS -shared-libsan)
+            LIST(APPEND THREAD_SANITIZER_LDFLAGS -ltsan)
         ENDIF()
+
+        # Ensure TSan flags are used for cgo compile and link, so Go
+        # programs linking to TSan-enabled C/C++ libraries have the
+        # correct tsan runtime library available.
+        SET(CMAKE_CGO_CFLAGS "${CMAKE_CGO_CFLAGS} ${THREAD_SANITIZER_FLAG}")
+        STRING(REPLACE ";" " " tsan_ldflags_list "${THREAD_SANITIZER_LDFLAGS}")
+        SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${tsan_ldflags_list}")
 
         use_rpath_for_sanitizers()
 
@@ -55,7 +62,10 @@ IF (CB_THREADSANITIZER)
             # binaries on a machine different to the build machine
             # (for example for RPM sanitized packages).
             # library).
-            install_sanitizer_library(TSan libtsan.so.0 "${THREAD_SANITIZER_FLAG}" ${CMAKE_INSTALL_PREFIX}/lib)
+            install_sanitizer_library(TSan
+                                      libtsan.so.0
+                                      "${THREAD_SANITIZER_FLAG};${THREAD_SANITIZER_LDFLAGS}"
+                                      ${CMAKE_INSTALL_PREFIX}/lib)
         endif()
 
         # Override the normal ADD_TEST macro to set the TSAN_OPTIONS
@@ -101,7 +111,8 @@ function(remove_sanitize_thread TARGET)
         return()
     endif ()
     remove_from_property(${TARGET} COMPILE_OPTIONS ${THREAD_SANITIZER_FLAG})
-    remove_from_property(${TARGET} LINK_OPTIONS ${THREAD_SANITIZER_FLAG})
+    remove_from_property(${TARGET}
+        LINK_OPTIONS ${THREAD_SANITIZER_FLAG} ${THREAD_SANITIZER_LDFLAGS})
 
     # Remove any explicitly added TSan runtime libraries - see
     # LINK_LIBRARIES(tsan) call above.
