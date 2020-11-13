@@ -17,8 +17,7 @@ IF (CB_THREADSANITIZER)
 
     IF(HAVE_FLAG_SANITIZE_THREAD_C AND HAVE_FLAG_SANITIZE_THREAD_CXX)
         SET(THREAD_SANITIZER_FLAG "-fsanitize=thread")
-        ADD_COMPILE_OPTIONS(${THREAD_SANITIZER_FLAG})
-        ADD_LINK_OPTIONS(${THREAD_SANITIZER_FLAG})
+        SET(THREAD_SANITIZER_LDFLAGS "-fsanitize=thread")
 
         # MB-41896: Clang links to the TSan runtime library statically
         # by default. This is problematic as we can have multiple
@@ -29,15 +28,17 @@ IF (CB_THREADSANITIZER)
         # Link to the shared runtime library to avoid this.
         # (Note: AppleClang defaults to shared linking so doesn't have this problem).
         IF(CMAKE_C_COMPILER_ID STREQUAL "Clang")
-            ADD_LINK_OPTIONS(-shared-libsan)
-            LINK_LIBRARIES(tsan)
-
             # Append extra flags to THREAD_SANITIZER_FLAG, so they can
             # be correctly removed for unsanitized targets - see
             # remove_sanitize_thread() below.
             LIST(APPEND THREAD_SANITIZER_LDFLAGS -shared-libsan)
             LIST(APPEND THREAD_SANITIZER_LDFLAGS -ltsan)
+
+            LINK_LIBRARIES(tsan)
         ENDIF()
+
+        ADD_COMPILE_OPTIONS(${THREAD_SANITIZER_FLAG})
+        ADD_LINK_OPTIONS(${THREAD_SANITIZER_LDFLAGS})
 
         # Ensure TSan flags are used for cgo compile and link, so Go
         # programs linking to TSan-enabled C/C++ libraries have the
