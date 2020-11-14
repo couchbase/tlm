@@ -55,6 +55,7 @@ specs:
   - setuptools 40.8.0
   - wheel 0.33.1
   - pip 19.0.3
+  - https://repo.anaconda.com/pkgs/main/win-64/win_inet_pton-1.1.0-py37_0.tar.bz2 [win]
 
 exclude:
   - tk        [not win]
