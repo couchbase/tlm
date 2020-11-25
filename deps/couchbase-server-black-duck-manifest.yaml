@@ -39,7 +39,7 @@ components:
     prometheus:
         bd-name: prometheus monitoring
         versions: [ v2.17.2 ]
-    snappy: [ 1.1.1 ]
+    google-snappy: [ 1.1.1 ]
     v8:
         bd-name: Google V8 Javascript engine
         versions: [ 7.1.321 ]
