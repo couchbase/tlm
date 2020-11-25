@@ -36,7 +36,7 @@ components:
     openssl: [ 1.1.1d ]
     opentracing-cpp: [ v1.5.1 ]
     pcre: [ 8.43 ]
-    snappy: [ 1.1.1 ]
+    google-snappy: [ 1.1.1 ]
     v8:
         bd-name: Google V8 Javascript engine
         versions: [ 7.1.321 ]
