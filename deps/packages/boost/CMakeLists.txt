@@ -34,9 +34,7 @@ ExternalProject_Add(boost
   # CB Server and Folly (particulary) require most of Boost's submodules;
   # however there are few large modules we don't need - and hence don't want to
   # bloat the cbdeps with. Remove these before packaging up.
-  INSTALL_COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/include/boost/asio
-          COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/include/boost/fusion
-          COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/include/boost/geometry
+  INSTALL_COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/include/boost/geometry
           COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/include/boost/hana
           COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/include/boost/phoenix
           COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/include/boost/spirit
