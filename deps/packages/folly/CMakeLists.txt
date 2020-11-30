@@ -11,7 +11,7 @@ set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 # (previously using GCC 8.2.1), the following temporary conditionals
 # are needed for said platform, and can be removed once things are
 # resynced with a later build.
-DECLARE_DEP (boost VERSION 1.67.0-cb8 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (boost VERSION 1.74.0-cb1 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS centos8 debian10 rhel8 ubuntu20.04)
 DECLARE_DEP (fmt VERSION 7.0.3-cb2 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2015 windows_msvc2017)
@@ -48,6 +48,7 @@ list(APPEND cache_args -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo)
 list(APPEND cache_args "-DCMAKE_INSTALL_PREFIX:PATH=\
 ${CMAKE_CURRENT_BINARY_DIR}/install")
 list(APPEND cache_args -DBUILD_SHARED_LIBS:STRING=OFF)
+list(APPEND cache_args -DBoost_ADDITIONAL_VERSIONS:STRING=1.74)
 list(APPEND cache_args -DBoost_DETAILED_FAILURE_MSG:STRING=ON)
 list(APPEND cache_args -DBoost_USE_STATIC_LIBS:STRING=ON)
 list(APPEND cache_args -DBoost_NO_SYSTEM_PATHS:BOOL=ON)

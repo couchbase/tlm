@@ -35,7 +35,7 @@ if (NOT DEFINED Boost_FOUND)
         set(Boost_NO_BOOST_CMAKE ON)
     endif ()
 
-    set(Boost_ADDITIONAL_VERSIONS "1.67")
+    set(Boost_ADDITIONAL_VERSIONS "1.74")
     set(Boost_DETAILED_FAILURE_MSG ON)
     set(Boost_USE_STATIC_LIBS ON)
 
