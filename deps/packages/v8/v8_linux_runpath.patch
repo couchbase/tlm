@@ -1,25 +1,25 @@
 diff --git a/toolchain/gcc_toolchain.gni b/toolchain/gcc_toolchain.gni
-index e7c88708c..c57642d38 100644
+index 744c78cbd..7c362b877 100644
 --- a/toolchain/gcc_toolchain.gni
 +++ b/toolchain/gcc_toolchain.gni
-@@ -607,6 +607,7 @@ template("clang_toolchain") {
+@@ -601,6 +601,7 @@ template("clang_toolchain") {
                             [
                               "strip",
-                              "is_clang_analysis_supported",
+                              "default_shlib_subdir",
 +                             "extra_ldflags",
                               "enable_linker_map",
                               "use_unstripped_as_runtime_outputs",
                             ])
 diff --git a/toolchain/linux/BUILD.gn b/toolchain/linux/BUILD.gn
-index 1b0f22059..924225cfe 100644
+index fa8b17e9d..de4d7572d 100644
 --- a/toolchain/linux/BUILD.gn
 +++ b/toolchain/linux/BUILD.gn
-@@ -111,6 +111,8 @@ gcc_toolchain("x86") {
+@@ -119,6 +119,8 @@ gcc_toolchain("x86") {
  }
-
+ 
  clang_toolchain("clang_x64") {
 +  extra_ldflags = "-Wl,-rpath=\\\$ORIGIN -Wl,--enable-new-dtags"
 +
    # Output linker map files for binary size analysis.
    enable_linker_map = true
-
+ 

@@ -32,9 +32,20 @@ chmod +x /tmp/cbdep
 # python2, not overriding anything). Also add to LD_LIBRARY_PATH as the
 # "vpython" script the build uses creates a copy of "python2" but doesn't
 # copy libpython2 as well.
+# On macosx, we need to use python from miniconda; otherwise, gclient will
+# fail due to SIP.  Creating an alias doesn't seem to work; have to add
+# miniconda2 in the front of PATH.  ubuntu20 comes with python3, v8 doesn't
+# work well with python3, put miniconda2 in the front as well.
+
 /tmp/cbdep install -d ${DEPS} miniconda2 ${MINICONDA_VER}
-export PATH=${PATH}:${DEPS}/miniconda2-${MINICONDA_VER}/bin
+export PATH_ORG=${PATH}
 export LD_LIBRARY_PATH=${DEPS}/miniconda2-${MINICONDA_VER}/lib
+
+if [[ $PLATFORM != "macosx" && $PLATFORM != "ubuntu20.04" && $PLATFORM != "ubuntu18.04" ]]; then
+    export PATH=${PATH_ORG}:${DEPS}/miniconda2-${MINICONDA_VER}/bin
+else
+    export PATH=${DEPS}/miniconda2-${MINICONDA_VER}/bin:${PATH_ORG}
+fi
 
 # Get Google's depot_tools; checkout from October 18th, 2018,
 # which worked for the SuSE platforms on the last build.
@@ -47,7 +58,7 @@ export PATH=$(pwd)/depot_tools:$PATH
 cat > .gclient <<EOF
 solutions = [
   {
-    "url": "https://github.com/couchbasedeps/v8-mirror.git@7.1.321",
+    "url": "https://github.com/couchbasedeps/v8-mirror.git@8.3.110.13",
     "managed": False,
     "name": "v8",
     "deps_file": "DEPS",
@@ -64,12 +75,27 @@ if [[ $PLATFORM != "macosx" ]]; then
     popd
 fi
 
+#download older version of gn for centos7
+#latest requires glibc 2.18, centos7 comes with 2.17
+if [[ $PLATFORM == "centos7" ]]; then
+    pushd v8/buildtools/linux64
+    mv gn gn.org
+    curl -L -o gn.zip https://chrome-infra-packages.appspot.com/dl/gn/gn/linux-amd64/+/jCF636-ci00rA64wJkdAPZx3NrIvafSvZ_bajkcCMbUC
+    unzip gn.zip
+    popd
+fi
+
 # Actual v8 configure and build steps - we build debug and release.
 cd v8
-V8_ARGS='target_cpu="x64" is_component_build=true v8_enable_backtrace=true v8_use_external_startup_data=false'
+V8_ARGS='target_cpu="x64" is_component_build=true v8_enable_backtrace=true v8_use_external_startup_data=false use_custom_libcxx=false v8_enable_pointer_compression=false'
+
 gn gen out.gn/x64.release --args="$V8_ARGS is_debug=false"
 ninja -C out.gn/x64.release
-V8_ARGS="$V8_ARGS v8_enable_slow_dchecks=true v8_optimized_debug=false"
+V8_ARGS="$V8_ARGS v8_enable_slow_dchecks=true"
+#only enable v8_optimized_debug=false if it is not macosx as of V8 8.3 as it causes unitest failures
+if [[ $PLATFORM != "macosx" ]]; then
+    V8_ARGS="$V8_ARGS v8_optimized_debug=false"
+fi
 gn gen out.gn/x64.debug --args="$V8_ARGS is_debug=true"
 ninja -C out.gn/x64.debug
 
@@ -78,29 +104,29 @@ mkdir -p \
     $INSTALL_DIR/lib/Release \
     $INSTALL_DIR/lib/Debug \
     $INSTALL_DIR/include/libplatform \
+    $INSTALL_DIR/include/cppgc \
     $INSTALL_DIR/include/unicode
 (
     cd out.gn/x64.release
     cp -avi libv8*.* $INSTALL_DIR/lib/Release
+    cp -avi libchrome*.* $INSTALL_DIR/lib/Release
+    cp -avi libcppgc*.* $INSTALL_DIR/lib/Release
     cp -avi libicu*.* $INSTALL_DIR/lib/Release
     cp -avi icu*.* $INSTALL_DIR/lib/Release
-    if [[ $PLATFORM != "macosx" ]]; then
-        cp -avi libc++*.* $INSTALL_DIR/lib/Release
-    fi
 )
 (
     cd out.gn/x64.debug
     cp -avi libv8*.* $INSTALL_DIR/lib/Debug
+    cp -avi libchrome*.* $INSTALL_DIR/lib/Debug
+    cp -avi libcppgc*.* $INSTALL_DIR/lib/Debug
     cp -avi libicu*.* $INSTALL_DIR/lib/Debug
     cp -avi icu*.* $INSTALL_DIR/lib/Debug
-    if [[ $PLATFORM != "macosx" ]]; then
-        cp -avi libc++*.* $INSTALL_DIR/lib/Debug
-    fi
 )
 (
     cd include
     cp -avi v8*.h $INSTALL_DIR/include
     cp -avi libplatform/[a-z]*.h $INSTALL_DIR/include/libplatform
+    cp -avi cppgc/[a-z]*.h $INSTALL_DIR/include/cppgc
 )
 (
     cd third_party/icu/source/common/unicode

@@ -1,0 +1,26 @@
+diff --git a/toolchain/win/tool_wrapper.py b/toolchain/win/tool_wrapper.py
+index 18986986c..cf409216c 100644
+--- a/toolchain/win/tool_wrapper.py
++++ b/toolchain/win/tool_wrapper.py
+@@ -141,9 +141,9 @@ class WinTool(object):
+     # Read output one line at a time as it shows up to avoid OOM failures when
+     # GBs of output is produced.
+     for line in link.stdout:
+-      if (not line.startswith('   Creating library ') and
+-          not line.startswith('Generating code') and
+-          not line.startswith('Finished generating code')):
++      if (not line.startswith(b'   Creating library ') and
++          not line.startswith(b'Generating code') and
++          not line.startswith(b'Finished generating code')):
+         print(line)
+     return link.wait()
+
+@@ -159,7 +159,7 @@ class WinTool(object):
+                              stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+     out, _ = popen.communicate()
+     for line in out.splitlines():
+-      if not line.startswith(' Assembling: '):
++      if not line.startswith(b' Assembling: '):
+         print(line)
+     return popen.returncode
+

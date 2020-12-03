@@ -42,7 +42,7 @@ components:
     google-snappy: [ 1.1.1 ]
     v8:
         bd-name: Google V8 Javascript engine
-        versions: [ 7.1.321 ]
+        versions: [ 8.3.110.13 ]
     zlib: [ 1.2.11 ]
 
     #
