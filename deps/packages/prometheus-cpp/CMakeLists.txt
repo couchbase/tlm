@@ -26,6 +26,7 @@ ExternalProject_Add(${_dep_package}
             -DBUILD_SHARED_LIBS=OFF
             -DENABLE_PUSH=OFF
             -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/zlib.exploded
+            -DCMAKE_POSITION_INDEPENDENT_CODE=ON
 
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
         )
