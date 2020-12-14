@@ -42,6 +42,12 @@ if (NOT JEMALLOC_INCLUDE_DIR)
     message(FATAL_ERROR "Failed to locate jemalloc/jemalloc.h")
 endif ()
 
+# On Windows also need to add the 'msvc_compat' subdir to include path to
+# provide an implementation of <strings.h>.
+if (WIN32)
+    list(APPEND JEMALLOC_INCLUDE_DIR ${JEMALLOC_INCLUDE_DIR}/msvc_compat)
+endif ()
+
 # find the Release library and Debug library (if it exists).
 #
 # We need to put _jemalloc_exploded/lib/* as hints as we don't
@@ -75,9 +81,6 @@ find_package_handle_standard_args(JEMALLOC
 cmake_push_check_state(RESET)
 set(CMAKE_REQUIRED_LIBRARIES ${JEMALLOC_LIBRARIES})
 set(CMAKE_REQUIRED_INCLUDES ${JEMALLOC_INCLUDE_DIR})
-if (WIN32)
-    list(APPEND CMAKE_REQUIRED_INCLUDES ${JEMALLOC_INCLUDE_DIR}/msvc_compat)
-endif ()
 check_symbol_exists(je_malloc "stdbool.h;jemalloc/jemalloc.h" HAVE_JE_SYMBOLS)
 check_symbol_exists(je_sdallocx "stdbool.h;jemalloc/jemalloc.h" HAVE_JEMALLOC_SDALLOCX)
 cmake_pop_check_state()
