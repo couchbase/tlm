@@ -164,7 +164,7 @@ _ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 6)
 _ADD_DEP_PACKAGE(v8 8.3 8.3.110.13 1)
 _ADD_DEP_PACKAGE(jemalloc 5.2.1 5.2.1 4)
 
-_ADD_DEP_PACKAGE(erlang cheshirecat couchbase-cheshirecat 4)
+_ADD_DEP_PACKAGE(erlang cheshirecat couchbase-cheshirecat 3)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
