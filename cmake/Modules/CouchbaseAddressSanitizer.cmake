@@ -61,8 +61,9 @@ IF (CB_ADDRESSSANITIZER)
                SET(_name ${ARGV0})
             ENDIF()
             _ADD_TEST(${ARGV})
+            SET(lsan_options "suppressions=${CMAKE_SOURCE_DIR}/tlm/lsan.suppressions")
             SET_TESTS_PROPERTIES(${_name} PROPERTIES ENVIRONMENT
-                                 "ASAN_SYMBOLIZER_PATH=${LLVM_SYMBOLIZER}")
+                                 "LSAN_OPTIONS=${lsan_options};ASAN_SYMBOLIZER_PATH=${LLVM_SYMBOLIZER}")
         ENDFUNCTION()
 
         if(NOT CB_ADDRESSSANITIZER EQUAL 2)
@@ -120,7 +121,7 @@ function(remove_sanitize_memory TARGET)
     endif ()
 
     set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY COMPILE_FLAGS "${ADDRESS_SANITIZER_FLAG_DISABLE}")
+        PROPERTY COMPILE_FLAGS " ${ADDRESS_SANITIZER_FLAG_DISABLE}")
     set_property(TARGET ${TARGET} APPEND_STRING
         PROPERTY LINK_FLAGS " ${ADDRESS_SANITIZER_FLAG_DISABLE}")
 endfunction()

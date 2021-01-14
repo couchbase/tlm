@@ -1,0 +1,10 @@
+# The file must contain one suppression rule per line, each rule being of the
+# form leak:<pattern>. The pattern will be substring-matched against the
+# symbolized stack trace of the leak. If either function name, source file name
+# or binary file name matches, the leak report will be suppressed.
+# Upstream documentation for the file:
+# https://github.com/google/sanitizers/wiki/AddressSanitizerLeakSanitizer#suppressions
+
+# MB-41894: v8 8.3 with pointer compression disabled has some read-only memory
+# Supressing isolate leaks until we enable pointer compression
+leak:v8::Isolate::New
