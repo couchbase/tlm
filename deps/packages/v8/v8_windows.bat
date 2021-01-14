@@ -54,12 +54,14 @@ cd out.gn\x64.release
 copy v8.dll* %INSTALL_DIR%\lib\Release || goto error
 copy v8_lib* %INSTALL_DIR%\lib\Release || goto error
 copy icu*.* %INSTALL_DIR%\lib\Release || goto error
+copy zlib.dll* %INSTALL_DIR%\lib\Release || goto error
 del %INSTALL_DIR%\lib\Release\*.ilk || goto error
 
 cd ..\..\out.gn\x64.debug
 copy v8.dll* %INSTALL_DIR%\lib\Debug || goto error
 copy v8_lib* %INSTALL_DIR%\lib\Debug || goto error
 copy icu*.* %INSTALL_DIR%\lib\Debug || goto error
+copy zlib.dll* %INSTALL_DIR%\lib\Debug || goto error
 del %INSTALL_DIR%\lib\Debug\*.ilk || goto error
 
 cd ..\..\include

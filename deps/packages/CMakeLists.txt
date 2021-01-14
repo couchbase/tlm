@@ -161,7 +161,7 @@ _ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 5)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
 _ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 6)
-_ADD_DEP_PACKAGE(v8 8.3 8.3.110.13 1)
+_ADD_DEP_PACKAGE(v8 8.3 8.3.110.13 2)
 _ADD_DEP_PACKAGE(jemalloc 5.2.1 5.2.1 4)
 
 _ADD_DEP_PACKAGE(erlang cheshirecat couchbase-cheshirecat 4)
