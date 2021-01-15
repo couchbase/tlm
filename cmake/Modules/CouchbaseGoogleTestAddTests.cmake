@@ -5,6 +5,7 @@ set(prefix "${TEST_PREFIX}")
 set(suffix "${TEST_SUFFIX}")
 set(extra_args ${TEST_EXTRA_ARGS})
 set(properties ${TEST_PROPERTIES})
+set(post_suite_filter ${TEST_POST_SUITE_FILTER})
 set(script)
 set(suite)
 set(tests)
@@ -68,7 +69,7 @@ foreach(line ${output})
           "${prefix}${pretty_suite}"
           ${TEST_EXECUTOR}
           "${TEST_EXECUTABLE}"
-          "--gtest_filter=${suite}.*"
+          "--gtest_filter=${suite}.${post_suite_filter}*"
           ${extra_args}
         )
         add_command(set_tests_properties

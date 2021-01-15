@@ -215,6 +215,11 @@ same as the Google Test name (i.e. ``suite.testcase``); see also
     cost), this option will instead create one CTest for each GoogleTest
     _suite_.
 
+  ``POST_SUITE_FILTER``
+    Can be used in conjunction with ONE_CTEST_PER_SUITE to pass an additional
+    regex filter to the resulting --gtest_filter arg. Only tests matching the
+    given filter will be run.
+
   ``PROPERTIES name1 value1...``
     Specifies additional properties to be set on all tests discovered by this
     invocation of ``gtest_discover_tests``.
@@ -376,7 +381,7 @@ function(gtest_discover_tests TARGET)
     ""
     "NO_PRETTY_TYPES;NO_PRETTY_VALUES;ONE_CTEST_PER_SUITE"
     "TEST_PREFIX;TEST_SUFFIX;WORKING_DIRECTORY;TEST_LIST;DISCOVERY_TIMEOUT"
-    "EXTRA_ARGS;PROPERTIES"
+    "EXTRA_ARGS;PROPERTIES;POST_SUITE_FILTER"
     ${ARGN}
   )
 
@@ -447,6 +452,7 @@ function(gtest_discover_tests TARGET)
             -D "CTEST_FILE=${ctest_tests_file}"
             -D "TEST_DISCOVERY_TIMEOUT=${_DISCOVERY_TIMEOUT}"
             -D "ONE_CTEST_PER_SUITE=${_ONE_CTEST_PER_SUITE}"
+            -D "TEST_POST_SUITE_FILTER=${_POST_SUITE_FILTER}"
             -P "${_GOOGLETEST_DISCOVER_TESTS_SCRIPT}"
     VERBATIM
   )
