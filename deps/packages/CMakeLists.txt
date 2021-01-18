@@ -214,6 +214,6 @@ _ADD_DEP_PACKAGE(gflags 2.2.1 v2.2.1 4)
 _ADD_DEP_PACKAGE(glog 0.3.5 v0.3.5 4)
 
 _ADD_DEP_PACKAGE(folly v2019.08.12.00 v2019.08.12.00 2)
-_ADD_DEP_PACKAGE(grpc 1.12.0 v1.12.0 10)
+_ADD_DEP_PACKAGE(grpc 1.12.0 couchbase-v1.12.0 11)
 _ADD_DEP_PACKAGE(pcre 8.43 v8.43 2)
 _ADD_DEP_PACKAGE(opentracing-cpp v1.5.1 v1.5.1 4)

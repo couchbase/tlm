@@ -208,11 +208,10 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
        "macosx"
        "rhel8"
        "suse12" "suse15"
-       "ubuntu16.04" "ubuntu18.04"
+       "ubuntu16.04" "ubuntu18.04" "ubuntu20.04"
        "windows_msvc2017")
   LIST (FIND _supported_platforms ${_platform} _index)
   IF (_index GREATER "-1")
     SET(${_supported_platform} ${_platform})
   ENDIF (_index GREATER "-1")
 ENDMACRO (CB_GET_SUPPORTED_PLATFORM)
-

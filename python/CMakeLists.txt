@@ -38,7 +38,7 @@ SET (CBPY_VER_FILE "${CBPY_INSTALL}/couchbase-${CB_VERSION}-py${CBPY_BLD_NUM}.ve
 
 # Path to python interpreter in the local cbpy install.
 IF (WIN32)
-  SET (_localpy "${CBPY_INSTALL}/python3.exe")
+  SET (_localpy "${CBPY_INSTALL}/python.exe")
 ELSE ()
   SET (_localpy "${CBPY_INSTALL}/bin/python3")
 ENDIF ()
