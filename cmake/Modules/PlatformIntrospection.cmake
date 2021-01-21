@@ -215,4 +215,3 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
     SET(${_supported_platform} ${_platform})
   ENDIF (_index GREATER "-1")
 ENDMACRO (CB_GET_SUPPORTED_PLATFORM)
-
