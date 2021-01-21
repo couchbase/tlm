@@ -32,7 +32,7 @@ components:
         versions: [ 2.1.8 ]
     libuv: [ 1.20.3 ]
     lz4: [ 1.8.0 ]
-    numactl: [ 2.0.11 ]
+    libnuma1: [ 2.0.11 ]
     openssl: [ 1.1.1d ]
     opentracing-cpp: [ v1.5.1 ]
     pcre: [ 8.43 ]
