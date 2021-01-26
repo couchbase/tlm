@@ -113,6 +113,8 @@ mkdir -p \
     cp -avi libcppgc*.* $INSTALL_DIR/lib/Release
     cp -avi libicu*.* $INSTALL_DIR/lib/Release
     cp -avi icu*.* $INSTALL_DIR/lib/Release
+    rm -f $INSTALL_DIR/lib/Release/*for_testing*
+    rm -f $INSTALL_DIR/lib/Release/*debug_helper*
 )
 (
     cd out.gn/x64.debug
@@ -121,6 +123,8 @@ mkdir -p \
     cp -avi libcppgc*.* $INSTALL_DIR/lib/Debug
     cp -avi libicu*.* $INSTALL_DIR/lib/Debug
     cp -avi icu*.* $INSTALL_DIR/lib/Debug
+    rm -f $INSTALL_DIR/lib/Debug/*for_testing*
+    rm -f $INSTALL_DIR/lib/Debug/*debug_helper*
 )
 (
     cd include
