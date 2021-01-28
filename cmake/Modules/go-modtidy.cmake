@@ -10,6 +10,11 @@ SET (ENV{GOPATH} "${GO_BINARY_DIR}")
 # It places things directly into this directory, so we append /cache.
 SET (ENV{GOCACHE} "${GO_BINARY_DIR}/cache")
 
+# If this is a production build, set/override GOPROXY.
+IF (CB_PRODUCTION_BUILD)
+  SET (ENV{GOPROXY} "http://goproxy.build.couchbase.com/")
+ENDIF ()
+
 # Execute "go mod tidy".
 SET (CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT)
 EXECUTE_PROCESS (

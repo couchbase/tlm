@@ -67,6 +67,11 @@ SET (ENV{GO111MODULE} "on")
 # It places things directly into this directory, so we append /cache.
 SET (ENV{GOCACHE} "${GO_BINARY_DIR}/cache")
 
+# If this is a production build, set/override GOPROXY.
+IF (CB_PRODUCTION_BUILD)
+  SET (ENV{GOPROXY} "http://goproxy.build.couchbase.com/")
+ENDIF ()
+
 # Attempt to hide build-system-specific paths in resulting binaries.
 get_filename_component(REPOSYNC "${REPOSYNC}" REALPATH)
 SET (GCFLAGS "-trimpath=${REPOSYNC}" ${GCFLAGS})
