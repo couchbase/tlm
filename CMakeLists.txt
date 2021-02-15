@@ -276,6 +276,10 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     IF (NOT BUILD_ONLY_TOOLS)
       ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
 
+      IF (BUILD_ENTERPRISE)
+          ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing-ee)
+      ENDIF()
+
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/query)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/indexing)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/goxdcr)
@@ -327,7 +331,6 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     IF (NOT BUILD_ONLY_TOOLS)
       IF (BUILD_ENTERPRISE)
         ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing)
-        ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing-ee)
       ENDIF()
 
       IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbsummary")
