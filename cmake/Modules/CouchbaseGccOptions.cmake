@@ -23,7 +23,12 @@ endforeach (dir ${CB_SYSTEM_HEADER_DIRS})
 if (CB_CODE_COVERAGE)
    list(APPEND _cb_c_flags --coverage)
    set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} --coverage")
- endif ()
+endif ()
+
+if (NOT COUCHBASE_OMIT_FRAME_POINTER)
+   message(STATUS "Add -fno-omit-frame-pointer")
+   list(APPEND _cb_c_flags -fno-omit-frame-pointer)
+endif()
 
 # If building with a version of GCC which defaults to PIE code
 # (--enable-default-pie), we can encounter linker errors when linking

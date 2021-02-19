@@ -43,6 +43,10 @@ if (NOT HAVE_VARIANT)
   message(FATAL_ERROR "C++ compiler claims C++17 support but is missing required header <variant>. Check if your compiler (${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}) fully supports C++17.")
 endif()
 
+option(COUCHBASE_OMIT_FRAME_POINTER
+       "Allow omission of frame pointer"
+       True)
+
 #
 # Set flags for the C and C++ Compiler
 #

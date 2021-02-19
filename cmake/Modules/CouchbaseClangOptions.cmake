@@ -29,6 +29,11 @@ if (CB_CODE_COVERAGE)
     set(CMAKE_LINK_FLAGS "${CMAKE_LINK_FLAGS} -fprofile-instr-generate")
 endif ()
 
+if (NOT COUCHBASE_OMIT_FRAME_POINTER)
+    message(STATUS "Add -fno-omit-frame-pointer")
+    list(APPEND _cb_c_flags -fno-omit-frame-pointer)
+endif()
+
 list(APPEND _cb_c_flags -fvisibility=hidden -pthread)
 if (CMAKE_GENERATOR STREQUAL "Ninja")
     # Enable color diagnostic output when using Ninja build generator
