@@ -255,6 +255,13 @@ ENDIF()
 
 IF (NOT BUILD_ONLY_TOOLS)
   ADD_SUBDIRECTORY(product-texts/couchbase-server)
+  STRING (REGEX MATCH "^[^-]+" _version "${PRODUCT_VERSION}")
+  SET (NOTICES_FILE "product-metadata/couchbase-server/blackduck/${_version}/notices.txt")
+  IF (EXISTS "${CMAKE_SOURCE_DIR}/${NOTICES_FILE}")
+    INSTALL (FILES "${NOTICES_FILE}" RENAME "NOTICES.txt" DESTINATION .)
+  ELSE ()
+    MESSAGE (WARNING "Could not find ${NOTICES_FILE} - will not be included in installation package")
+  ENDIF ()
 ENDIF()
 
 IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
