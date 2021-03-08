@@ -92,10 +92,14 @@ IF (NOT WIN32)
   # Golang very annoyingly leaves all downloaded module directories as
   # read-only, so not even rm -rf works. Go 1.14 introduces a new flag
   # GOFLAGS=-modcacherw which fixes this, but until we have switched
-  # entirely to 1.14 or higher, here's a work-around:
+  # entirely to 1.14 or higher, here's a work-around. Note we suppress
+  # and ignore any errors; this is just a convenience, so if it fails
+  # we don't want to fail the build.
   EXECUTE_PROCESS (
     COMMAND find "${GO_BINARY_DIR}/pkg/mod" -type d -print0
     COMMAND xargs -0 chmod u+w
+    OUTPUT_QUIET ERROR_QUIET
+    RESULT_VARIABLE _ignored
   )
 ENDIF ()
 IF (CB_GO_CODE_COVERAGE)
