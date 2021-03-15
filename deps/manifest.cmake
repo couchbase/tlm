@@ -42,7 +42,7 @@ DECLARE_DEP (openssl V2 VERSION 1.1.1h BUILD 1 PLATFORMS amzn2 centos7 centos8 d
 DECLARE_DEP (pcre VERSION 8.43-cb1 PLATFORMS amzn2 centos7 centos8 debian9 debian10 rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (pcre VERSION 8.43-cb2 PLATFORMS macosx ubuntu20.04)
 DECLARE_DEP (prometheus V2 VERSION 2.22 BUILD 1 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
-DECLARE_DEP (prometheus-cpp VERSION v0.10.0-couchbase-cb1 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (prometheus-cpp VERSION v0.10.0-couchbase-cb2 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 3 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 # We don't want RocksDB to end up in shipped production builds.
 # NB: I don't indent this IF() block just in case, because I know that some
