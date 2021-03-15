@@ -21,10 +21,21 @@ specs:
   - python 3.7.3*
   - natsort 5.5.0
   - python-snappy 0.5.3
+  - requests 2.25.1
 # These are transitive dependencies of the above. We keep
 # them pinned to avoid surprises when newer versions are
 # installed. Where possible we pin them to the same version
 # in cbdeps.
+  - asn1crypto 1.3.0
+  - idna 2.8
+  - chardet 4.0.0
+  - pycparser 2.20
+  - pysocks 1.7.1
+  - six 1.14.0
+  - cffi 1.14.0
+  - cryptography 2.8
+  - pyopenssl 19.1.0
+  - urllib3 1.26.3
   - snappy 1.1.7
   - sqlite 3.27.2
   - ca-certificates 2019.1.23
@@ -43,6 +54,7 @@ specs:
   - setuptools 40.8.0
   - wheel 0.33.1
   - pip 19.0.3
+  - win_inet_pton 1.1.0 py37_0 [win]
 
 exclude:
   - tk        [not win]
