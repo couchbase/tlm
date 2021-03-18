@@ -21,7 +21,7 @@ specs:
   - python 3.7.3*
   - natsort 5.5.0
   - python-snappy 0.5.3
-  - requests 2.21.0
+  - requests 2.23.0
   - msgpack-python 1.0.0
 # These are transitive dependencies of the above. We keep
 # them pinned to avoid surprises when newer versions are
@@ -36,7 +36,7 @@ specs:
   - cffi 1.14.0
   - cryptography 2.8
   - pyopenssl 19.1.0
-  - urllib3 1.24.1
+  - urllib3 1.25.8
   - snappy 1.1.7
   - sqlite 3.27.2
   - ca-certificates 2019.1.23
@@ -55,7 +55,7 @@ specs:
   - setuptools 40.8.0
   - wheel 0.33.1
   - pip 19.0.3
-  - https://repo.anaconda.com/pkgs/main/win-64/win_inet_pton-1.1.0-py37_0.tar.bz2 [win]
+  - win_inet_pton 1.1.0 py37_0 [win]
 
 exclude:
   - tk        [not win]
