@@ -16,8 +16,13 @@
 INCLUDE (CBDownloadDeps)
 
 # Our desired tool versions.
+# Miniconda 4.6.14 has python3.7.
 SET (MINICONDA_VERSION 4.6.14)
-SET (CONSTRUCTOR_VERSION 2.3.0)
+# We do need a newer version of the "conda" tool which handles "noarch"
+# packages like requests correctly.
+SET (CONDA_VERSION 4.9.2)
+# Version of the "constructor" tool.
+SET (CONSTRUCTOR_VERSION 3.2.0)
 STRING (REGEX REPLACE "-.*" "" CB_VERSION "${PRODUCT_VERSION}")
 
 # Count to differentiate different versions of cbpy over time.
@@ -25,7 +30,7 @@ STRING (REGEX REPLACE "-.*" "" CB_VERSION "${PRODUCT_VERSION}")
 # so that cbpy will be re-installed into the install/lib/python/runtime
 # directory, and the MacOS wrapper script will install cbpy into a
 # differently-named directory in the user's home dir.
-SET (CBPY_BLD_NUM 2 CACHE INTERNAL "")
+SET (CBPY_BLD_NUM 4 CACHE INTERNAL "")
 
 # Set up various paths and locations for Python-related things:
 
@@ -82,10 +87,12 @@ IF (WIN32)
   SET (_constructor "${_constructor}.exe")
 ENDIF ()
 
-# Invoke conda to install constructor. Note: on Docker swarm slaves, the
-# build environment is launched via sudo. This breaks conda for dumb
-# reasons (https://github.com/conda/conda/issues/7267). Workaround is
-# to unset SUDO_UID when invoking.
+# Update conda for full "noarch" support, then invoke conda to install
+# constructor.
+# Note: on Docker swarm slaves, the build environment is launched via sudo.
+# This breaks conda for dumb reasons
+# (https://github.com/conda/conda/issues/7267). Workaround is to unset
+# SUDO_UID when invoking.
 # MB-37289: Also unset some Conda environment variables in case the
 # user has a different installation of conda, and override HOME so it
 # can't read the user's ~/.condarc.
@@ -95,7 +102,11 @@ ADD_CUSTOM_COMMAND (OUTPUT "${_constructor}"
   COMMAND "${CMAKE_COMMAND}" -E env
     --unset=SUDO_UID
     --unset=CONDA_PREFIX --unset=CONDA_DEFAULT_ENV "HOME=${_miniconda_install}"
-    "${CONDA_EXE}" install -y constructor=${CONSTRUCTOR_VERSION}
+    "${CONDA_EXE}" install -y conda=${CONDA_VERSION}
+  COMMAND "${CMAKE_COMMAND}" -E env
+    --unset=SUDO_UID
+    --unset=CONDA_PREFIX --unset=CONDA_DEFAULT_ENV "HOME=${_miniconda_install}"
+    "${CONDA_EXE}" install -y -c conda-forge constructor=${CONSTRUCTOR_VERSION}
   VERBATIM)
 
 # Target to create our "microconda" installer
