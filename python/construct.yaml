@@ -9,6 +9,11 @@ name: cbpy
 version: 1.0.0
 installer_filename: cbpy-installer
 
+# Unfortunately many Windows conda packages are packaged badly
+# ( https://github.com/ContinuumIO/anaconda-issues/issues/12156 )
+# so we have to bypass this useful safety check.
+ignore_duplicate_files: true
+
 channels:
   - https://repo.anaconda.com/pkgs/main/
 
@@ -16,11 +21,11 @@ specs:
 # These are the packages we explicitly depend on.
 # If you change these (packages OR versions), be sure
 # to experimentally update the transitive dependencies below!
-  - python 3.7.3*
+  - python 3.9.2*
 
-  - msgpack-python 1.0.0
-  - natsort 5.5.0
-  - python-snappy 0.5.3
+  - msgpack-python 1.0.2
+  - natsort 7.1.1
+  - python-snappy 0.6.0
   - requests 2.25.1
 # These are transitive dependencies of the above. We keep
 # them pinned to avoid surprises when newer versions are
@@ -28,7 +33,7 @@ specs:
 # in cbdeps.
 # Note: One way to create/update this list is to install a local miniconda3
 # environment and activate it, then run
-#    conda install python=3.7.3\* natsort=5.5.0 .....
+#    conda install python=3.9.2\* natsort=5.5.0 .....
 #    conda update --update-all
 #    conda install python=3.7.3\* natsort=5.5.0 .....
 #    conda list
@@ -38,18 +43,16 @@ specs:
 # care when adding entirely new packages to the list below. Try leaving
 # them out at first and see if cbpy builds OK.
   - _libgcc_mutex 0.1 [linux]
-  - asn1crypto 1.3.0
   - brotlipy 0.7.0
   - ca-certificates 2021.1.19
   - certifi 2020.12.5
-  - cffi 1.14.0
+  - cffi 1.14.5
   - chardet 4.0.0
   - cryptography 3.4.6
   - idna 2.10
   - ld_impl_linux-64 2.33.1 [linux]
   - libcxx 10.0.0 [osx]
-  - libedit 3.1.20210216 [unix]
-  - libffi 3.2.1 [unix]
+  - libffi 3.3 [unix]
   - libgcc-ng 9.1.0 [linux]
   - libstdcxx-ng 9.1.0 [linux]
   - ncurses 6.2 [unix]
@@ -58,16 +61,16 @@ specs:
   - pycparser 2.20
   - pyopenssl 20.0.1
   - pysocks 1.7.1
-  - readline 7.0 [unix]
+  - readline 8.1 [unix]
   - setuptools 52.0.0
   - six 1.15.0
   - snappy 1.1.8
-  - sqlite 3.33.0
+  - sqlite 3.35.2
   - tk 8.6.10
   - tzdata 2020f
   - urllib3 1.26.4
   - wheel 0.36.2
   - wincertstore 0.2 [win]
-  - win_inet_pton 1.1.0 py37_0 [win]
+  - win_inet_pton 1.1.0 [win]
   - xz 5.2.5
   - zlib 1.2.11

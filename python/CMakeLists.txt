@@ -16,8 +16,7 @@
 INCLUDE (CBDownloadDeps)
 
 # Our desired tool versions.
-# Miniconda 4.6.14 has python3.7.
-SET (MINICONDA_VERSION 4.6.14)
+SET (MINICONDA_VERSION 4.9.2)
 # We do need a newer version of the "conda" tool which handles "noarch"
 # packages like requests correctly.
 SET (CONDA_VERSION 4.9.2)
@@ -30,7 +29,7 @@ STRING (REGEX REPLACE "-.*" "" CB_VERSION "${PRODUCT_VERSION}")
 # so that cbpy will be re-installed into the install/lib/python/runtime
 # directory, and the MacOS wrapper script will install cbpy into a
 # differently-named directory in the user's home dir.
-SET (CBPY_BLD_NUM 4 CACHE INTERNAL "")
+SET (CBPY_BLD_NUM 5 CACHE INTERNAL "")
 
 # Set up various paths and locations for Python-related things:
 
@@ -72,7 +71,7 @@ ADD_CUSTOM_COMMAND (OUTPUT "${CONDA_EXE}"
   COMMENT "Creating Miniconda3 ${MINICONDA_VERSION} install"
   COMMAND "${CMAKE_COMMAND}" -E remove_directory "${_miniconda_install}"
   COMMAND "${CBDEP}" install -d "${CMAKE_CURRENT_BINARY_DIR}"
-      miniconda3 ${MINICONDA_VERSION}
+      miniconda3-py39 ${MINICONDA_VERSION}
   COMMAND "${CMAKE_COMMAND}" -E echo "auto_update_conda: False" > "${_miniconda_install}/.condarc"
   COMMAND "${CMAKE_COMMAND}" -E echo "pkgs_dirs: [ ${CB_DOWNLOAD_DEPS_CACHE}/condacache ]" >> "${_miniconda_install}/.condarc"
   VERBATIM)
