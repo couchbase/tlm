@@ -33,7 +33,7 @@ components:
     libuv: [ 1.20.3 ]
     lz4: [ 1.8.0 ]
     libnuma1: [ 2.0.11 ]
-    openssl: [ 1.1.1d ]
+    openssl: [ 1.1.1j ]
     opentracing-cpp: [ v1.5.1 ]
     pcre: [ 8.43, 8.41 ]
     prometheus:
