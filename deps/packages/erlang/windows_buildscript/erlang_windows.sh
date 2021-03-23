@@ -4,7 +4,7 @@ set -ex
 ################## OPENSSL #####################
 # Chocolatey OpenSSL versions are eg. "1.1.1.800", where "800" == "h"
 # because "h" is the eighth letter of the alphabet.
-OPENSSL_VER=1.1.1.800
+OPENSSL_VER=1.1.1.1000
 ################################################
 
 
