@@ -13,6 +13,7 @@ DECLARE_DEP (openssl V2 VERSION 1.1.1j BUILD 1
              PLATFORMS amzn2
                        centos7 centos8
                        debian8 debian9 debian10
+                       rhel8
                        macosx
                        suse12 suse15
                        ubuntu16.04 ubuntu18.04 ubuntu20.04
