@@ -77,11 +77,6 @@ get_filename_component(REPOSYNC "${REPOSYNC}" REALPATH)
 SET (GCFLAGS "-trimpath=${REPOSYNC}" ${GCFLAGS})
 SET (ASMFLAGS "-trimpath=${REPOSYNC}")
 
-# Work around Windows Go 1.15 link error - MB-44988
-IF (WIN32)
-  SET (_go_buildmode "-buildmode=exe")
-ENDIF ()
-
 # Execute "go build".
 SET (CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT)
 EXECUTE_PROCESS (
@@ -89,7 +84,7 @@ EXECUTE_PROCESS (
   COMMAND "${GOEXE}" build
     "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}"
     "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}"
-    ${_go_debug} ${_go_race} ${_go_buildmode}
+    ${_go_debug} ${_go_race}
     -mod=readonly
     -o "${OUTPUT}"
     "${PACKAGE}")
