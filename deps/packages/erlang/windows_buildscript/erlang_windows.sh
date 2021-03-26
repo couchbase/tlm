@@ -1,13 +1,6 @@
 #!/bin/bash
 set -ex
 
-################## OPENSSL #####################
-# Chocolatey OpenSSL versions are eg. "1.1.1.800", where "800" == "h"
-# because "h" is the eighth letter of the alphabet.
-OPENSSL_VER=1.1.1.1000
-################################################
-
-
 echo start build at `date`
 
 thisdir=`pwd`
@@ -15,11 +8,20 @@ thisdir=`pwd`
 otp_version=$1
 cb_buildnumber=$2
 
-# start by ensuring right version of OpenSSL is installed.
-# This isn't a very 'friendly' way of doing it, but since we already know
-# this VM only exists for building Erlang on Windows, it's OK.
-/cygdrive/c/ProgramData/chocolatey/bin/choco install -y \
-    --allow-downgrade openssl --version=${OPENSSL_VER} --no-progress
+
+#Among all sites provide pre-built openssl binaries for windows, slproweb.com 
+#is recommended by openssl.  It typically comes out a day or two after openssl
+#release.  Before installation, we remove the old install directory.  Since we
+#only care about the binaries, it is not necessary to perform uninstall.  If 
+#we need to uninstall in the future, we will need to check the existency of
+#uninstaller, then run it in silent mode:
+#/cygdrive/c/Program\ Files/OpenSSL-Win64/unins000.exe /silent
+
+OPENSSL_VER=1_1_1k
+curl -OL https://slproweb.com/download/Win64OpenSSL-${OPENSSL_VER}.exe
+rm -rf /cygdrive/c/Program\ Files/OpenSSL-Win64
+./Win64OpenSSL-${OPENSSL_VER}.exe /silent
+
 # otp_build and configure don't like paths with spaces, so copy the OpenSSL
 # installation. Also note that this path matches LIB and LIBPATH in
 # ./cygwin.bash_profile.

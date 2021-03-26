@@ -71,5 +71,9 @@ INCLUDE="$WIN_VISUAL_STUDIO_ROOT\\VC\\include\;$WIN_SDK\\include\\shared\;$WIN_S
 # Put nsis, c compiler and java in path
 export PATH=$VCPATH:$PATH:$JAVA_BIN:$NSIS_BIN:$PRG_FLS64/Git/bin
 
+# Add chocolatey to PATH
+# It contains useful utilities such as curl
+export PATH=$PATH:/cygdrive/c/ProgramData/chocolatey/bin
+
 # Make sure LIB and INCLUDE is available for others
 export LIBPATH LIB INCLUDE
