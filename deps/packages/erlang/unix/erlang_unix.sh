@@ -35,6 +35,7 @@ esac
       --without-debugger \
       --without-megaco \
       --without-observer \
+      --without-termcap \
       --with-ssl=$CBDEPS_OPENSSL_DIR \
       $SSL_RPATH \
       CFLAGS="-fno-strict-aliasing -O3 -ggdb3"
