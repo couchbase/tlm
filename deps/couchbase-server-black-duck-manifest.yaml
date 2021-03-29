@@ -7,7 +7,8 @@ components:
 
     boost:
         bd-name: Boost C++ Libraries - boost
-        versions: [ 1.67.0 ]
+        # Black Duck doesn't know "1.74.0", so this one seem closest
+        versions: [ 1.74.0.2 ]
     # Note: breakpad doesn't really have "releases". I picked this version from
     # Black Duck's history as being moderately close to the date of the code we
     # use.
@@ -18,10 +19,8 @@ components:
     double-conversion: [ v3.0.0 ]
     erlang: [ 20.3.8.20 ]
     flatbuffers: [ v1.10.0 ]
-    folly:
-        bd-name: Facebook Folly
-        versions: [ v2019.08.12.00 ]
-    glog: [ 0.3.5 ]
+    folly: [ v2020.08.24.00 ]
+    glog: [ 0.4.0 ]
     grpc: [ 1.28.1 ]
     jemalloc: [ 5.2.1 ]
     json:
@@ -31,14 +30,14 @@ components:
         bd-name: libevent - an event notification library
         versions: [ 2.1.11 ]
     libuv: [ 1.20.3 ]
-    lz4: [ 1.8.0 ]
+    lz4: [ 1.9.2 ]
     libnuma1: [ 2.0.11 ]
     openssl: [ 1.1.1k ]
-    opentracing-cpp: [ v1.5.1 ]
-    pcre: [ 8.43, 8.41 ]
+    pcre: [ 8.43 ]
     prometheus:
         bd-name: prometheus monitoring
-        versions: [ v2.17.2 ]
+        versions: [ v2.22.0 ]
+    prometheus-cpp: [ v0.10.0 ]
     google-snappy: [ 1.1.1 ]
     v8:
         bd-name: Google V8 Javascript engine

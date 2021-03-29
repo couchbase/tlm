@@ -3,6 +3,9 @@
 # IMPORTANT: If you make any changes to this file, you must also bump
 # CBPY_BLD_NUM in CMakeLists.txt in this directory!
 #
+# And don't forget to update
+# couchbase-server-black-duck-manifest.yaml in this directory!
+#
 # #################################
 
 name: cbpy
@@ -56,7 +59,7 @@ specs:
   - libgcc-ng 9.1.0 [linux]
   - libstdcxx-ng 9.1.0 [linux]
   - ncurses 6.2 [unix]
-  - openssl 1.1.1j
+  - openssl 1.1.1k
   - pip 21.0.1
   - pycparser 2.20
   - pyopenssl 20.0.1
