@@ -13,6 +13,20 @@ IF (NOT modified_binary_dir STREQUAL CMAKE_BINARY_DIR)
   MESSAGE(FATAL_ERROR "Couchbase cannot be built in a build directory containing a space character")
 ENDIF (NOT modified_binary_dir STREQUAL CMAKE_BINARY_DIR)
 
+# Use gcc from an alternate location if available (and the user didn't
+# ask for something else using the standard CMAKE_C/CXX_COMPILER
+# variables or CC / CXX env vars).
+SET (CB_GCC_PATH /opt/gcc-10.2.0 CACHE PATH "Preferred location for GCC, if available")
+IF (NOT DEFINED CMAKE_C_COMPILER AND
+    NOT DEFINED CMAKE_CXX_COMPILER AND
+    NOT DEFINED ENV{CC} AND
+    NOT DEFINED ENV{CXX})
+  IF (EXISTS "${CB_GCC_PATH}")
+    SET (CMAKE_C_COMPILER "${CB_GCC_PATH}/bin/gcc" CACHE PATH "Path to C Compiler" FORCE)
+    SET (CMAKE_CXX_COMPILER "${CB_GCC_PATH}/bin/g++" CACHE PATH "Path to C++ Compiler" FORCE)
+  ENDIF ()
+ENDIF ()
+
 # The PROJECT() macro sets it's own default build type, so need to specify
 # ours first.
 IF (NOT DEFINED CMAKE_BUILD_TYPE)
@@ -84,6 +98,28 @@ ENDIF (NOT DEFINED CB_DOWNLOAD_DEPS)
 # FIND anything
 ADD_SUBDIRECTORY(tlm/deps)
 
+# Also install the necessary GCC libraries.
+MACRO (_install_gcc_file GCCFILENAME)
+  IF (UNIX AND NOT APPLE AND "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+    EXECUTE_PROCESS(
+      COMMAND "${CMAKE_CXX_COMPILER}" -print-file-name=${GCCFILENAME}
+      OUTPUT_VARIABLE _gccfile OUTPUT_STRIP_TRAILING_WHITESPACE
+      ERROR_VARIABLE _errormsg
+      RESULT_VARIABLE _failure)
+    IF (_failure)
+      MESSAGE (FATAL_ERROR "Error (${_failure}) determining path to ${GCCFILENAME}: ${_errormsg}")
+    ENDIF ()
+    # We actually need to copy any files with longer filenames - this can be eg.
+    # libstdc++.so.6, or libgcc_s.so.1.
+    FILE (GLOB _gccfiles "${_gccfile}*")
+    FOREACH (_gccfile ${_gccfiles})
+      INSTALL (FILES "${_gccfile}" DESTINATION lib)
+    ENDFOREACH ()
+  ENDIF ()
+ENDMACRO (_install_gcc_file)
+
+_install_gcc_file(libstdc++.so)
+_install_gcc_file(libgcc_s.so)
 INCLUDE(CouchbaseDefaultValues)
 
 # If the user has synced any closed-source code, assume building EE
