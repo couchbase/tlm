@@ -88,7 +88,8 @@ IF (CB_ADDRESSSANITIZER)
                 # for Clang.
                 # GCC 7.3 CV currently uses libasan.so.4, but out of the box
                 # Ubuntu 20.04 wants to use GCC 9.3 and wants libasan.so.5.
-                install_sanitizer_library(ASan "libasan.so.5;libasan.so.4" ${ADDRESS_SANITIZER_FLAG} ${CMAKE_INSTALL_PREFIX}/lib)
+                # GCC 10.2 uses libasan.so.6
+                install_sanitizer_library(ASan "libasan.so.6;libasan.so.5;libasan.so.4" ${ADDRESS_SANITIZER_FLAG} ${CMAKE_INSTALL_PREFIX}/lib)
             endif ()
         endif ()
 
