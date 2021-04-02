@@ -2,3 +2,7 @@ components:
 
     # Since we ship this, include it in Black Duck reports
     continuumio/conda: [ 4.6.14 ]
+
+    # Add these to BD report since they're important to disclose
+    chardet: [ 3.0.4 ]
+    readline: [ 7.0 ]
