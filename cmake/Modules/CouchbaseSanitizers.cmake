@@ -57,10 +57,11 @@ function(install_sanitizer_library _name sanitizer_lib_name sanitizer_flags sani
       get_filename_component(${_name}_realpath ${${_name}_path} REALPATH)
       file(COPY ${${_name}_realpath} DESTINATION ${sanitizer_dest})
     endif ()
-    set(installed_${_name}_path ${sanitizer_dest}/${sanitizer_lib_name})
+    get_filename_component(${_name}_relname ${${_name}_path} NAME)
+    set(installed_${_name}_path ${sanitizer_dest}/${_name}_relname)
 
     # One some distros (at least Ubuntu18.04), the sanitizer library
-    # inclues a RUNPATH in the dynamic linker section. This
+    # includes a RUNPATH in the dynamic linker section. This
     # breaks the ability to use the RPATH from the base
     # executable (see description of function
     # use_rpath_for_sanitizers() for full details).
