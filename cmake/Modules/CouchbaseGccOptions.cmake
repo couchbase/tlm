@@ -83,13 +83,6 @@ list(APPEND _cb_cxx_flags
 
 SET(CB_GNU_CXX11_OPTION "-std=gnu++17")
 
-if (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 6.9.9)
-   # Disable stringop-overflow warnings as there seem to be a fair few bugs in that area (GCC 7.2)
-   # There are multiple bugs files regarding false positives.
-   # See: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=79095 and https://gcc.gnu.org/bugzilla/show_bug.cgi?id=83239
-   list(APPEND _cb_cxx_flags -Wno-stringop-overflow)
-   message(STATUS "Disabling stringop-overflow warning as it seems to report false positives at the moment")
-endif ()
 # Convert the list to a string
 string(REPLACE ";" " " _cb_cxx_options "${_cb_cxx_flags}")
 
