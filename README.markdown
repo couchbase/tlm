@@ -122,6 +122,13 @@ same "repo init" and "repo sync" steps as above, then run:
     cmake -G Ninja -D CMAKE_C_COMPILER=cl -D CMAKE_CXX_COMPILER=cl -D CMAKE_BUILD_TYPE=RelWithDebInfo ..
     ninja install
 
+### cbbackupmgr, cbimport and cbexport
+
+Please note that the Community Edition packages on couchbase.com contain `cbbackupmgr`, `cbimport` and `cbexport`.
+They will not be built when compiling from source as the source code is private. As well as not having these
+programs the sample buckets cannot be loaded as it uses `cbimport`. To workaround this issue `cbbackupmgr`,
+`cbimport` and `cbexport` can be copied from the Community Edition binaries.
+
 # End of the basic build information
 
 The remainder of this document covers certain special cases for building
