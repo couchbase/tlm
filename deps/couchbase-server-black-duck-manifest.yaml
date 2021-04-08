@@ -16,7 +16,7 @@ components:
         bd-name: libcurl
         versions: [ 7.66.0 ]
     double-conversion: [ v3.0.0 ]
-    erlang: [ OTP-20.3.8.11 ]
+    erlang-otp: [ OTP-20.3.8.11 ]
     flatbuffers: [ v1.10.0 ]
     folly:
         bd-name: Facebook Folly
