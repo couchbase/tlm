@@ -1,0 +1,11 @@
+# #################################
+#
+# IMPORTANT: If you make any changes to this file, you must also update
+# couchbase-server-black-duck-manifest.yaml in this directory!
+#
+# #################################
+
+# Extra dependencies that are unique to MacOS
+
+dependencies:
+  - libcxx=10.0.0

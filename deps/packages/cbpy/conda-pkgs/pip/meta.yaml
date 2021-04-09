@@ -1,0 +1,6 @@
+package:
+  name: pip
+  version: 21.0.1.9
+
+build:
+  noarch: generic

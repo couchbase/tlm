@@ -1,0 +1,22 @@
+package:
+  name: chardet
+  version: 4.0.0.9
+
+source:
+  path: ./src
+
+requirements:
+  build:
+    - python
+    - setuptools
+  run:
+    - python
+
+build:
+  script: python setup.py install
+  noarch: python
+
+test:
+  import:
+    - chardet
+    - chardet.__version__

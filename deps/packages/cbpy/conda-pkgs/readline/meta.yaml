@@ -1,0 +1,6 @@
+package:
+  name: readline
+  version: 8.1.9
+
+build:
+  noarch: generic

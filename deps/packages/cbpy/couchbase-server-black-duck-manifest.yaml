@@ -15,7 +15,6 @@ components:
     brotlipy: [ 0.7.0 ]
     python-certifi: [ 2020.12.5 ]
     cffi: [ 1.14.5 ]
-    chardet: [ 4.0.0 ]
     python-cryptography: [ 3.4.6 ]
     idna: [ 2.10 ]
     # ld_impl_linux-64 is also part of gcc, at least I believe so;
@@ -28,11 +27,9 @@ components:
     ncurses:
         bd-name: GNU Ncurses
         versions: [ 6.2 ]
-    pip: [ 21.0.1 ]
     pycparser: [ release_v2.20 ]
     pyopenssl: [ 20.0.1 ]
     pysocks: [ 1.7.1 ]
-    readline: [ 8.1 ]
     setuptools:
         bd-name: pypa/setuptools
         versions: [ 52.0.0 ]

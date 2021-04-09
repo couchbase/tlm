@@ -1,0 +1,43 @@
+# A stubbed "external" project, because the cbpy build instructions
+# are actually right here.
+
+SET (CBDEP_VERSION 0.9.18)
+SET (MINICONDA_VERSION 4.9.2)
+
+include(ExternalProject)
+
+SET (_cbdep_url_base "https://packages.couchbase.com/cbdep/cbdep-")
+
+IF (WIN32)
+  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/cbpy_windows.bat)
+  SET (_cbdep_url_ext "windows.exe")
+ELSEIF (APPLE)
+  SET (_cbdep_url_ext "darwin")
+  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/cbpy_unix.sh)
+ELSE ()
+  SET (_cbdep_url_ext "linux")
+  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/cbpy_unix.sh)
+ENDIF ()
+
+SET (_install_dir "${CMAKE_BINARY_DIR}/install")
+FILE (TO_NATIVE_PATH "${_install_dir}" _install_dir)
+
+# We abuse the DOWNLOAD step here to grab cbdep for us. cbdep knows the
+# vagaries of downloading and installing a local Miniconda to kickstart
+# the whole process.
+# Other notes:
+#  - We do not specify BUILD_IN_SOURCE 1, so the script can assume that cwd
+#    is where it should dump stuff
+#  - We pass CMAKE_CURRENT_SOURCE_DIR to the script so it knows where to
+#    find conda-pkgs etc.
+ExternalProject_Add(cbpy
+  URL "${_cbdep_url_base}${_cbdep_url_ext}"
+  DOWNLOAD_NO_EXTRACT true
+  CONFIGURE_COMMAND ""
+  BUILD_COMMAND "${_build_script}" "${CMAKE_CURRENT_SOURCE_DIR}" <DOWNLOADED_FILE> ${MINICONDA_VERSION} <INSTALL_DIR>
+  INSTALL_DIR "${_install_dir}"
+  INSTALL_COMMAND ""
+)
+
+# cbdeps boilerplate
+_ADD_PACKAGE_STEP()

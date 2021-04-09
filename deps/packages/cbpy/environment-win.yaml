@@ -1,0 +1,11 @@
+# #################################
+#
+# IMPORTANT: If you make any changes to this file, you must also update
+# couchbase-server-black-duck-manifest.yaml in this directory!
+#
+# #################################
+
+# Extra dependencies that are unique to Windows
+dependencies:
+  - wincertstore=0.2
+  - win_inet_pton=1.1.0
