@@ -12,9 +12,7 @@ components:
     # Black Duck's history as being moderately close to the date of the code we
     # use.
     breakpad: [ r835 ]
-    curl:
-        bd-name: libcurl
-        versions: [ 7.66.0 ]
+    curl: [ 7.66.0 ]
     double-conversion: [ v3.0.0 ]
     erlang-otp: [ OTP-20.3.8.11 ]
     flatbuffers: [ v1.10.0 ]
