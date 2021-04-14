@@ -558,7 +558,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     IF (NOT TARGET goyacc)
       GoInstall (TARGET goyacc
       PACKAGE golang.org/x/tools/cmd/goyacc
-      GOVERSION 1.11
+      GOVERSION 1.11.6
       GOPATH "${CMAKE_SOURCE_DIR}/godeps")
     ENDIF ()
 
