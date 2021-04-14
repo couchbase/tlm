@@ -4,18 +4,22 @@ components:
     # Classic cbdeps first
     #
 
-
     boost:
         bd-name: Boost C++ Libraries - boost
         # Black Duck doesn't know "1.74.0", so this one seem closest
         versions: [ 1.74.0.2 ]
+        cbdeps-versions: [ 1.74.0 ]
     # Note: breakpad doesn't really have "releases". I picked this version from
     # Black Duck's history as being moderately close to the date of the code we
     # use.
-    breakpad: [ r835 ]
+    breakpad:
+        versions: [ r835 ]
+        cbdeps-versions: [ 20200430 ]
     curl: [ 7.66.0 ]
     double-conversion: [ v3.0.0 ]
-    erlang: [ 20.3.8.20 ]
+    erlang:
+        versions: [ 20.3.8.20 ]
+        cbdeps-versions: [ cheshirecat ]
     flatbuffers: [ v1.10.0 ]
     folly: [ v2020.08.24.00 ]
     glog: [ 0.4.0 ]
@@ -29,28 +33,37 @@ components:
         versions: [ 2.1.11 ]
     libuv: [ 1.20.3 ]
     lz4: [ 1.9.2 ]
-    libnuma1: [ 2.0.11 ]
+    numactl:
+        bd-name: libnuma1
+        versions: [ 2.0.11 ]
     openssl: [ 1.1.1k ]
     pcre: [ 8.43 ]
     prometheus:
         bd-name: prometheus monitoring
         versions: [ v2.22.0 ]
     prometheus-cpp: [ v0.10.0 ]
-    google-snappy: [ 1.1.1 ]
+    snappy:
+        bd-name: google-snappy
+        versions: [ 1.1.1 ]
     v8:
         bd-name: Google V8 Javascript engine
         versions: [ 8.3.110.13 ]
+        cbdeps-versions: [ 8.3 ]
     zlib: [ 1.2.11 ]
 
     #
-    # End classic cbdeps. Note: the following cbdeps packags are build-only
-    # requirements and hence aren't captured for the Black Duck report:
-    #     maven
-    #     protoc-gen-go
+    # End classic cbdeps.
     #
+
+    # The following cbdeps packages are build-only requirements and hence
+    # aren't captured for the Black Duck report
+    maven: []
+    protoc-gen-go: []
     # We also don't include RocksDB as it is only used by internal testing
-    # builds, not shipped.
-    #
+    # builds, not shipped
+    rocksdb: []
+    # cbpy's component packages are listed in deps/packages/cbpy
+    cbpy: []
 
     # Include these here even though they're actually included in the builds
     # by server-linux-build.sh.
