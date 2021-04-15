@@ -103,32 +103,38 @@ set(folly_dependancies ${DOUBLE_CONVERSION_LIBRARIES}
 add_library(Folly::folly STATIC IMPORTED)
 set_target_properties(Folly::folly
     PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${FOLLY_INCLUDE_DIR}"
-        IMPORTED_LOCATION "${FOLLY_LIBRARY}")
-target_link_libraries(Folly::folly INTERFACE ${folly_dependancies})
-
-add_library(Folly::folly_unsanitized STATIC IMPORTED)
-set_target_properties(Folly::folly_unsanitized
-    PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${FOLLY_INCLUDE_DIR}")
-if (FOLLY_LIBRARIES_UNSANITIZED)
-    set_target_properties(Folly::folly_unsanitized
-            PROPERTIES
-            IMPORTED_LOCATION "${FOLLY_LIBRARIES_UNSANITIZED}")
-else()
-    set_target_properties(Folly::folly_unsanitized
-            PROPERTIES
-            IMPORTED_LOCATION "${FOLLY_LIBRARY}")
+    IMPORTED_LOCATION ${FOLLY_LIBRARY_RELEASE})
+if(FOLLY_LIBRARY_DEBUG)
+    set_target_properties(Folly::folly
+        PROPERTIES
+        IMPORTED_LOCATION_DEBUG ${FOLLY_LIBRARY_DEBUG})
 endif()
-target_link_libraries(Folly::folly_unsanitized INTERFACE ${folly_dependancies})
+target_link_libraries(Folly::folly INTERFACE
+    Folly::headers
+    ${folly_dependancies})
+
+if(FOLLY_LIBRARIES_UNSANITIZED)
+    add_library(Folly::folly_unsanitized STATIC IMPORTED)
+    set_target_properties(Folly::folly_unsanitized
+        PROPERTIES
+        IMPORTED_LOCATION ${FOLLY_LIBRARIES_UNSANITIZED})
+    target_link_libraries(Folly::folly_unsanitized INTERFACE
+        Folly::headers
+        ${folly_dependancies})
+else()
+    add_library(Folly::folly_unsanitized INTERFACE IMPORTED)
+    target_link_libraries(Folly::folly_unsanitized INTERFACE Folly::folly)
+endif()
 
 # Define an interface library which is just the headers of Folly.
 # This is useful as some targets (e.g. tests) only make use of the
 # portability headers such as portability/GTest.h
 add_library(Folly::headers INTERFACE IMPORTED)
-set_target_properties(Folly::headers
-    PROPERTIES
-        INTERFACE_INCLUDE_DIRECTORIES "${FOLLY_INCLUDE_DIR}")
+target_include_directories(Folly::headers INTERFACE
+        ${FOLLY_CONFIG_INCLUDE_DIR}
+        ${Boost_INCLUDE_DIR}
+        ${DOUBLE_CONVERSION_INCLUDE_DIR}
+        ${GLOG_INCLUDE_DIR})
 
 # Append Folly's depenancies to the include / lib variables so users
 # of Folly pickup the dependancies automatically.
