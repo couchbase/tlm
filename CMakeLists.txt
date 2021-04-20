@@ -142,6 +142,17 @@ IF ($ENV{CB_TOOLS_ONLY})
   SET(BUILD_ONLY_TOOLS True)
 ENDIF ($ENV{CB_TOOLS_ONLY})
 
+# If set, limit the number of concurrent link jobs to the specified value.
+# This can be useful to constrain parallelism for machines with high CPU
+# count but relatively low RAM, to avoid linker getting OOM-killed (particulary
+# for Debug / Sanitizer build which seem to have much higher RAM usage).
+# Only works with the Ninja generator.
+SET(CB_PARALLEL_LINK_JOBS "" CACHE STRING "Define the maximum number of concurrent link jobs.")
+IF(CB_PARALLEL_LINK_JOBS)
+  SET_PROPERTY(GLOBAL APPEND PROPERTY JOB_POOLS link_job_pool=${CB_PARALLEL_LINK_JOBS})
+  SET(CMAKE_JOB_POOL_LINK link_job_pool)
+ENDIF()
+
 MESSAGE(STATUS "Using cmake version: ${CMAKE_VERSION}")
 MESSAGE(STATUS "Installing to ${CMAKE_INSTALL_PREFIX}")
 MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
