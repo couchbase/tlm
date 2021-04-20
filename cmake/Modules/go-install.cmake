@@ -36,12 +36,12 @@ IF (CGO_LDFLAGS)
 ENDIF ()
 
 IF (NOT WIN32)
-  IF (DEFINED CB_THREADSANITIZER)
+  IF (CB_THREADSANITIZER OR CB_ADDRESSSANITIZER OR CB_UNDEFINEDSANITIZER)
     # Only use the CMAKE C compiler for cgo on non-Windows platforms;
     # on Windows we use a different compiler (gcc) for cgo than for
     # the main build MSVC).
     SET (ENV{CC} "${CMAKE_C_COMPILER}")
-  ENDIF (DEFINED CB_THREADSANITIZER)
+  ENDIF (CB_THREADSANITIZER OR CB_ADDRESSSANITIZER OR CB_UNDEFINEDSANITIZER)
 ENDIF()
 
 # QQQ TOTAL HACK to enable CGO binaries to find Couchbase-built shared
