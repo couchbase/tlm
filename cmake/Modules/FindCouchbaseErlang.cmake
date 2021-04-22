@@ -95,7 +95,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
     ENDIF (NOT ESCRIPT_EXECUTABLE)
 
     PARSE_ARGUMENTS (Rebar "DEPENDS;REBAR_OPTS;EUNIT_OPTS;EUNIT_DEPENDS"
-      "TARGET;REBAR_SCRIPT;CLEAN_HOOK"
+      "TARGET;COMMAND;REBAR_SCRIPT;CLEAN_HOOK"
       "NOCLEAN;NOALL;EUNIT" ${ARGN})
 
     SET (rebar_script "${REBAR_SCRIPT}")
@@ -118,8 +118,14 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
     IF (Rebar_NOALL)
       SET (_all "")
     ENDIF (Rebar_NOALL)
+
+    IF (NOT Rebar_COMMAND)
+      SET (Rebar_COMMAND "compile")
+    ENDIF (NOT Rebar_COMMAND)
+
     ADD_CUSTOM_TARGET (${Rebar_TARGET} ${_all}
-      "${ESCRIPT_EXECUTABLE}" "${rebar_script}" ${Rebar_REBAR_OPTS} compile
+      "${ESCRIPT_EXECUTABLE}" "${rebar_script}" ${Rebar_REBAR_OPTS}
+      ${Rebar_COMMAND}
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
 
     IF (Rebar_EUNIT)
