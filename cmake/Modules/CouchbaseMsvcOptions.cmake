@@ -13,11 +13,16 @@ set(CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG)
 # provided on Linux/Unix to avoid having to deal with #ifdef's
 include_directories(AFTER ${CMAKE_SOURCE_DIR}/platform/include/win32)
 
-if (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 19.10)
 
+if (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 19.10)
+    # Disable warnings for any external (aka system) headers.
+    # /external: flags are not enabled by default; must pass /experimental:external
+    # to turn them on.
+    list(APPEND _cb_cxx_flags "/experimental:external /external:W0")
     foreach (dir ${CB_SYSTEM_HEADER_DIRS})
         list(APPEND _cb_cxx_flags "/external:I ${dir}")
     endforeach (dir ${CB_SYSTEM_HEADER_DIRS})
+    set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "/external:I ")
 
     # forestdb hash needs this in MSVC 2017 (should be fixed there eventually)
     list(APPEND _cb_cxx_flags "/Zc:offsetof-")
