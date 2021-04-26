@@ -2,20 +2,19 @@
 
 # We bundle OpenSSL and we want support for OpenSSL in Erlang so
 # we need to install the OpenSSL Package.
+
 SET (_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/ignored")
 SET (_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 SET (CMAKE_INSTALL_PREFIX "${_openssl_install}")
-DECLARE_DEP (openssl VERSION 1.1.1d-cb1
+DECLARE_DEP (openssl V2 VERSION 1.1.1k BUILD 1
              PLATFORMS amzn2
                        centos7 centos8
                        debian8 debian9 debian10
-                       macosx
                        rhel8
+                       macosx
                        suse12 suse15
-                       ubuntu16.04 ubuntu18.04
+                       ubuntu16.04 ubuntu18.04 ubuntu20.04
                        windows_msvc2017)
-DECLARE_DEP (openssl VERSION 1.1.1d-cb2
-             PLATFORMS ubuntu20.04)
 SET (CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 
 INCLUDE (ExternalProject)
