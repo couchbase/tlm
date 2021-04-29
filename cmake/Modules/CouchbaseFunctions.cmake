@@ -5,9 +5,7 @@
 # Is it also added to a project-specific "<project>_everything" target, allowing
 # an easy way to build everything in a given project - e.g kv_engine_everything.
 function(cb_add_test_executable name)
-    # TODO: Add 'EXCLUDE_FROM_ALL' to add_executable(); removing tests from the
-    # 'all' target.
-    add_executable(${name} ${ARGN})
+    add_executable(${name} EXCLUDE_FROM_ALL ${ARGN})
     set_property(TARGET ${name} PROPERTY CB_TEST_EXECUTABLE ON)
 endfunction()
 
