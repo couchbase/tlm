@@ -33,7 +33,7 @@ CMAKE_ARGS=-G "$(MAKETYPE)" $(EXTRA_CMAKE_OPTIONS)
 
 all: CMakeLists.txt Makefile GNUmakefile build/Makefile compile
 
-everything:
+everything: build/Makefile
 	(cd build && $(MAKE) everything install)
 
 compile: build/Makefile
