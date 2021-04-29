@@ -164,6 +164,7 @@ INCLUDE(CouchbaseMemoryAllocator)
 INCLUDE(CouchbaseCompression)
 INCLUDE(CouchbaseUnityBuild)
 INCLUDE(CouchbasePrecompiledHeaders)
+INCLUDE(CouchbaseFunctions)
 
 INCLUDE(FindCouchbaseBoost)
 INCLUDE(FindCouchbaseFolly)
@@ -398,3 +399,7 @@ ENDIF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
 IF (NOT WIN32)
    CONFIGURE_FILE(tlm/memcached-wrapper.in ${CMAKE_BINARY_DIR}/tlm/memcached-wrapper)
 ENDIF (NOT WIN32)
+
+# End of top-level CMakeLists.txt - now all targets have been defined,
+# introspect them and define 'everything' and <project>_everything targets.
+define_everything_targets()
