@@ -13,16 +13,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# The version of cbpy. Must match the entries in tlm/deps/manifest.cmake.
-# The build number is used so that a newer cbpy will be re-installed into the
-# install/lib/python/runtime directory, and the MacOS wrapper script will
-# install cbpy into a differently-named directory in the user's home dir.
-SET (CBPY_VERSION 7.0.0)
-SET (CBPY_BLD_NUM 1)
-
-STRING (REGEX REPLACE "-.*" "" CB_VERSION "${PRODUCT_VERSION}")
-
-SET (CBPY_BLD_NUM 5 CACHE INTERNAL "")
+# The version of cbpy, as extracted from tlm/deps/manifest.cmake. The build
+# number is used so that a newer cbpy will be re-installed into the
+# install/lib/python/runtime directory (as part of a Server build), and the
+# MacOS wrapper script will install cbpy into a differently-named directory in
+# the user's home dir.
+SET (CBPY_VERSION "${CBDEP_cbpy_VERSION}")
+SET (CBPY_BLD_NUM "${CBDEP_cbpy_BLD_NUM}")
 
 # Set up various paths and locations for Python-related things:
 
@@ -31,7 +28,7 @@ SET (CBPY_BLD_NUM 5 CACHE INTERNAL "")
 # this directory is actually created by the local-cbpy target below.
 SET (CBPY_PATH lib/python/runtime)
 SET (CBPY_INSTALL "${CMAKE_INSTALL_PREFIX}/${CBPY_PATH}" CACHE INTERNAL "")
-SET (CBPY_VER_FILE "${CBPY_INSTALL}/couchbase-${CB_VERSION}-py${CBPY_BLD_NUM}.version")
+SET (CBPY_VER_FILE "${CBPY_INSTALL}/couchbase-${CBPY_VERSION}-${CBPY_BLD_NUM}.version")
 
 # Path to python interpreter in the local cbpy install.
 IF (WIN32)

@@ -154,14 +154,22 @@ IF (NOT CBDownloadDeps_INCLUDED)
       RETURN ()
     ENDIF (_declared AND NOT "${PROJECT_NAME}" STREQUAL "cbdeps_packages")
 
-    # Set a variable to use for the version based on whether
-    # the V2 argument is set or not (for V2, version and build
-    # values are separate)
+    # Set a variable to use for the version. Also cache the version and build
+    # number for use by other parts of the build.
     IF (dep_V2)
-      SET (_dep_fullver "${dep_VERSION}-${dep_BUILD}")
+      # for V2, version and build number values are separate arguments
+      SET (_dep_version "${dep_VERSION}")
+      SET (_dep_bld_num "${dep_BUILD}")
     ELSE (dep_V2)
-      SET (_dep_fullver "${dep_VERSION}")
+      # for V1, version is conventionally version-bld_num, so split it apart.
+      # Occasionally there may be a version with no -, in which case the
+      # bld_num is the empty string.
+      STRING (REPLACE "-" ";" _dep_bits "${dep_VERSION}")
+      LIST (POP_FRONT _dep_bits _dep_version _dep_bld_num)
     ENDIF (dep_V2)
+    SET (_dep_fullver "${_dep_version}-${_dep_bld_num}")
+    SET (CBDEP_${name}_VERSION "${_dep_version}" CACHE STRING "Version of cbdep package '${name}'" FORCE)
+    SET (CBDEP_${name}_BLD_NUM "${_dep_bld_num}" CACHE STRING "Build number of cbdep package '${name}'" FORCE)
 
     # If this dependency declares PLATFORM, ensure that we are running on
     # one of those platforms.
