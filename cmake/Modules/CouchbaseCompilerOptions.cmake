@@ -81,37 +81,14 @@ include(CouchbaseDefinitions)
 # Setup the RPATH
 include(CouchbaseRpath)
 
-# Check function attibute availability
-# - warn_used_result
+# Check function attribute availability
 include(CheckCCompilerFlag)
-check_c_source_compiles("int main() {
-      return 0;
-}
-int foo() __attribute__((warn_unused_result));" HAVE_ATTR_WARN_UNUSED_RESULT)
 
-# - printf-style format checking
+# Printf-style format checking
 check_c_source_compiles("int main() {
       return 0;
 }
 int my_printf(const char* fmt, ...) __attribute__((format (printf, 1, 2)));" HAVE_ATTR_FORMAT)
-
-# - noreturn for functions not returning
-check_c_source_compiles("int main() {
-      return 0;
-}
-int foo(void) __attribute__((noreturn));" HAVE_ATTR_NORETURN)
-
-# - nonnull parameters that can't be null
-check_c_source_compiles("int main() {
-      return 0;
-}
-int foo(void* foo) __attribute__((nonnull(1)));" HAVE_ATTR_NONNULL)
-
-# - deprecated
-check_c_source_compiles("int main() {
-      return 0;
-}
-int foo(void* foo) __attribute__((deprecated));" HAVE_ATTR_DEPRECATED)
 
 if (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
     find_program(CCACHE ccache)
