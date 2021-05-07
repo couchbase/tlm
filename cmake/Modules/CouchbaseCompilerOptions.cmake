@@ -29,20 +29,6 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 message(STATUS "C++ compiler version: ${CMAKE_CXX_COMPILER_VERSION}")
 message(STATUS "C++ language version: ${CMAKE_CXX_STANDARD}")
 
-# Verify that compiler actually suppors the main C++17 features used -
-# some compilers *couch* AppleClang 9 *couch* claim support C++17 but
-# are missing core library features.
-CHECK_INCLUDE_FILE_CXX(optional HAVE_OPTIONAL)
-if (NOT HAVE_OPTIONAL)
-  unset(HAVE_OPTIONAL)
-  message(FATAL_ERROR "C++ compiler claims C++17 support but is missing required header <optional>. Check if your compiler (${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}) fully supports C++17.")
-endif()
-CHECK_INCLUDE_FILE_CXX(variant HAVE_VARIANT)
-if (NOT HAVE_VARIANT)
-  unset(HAVE_VARIANT)
-  message(FATAL_ERROR "C++ compiler claims C++17 support but is missing required header <variant>. Check if your compiler (${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}) fully supports C++17.")
-endif()
-
 option(COUCHBASE_OMIT_FRAME_POINTER
        "Allow omission of frame pointer"
        True)
@@ -59,6 +45,19 @@ if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
 
     include(CouchbaseGccOptions)
 elseif ("${CMAKE_C_COMPILER_ID}" STREQUAL "Clang" OR "${CMAKE_C_COMPILER_ID}" STREQUAL "AppleClang")
+    # Verify that compiler actually supports the main C++17 features used -
+    # some compilers *couch* AppleClang 9 *couch* claim support C++17 but
+    # are missing core library features.
+    check_include_file_cxx(optional HAVE_OPTIONAL)
+    if (NOT HAVE_OPTIONAL)
+        unset(HAVE_OPTIONAL)
+        message(FATAL_ERROR "C++ compiler claims C++17 support but is missing required header <optional>. Check if your compiler (${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}) fully supports C++17.")
+    endif ()
+    check_include_file_cxx(variant HAVE_VARIANT)
+    if (NOT HAVE_VARIANT)
+        unset(HAVE_VARIANT)
+        message(FATAL_ERROR "C++ compiler claims C++17 support but is missing required header <variant>. Check if your compiler (${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER_VERSION}) fully supports C++17.")
+    endif ()
     if (NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang" AND NOT "${CMAKE_CXX_COMPILER_ID}" STREQUAL "AppleClang")
         message(WARNING "C compiler identifier: ${CMAKE_C_COMPILER_ID}")
         message(WARNING "C++ compiler identifier: ${CMAKE_CXX_COMPILER_ID}")
