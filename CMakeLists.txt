@@ -184,6 +184,7 @@ INCLUDE(FindCouchbaseOpentracing)
 INCLUDE(FindCouchbasePCRE)
 INCLUDE(FindCouchbasePrometheus)
 INCLUDE(FindCouchbaseNuma)
+INCLUDE(FindCouchbaseFmt)
 
 if (BUILD_ENTERPRISE)
     # libuv is currently only used by the enterpise builds

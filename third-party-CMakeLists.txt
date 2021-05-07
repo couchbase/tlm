@@ -39,4 +39,6 @@ add_subdirectory(spdlog)
 
 # Define macro which renames spdlog's severity levels
 set(CUSTOM_LEVELS "{\"TRACE\",\ \"DEBUG\",\ \"INFO\",\ \"WARNING\",\ \"ERROR\",\ \"CRITICAL\",\ \"OFF\"}")
-target_compile_definitions(spdlog INTERFACE -DSPDLOG_LEVEL_NAMES=${CUSTOM_LEVELS})
+target_compile_definitions(spdlog
+    INTERFACE -DSPDLOG_LEVEL_NAMES=${CUSTOM_LEVELS} SPDLOG_FMT_EXTERNAL)
+target_link_libraries(spdlog INTERFACE fmt::fmt)
