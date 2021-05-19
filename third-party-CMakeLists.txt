@@ -30,11 +30,11 @@ else()
 endif()
 
 # Disable building examples and tests for HdrHistogram.
-set(HDR_HISTOGRAM_BUILD_PROGRAMS)
+set(HDR_HISTOGRAM_BUILD_PROGRAMS OFF)
 add_subdirectory(HdrHistogram_c)
 
-set(SPDLOG_BUILD_EXAMPLES)
-set(SPDLOG_BUILD_TESTING)
+set(SPDLOG_BUILD_EXAMPLES OFF)
+set(SPDLOG_BUILD_TESTING OFF)
 add_subdirectory(spdlog)
 
 # Define macro which renames spdlog's severity levels
