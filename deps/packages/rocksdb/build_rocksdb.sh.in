@@ -9,11 +9,18 @@ export CFLAGS="-I${_dep_install}/include -I${CMAKE_CURRENT_BINARY_DIR}/lz4.explo
 export DEBUG_LEVEL=0
 export PORTABLE=1
 export USE_RTTI=1
-export USE_SSE=1
+if [ "$(uname -m)" = "x86_64" ]; then
+    export USE_SSE=1
+fi
 
 # Forcibly disable rocksdb from compiling with jemalloc as we prefix our
 # symbols and I don't wanna try to work out how to make that work with RocksDB.
 # This is only necessary because some newer version of xcode seems to be
 # setting this on MacOS.
 export DISABLE_JEMALLOC=1
-make $@
+
+# DISABLE_WARNING_AS_ERROR: The version of RocksDB we build has
+# various warnings with newer (GCC-10) compilers; RocksDB by default
+# enables -Werror but that's too strict given we build with GCC-10.2;
+# so don't set '-Werror'.
+make DISABLE_WARNING_AS_ERROR=1 $@

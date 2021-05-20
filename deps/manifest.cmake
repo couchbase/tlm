@@ -55,7 +55,7 @@ DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 3 PLATFORMS amzn2 centos7 cent
 # NB: I don't indent this IF() block just in case, because I know that some
 # scripts (such as escrow) parse this file manually.
 IF (NOT CB_PRODUCTION_BUILD)
-DECLARE_DEP (rocksdb VERSION 5.18.3-cb5 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04)
+DECLARE_DEP (rocksdb VERSION 5.18.3-cb6 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04)
 ENDIF (NOT CB_PRODUCTION_BUILD)
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc2017)
 DECLARE_DEP (snappy VERSION 1.1.1-cb5 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04)
