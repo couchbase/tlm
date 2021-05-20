@@ -6,13 +6,13 @@
 set(_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/unused")
 set(_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 set(CMAKE_INSTALL_PREFIX "${_openssl_install}")
-declare_dep(openssl V2 VERSION 1.1.1h BUILD 1
+declare_dep(openssl V2 VERSION 1.1.1k BUILD 1
             PLATFORMS amzn2
-                      centos7 centos8
-                      debian8 debian9 debian10
+                      centos7
+                      debian9 debian10
                       macosx
                       suse12 suse15
-                      ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+                      ubuntu18.04 ubuntu20.04 windows_msvc2017)
 
 set(CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 set(_libevent_extra_options -D "OPENSSL_ROOT_DIR=${CMAKE_BINARY_DIR}/libevent/openssl.exploded")
@@ -53,6 +53,13 @@ set(_libevent_build_type RelWithDebInfo)
 
 include(ExternalProject)
 
+# Skip tests on Windows (some fail).
+if (WIN32)
+  set (test_step)
+else()
+  set(test_step "TEST_BEFORE_INSTALL 1")
+endif()
+
 ### Download, configure and build libevent ####################################
 ExternalProject_Add(libevent
   GIT_REPOSITORY ${_git_repo}
@@ -61,10 +68,11 @@ ExternalProject_Add(libevent
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
              -D CMAKE_BUILD_TYPE=${_libevent_build_type}
              -D EVENT__DISABLE_BENCHMARK=ON
-             -D EVENT__DISABLE_TESTS=ON
              -D EVENT__DISABLE_REGRESS=ON
              -D EVENT__DISABLE_SAMPLES=ON
              ${_libevent_extra_options}
+
+  ${test_step}
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND $(MAKE) install
