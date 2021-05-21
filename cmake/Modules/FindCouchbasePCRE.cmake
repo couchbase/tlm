@@ -39,7 +39,7 @@ IF (NOT DEFINED PCRE_FOUND)
   # .lib file; all we need is the path to the directory containing libpcre.dll.
   # There is extensive confusing commentary about this on MB-32895.
   FIND_PATH (PCRE_LIBRARY_DIR
-    NAMES libpcre.dll libpcre.so libpcre.dylib
+    NAMES pcre.dll libpcre.so libpcre.dylib
     HINTS "${CMAKE_INSTALL_PREFIX}/bin" "${CMAKE_INSTALL_PREFIX}/lib"
     ${_no_default_path})
 
