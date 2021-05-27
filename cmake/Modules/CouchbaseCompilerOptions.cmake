@@ -117,17 +117,17 @@ endif (NOT DEFINED COUCHBASE_DISABLE_CCACHE)
 #
 # The primary use-case for this build type is automated commit-validation jobs.
 # Given commit-validation jobs compile once and run once, we want to be able
-# to balanace compile time and execution time of the unit tests:
+# to balance compile time and execution time of the unit tests:
 # Much of the unit test code is expensive to compile with production-level
 # optimization, either simply due to its size, or things like GMock / GTest
 # template instantiation, so it's undesirable to compile with Release-level
 # optimization, however without _any_ optimizations the unit test code can
 # take a long time to execute.
-set(CMAKE_CXX_FLAGS_DEBUGOPTIMIZED "${CMAKE_CXX_FLAGS_DEBUG} ${CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG}"
+set(CMAKE_CXX_FLAGS_DEBUGOPTIMIZED "${CB_FLAGS_OPTIMIZE_FOR_DEBUG}"
         CACHE
         STRING "Flags used by the C++ compiler during DebugOptimized builds."
         FORCE )
-set(CMAKE_C_FLAGS_DEBUGOPTIMIZED "${CMAKE_C_FLAGS_DEBUG} ${CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG}"
+set(CMAKE_C_FLAGS_DEBUGOPTIMIZED "${CB_FLAGS_OPTIMIZE_FOR_DEBUG}"
         CACHE
         STRING "Flags used by the C compiler during DebugOptimized builds."
         FORCE )

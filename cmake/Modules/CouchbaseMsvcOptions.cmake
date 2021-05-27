@@ -5,9 +5,16 @@ set(CMAKE_C_FLAGS_RELWITHDEBINFO "/MD /O2 /Ob2 /D NDEBUG /Zi")
 set(CMAKE_C_FLAGS_DEBUG          "/MDd /Od /Ob0 /Zi")
 set(CB_C_FLAGS_NO_OPTIMIZE       "/Od /Ob0")
 
-# Just use an empty value for CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG - MSVC build
-# times for Release / RelWithDebInfo levels haven't thus far been an issue.
-set(CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG)
+# Flag for DebugOptimized build (see CouchbaseCompilerOptions.cmake):
+# - /MD: Use release (non-debug) runtime library. We use the release runtime
+#        library given (a) that's what all our third-party dependaecies use
+#        (and MSVC doesn't allow mixing and matching) and (b) it's
+#        significantly faster than the debug runtime library - but doesn't
+#        itself take longer to build with.
+# - /Ob1: Inline function calls which are considered inline. This is a cheap
+#        optimization to enable in terms of compile-time; but results in
+#        a noticable speedup in runtime performance.
+set(CB_FLAGS_OPTIMIZE_FOR_DEBUG "/MD /Ob1 /Zi")
 
 # we've created wrappers of some of the typical header files
 # provided on Linux/Unix to avoid having to deal with #ifdef's
