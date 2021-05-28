@@ -28,6 +28,11 @@ DECLARE_DEP (folly VERSION v2020.08.24.00-couchbase-cb1 PLATFORMS ubuntu16.04)
 DECLARE_DEP (folly VERSION v2020.08.24.00-couchbase-cb4 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (glog VERSION v0.4.0-cb1 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (grpc VERSION 1.28.1-cb1 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+#
+# IMPORTANT: If you add a new package here or update an existing package
+# version, you must also update couchbase-server-black-duck-manifest.json
+# in this same directory!
+#
 DECLARE_DEP (jemalloc VERSION 5.2.1-cb5 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (json VERSION 3.5.0-cb1 PLATFORMS amzn2 centos7 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (json VERSION 3.5.0-cb2 PLATFORMS centos8 debian10 rhel8 ubuntu20.04)
@@ -57,3 +62,8 @@ DECLARE_DEP (snappy VERSION 1.1.1-cb5 PLATFORMS centos8 debian10 rhel8 ubuntu20.
 DECLARE_DEP (v8 VERSION 8.3-cb4 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (zlib V2 VERSION 1.2.11 BUILD 4 PLATFORMS amzn2 centos7 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (zlib V2 VERSION 1.2.11 BUILD 6 PLATFORMS centos8 debian10 rhel8 ubuntu20.04)
+#
+# IMPORTANT: If you add a new package here or update an existing package
+# version, you must also update couchbase-server-black-duck-manifest.json
+# in this same directory!
+#
