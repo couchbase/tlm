@@ -64,6 +64,8 @@ components:
     rocksdb: []
     # cbpy's component packages are listed in deps/packages/cbpy
     cbpy: []
+    # fmt.dev is unknown by Black Duck.
+    fmt: []
 
     # Include these here even though they're actually included in the builds
     # by server-linux-build.sh.
