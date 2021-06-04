@@ -163,6 +163,7 @@ INCLUDE(CouchbaseAsciiDocs)
 INCLUDE(CouchbaseMemoryAllocator)
 INCLUDE(CouchbaseCompression)
 INCLUDE(CouchbaseUnityBuild)
+INCLUDE(CouchbasePrecompiledHeaders)
 
 INCLUDE(FindCouchbaseBoost)
 INCLUDE(FindCouchbaseFolly)
