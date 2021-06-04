@@ -38,7 +38,7 @@ set(SPDLOG_BUILD_TESTING OFF CACHE BOOL "Build spdlog tests")
 set(SPDLOG_BUILD_BENCH OFF CACHE BOOL "Build spdlog benchmarks")
 set(SPDLOG_FMT_EXTERNAL ON CACHE BOOL "Use external fmt library instead of bundled")
 
-add_subdirectory(spdlog_new)
+add_subdirectory(spdlog)
 
 # Define macro which renames spdlog's severity levels.
 set(CUSTOM_LEVELS "{\"TRACE\",\ \"DEBUG\",\ \"INFO\",\ \"WARNING\",\ \"ERROR\",\ \"CRITICAL\",\ \"OFF\"}")
