@@ -1,0 +1,34 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index b9694655..e855f4cc 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -295,7 +295,8 @@ if(SPDLOG_INSTALL)
+     install(EXPORT spdlog DESTINATION ${export_dest_dir} NAMESPACE spdlog:: FILE ${config_targets_file})
+ 
+     include(CMakePackageConfigHelpers)
+-    configure_file("${project_config_in}" "${project_config_out}" @ONLY)
++    configure_package_config_file("${project_config_in}" "${project_config_out}"
++        INSTALL_DESTINATION ${export_dest_dir})
+ 
+     write_basic_package_version_file("${version_config_file}" COMPATIBILITY SameMajorVersion)
+     install(FILES "${project_config_out}" "${version_config_file}" DESTINATION "${export_dest_dir}")
+diff --git a/cmake/spdlogConfig.cmake.in b/cmake/spdlogConfig.cmake.in
+index 43ffcf7e..89aaab5a 100644
+--- a/cmake/spdlogConfig.cmake.in
++++ b/cmake/spdlogConfig.cmake.in
+@@ -1,6 +1,8 @@
+ # Copyright(c) 2019 spdlog authors
+ # Distributed under the MIT License (http://opensource.org/licenses/MIT)
+ 
++@PACKAGE_INIT@
++
+ find_package(Threads REQUIRED)
+ 
+ set(SPDLOG_FMT_EXTERNAL @SPDLOG_FMT_EXTERNAL@)
+@@ -13,3 +15,5 @@ endif()
+ 
+ 
+ include("${CMAKE_CURRENT_LIST_DIR}/${config_targets_file}")
++
++check_required_components(spdlog)
+\ No newline at end of file
