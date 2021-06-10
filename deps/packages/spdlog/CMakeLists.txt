@@ -54,6 +54,31 @@ ExternalProject_Add(spdlog
 
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install)
 
+# We generally only run TSan on Ubuntu dockers, but on occasion a local build is
+# required. Only build the TSan package on ubuntu and macos platforms to save
+# time.
+# Currently only building for Ubuntu 18.04 as that's the main CV platform and
+# Ubuntu 20.04's clang is broken - see CBD-4186.
+if (${PLATFORM} STREQUAL "ubuntu18.04" OR ${PLATFORM} MATCHES "macos")
+    ExternalProject_Add(spdlog_tsan
+            GIT_REPOSITORY ${_git_repo}
+            GIT_TAG ${_git_rev}
+            PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/custom_level_names.patch
+                  COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/relocatable_export_package.patch
+            CMAKE_CACHE_ARGS ${cache_args}
+                "-DCMAKE_C_COMPILER:STRING=clang"
+                "-DCMAKE_CXX_COMPILER:STRING=clang++"
+                "-DCMAKE_CXX_FLAGS:STRING=-fsanitize=thread"
+            CMAKE_ARGS -D CMAKE_BUILD_TYPE=RelWithDebInfo
+
+            BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
+
+            INSTALL_COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/install/tsan_root/lib &&
+                 cp libspdlog.a ${CMAKE_CURRENT_BINARY_DIR}/install/tsan_root/lib)
+
+    ExternalProject_Add_StepDependencies(spdlog download spdlog_tsan)
+endif()
+
 # Additionally build a Debug variant on Windows, as for a debug build of
 # CB Server we need all dependancies _also_ linked against Debug CRT.
 if (WIN32)
