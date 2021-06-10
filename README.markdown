@@ -12,7 +12,7 @@ of utility CMake libraries in cmake/Modules.
   * Visual Studio 2017 or newer
   * Xcode
   * clang
-* CMake 3.12 or newer
+* CMake 3.16 or newer
 * Google repo (in order to fetch all of the source code)
 * A build tool such as Make or Ninja
 * ccache may speed up the development cycle when clang / gcc is used
@@ -129,12 +129,94 @@ They will not be built when compiling from source as the source code is private.
 programs the sample buckets cannot be loaded as it uses `cbimport`. To workaround this issue `cbbackupmgr`,
 `cbimport` and `cbexport` can be copied from the Community Edition binaries.
 
-# End of the basic build information
+**End of the basic build information**
 
 The remainder of this document covers certain special cases for building
 Couchbase Server. You likely will not be interested in anything beyond this
 point unless you work for Couchbase and have specific development issues to
 work on.
+
+### "Best" Developer build
+
+(Note: Assumes *ix platform).
+
+If you're building Couchbase Server more than just a one-off, there are
+a few modifications you can make to speed up your compile-edit-debug cycle.
+The most significant two are:
+
+1. Use Ninja as the CMake generator - [Ninja](https://ninja-build.org) is
+"a small build system which focuses on speed". It's main advantages over the
+default generator (GNU Make) are:
+   1. Automatic parallelism based on machine CPUs, and better CPU utilisation.
+   2. Much faster to determine "what's changed" for incremental builds -
+   Ninja takes less than 1 second to figure out what source files have changed
+   in a complete server build; GNU Make is closer to 10s.
+2. Use a non-optimised (Debug) build. This is around 2x faster to compile,
+   and also improves debuggability over the default _RelWithDebInfo_ build
+   type. Note it does produce slower code, so this isn't suitable if you're
+   doing any performance measuremnts.
+
+#### Prerequisites
+
+Ninja is available in most Linux distos now, and via homebrew on macOS:
+
+macOS:
+```commandline
+brew install ninja
+```
+Debian / Ubuntu:
+```commandline
+apt install ninja-build
+```
+
+Once you have Ninja available, configure your build tree to use it and enable
+Debug build type:
+
+```commandline
+mkdir build && cd build
+cmake -G Ninja -D CMAKE_INSTALL_PREFIX=../install -D CMAKE_BUILD_TYPE=Debug ..
+```
+
+Then use `ninja` instead of your normal command - for example to build and
+install everything run (from `build/` dir):
+```commandline
+ninja install
+```
+
+That will compile and install everything, automatically selecting a suitable
+compile parallelism based on CPU core count.
+
+#### Tips
+
+* You _cannot_ change a CMake generator once a tree is configured; so if you've
+already configured a given build tree you'll need to remove `build/` and re-run
+CMake with the above args.
+
+* Ninja can build specific targets just like GNU Make, simply specify the name
+of the target as you would with make:
+```commandline
+ninja memcached
+```
+
+* Ninja can also build only a single project of the tree (like GNU Make),
+however the syntax is a bit different - instead of changing into the
+subdirectory and running `make`, you _always_ run Ninja from the toplevel
+build dir, but specify `<project>/all` as the target - for example:
+```commandline
+ninja kv_engine/all
+```
+
+* Similary to just compile and install a single project specify
+`<project>/install` as the target to build:
+```commandline
+ninja couchstore/install
+```
+
+* You only have to explicitly run CMake (`cmake -G Ninja ...`) the first time a
+  build directory is setup, after then you just need to invoke `ninja` to build
+  whatever has changed. This includes both local changes and if you pull new
+  code from git. Ninja will automagically invoke CMake if necessary
+  (for example if source files have been added / removed).
 
 ### Customize your builds
 
