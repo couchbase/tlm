@@ -304,7 +304,7 @@ IF (NOT BUILD_ONLY_TOOLS)
   ADD_SUBDIRECTORY(sigar)
 ENDIF()
 
-IF (NOT BUILD_ONLY_TOOLS)
+IF (NOT BUILD_ONLY_TOOLS AND NOT COUCHBASE_KV_COMMIT_VALIDATION)
   ADD_SUBDIRECTORY(product-texts/couchbase-server)
   STRING (REGEX MATCH "^[^-]+" _version "${PRODUCT_VERSION}")
   SET (NOTICES_FILE "product-metadata/couchbase-server/blackduck/${_version}/notices.txt")
