@@ -8,6 +8,8 @@ ExternalProject_Add(fmt
 
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
 	     -D CMAKE_BUILD_TYPE=RelWithDebInfo
+         -D CMAKE_CXX_VISIBILITY_PRESET=hidden
+         -D CMAKE_POSITION_INDEPENDENT_CODE=ON
 
   BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
 
@@ -26,6 +28,8 @@ if (WIN32)
 
      CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
                 -D CMAKE_BUILD_TYPE=Debug
+                -D CMAKE_CXX_VISIBILITY_PRESET=hidden
+                -D CMAKE_POSITION_INDEPENDENT_CODE=ON
 
      BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
 

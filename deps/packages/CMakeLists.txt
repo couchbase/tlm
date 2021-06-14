@@ -197,7 +197,7 @@ _ADD_DEP_PACKAGE(maven 3.5.2 master 6)
 _ADD_DEP_PACKAGE(openjdk-rt 1.8.0.171 UNUSED 2)
 
 _ADD_DEP_PACKAGE(double-conversion 3.0.0 v3.0.0 4)
-_ADD_DEP_PACKAGE(fmt 7.1.3 7.1.3 1)
+_ADD_DEP_PACKAGE(fmt 7.1.3 7.1.3 2)
 _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 1)
 
 _ADD_DEP_PACKAGE(folly v2020.08.24.00-couchbase v2020.08.24.00-couchbase 4)
