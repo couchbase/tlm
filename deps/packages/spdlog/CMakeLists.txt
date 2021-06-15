@@ -7,7 +7,6 @@ DECLARE_DEP (fmt VERSION 7.1.3-cb2 PLATFORMS amzn2 centos7 centos8 debian8 debia
 # Given we build spdlog twice on Windows, define the common cmake
 # arguments once.
 list(APPEND cache_args -DCMAKE_CXX_VISIBILITY_PRESET:STRING=hidden)
-list(APPEND cache_args -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_CURRENT_BINARY_DIR}/install)
 list(APPEND cache_args -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON)
 list(APPEND cache_args -DSPDLOG_BUILD_EXAMPLE:BOOL=OFF)
 
@@ -45,14 +44,14 @@ list(APPEND cache_args -DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_BINARY_DIR}/fm
 ExternalProject_Add(spdlog
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
+        INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
+
         PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/custom_level_names.patch
               COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/relocatable_export_package.patch
         CMAKE_CACHE_ARGS ${cache_args}
-        CMAKE_ARGS -D CMAKE_BUILD_TYPE=RelWithDebInfo
+        CMAKE_ARGS -D CMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
 
-        BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
-
-        INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install)
+        BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism})
 
 # We generally only run TSan on Ubuntu dockers, but on occasion a local build is
 # required. Only build the TSan package on ubuntu and macos platforms to save
@@ -63,18 +62,17 @@ if (${PLATFORM} STREQUAL "ubuntu18.04" OR ${PLATFORM} MATCHES "macos")
     ExternalProject_Add(spdlog_tsan
             GIT_REPOSITORY ${_git_repo}
             GIT_TAG ${_git_rev}
+            INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install/tsan_root
+
             PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/custom_level_names.patch
                   COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/relocatable_export_package.patch
             CMAKE_CACHE_ARGS ${cache_args}
                 "-DCMAKE_C_COMPILER:STRING=clang"
                 "-DCMAKE_CXX_COMPILER:STRING=clang++"
                 "-DCMAKE_CXX_FLAGS:STRING=-fsanitize=thread"
-            CMAKE_ARGS -D CMAKE_BUILD_TYPE=RelWithDebInfo
+            CMAKE_ARGS -D CMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
 
-            BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
-
-            INSTALL_COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/install/tsan_root/lib &&
-                 cp libspdlog.a ${CMAKE_CURRENT_BINARY_DIR}/install/tsan_root/lib)
+            BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism})
 
     ExternalProject_Add_StepDependencies(spdlog download spdlog_tsan)
 endif()
