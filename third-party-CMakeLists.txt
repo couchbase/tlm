@@ -10,7 +10,13 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 add_subdirectory(gsl-lite)
 target_include_directories(gsl_lite INTERFACE ${gsl_lite_SOURCE_DIR}/include)
 
+# Disable building examples and tests for HdrHistogram and spdlog
+
+set(HDR_HISTOGRAM_BUILD_PROGRAMS OFF CACHE BOOL "Build hdr_histogram tests and examples")
 add_subdirectory(HdrHistogram_c)
+
+set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build spdlog examples")
+set(SPDLOG_BUILD_TESTING OFF CACHE BOOL "Build spdlog tests")
 add_subdirectory(spdlog)
 
 # Define macro which renames spdlog's severity levels
