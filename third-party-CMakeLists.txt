@@ -34,14 +34,3 @@ endif()
 # Disable building examples and tests for HdrHistogram.
 set(HDR_HISTOGRAM_BUILD_PROGRAMS OFF CACHE BOOL "Build hdr_histogram tests and examples")
 add_subdirectory(HdrHistogram_c)
-
-set(SPDLOG_BUILD_EXAMPLES OFF CACHE BOOL "Build spdlog examples")
-set(SPDLOG_BUILD_TESTING OFF CACHE BOOL "Build spdlog tests")
-set(SPDLOG_BUILD_BENCH OFF CACHE BOOL "Build spdlog benchmarks")
-set(SPDLOG_FMT_EXTERNAL ON CACHE BOOL "Use external fmt library instead of bundled")
-
-add_subdirectory(spdlog)
-
-# Define macro which renames spdlog's severity levels.
-set(CUSTOM_LEVELS "{\"TRACE\",\ \"DEBUG\",\ \"INFO\",\ \"WARNING\",\ \"ERROR\",\ \"CRITICAL\",\ \"OFF\"}")
-target_compile_definitions(spdlog PUBLIC -DSPDLOG_LEVEL_NAMES=${CUSTOM_LEVELS})

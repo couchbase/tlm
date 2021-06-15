@@ -196,6 +196,7 @@ INCLUDE(FindCouchbaseNuma)
 INCLUDE(FindCouchbaseFmt)
 INCLUDE(FindCouchbaseLiburing)
 include(FindCouchbaseGoogletest)
+INCLUDE(FindCouchbaseSpdlog)
 
 if (BUILD_ENTERPRISE)
     # libuv is currently only used by the enterpise builds
