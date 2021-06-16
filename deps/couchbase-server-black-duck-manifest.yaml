@@ -21,6 +21,9 @@ components:
         versions: [ 22.3.4.15 ]
         cbdeps-versions: [ cheshirecat ]
     flatbuffers: [ v1.10.0 ]
+    fmt:
+        bd-name: fmtlib/fmt
+        versions: [ 7.1.3 ]
     folly: [ v2020.08.24.00 ]
     glog: [ 0.4.0 ]
     grpc: [ 1.28.1 ]
@@ -64,8 +67,6 @@ components:
     rocksdb: []
     # cbpy's component packages are listed in deps/packages/cbpy
     cbpy: []
-    # fmt.dev is unknown by Black Duck.
-    fmt: []
 
     # Include these here even though they're actually included in the builds
     # by server-linux-build.sh.
