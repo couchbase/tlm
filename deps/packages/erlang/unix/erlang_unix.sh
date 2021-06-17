@@ -30,11 +30,9 @@ esac
       --disable-hipe \
       --disable-fp-exceptions \
       --without-javac \
-      --without-wx \
       --without-et \
       --without-debugger \
       --without-megaco \
-      --without-observer \
       --with-ssl=$CBDEPS_OPENSSL_DIR \
       $SSL_RPATH \
       CFLAGS="-fno-strict-aliasing -O3 -ggdb3"
@@ -42,6 +40,10 @@ esac
 make -j4
 
 make install
+
+# Prune wxWidgets - we needed this available for building observer
+# but not needed at runtime
+rm -rf ${INSTALL_DIR}/lib/erlang/lib/wx-*
 
 # Copy in cbdeps CMakeLists
 cp ${SCRIPT_DIR}/CMakeLists_package.txt ${INSTALL_DIR}/CMakeLists.txt
