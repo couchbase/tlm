@@ -80,9 +80,16 @@ IF (DEFINED JETBRAINS_CLION_IDE)
 ENDIF (DEFINED JETBRAINS_CLION_IDE)
 
 IF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-  SET(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/install" CACHE STRING
-      "The install location" FORCE)
-  LIST(APPEND CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}")
+    if (JETBRAINS_CLION_IDE)
+        # Cmake use directories like: cmake-build-[build-type]-[toolchain]
+        # Lets let the install directory be cmake-install-[build-type]-[toolchain]
+        string(REGEX REPLACE "(.*)build(.*)" "\\1install\\2" cb_install_dir ${CMAKE_BINARY_DIR})
+        set(CMAKE_INSTALL_PREFIX "${cb_install_dir}" CACHE STRING "The install location" FORCE)
+    else ()
+        SET(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/install" CACHE STRING
+            "The install location" FORCE)
+    endif ()
+    LIST(APPEND CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}")
 ENDIF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 LIST (APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
