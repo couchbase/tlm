@@ -9,10 +9,10 @@ otp_version=$1
 cb_buildnumber=$2
 
 
-#Among all sites provide pre-built openssl binaries for windows, slproweb.com 
+#Among all sites provide pre-built openssl binaries for windows, slproweb.com
 #is recommended by openssl.  It typically comes out a day or two after openssl
 #release.  Before installation, we remove the old install directory.  Since we
-#only care about the binaries, it is not necessary to perform uninstall.  If 
+#only care about the binaries, it is not necessary to perform uninstall.  If
 #we need to uninstall in the future, we will need to check the existency of
 #uninstaller, then run it in silent mode:
 #/cygdrive/c/Program\ Files/OpenSSL-Win64/unins000.exe /silent
@@ -58,11 +58,9 @@ eval $(./otp_build env_win64)
 patch_ssl
 ./otp_build configure \
       --without-javac \
-      --without-wx \
       --without-et \
       --without-debugger \
       --without-megaco \
-      --without-observer \
       --with-ssl=${OPENSSL_DIR} 2>&1 | tee configure.out
 ./otp_build boot -a 2>&1 | tee boot.out
 ./otp_build release -a 2>&1 | tee release.out
@@ -95,6 +93,10 @@ FILE (COPY bin erts-${erts_version} lib releases usr DESTINATION \"\${CMAKE_INST
 # And install erl.ini with correct paths
 CONFIGURE_FILE(\${CMAKE_CURRENT_SOURCE_DIR}/erl.ini.in \${CMAKE_INSTALL_PREFIX}/bin/erl.ini)
 " > CMakeLists.txt
+
+# Prune wxWidgets - we needed this available for building observer
+# but not needed at runtime
+rm -rf "${installdir}"/lib/wx-*
 
 ## tar 'em up
 cp VERSION.txt erl.ini.in CMakeLists.txt "${installdir}"

@@ -12,7 +12,7 @@ dependencies:
 # These are the packages we explicitly depend on.
 # If you change these (packages OR versions), be sure
 # to experimentally update the transitive dependencies below!
-  - python=3.9.2*
+  - python=3.9.5*
   - msgpack-python=1.0.2
   - natsort=7.1.1
   - python-snappy=0.6.0
@@ -33,8 +33,8 @@ dependencies:
 # care when adding entirely new packages to the list below. Try leaving
 # them out at first and see if cbpy builds OK.
   - brotlipy=0.7.0
-  - ca-certificates=2021.1.19
-  - certifi=2020.12.5
+  - ca-certificates=2021.5.25
+  - certifi=2021.5.30
   - cffi=1.14.5
   - cryptography=3.4.6
   - idna=2.10
@@ -45,7 +45,7 @@ dependencies:
   - setuptools=52.0.0
   - six=1.15.0
   - snappy=1.1.8
-  - sqlite=3.35.2
+  - sqlite=3.35.4
   - tk=8.6.10
   - tzdata=2020f
   - urllib3=1.26.4
