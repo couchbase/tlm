@@ -65,7 +65,7 @@ OPTION(COUCHBASE_KV_COMMIT_VALIDATION
 # customer environment.
 OPTION(CB_DEVELOPMENT_ASSERTS
        "Enable additional asserts which abort execution if they fail."
-       OFF)
+       ON)
 IF (CB_DEVELOPMENT_ASSERTS)
    MESSAGE(STATUS "Enabling CB_DEVELOPMENT_ASSERTS")
    ADD_DEFINITIONS(-DCB_DEVELOPMENT_ASSERTS)
