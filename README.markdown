@@ -122,6 +122,23 @@ same "repo init" and "repo sync" steps as above, then run:
     cmake -G Ninja -D CMAKE_C_COMPILER=cl -D CMAKE_CXX_COMPILER=cl -D CMAKE_BUILD_TYPE=RelWithDebInfo ..
     ninja install
 
+### Specifying what to build
+
+The default make target if not explicilty specified is `all` - this builds all
+binaries required for the shipping product. This is sufficient to run Couchbase
+Server itself, but doesn't include unit test / benchmark binaries etc.
+
+The following additional targets are available:
+
+* `everything` : Builds both production binaries, along with unit tests, benchmarks etc for
+all subprojects.
+* `<PROJECT>_everything`
+: Builds all binaries for the specific project, e.g `platform_everything`.
+(Similar to `make -C <PROJECT> all`, but also builds non-shipping binaries)
+* `install`
+: Standard CMake target; builds all production binaries and installs them to
+`CMAKE_INSTALL_PREFIX`.
+
 ### cbbackupmgr, cbimport and cbexport
 
 Please note that the Community Edition packages on couchbase.com contain `cbbackupmgr`, `cbimport` and `cbexport`.
