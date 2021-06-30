@@ -16,9 +16,7 @@ components:
     double-conversion: [ v3.0.0 ]
     erlang-otp: [ OTP-20.3.8.11 ]
     flatbuffers: [ v1.10.0 ]
-    folly:
-        bd-name: Facebook Folly
-        versions: [ v2019.08.12.00 ]
+    folly: [ v2019.08.12.00 ]
     glog: [ 0.3.5 ]
     grpc: [ 1.12.0 ]
     jemalloc: [ 5.2.1 ]
@@ -36,7 +34,7 @@ components:
     pcre: [ 8.43 ]
     google-snappy: [ 1.1.1 ]
     v8:
-        bd-name: Google V8 Javascript engine
+        bd-name: Google V8 JavaScript Engine
         versions: [ 7.1.321 ]
     zlib: [ 1.2.11 ]
 
