@@ -12,20 +12,15 @@ set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 # are needed for said platform, and can be removed once things are
 # resynced with a later build.
 DECLARE_DEP (boost VERSION 1.74.0-cb1 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
-DECLARE_DEP (double-conversion VERSION 3.0.0-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
-DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS centos8 debian10 rhel8 ubuntu20.04)
-DECLARE_DEP (fmt VERSION 7.0.3-cb2 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2015 windows_msvc2017)
+DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (fmt VERSION 7.1.3-cb2 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (glog VERSION v0.4.0-cb1 PLATFORMS amzn2 centos6 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2015 windows_msvc2017)
-DECLARE_DEP (jemalloc VERSION 5.2.1-cb4 PLATFORMS amzn2 centos7 centos8 debian7 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
-DECLARE_DEP (libevent VERSION 2.1.8-cb8 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
-DECLARE_DEP (libevent VERSION 2.1.8-cb10 PLATFORMS centos8 debian10 rhel8)
-DECLARE_DEP (libevent VERSION 2.1.11-cb6 PLATFORMS ubuntu20.04)
-DECLARE_DEP (openssl V2 VERSION 1.1.1h BUILD 1 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (jemalloc VERSION 5.2.1-cb6 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (libevent VERSION 2.1.11-cb7 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (openssl V2 VERSION 1.1.1k BUILD 1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc2015 windows_msvc2017)
-DECLARE_DEP (snappy VERSION 1.1.1-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
-DECLARE_DEP (snappy VERSION 1.1.1-cb5 PLATFORMS centos8 debian10 rhel8 ubuntu20.04)
-DECLARE_DEP (zlib V2 VERSION 1.2.11 BUILD 4 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
-DECLARE_DEP (zlib V2 VERSION 1.2.11 BUILD 6 PLATFORMS centos8 debian10 rhel8 ubuntu20.04)
+DECLARE_DEP (snappy VERSION 1.1.1-cb5 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04)
+DECLARE_DEP (zlib V2 VERSION 1.2.11 BUILD 7 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 
 # Restore the INSTALL_PREFIX
 set(CMAKE_INSTALL_PREFIX ${_orig_install_prefix})
@@ -93,7 +88,9 @@ ExternalProject_Add(folly
 # We generally only run TSan on ubuntu dockers, but on occasion a local build is
 # required. Only build the TSan package on ubuntu and macos platforms to save
 # time.
-if (${PLATFORM} MATCHES "ubuntu" OR ${PLATFORM} MATCHES "macos")
+# Currently only building for Ubuntu 18.04 as that's the main CV platform and
+# Ubuntu 20.04's clang is broken - see CBD-4186.
+if (${PLATFORM} STREQUAL "ubuntu18.04" OR ${PLATFORM} MATCHES "macos")
    # Not designed to be built independently of the normal folly package build. The
    # build will only install the package and not the source.
    ExternalProject_Add(follytsan
