@@ -155,8 +155,6 @@ work on.
 
 ### "Best" Developer build
 
-(Note: Assumes *ix platform).
-
 If you're building Couchbase Server more than just a one-off, there are
 a few modifications you can make to speed up your compile-edit-debug cycle.
 The most significant two are:
@@ -168,6 +166,11 @@ default generator (GNU Make) are:
    2. Much faster to determine "what's changed" for incremental builds -
    Ninja takes less than 1 second to figure out what source files have changed
    in a complete server build; GNU Make is closer to 10s.
+   3. Allows for limiting the number of parallel link jobs. Due to the fact
+   that we're using static linking each link process may require a lot of
+   memory (I've seen them exceed 2GB resident memory). Pass
+   `-D CB_PARALLEL_LINK_JOBS=4` to `cmake` to limit the number of parallel
+   link jobs to 4
 2. Use a non-optimised (Debug) build. This is around 2x faster to compile,
    and also improves debuggability over the default _RelWithDebInfo_ build
    type. Note it does produce slower code, so this isn't suitable if you're
@@ -190,8 +193,9 @@ Once you have Ninja available, configure your build tree to use it and enable
 Debug build type:
 
 ```commandline
-mkdir build && cd build
-cmake -G Ninja -D CMAKE_INSTALL_PREFIX=../install -D CMAKE_BUILD_TYPE=Debug ..
+mkdir build
+cd build
+cmake -G Ninja -D CB_PARALLEL_LINK_JOBS=4 -D CMAKE_BUILD_TYPE=Debug ..
 ```
 
 Then use `ninja` instead of your normal command - for example to build and
