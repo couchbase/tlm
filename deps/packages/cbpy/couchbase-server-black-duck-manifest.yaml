@@ -24,9 +24,7 @@ components:
     libffi: [ 3.3 ]
     # libgcc-ng and libstdcxx-ng are part of libgcc, which is covered
     # elsewhere
-    ncurses:
-        bd-name: GNU Ncurses
-        versions: [ 6.2 ]
+    ncurses: [ 6.2 ]
     pycparser: [ release_v2.20 ]
     pyopenssl: [ 20.0.1 ]
     pysocks: [ 1.7.1 ]
