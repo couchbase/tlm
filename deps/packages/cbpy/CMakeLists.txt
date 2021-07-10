@@ -1,7 +1,7 @@
 # A stubbed "external" project, because the cbpy build instructions
 # are actually right here.
 
-SET (CBDEP_VERSION 0.9.18)
+SET (CBDEP_VERSION 1.0.0)
 SET (MINICONDA_VERSION 4.9.2)
 
 include(ExternalProject)
@@ -11,12 +11,16 @@ SET (_cbdep_url_base "https://packages.couchbase.com/cbdep/cbdep-")
 IF (WIN32)
   SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/cbpy_windows.bat)
   SET (_cbdep_url_ext "windows.exe")
-ELSEIF (APPLE)
-  SET (_cbdep_url_ext "darwin")
-  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/cbpy_unix.sh)
 ELSE ()
-  SET (_cbdep_url_ext "linux")
-  SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/cbpy_unix.sh)
+  IF(APPLE)
+    SET (_cbdep_platform "darwin")
+    SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/cbpy_unix.sh)
+  ELSE ()
+    SET (_cbdep_platform "linux")
+    SET (_build_script ${CMAKE_CURRENT_SOURCE_DIR}/cbpy_unix.sh)
+  ENDIF ()
+  STRING (TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" _arch)
+  SET (_cbdep_url_ext "${_cbdep_platform}-${_arch}")
 ENDIF ()
 
 SET (_install_dir "${CMAKE_BINARY_DIR}/install")

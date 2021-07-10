@@ -5,6 +5,8 @@ CBDEP=$2
 MINICONDA_VERSION=$3
 INSTALL_DIR=$4
 
+CONSTRUCTOR_VERSION=3.2.1
+
 # Clear positional parameters so "activate" works in a moment
 set --
 
@@ -14,8 +16,13 @@ chmod 755 "${CBDEP}"
 "${CBDEP}" install -d . miniconda3-py39 ${MINICONDA_VERSION}
 . ./miniconda3-${MINICONDA_VERSION}/bin/activate
 
-# Install conda-build and constructor
-conda install -y conda-build constructor
+# Install conda-build
+conda install -y conda-build
+
+# Download, build, and install constructor
+git clone git://github.com/conda/constructor
+conda build --output-folder "./conda-pkgs" $(pwd)/constructor/conda.recipe
+conda install --channel "./conda-pkgs" constructor
 
 # Build our local stub packages
 conda build --output-folder "./conda-pkgs" ${SRC_DIR}/conda-pkgs/*
@@ -29,7 +36,7 @@ conda env update -p ./cbpy-environment -f "${SRC_DIR}/environment-unix.yaml"
 if [ $(uname -s) = "Darwin" ]; then
     platform=osx
 else
-    platform=linux
+    platform=linux-$(uname -m)
 fi
 conda env update -p ./cbpy-environment -f "${SRC_DIR}/environment-${platform}.yaml"
 

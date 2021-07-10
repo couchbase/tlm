@@ -33,10 +33,10 @@ dependencies:
 # care when adding entirely new packages to the list below. Try leaving
 # them out at first and see if cbpy builds OK.
   - brotlipy=0.7.0
-  - ca-certificates=2021.5.25
+  - ca-certificates=2021.4.13
   - certifi=2021.5.30
   - cffi=1.14.5
-  - cryptography=3.4.6
+  - cryptography=3.4.7
   - idna=2.10
   - openssl=1.1.1k
   - pycparser=2.20
