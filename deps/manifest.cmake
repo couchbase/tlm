@@ -26,7 +26,8 @@ DECLARE_DEP (flatbuffers VERSION 1.10.0-cb5 PLATFORMS amzn2 centos7 debian9 debi
 DECLARE_DEP (fmt VERSION 7.1.3-cb2 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (folly VERSION v2020.09.07.00-couchbase-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (glog VERSION v0.4.0-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
-DECLARE_DEP (grpc VERSION 1.28.1-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (grpc VERSION 1.28.1-cb1 PLATFORMS windows_msvc2017)
+DECLARE_DEP (grpc VERSION 1.28.1-cb2 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04)
 #
 # IMPORTANT: If you add a new package here or update an existing package
 # version, you must also update couchbase-server-black-duck-manifest.json
