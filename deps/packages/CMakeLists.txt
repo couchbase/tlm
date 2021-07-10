@@ -201,6 +201,7 @@ _ADD_DEP_PACKAGE(fmt 7.1.3 7.1.3 2)
 _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 1)
 
 _ADD_DEP_PACKAGE(folly v2020.09.07.00-couchbase v2020.09.07.00-couchbase 1)
+_ADD_DEP_PACKAGE(grpc 1.28.1 v1.28.1 1)
 _ADD_DEP_PACKAGE(pcre 8.43 v8.43 2)
 _ADD_DEP_PACKAGE(opentracing-cpp v1.5.1 v1.5.1 4)
 _ADD_DEP_PACKAGE(prometheus-cpp v0.10.0-couchbase v0.10.0-couchbase 2)

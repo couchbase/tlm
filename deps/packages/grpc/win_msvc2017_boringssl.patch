@@ -1,0 +1,13 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index f58ee194f1..ef4cd4d4ae 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -101,7 +101,7 @@ if (MSVC)
+   # TODO(jtattermusch): revisit C4267 occurrences throughout the code
+   add_definitions(/wd4267)
+   # TODO(jtattermusch): needed to build boringssl with VS2017, revisit later
+-  add_definitions(/wd4987 /wd4774 /wd4819 /wd4996 /wd4619)
++  add_definitions(/wd4987 /wd4774 /wd4819 /wd4996 /wd4619 /wd5045)
+ endif()
+ 
+ if (gRPC_USE_PROTO_LITE)
