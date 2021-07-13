@@ -124,6 +124,8 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
     ENDIF (NOT Rebar_COMMAND)
 
     ADD_CUSTOM_TARGET (${Rebar_TARGET} ${_all}
+      "${CMAKE_COMMAND}" -E env
+      CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
       "${ESCRIPT_EXECUTABLE}" "${rebar_script}" ${Rebar_REBAR_OPTS}
       ${Rebar_COMMAND}
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
@@ -131,6 +133,8 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
     IF (Rebar_EUNIT)
       SET(_eunit_target "${Rebar_TARGET}-eunit")
       ADD_CUSTOM_TARGET ("${_eunit_target}"
+        "${CMAKE_COMMAND}" -E env
+        CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
         "${ESCRIPT_EXECUTABLE}" "${rebar_script}"
         compile_only=true ${Rebar_EUNIT_OPTS} eunit
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
@@ -153,6 +157,8 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
 
     IF (NOT Rebar_NOCLEAN)
       ADD_CUSTOM_TARGET ("${Rebar_TARGET}-clean"
+        "${CMAKE_COMMAND}" -E env
+        CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
         "${ESCRIPT_EXECUTABLE}" "${rebar_script}" clean
         COMMAND "${CMAKE_COMMAND}" -E remove_directory ebin
         COMMAND "${CMAKE_COMMAND}" -E remove_directory .eunit
