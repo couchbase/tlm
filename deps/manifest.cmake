@@ -55,7 +55,8 @@ DECLARE_DEP (rocksdb VERSION 5.18.3-cb6 PLATFORMS amzn2 centos7 debian9 debian10
 ENDIF (NOT CB_PRODUCTION_BUILD)
 DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc2017)
 DECLARE_DEP (snappy VERSION 1.1.1-cb5 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04)
-DECLARE_DEP (v8 VERSION 8.3-cb4 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (v8 VERSION 8.3-cb4 PLATFORMS suse12)
+DECLARE_DEP (v8 VERSION 8.3-cb5 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (zlib V2 VERSION 1.2.11 BUILD 7 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 
 #
