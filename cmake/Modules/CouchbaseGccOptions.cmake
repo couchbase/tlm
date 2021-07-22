@@ -42,7 +42,7 @@ endif()
 include(CheckCCompilerFlag)
 check_c_compiler_flag(-no-pie HAVE_NO_PIE)
 if (HAVE_NO_PIE)
-  list(APPEND CMAKE_EXE_LINKER_FLAGS "-no-pie")
+  string(APPEND CMAKE_EXE_LINKER_FLAGS " -no-pie")
 endif ()
 
 list(APPEND _cb_c_flags -fvisibility=hidden -pthread)

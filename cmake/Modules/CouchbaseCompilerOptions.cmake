@@ -33,6 +33,18 @@ option(COUCHBASE_OMIT_FRAME_POINTER
        "Allow omission of frame pointer"
        True)
 
+if (UNIX AND NOT APPLE)
+    # Add --build-id=sha1 to the linker if the linker supports it to get
+    # rid of "WARNING: No build ID note found in <...>" when building
+    # an RPM package
+  include(CheckCCompilerFlag)
+  check_c_compiler_flag(-Wl,--build-id=sha1 HAVE_LINKER_BUILD_ID)
+  if (HAVE_LINKER_BUILD_ID)
+    string(APPEND CMAKE_EXE_LINKER_FLAGS " -Wl,--build-id=sha1")
+    string(APPEND CMAKE_SHARED_LINKER_FLAGS " -Wl,--build-id=sha1")
+  endif ()
+endif()
+
 #
 # Set flags for the C and C++ Compiler
 #
