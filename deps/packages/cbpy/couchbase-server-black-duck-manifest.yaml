@@ -37,7 +37,7 @@ components:
     google-snappy: [ 1.1.8 ]
     sqlite: [ 3.35.4 ]
     tk: [ 8.6.10 ]
-    urllib3: [ 1.26.4 ]
+    urllib3: [ 1.26.6 ]
     python-wheel: [ 0.36.2 ]
     xz:
         bd-name: XZ Utils
