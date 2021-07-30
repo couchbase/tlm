@@ -25,7 +25,9 @@ components:
     # libgcc-ng and libstdcxx-ng are part of libgcc, which is covered
     # elsewhere
     ncurses: [ 6.2 ]
-    pycparser: [ release_v2.20 ]
+    # as of July 29, 2021, quotes have to be around 2.20.
+    # otherwise, zero at the end is stripped somehow and BD scan will fail.
+    pycparser: [ "2.20" ]
     pyopenssl: [ 20.0.1 ]
     pysocks: [ 1.7.1 ]
     setuptools:
