@@ -19,3 +19,10 @@ ENDIF()
 SET(CMAKE_INSTALL_RPATH "${RPATH}")
 
 SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+
+# Remove any rpath added by the toolchain. This is necessary to remove
+# the local '/opt/gcc-10.2.0/lib64' rpath added by our local gcc-10
+# binary to allow the binary to locate libstdc++ et al at build
+# time. At install time we locate libstdc++ via the above
+# origin-relative path.
+SET(CMAKE_INSTALL_REMOVE_ENVIRONMENT_RPATH TRUE)

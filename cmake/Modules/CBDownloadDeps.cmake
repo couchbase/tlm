@@ -131,12 +131,13 @@ IF (NOT CBDownloadDeps_INCLUDED)
       WORKING_DIRECTORY "${dir}"
       RESULT_VARIABLE _explode_result
       ERROR_VARIABLE _explode_stderr)
-    IF(_explode_result)
+    STRING (FIND "${_explode_stderr}" "error" _explode_error)
+    IF(_explode_result GREATER 0 OR _explode_error GREATER -1)
       FILE (REMOVE_RECURSE "${dir}")
       FILE (REMOVE "${file}")
       MESSAGE (FATAL_ERROR "Failed to extract dependency ${file} - file corrupt? "
         "It has been deleted, please try again.\n ${_explode_stderr}")
-    ENDIF(_explode_result)
+    ENDIF()
   ENDFUNCTION (EXPLODE_ARCHIVE)
 
   # Declare a dependency
@@ -314,6 +315,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
     IF (NOT EXISTS "${_goexe}")
       FILE (REMOVE "${_cachefile}")
+      FILE (REMOVE_RECURSE "${_explode_dir}")
       MESSAGE (FATAL_ERROR "Downloaded go archive ${_gofile}"
         " failed to unpack correctly - ${_goexe} does not exist!"
         " (archive removed from download cache)")
@@ -321,7 +323,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
   ENDFUNCTION (GET_GO_VERSION)
 
   # Start of CBDeps 2.0 - download and cache the new 'cbdep' tool
-  SET (CBDEP_VERSION 1.0.1)
+  SET (CBDEP_VERSION 1.0.2)
   FUNCTION (GET_CBDEP)
     _DETERMINE_PLATFORM (_platform)
     _DETERMINE_ARCH (_arch)

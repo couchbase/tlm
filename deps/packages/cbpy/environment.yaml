@@ -48,7 +48,7 @@ dependencies:
   - sqlite=3.35.4
   - tk=8.6.10
   - tzdata=2020f
-  - urllib3=1.26.4
+  - urllib3=1.26.6
   - wheel=0.36.2
   - xz=5.2.5
   - zlib=1.2.11
