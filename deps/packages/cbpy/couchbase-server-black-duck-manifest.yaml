@@ -15,7 +15,7 @@ components:
     brotlipy: [ 0.7.0 ]
     python-certifi: [ 2021.5.30 ]
     cffi: [ 1.14.5 ]
-    python-cryptography: [ 3.4.6 ]
+    python-cryptography: [ 3.4.7 ]
     idna: [ 2.10 ]
     # ld_impl_linux-64 is also part of gcc, at least I believe so;
     # it doesn't seem to exist as a separate package anywhere except
