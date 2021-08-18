@@ -7,6 +7,8 @@ installer_filename: cbpy-installer
 # so we have to bypass this useful safety check.
 ignore_duplicate_files: true
 
+post_install: post_install.bat          [win]
+
 channels:
   - https://repo.anaconda.com/pkgs/main/
 
