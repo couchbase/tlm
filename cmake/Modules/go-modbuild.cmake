@@ -34,12 +34,15 @@ IF (NOT WIN32)
   ENDIF (CB_THREADSANITIZER OR CB_ADDRESSSANITIZER OR CB_UNDEFINEDSANITIZER)
 ENDIF()
 
-# QQQ TOTAL HACK to enable CGO binaries to find Couchbase-built shared
-# libraries.  This will clearly only work on Linux ELF-based systems,
-# and only for those libraries which are installed in the correct path
-# relative to the installed location of the Go-built executable. I'm still
-# trying to figure out how to handle this correctly.
-SET (ENV{LD_RUN_PATH} "$ORIGIN/../lib")
+# Our globally-desired RPATH for all Go executables (so far anyway)
+# for Linux and MacOS. Windows doesn't have a problem currently
+# because all exes and libs get dumped together.
+IF (APPLE)
+  SET (ENV{CGO_LDFLAGS} "$ENV{CGO_LDFLAGS} -Wl,-rpath,@executable_path/../lib")
+ELSEIF (UNIX)
+  # UNIX but not APPLE == LINUX
+  SET (ENV{CGO_LDFLAGS} "$ENV{CGO_LDFLAGS} -Wl,-rpath=$ORIGIN/../lib")
+ENDIF ()
 
 # Always use -x if CB_GO_DEBUG is set
 IF ($ENV{CB_GO_DEBUG})
