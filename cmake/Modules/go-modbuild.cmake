@@ -68,7 +68,8 @@ SET (ENV{GO111MODULE} "on")
 SET (ENV{GOCACHE} "${GO_BINARY_DIR}/cache")
 
 # If this is a production build, set/override GOPROXY.
-IF (CB_PRODUCTION_BUILD)
+# (For now, not on AWS since it doesn't have access to our proxy.)
+IF (CB_PRODUCTION_BUILD AND NOT EXISTS "/aws")
   SET (ENV{GOPROXY} "http://goproxy.build.couchbase.com/")
 ENDIF ()
 
