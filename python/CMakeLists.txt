@@ -117,7 +117,10 @@ ADD_CUSTOM_COMMAND (OUTPUT "${_installer}"
   COMMAND "${_constructor}" "${CMAKE_CURRENT_SOURCE_DIR}"
   WORKING_DIRECTORY "${_cwd}"
   COMMAND "${CMAKE_COMMAND}" -E rename cbpy-installer "${_installer}"
-  DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/construct.yaml" "${_constructor}"
+  DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/construct.yaml"
+    "${_constructor}"
+    "${CMAKE_CURRENT_SOURCE_DIR}/post_install.sh"
+    "${CMAKE_CURRENT_SOURCE_DIR}/post_install.bat"
   COMMENT "Build cbpy distribution"
   VERBATIM)
 
