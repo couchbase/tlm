@@ -2,36 +2,28 @@
 
 include(ExternalProject)
 
+_DETERMINE_CPU_COUNT(_parallelism)
+
 ### Download, configure and build snappy ####################################
 ExternalProject_Add(snappy
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
 
-  CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>
-                                           --enable-shared
-                                           --disable-static
-                                           --disable-dependency-tracking
-                                           --disable-gtest
+  CMAKE_ARGS -D CMAKE_C_FLAGS_RELWITHDEBINFO=${CMAKE_C_FLAGS_RELWITHDEBINFO}
+             -D CMAKE_CXX_FLAGS_RELWITHDEBINFO=${CMAKE_CXX_FLAGS_RELWITHDEBINFO}
+             -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
+             -D CMAKE_BUILD_TYPE=RelWithDebInfo
+             -D BUILD_SHARED_LIBS=ON
 
-  BUILD_COMMAND $(MAKE) all
+  BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
 
-  INSTALL_DIR ${CMAKE_BINARY_DIR}/install
-  INSTALL_COMMAND $(MAKE) install
-          COMMAND rm -rf <INSTALL_DIR>/share
-          COMMAND rm -f <INSTALL_DIR>/lib/libsnappy.la
+  TEST_BEFORE_INSTALL ON
 
-  COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
+  INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
+  INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
+          COMMAND ${CMAKE_COMMAND} -E echo "file(GLOB snappy_libs lib/*snappy*)" > <INSTALL_DIR>/CMakeLists.txt
+          COMMAND ${CMAKE_COMMAND} -E echo "file(COPY \${snappy_libs} DESTINATION \"\${CMAKE_INSTALL_PREFIX}/lib/\")" >> <INSTALL_DIR>/CMakeLists.txt
 )
-
-# OS X-only: Custom post-build step to set the shared library install name.
-if (APPLE)
-  ExternalProject_Add_Step(snappy install_name
-    COMMAND install_name_tool -id @rpath/libsnappy.1.dylib <BINARY_DIR>/.libs/libsnappy.1.dylib
-    DEPENDEES build
-    DEPENDERS install
-    WORKING_DIRECTORY <BINARY_DIR>
-  )
-endif(APPLE)
 
 # cbdeps boilerplate
 _ADD_PACKAGE_STEP()

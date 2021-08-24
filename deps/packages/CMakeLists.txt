@@ -19,6 +19,7 @@ CMAKE_MINIMUM_REQUIRED (VERSION 2.8)
 LIST (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../../cmake/Modules")
 INCLUDE (PlatformIntrospection)
 INCLUDE (CBDownloadDeps)
+INCLUDE (CouchbaseCompilerOptions)
 
 _DETERMINE_PLATFORM (cbcache_platform)
 _DETERMINE_ARCH (cbcache_arch)
@@ -155,9 +156,7 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 #
 # And here is the set of "latest" dependencies.
 #
-# Note: Snappy 1.1.1-cb6 was used for Alice only;
-# next master build (if needed) should be -cb7
-_ADD_DEP_PACKAGE(snappy 1.1.1 1.1.1 5)
+_ADD_DEP_PACKAGE(snappy 1.1.8 1.1.8 1)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
 _ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 7)
