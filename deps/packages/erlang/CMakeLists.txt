@@ -9,14 +9,13 @@
 SET (_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/ignored")
 SET (_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 SET (CMAKE_INSTALL_PREFIX "${_openssl_install}")
-DECLARE_DEP (openssl V2 VERSION 1.1.1k BUILD 1
+DECLARE_DEP (openssl V2 VERSION 1.1.1l BUILD 1
              PLATFORMS amzn2
-                       centos7 centos8
-                       debian8 debian9 debian10
-                       rhel8
+                       centos7
+                       debian9 debian10
                        macosx
                        suse12 suse15
-                       ubuntu16.04 ubuntu18.04 ubuntu20.04
+                       ubuntu18.04 ubuntu20.04
                        windows_msvc2017)
 SET (CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 
