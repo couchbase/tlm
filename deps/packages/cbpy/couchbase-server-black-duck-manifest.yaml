@@ -3,47 +3,93 @@ components:
     # Please keep these entries in the same order as the corresponding
     # lines in construct.yaml, for ease of comparison
     python:
-        bd-name: Python Programming Language
+        bd-id: ee4d67e0-63f9-409d-a9be-1c30de64873d
         versions: [ 3.9.5 ]
 
-    requests: [ 2.25.1 ]
-    msgpack-python: [ 1.0.2 ]
-    natsort: [ 7.1.1 ]
-    python-snappy: [ 0.6.0 ]
+    requests:
+        bd-id: 93b03de5-fedb-4162-8a18-7f19fdbd252e
+        versions: [ 2.25.1 ]
+    msgpack-python:
+        bd-id: d265c559-74ea-4baa-a993-2089ca47efde
+        versions: [ 1.0.2 ]
+    natsort:
+        bd-id: c935b0a6-c4ad-449b-bea6-e953ad632518
+        versions: [ 7.1.1 ]
+    python-snappy:
+        bd-id: 47724afe-8603-46c1-9bb9-de8bbba8c11f
+        versions: [ 0.6.0 ]
 
     # _libgcc_mutex is part of libgcc, which is covered elsewhere
-    brotlipy: [ 0.7.0 ]
-    python-certifi: [ 2021.5.30 ]
-    cffi: [ 1.14.5 ]
-    python-cryptography: [ 3.4.7 ]
-    idna: [ 2.10 ]
+    brotlipy:
+        bd-id: eeda27ea-0cb3-4fac-b767-42a7fb4dfd49
+        versions: [ v0.7.0 ]
+    python-certifi:
+        bd-id: f1890115-04dd-4eaf-8ff0-5e2643582990
+        versions: [ 2021.5.30 ]
+    cffi:
+        bd-id: 043e4252-a86b-4281-a1a3-a762fe0470de
+        versions: [ 1.14.5 ]
+    python-cryptography:
+        bd-id: 1fb0e6ce-44cf-454e-99d4-454ffd6ecffa
+        versions: [ 3.4.7 ]
+    idna:
+        bd-id: 0be5e619-2387-4fe3-915e-8a60146b57dd
+        versions: [ 2.10 ]
     # ld_impl_linux-64 is also part of gcc, at least I believe so;
     # it doesn't seem to exist as a separate package anywhere except
     # here in Anaconda-land
-    libcxx: [ 10.0.0 ]
-    libffi: [ 3.3 ]
+    libcxx:
+        bd-id: 587d3e15-ea76-449b-94b1-ef12538584e4
+        versions: [ 10.0.0 ]
+    libffi:
+        bd-id: 8a5d4e5f-eee6-441d-91cc-85c7bb5e9fb5
+        versions: [ 3.3 ]
     # libgcc-ng and libstdcxx-ng are part of libgcc, which is covered
     # elsewhere
-    ncurses: [ 6.2 ]
+    ncurses:
+        bd-id: 7273e9b6-fd06-4da3-882b-391c9d4ea758
+        versions: [ 6.2 ]
     # as of July 29, 2021, quotes have to be around 2.20.
     # otherwise, zero at the end is stripped somehow and BD scan will fail.
-    pycparser: [ "2.20" ]
-    pyopenssl: [ 20.0.1 ]
-    pysocks: [ 1.7.1 ]
+    pycparser:
+        bd-id: d4148456-5d7e-49b5-8ffe-c65d67ee52a6
+        versions: [ "2.20" ]
+    pyopenssl:
+        bd-id: 69c65bd6-9d4a-427e-8b35-384c0ce8602e
+        versions: [ 20.0.1 ]
+    pysocks:
+        bd-id: 5c2e7e08-0eb3-4d78-a6a7-45a36bad400c
+        versions: [ 1.7.1 ]
     setuptools:
-        bd-name: pypa/setuptools
+        bd-id: ac1b690f-ce51-4bd2-93c9-78e3f37757de
         versions: [ 52.0.0 ]
     python-six:
-        bd-name: Python six
+        bd-id: 69184346-b974-4064-88a3-134a17f6bbb5
         versions: [ 1.15.0 ]
-    google-snappy: [ 1.1.8 ]
-    sqlite: [ 3.35.4 ]
-    tk: [ 8.6.10 ]
-    urllib3: [ 1.26.6 ]
-    python-wheel: [ 0.36.2 ]
+    google-snappy:
+        bd-id: fd5e5c60-2c67-4d20-8be9-b7648156cef3
+        versions: [ 1.1.8 ]
+    sqlite:
+        bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
+        versions: [ 3.35.4 ]
+    tk:
+        bd-id: 1986cb95-15ac-47e9-8728-6bea10ce7963
+        versions: [ 8.6.10 ]
+    urllib3:
+        bd-id: d222c710-38b5-4073-8347-63bb6526e77d
+        versions: [ 1.26.6 ]
+    python-wheel:
+        bd-id: 9adf3d8e-5d1a-4a6a-8cd6-407f18ee396d
+        versions: [ 0.36.2 ]
     xz:
-        bd-name: XZ Utils
+        bd-id: 59191267-61f3-42aa-9247-6b83d8085db5
         versions: [ 5.2.5 ]
-    wincertstore: [ 0.2 ]
-    win_inet_pton: [ 1.1.0 ]
-    zlib: [ 1.2.11 ]
+    wincertstore:
+        bd-id: c71dc3e4-e480-4012-9514-41cfa26727bb
+        versions: [ 0.2 ]
+    win_inet_pton:
+        bd-id: 196607cc-9260-4b6c-baba-f7cb9dd706b1
+        versions: [ 1.1.0 ]
+    zlib:
+        bd-id: b9185555-6e31-401e-b373-bfec7955a8ab
+        versions: [ 1.2.11 ]
