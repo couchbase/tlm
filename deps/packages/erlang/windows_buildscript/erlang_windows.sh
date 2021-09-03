@@ -9,15 +9,15 @@ otp_version=$1
 cb_buildnumber=$2
 
 
-#Among all sites provide pre-built openssl binaries for windows, slproweb.com 
+#Among all sites provide pre-built openssl binaries for windows, slproweb.com
 #is recommended by openssl.  It typically comes out a day or two after openssl
 #release.  Before installation, we remove the old install directory.  Since we
-#only care about the binaries, it is not necessary to perform uninstall.  If 
+#only care about the binaries, it is not necessary to perform uninstall.  If
 #we need to uninstall in the future, we will need to check the existency of
 #uninstaller, then run it in silent mode:
 #/cygdrive/c/Program\ Files/OpenSSL-Win64/unins000.exe /silent
 
-OPENSSL_VER=1_1_1k
+OPENSSL_VER=1_1_1L
 curl -OL https://slproweb.com/download/Win64OpenSSL-${OPENSSL_VER}.exe
 rm -rf /cygdrive/c/Program\ Files/OpenSSL-Win64
 ./Win64OpenSSL-${OPENSSL_VER}.exe /silent
