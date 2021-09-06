@@ -76,7 +76,7 @@ components:
         versions: [ v0.10.0 ]
     snappy:
         bd-id: fd5e5c60-2c67-4d20-8be9-b7648156cef3
-        versions: [ 1.1.1 ]
+        versions: [ 1.1.8 ]
     v8:
         bd-id: 3eec43ae-12a3-4035-bceb-9b5bd8eefe79
         versions: [ 8.3.110.13 ]
