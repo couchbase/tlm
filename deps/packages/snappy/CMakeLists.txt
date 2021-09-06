@@ -21,8 +21,7 @@ ExternalProject_Add(snappy
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
-          COMMAND ${CMAKE_COMMAND} -E echo "file(GLOB snappy_libs lib/*snappy*)" > <INSTALL_DIR>/CMakeLists.txt
-          COMMAND ${CMAKE_COMMAND} -E echo "file(COPY \${snappy_libs} DESTINATION \"\${CMAKE_INSTALL_PREFIX}/lib/\")" >> <INSTALL_DIR>/CMakeLists.txt
+          COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt" <INSTALL_DIR>/CMakeLists.txt
 )
 
 # cbdeps boilerplate

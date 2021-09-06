@@ -1,0 +1,10 @@
+IF (WIN32)
+    # On Windows platforms, .dll copied to install/bin
+    FILE (COPY bin/snappy.dll DESTINATION "${CMAKE_INSTALL_PREFIX}/bin")
+ELSE()
+    # On non-Windows platforms, .so copied to install/lib.
+    # Glob to find all related .so files (libsnappy.so, libsnappy.so.X.Y etc)
+    # but excluding CMake packaging files which also reside in lib/
+    file(GLOB snappy_libs lib/*snappy*)
+    file(COPY ${snappy_libs} DESTINATION "${CMAKE_INSTALL_PREFIX}/lib")
+ENDIF()
