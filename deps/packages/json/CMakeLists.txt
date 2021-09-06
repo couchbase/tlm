@@ -13,7 +13,6 @@ ExternalProject_Add(json
                       -D JSON_BuildTests=OFF
                       -D JSON_Install=ON
                       -D JSON_MultipleHeaders=ON
-                      -D JSON_ImplicitConversions=ON
                       -D JSON_SystemInclude=ON
 
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
