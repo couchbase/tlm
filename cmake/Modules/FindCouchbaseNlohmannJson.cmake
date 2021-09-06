@@ -14,12 +14,21 @@
 #   limitations under the License.
 
 # Locate nlohmann JSON library
-# This module defines
-#
-#  NLOHMANN_JSON_FOUND
-#  NLOHMANN_JSON_INCLUDE_DIR
 
 if (NOT DEFINED NLOHMANN_JSON_FOUND)
+    include(PlatformIntrospection)
+    cb_get_supported_platform(_supported_platform)
+    if (_supported_platform)
+        find_package(nlohmann_json REQUIRED
+                     PATHS ${CMAKE_BINARY_DIR}/tlm/deps/json.exploded
+                     NO_DEFAULT_PATH)
+    else ()
+        find_package(nlohmann_json REQUIRED)
+    endif ()
+
+    # In a transition period until we have all consumers migrated over
+    # to the new way to locate the library we should keep the old variables
+    # around
     set(_nhlomann_json_exploded ${CMAKE_BINARY_DIR}/tlm/deps/json.exploded)
     if (EXISTS ${_nhlomann_json_exploded} AND IS_DIRECTORY ${_nhlomann_json_exploded})
         set(_nhlomann_json_no_default_path NO_DEFAULT_PATH)
