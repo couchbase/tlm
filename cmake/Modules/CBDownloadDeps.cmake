@@ -85,7 +85,6 @@ IF (NOT CBDownloadDeps_INCLUDED)
       IF (EXISTS "${md5path}")
         _CHECK_MD5 ("${path}" "${md5path}" _md5equal)
         IF (_md5equal)
-          MESSAGE (STATUS "Dependency '${path}' found in cache")
           SET(${var} TRUE PARENT_SCOPE)
           RETURN ()
         ELSE ()
@@ -99,24 +98,28 @@ IF (NOT CBDownloadDeps_INCLUDED)
     ENDIF (EXISTS "${path}")
   ENDFUNCTION ()
 
-  FUNCTION (_GET_DEP_FILENAME name version var)
-    _DETERMINE_PLATFORM (_platform)
-    _DETERMINE_ARCH (_arch)
+  FUNCTION (_GET_DEP_FILENAME name version platform var)
+    # Special case for "all" platform - must be "noarch"
+    IF ("${platform}" STREQUAL "all")
+      SET (_arch "noarch")
+    ELSE ()
+      _DETERMINE_ARCH (_arch)
+    ENDIF ()
 
     # Compute relative paths to dependency on local filesystem
     # and in remote repository
-    SET (${var} "${name}-${_platform}-${_arch}-${version}.tgz" PARENT_SCOPE)
+    SET (${var} "${name}-${platform}-${_arch}-${version}.tgz" PARENT_SCOPE)
   ENDFUNCTION ()
 
   # Downloads a dependency to the cache dir. First checks the cache for
   # an up-to-date copy based on md5.  Sets the variable named by 'var'
   # to the downloaded dependency .tgz.
-  FUNCTION (_DOWNLOAD_DEP name v2 version build var)
+  FUNCTION (_DOWNLOAD_DEP name v2 version build platform var)
     IF (v2)
-      _GET_DEP_FILENAME("${name}" "${version}-${build}" _rel_path)
+      _GET_DEP_FILENAME("${name}" "${version}-${build}" ${platform} _rel_path)
       SET (_repo_url "${CB_DOWNLOAD_DEPS_REPO}/${name}/${version}/${build}/${_rel_path}")
     ELSE (v2)
-      _GET_DEP_FILENAME("${name}" "${version}" _rel_path)
+      _GET_DEP_FILENAME("${name}" "${version}" ${platform} _rel_path)
       SET (_repo_url "${CB_DOWNLOAD_DEPS_REPO}/${name}/${version}/${_rel_path}")
     ENDIF (v2)
     _DOWNLOAD_URL_TO_CACHE ("${_repo_url}" _cachefile)
@@ -172,39 +175,35 @@ IF (NOT CBDownloadDeps_INCLUDED)
     SET (CBDEP_${name}_VERSION "${_dep_version}" CACHE STRING "Version of cbdep package '${name}'" FORCE)
     SET (CBDEP_${name}_BLD_NUM "${_dep_bld_num}" CACHE STRING "Build number of cbdep package '${name}'" FORCE)
 
-    # If this dependency declares PLATFORM, ensure that we are running on
-    # one of those platforms.
-    _DETERMINE_PLATFORM (_this_platform)
-    CB_GET_SUPPORTED_PLATFORM (_supported_platform)
-    LIST (LENGTH dep_PLATFORMS _num_platforms)
-    IF (_num_platforms GREATER 0)
-      SET (_found_platform 0)
-      FOREACH (_platform ${dep_PLATFORMS})
-        IF ("${_this_platform}" STREQUAL "${_platform}")
-          SET (_found_platform 1)
-          BREAK ()
-        ENDIF ("${_this_platform}" STREQUAL "${_platform}")
-      ENDFOREACH (_platform)
-      IF (NOT _found_platform AND NOT _supported_platform)
-        # check if we maybe have locally built dep file
-        _GET_DEP_FILENAME("${name}" "${_dep_fullver}" _dep_filename)
-        SET(_dep_path "${CB_DOWNLOAD_DEPS_CACHE}/${_dep_filename}")
-        STRING(REGEX REPLACE "\\.tgz$" ".md5" _dep_md5path "${_dep_path}")
-
-        _CHECK_CACHED_DEP_FILE("${_dep_path}" "${_dep_md5path}" _dep_found)
-
-        IF (_dep_found)
-          MESSAGE (STATUS "Found locally built dependency file ${_dep_path}. "
-            "Going to use it even though the platform ${_this_platform} is unsupported")
-          SET (_found_platform 1)
-        ENDIF ()
-      ENDIF (NOT _found_platform AND NOT _supported_platform)
-      IF (NOT _found_platform)
-        MESSAGE (STATUS "Dependency ${name} (${_dep_fullver}) not declared for platform "
-          "${_this_platform}, skipping...")
-        RETURN ()
+    # Match up the platforms the dependency is declared for with the
+    # set of platform descriptors for our local environment.
+    _DETERMINE_PLATFORMS (_local_platforms)
+    CB_GET_SUPPORTED_PLATFORM (_is_supported_platform)
+    SET (_found_platform "")
+    FOREACH (_platform ${dep_PLATFORMS})
+      IF ("${_platform}" IN_LIST _local_platforms)
+        SET (_found_platform ${_platform})
+        BREAK ()
       ENDIF ()
-    ENDIF (_num_platforms GREATER 0)
+    ENDFOREACH (_platform)
+    IF (NOT _found_platform AND NOT _is_supported_platform)
+      # check if we maybe have locally built dep file
+      _DETERMINE_PLATFORM (_local_platform)
+      _GET_DEP_FILENAME("${name}" "${_dep_fullver}" ${_local_platform} _dep_filename)
+      SET(_dep_path "${CB_DOWNLOAD_DEPS_CACHE}/${_dep_filename}")
+      STRING(REGEX REPLACE "\\.tgz$" ".md5" _dep_md5path "${_dep_path}")
+      _CHECK_CACHED_DEP_FILE("${_dep_path}" "${_dep_md5path}" _dep_found)
+      IF (_dep_found)
+        MESSAGE (STATUS "Found locally built dependency file ${_dep_path}. "
+          "Going to use it even though the platform ${_local_platforms} is unsupported")
+        SET (_found_platform "${_local_platform}")
+      ENDIF ()
+    ENDIF ()
+    IF (NOT _found_platform)
+      MESSAGE (STATUS "Dependency ${name} (${_dep_fullver}) not declared for platform "
+        "${_local_platforms}, skipping...")
+      RETURN ()
+    ENDIF ()
 
     # Remember that this dependency has been declared.
     SET_PROPERTY (GLOBAL PROPERTY ${_prop_name} 1)
@@ -233,14 +232,14 @@ IF (NOT CBDownloadDeps_INCLUDED)
     MESSAGE (STATUS "Checking exploded ${name} version ${EXPLODED_VERSION} against ${_dep_fullver}")
     IF (EXPLODED_VERSION STREQUAL ${_dep_fullver})
       MESSAGE (STATUS "Dependency '${name} (${_dep_fullver})' already downloaded")
-    ELSE (EXPLODED_VERSION STREQUAL ${_dep_fullver})
-      _DOWNLOAD_DEP ("${name}" "${dep_V2}" "${dep_VERSION}" "${dep_BUILD}" _cachedep)
+    ELSE ()
+      _DOWNLOAD_DEP ("${name}" "${dep_V2}" "${dep_VERSION}" "${dep_BUILD}" ${_found_platform} _cachedep)
 
       # Explode tgz into build directory.
       MESSAGE (STATUS "Installing dependency: ${name}-${_dep_fullver}...")
       EXPLODE_ARCHIVE ("${_cachedep}" "${_explode_dir}")
       FILE (WRITE "${_explode_dir}/VERSION.txt" ${_dep_fullver})
-    ENDIF (EXPLODED_VERSION STREQUAL ${_dep_fullver})
+    ENDIF ()
 
     # Always add the dep subdir; this will "re-install" the dep every time you
     # run CMake, which might be wasteful, but at least should be safe.
@@ -346,9 +345,11 @@ IF (NOT CBDownloadDeps_INCLUDED)
         "https://packages.couchbase.com/cbdep/${CBDEP_VERSION}/${_cbdepfile}"
         "${CBDEP_CACHE}")
     ENDIF ()
-    FILE (COPY "${CBDEP_CACHE}" DESTINATION "${PROJECT_BINARY_DIR}/tlm"
-      FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE)
-    MESSAGE (STATUS "Using cbdep at ${CBDEP}")
+    IF (NOT EXISTS "${CBDEP}")
+      FILE (COPY "${CBDEP_CACHE}" DESTINATION "${PROJECT_BINARY_DIR}/tlm"
+        FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE)
+      MESSAGE (STATUS "Using cbdep at ${CBDEP}")
+    ENDIF ()
   ENDFUNCTION (GET_CBDEP)
 
   # Generic function for installing a cbdep (2.0) package to a given directory
@@ -359,6 +360,8 @@ IF (NOT CBDownloadDeps_INCLUDED)
   #   INSTALL_DIR - where to install to; defaults to CMAKE_CURRENT_BINARY_DIR
   MACRO (CBDEP_INSTALL)
     PARSE_ARGUMENTS (cbdep "" "INSTALL_DIR;PACKAGE;VERSION" "" ${ARGN})
+
+    GET_CBDEP ()
 
     IF (NOT cbdep_INSTALL_DIR)
       SET (cbdep_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}")
@@ -378,8 +381,8 @@ IF (NOT CBDownloadDeps_INCLUDED)
     ENDIF ()
   ENDMACRO (CBDEP_INSTALL)
 
-  CB_GET_SUPPORTED_PLATFORM (_supported_platform)
-  IF (_supported_platform)
+  CB_GET_SUPPORTED_PLATFORM (_is_supported_platform)
+  IF (_is_supported_platform)
     SET (CB_DOWNLOAD_DEPS_REPO
       "https://packages.couchbase.com/couchbase-server/deps"
       CACHE STRING "URL of third-party dependency repository")
@@ -407,6 +410,5 @@ IF (NOT CBDownloadDeps_INCLUDED)
   FILE (MAKE_DIRECTORY "${CB_DOWNLOAD_DEPS_CACHE}")
   MESSAGE (STATUS "Third-party dependencies will be cached in "
     "${CB_DOWNLOAD_DEPS_CACHE}")
-
-  GET_CBDEP ()
+    ELSE (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 ENDIF (NOT CBDownloadDeps_INCLUDED)

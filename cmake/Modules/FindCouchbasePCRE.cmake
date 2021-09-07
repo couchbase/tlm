@@ -14,8 +14,8 @@
 IF (NOT DEFINED PCRE_FOUND)
 
   # Supported platforms should only use the provided hints
-  CB_GET_SUPPORTED_PLATFORM (_supported_platform)
-  IF (_supported_platform)
+  CB_GET_SUPPORTED_PLATFORM (_is_supported_platform)
+  IF (_is_supported_platform)
     SET (_no_default_path NO_DEFAULT_PATH)
   ENDIF ()
 

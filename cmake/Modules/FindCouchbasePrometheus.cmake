@@ -7,8 +7,8 @@ set(_prometheus_exploded ${CMAKE_BINARY_DIR}/tlm/deps/prometheus-cpp.exploded)
 
 include(PlatformIntrospection)
 
-cb_get_supported_platform(_supported_platform)
-if (_supported_platform)
+cb_get_supported_platform(_is_supported_platform)
+if (_is_supported_platform)
     set(_prometheus_no_default_path NO_DEFAULT_PATH)
 endif ()
 

@@ -75,7 +75,15 @@ have it download the required packages for you. To do this, set the CMake
 variable `CB_DOWNLOAD_DEPS_PLATFORM` to one of the platform strings from
 `manifest.cmake`, eg.
 
-    cmake -D CB_DOWNLOAD_DEPS_PLATFORM=ubuntu18.04 .....
+    cmake -D CB_DOWNLOAD_DEPS_PLATFORM=macosx .....
+
+Note: On Linux systems, you may have to specify `;linux` as part of the
+platform string, eg.
+
+    cmake -D CB_DOWNLOAD_DEPS_PLATFORM="ubuntu18.04;linux" ....
+
+Be sure to use quotes around that value to prevent the ; from being
+interpreted by your shell.
 
 ## How to build
 

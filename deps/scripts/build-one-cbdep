@@ -1,10 +1,18 @@
-#!/bin/sh -ex
+#!/bin/bash -ex
 
 cd deps/packages
 rm -rf build
 mkdir build
 cd build
-cmake .. -DPACKAGE=${PACKAGE}
+
+# Work-around for generating generic "linux" deps
+if [ "${DISTRO}" == "linux" ]; then
+    cmake .. -DPACKAGE=${PACKAGE} -DCB_DOWNLOAD_DEPS_PLATFORM="linux;all"
+elif [ "${DISTRO}" == "all" ]; then
+    cmake .. -DPACKAGE=${PACKAGE} -DCB_DOWNLOAD_DEPS_PLATFORM="all" -DCB_DOWNLOAD_DEPS_ARCH="noarch"
+else
+    cmake .. -DPACKAGE=${PACKAGE}
+fi
 cmake --build . --target ${PACKAGE}
 
 if [ x$1 = xinstall ]

@@ -7,14 +7,14 @@ INCLUDE (PlatformIntrospection)
 INCLUDE (CBDownloadDeps)
 
 MESSAGE (STATUS "*** Installing binary dependencies ***")
-_DETERMINE_PLATFORM (cbcache_platform)
+_DETERMINE_PLATFORMS (cbcache_platform)
 _DETERMINE_ARCH (cbcache_arch)
 
 MESSAGE (STATUS "Set platform to ${cbcache_platform} for dependency downloads")
 MESSAGE (STATUS "Set arch to ${cbcache_arch} for dependency downloads")
 
-CB_GET_SUPPORTED_PLATFORM(_supported_platform)
-IF (NOT _supported_platform)
+CB_GET_SUPPORTED_PLATFORM(_is_supported_platform)
+IF (NOT _is_supported_platform)
   IF (CB_PRODUCTION_BUILD)
     MESSAGE (FATAL_ERROR "Attempt to run production build on unsupported platform!")
   ENDIF ()
@@ -22,7 +22,7 @@ IF (NOT _supported_platform)
   MESSAGE (STATUS "      Downloads may fail.")
   MESSAGE (STATUS "      You may try building dependencies by running \"make deps-all\" from the repo root.")
   MESSAGE (STATUS "      Individual dependencies can be built by running \"make dep-<dependency name>\".")
-ENDIF (NOT _supported_platform)
+ENDIF ()
 
 # Default personal override manifest is in user's home directory; may
 # be overridden by CB_DOWNLOAD_DEPS_MANIFEST environment variable or
@@ -49,7 +49,7 @@ ENDIF (EXISTS "${CB_DOWNLOAD_DEPS_MANIFEST}")
 # Read stock manifest
 MESSAGE (STATUS "-----------------------------------------")
 IF (NOT DEFINED CB_DOWNLOAD_DEPS_DEFAULT_MANIFEST)
-  IF (_supported_platform)
+  IF (_is_supported_platform)
     SET (CB_DOWNLOAD_DEPS_DEFAULT_MANIFEST manifest.cmake)
   ELSE ()
     MESSAGE (STATUS "Note: current platform is not supported; looking in manifest-unsupported.cmake for third-party dependencies")

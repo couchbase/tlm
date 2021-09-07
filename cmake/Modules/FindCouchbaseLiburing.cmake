@@ -6,8 +6,8 @@
 if (NOT DEFINED LIBURING_FOUND)
     include(PlatformIntrospection)
 
-    cb_get_supported_platform(_supported_platform)
-    if (_supported_platform)
+    cb_get_supported_platform(_is_supported_platform)
+    if (_is_supported_platform)
         set(_liburing_no_default_path NO_DEFAULT_PATH)
     endif ()
 
