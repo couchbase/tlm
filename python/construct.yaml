@@ -43,7 +43,7 @@ specs:
   - libffi 3.2.1 [unix]
   - libgcc-ng 8.2.0 [linux]
   - libstdcxx-ng 8.2.0 [linux]
-  - openssl 1.1.1k
+  - openssl 1.1.1l
   - pip 19.0.3
   - pycparser 2.20
   - pyopenssl 19.1.0
