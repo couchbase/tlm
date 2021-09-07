@@ -13,33 +13,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# Locate nlohmann JSON library
-
-include(PlatformIntrospection)
-cb_get_supported_platform(_supported_platform)
-if (_supported_platform)
-    find_package(nlohmann_json REQUIRED
-                 PATHS ${CMAKE_BINARY_DIR}/tlm/deps/json.exploded
-                 NO_DEFAULT_PATH)
-else ()
-    find_package(nlohmann_json REQUIRED)
-endif ()
-
-# In a transition period until we have all consumers migrated over
-# to the new way to locate the library we should keep the old variables
-# around
-set(_nhlomann_json_exploded ${CMAKE_BINARY_DIR}/tlm/deps/json.exploded)
-if (EXISTS ${_nhlomann_json_exploded} AND IS_DIRECTORY ${_nhlomann_json_exploded})
-    set(_nhlomann_json_no_default_path NO_DEFAULT_PATH)
-endif ()
-find_path(NLOHMANN_JSON_INCLUDE_DIR nlohmann/json.hpp
-          HINTS ${_nhlomann_json_exploded}/include
-          ${_nhlomann_json_no_default_path})
-
-if (NOT NLOHMANN_JSON_INCLUDE_DIR)
-    message(FATAL_ERROR "Failed to locate nlohmann/json.hpp")
-endif (NOT NLOHMANN_JSON_INCLUDE_DIR)
-
-message(STATUS "Found nlohmann json in: ${NLOHMANN_JSON_INCLUDE_DIR}")
-set(NLOHMANN_JSON_FOUND true CACHE BOOL "Found nlohmann json" FORCE)
-mark_as_advanced(NLOHMANN_JSON_FOUND NLOHMANN_JSON_INCLUDE_DIR)
+if (NOT DEFINED nlohmann_json_ROOT AND EXISTS ${CMAKE_BINARY_DIR}/tlm/deps/json.exploded)
+  set(nlohmann_json_ROOT ${CMAKE_BINARY_DIR}/tlm/deps/json.exploded)
+endif()
+find_package(nlohmann_json REQUIRED CONFIG)
