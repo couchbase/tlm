@@ -14,6 +14,7 @@ ExternalProject_Add(snappy
              -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
              -D CMAKE_BUILD_TYPE=RelWithDebInfo
              -D BUILD_SHARED_LIBS=ON
+             -D SNAPPY_HAVE_BMI2=NO
 
   BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
 

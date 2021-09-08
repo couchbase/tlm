@@ -156,7 +156,7 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 #
 # And here is the set of "latest" dependencies.
 #
-_ADD_DEP_PACKAGE(snappy 1.1.8 1.1.8 2)
+_ADD_DEP_PACKAGE(snappy 1.1.8 1.1.8 3)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
 _ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 7)
