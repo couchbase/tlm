@@ -166,7 +166,6 @@ MESSAGE(STATUS "Build type: ${CMAKE_BUILD_TYPE}")
 
 INCLUDE(CouchbaseCompilerOptions)
 INCLUDE(CouchbaseSanitizers)
-INCLUDE(CouchbaseAsciiDocs)
 INCLUDE(CouchbaseMemoryAllocator)
 INCLUDE(CouchbaseCompression)
 INCLUDE(CouchbaseUnityBuild)
