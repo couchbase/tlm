@@ -11,9 +11,11 @@ set(BENCHMARK_ENABLE_INSTALL OFF)
 set(BENCHMARK_ENABLE_TESTING OFF)
 add_subdirectory(google-benchmark EXCLUDE_FROM_ALL)
 
-set(gtest_force_shared_crt ON CACHE BOOL
-     "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
-add_subdirectory(googletest EXCLUDE_FROM_ALL)
+if (NOT DEFINED SKIP_THIRD_PARTY_GTEST)
+    set(gtest_force_shared_crt ON CACHE BOOL
+        "Use shared (DLL) run-time lib even when Google Test is built as static lib.")
+    add_subdirectory(googletest EXCLUDE_FROM_ALL)
+endif()
 
 add_subdirectory(gsl-lite EXCLUDE_FROM_ALL)
 # Migration to gsl-lite v0.36:
