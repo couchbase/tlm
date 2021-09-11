@@ -9,6 +9,7 @@ ExternalProject_Add(googletest
                -D CMAKE_CXX_STANDARD=17
                -D CMAKE_CXX_STANDARD_REQUIRED=ON
                -D BUILD_SHARED_LIBS=OFF
+               -D gtest_force_shared_crt=ON
 
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
     INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
