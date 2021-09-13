@@ -22,17 +22,15 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
   # Downloads a file from a URL to a local file, raising any errors.
   FUNCTION (_DOWNLOAD_FILE url file)
-    FILE (DOWNLOAD "${url}" "${file}" STATUS _stat SHOW_PROGRESS)
+    FILE (DOWNLOAD "${url}" "${file}.temp" STATUS _stat SHOW_PROGRESS)
     LIST (GET _stat 0 _retval)
     IF (_retval)
-      # Don't leave corrupt/empty downloads
-      IF (EXISTS "${file}")
-        FILE (REMOVE "${file}")
-      ENDIF (EXISTS "${file}")
+      FILE (REMOVE "${file}.temp")
       LIST (GET _stat 0 _errcode)
       LIST (GET _stat 1 _message)
       MESSAGE (FATAL_ERROR "Error downloading ${url}: ${_message} (${_errcode})")
     ENDIF (_retval)
+    FILE (RENAME "${file}.temp" "${file}")
   ENDFUNCTION (_DOWNLOAD_FILE)
 
   # Downloads a specific URL to a file with the same name in the cache dir.
@@ -128,19 +126,26 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
   # Unpack an archive file into a directory, with error checking.
   FUNCTION (EXPLODE_ARCHIVE file dir)
-    FILE (MAKE_DIRECTORY "${dir}")
+    SET (temp_dir "${dir}.temp")
+    FILE (REMOVE_RECURSE "${temp_dir}")
+    FILE (MAKE_DIRECTORY "${temp_dir}")
+    MESSAGE (STATUS "Extracting ${file} to ${temp_dir}")
     EXECUTE_PROCESS (COMMAND "${CMAKE_COMMAND}" -E
       tar xf "${file}"
-      WORKING_DIRECTORY "${dir}"
+      WORKING_DIRECTORY "${temp_dir}"
       RESULT_VARIABLE _explode_result
       ERROR_VARIABLE _explode_stderr)
     STRING (FIND "${_explode_stderr}" "error" _explode_error)
     IF(_explode_result GREATER 0 OR _explode_error GREATER -1)
       FILE (REMOVE_RECURSE "${dir}")
+      FILE (REMOVE_RECURSE "${temp_dir}")
       FILE (REMOVE "${file}")
       MESSAGE (FATAL_ERROR "Failed to extract dependency ${file} - file corrupt? "
         "It has been deleted, please try again.\n ${_explode_stderr}")
     ENDIF()
+    MESSAGE(STATUS "Moving ${temp_dir} to ${dir}")
+    FILE (REMOVE_RECURSE "${dir}")
+    FILE (RENAME "${temp_dir}" "${dir}")
   ENDFUNCTION (EXPLODE_ARCHIVE)
 
   # Declare a dependency
