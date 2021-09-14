@@ -93,6 +93,7 @@ components:
     # aren't captured for the Black Duck report
     maven: []
     protoc-gen-go: []
+    googletest: []
     # We also don't include RocksDB as it is only used by internal testing
     # builds, not shipped
     rocksdb: []
