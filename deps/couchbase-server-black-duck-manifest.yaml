@@ -94,6 +94,7 @@ components:
     maven: []
     protoc-gen-go: []
     googletest: []
+    benchmark: []
     # We also don't include RocksDB as it is only used by internal testing
     # builds, not shipped
     rocksdb: []
