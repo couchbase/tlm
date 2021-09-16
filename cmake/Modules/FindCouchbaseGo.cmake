@@ -76,6 +76,18 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_SOURCE_DIR}/goproj/bin")
   ADD_DEPENDENCIES (realclean go_realclean)
 
+  # Go build/install already performs it's own parallelism internally, so
+  # we don't also want to have the CMake generator attempt to parallelise (i.e.
+  # run multiple `go build/install` targets in parallel).
+  # If we do (particulary for machines which have large numbers of CPUs but
+  # perhaps not as large RAM) then we can end up exhausing the RAM of the
+  # machine.
+  # Define a CMake JOB_POOL which has concurrency 1, which is used by the
+  # 'go build' and 'go install' custom targets below.
+  # Note: At time of writing this is only supported by the Ninja generators,
+  # is it ignored by other generators.
+  SET_PROPERTY (GLOBAL APPEND PROPERTY JOB_POOLS golang_build_pool=1)
+
   # Adds a target named TARGET which (always) calls "go install
   # PACKAGE".  This delegates incremental-build responsibilities to
   # the go compiler, which is generally what you want.
@@ -216,23 +228,25 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       -D "CB_THREADSANITIZER=${CB_THREADSANITIZER}"
       -P "${TLM_MODULES_DIR}/go-install.cmake"
       COMMENT "Building Go target ${Go_TARGET} using Go ${_gover}"
+      JOB_POOL golang_build_pool
       VERBATIM)
     IF (Go_DEPENDS)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
     ENDIF (Go_DEPENDS)
     MESSAGE (STATUS "Added Go build target '${Go_TARGET}' using Go ${_gover}")
 
-    # We expect multiple go targets to be operating over the same
-    # GOPATH.  It seems like the go compiler doesn't like be invoked
-    # in parallel in this case, as would happen if we parallelize the
-    # Couchbase build (eg., 'make -j8'). Since the go compiler itself
-    # does parallel building, we want to serialize all go targets. So,
-    # we make them all depend on any earlier Go targets.
-    GET_PROPERTY (_go_targets GLOBAL PROPERTY CB_GO_TARGETS)
-    IF (_go_targets)
-      ADD_DEPENDENCIES(${Go_TARGET} ${_go_targets})
-    ENDIF (_go_targets)
-    SET_PROPERTY (GLOBAL APPEND PROPERTY CB_GO_TARGETS ${Go_TARGET})
+    # The go compiler itself does parallel building, so to avoid
+    # overloading the machine we want to only build on Go target at
+    # once. If we are using Ninja as the CMake Generator then this is
+    # already handled by the JOB_POOL property, otherwise we make them
+    # all depend on any earlier Go targets.
+    IF (NOT CMAKE_GENERATOR STREQUAL "Ninja")
+      GET_PROPERTY (_go_targets GLOBAL PROPERTY CB_GO_TARGETS)
+      IF (_go_targets)
+        ADD_DEPENDENCIES(${Go_TARGET} ${_go_targets})
+      ENDIF (_go_targets)
+      SET_PROPERTY (GLOBAL APPEND PROPERTY CB_GO_TARGETS ${Go_TARGET})
+    ENDIF ()
 
     # Tweaks for installing and output renaming. go-install.cmake will
     # arrange for the workspace's bin directory to contain a file with
@@ -396,6 +410,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
         -P "${TLM_MODULES_DIR}/go-modbuild.cmake"
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       COMMENT "Building Go Modules target ${Go_TARGET} using Go ${_gover}"
+      JOB_POOL golang_build_pool
       VERBATIM)
     IF (Go_DEPENDS)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
