@@ -7,9 +7,11 @@
 # This setting is specifically required for HdrHistogram_c.
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-set(BENCHMARK_ENABLE_INSTALL OFF)
-set(BENCHMARK_ENABLE_TESTING OFF)
-add_subdirectory(google-benchmark EXCLUDE_FROM_ALL)
+if (NOT DEFINED CB_SKIP_THIRDPARTY_GOOGLETEST)
+    set(BENCHMARK_ENABLE_INSTALL OFF)
+    set(BENCHMARK_ENABLE_TESTING OFF)
+    add_subdirectory(google-benchmark EXCLUDE_FROM_ALL)
+endif()
 
 add_subdirectory(gsl-lite EXCLUDE_FROM_ALL)
 # Migration to gsl-lite v0.36:
