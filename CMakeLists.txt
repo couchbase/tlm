@@ -278,7 +278,6 @@ ADD_CUSTOM_TARGET(reset
                   COMMAND repo forall -c "git clean -dfx"
                   VERBATIM)
 
-set(CB_SKIP_THIRDPARTY_GOOGLE_BENCHMARK ON)
 ADD_SUBDIRECTORY(third_party EXCLUDE_FROM_ALL)
 
 IF (NOT BUILD_ONLY_TOOLS)
