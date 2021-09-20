@@ -22,10 +22,6 @@ if (IS_DIRECTORY "${BREAKPAD_INCLUDE_DIR}")
     list(APPEND CB_SYSTEM_HEADER_DIRS "${BREAKPAD_INCLUDE_DIR}")
 endif (IS_DIRECTORY "${BREAKPAD_INCLUDE_DIR}")
 
-# Explicitly add Google Benchmark as the BENCHMARK_MAIN macro
-# cause a warning we get as error
-list(APPEND CB_SYSTEM_HEADER_DIRS ${CMAKE_SOURCE_DIR}/third_party/google-benchmark/include)
-
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
