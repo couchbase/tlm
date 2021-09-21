@@ -73,7 +73,7 @@ components:
         bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
         versions: [ "3.36.0" ]
     tk:
-        bd-id: 1986cb95-15ac-47e9-8728-6bea10ce7963
+        bd-id: b64ca5f6-9e86-4f1f-932f-c5725affbfa5
         versions: [ 8.6.11 ]
     urllib3:
         bd-id: d222c710-38b5-4073-8347-63bb6526e77d
