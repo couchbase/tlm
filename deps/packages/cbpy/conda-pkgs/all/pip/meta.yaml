@@ -4,3 +4,4 @@ package:
 
 build:
   noarch: generic
+  include_recipe: false

@@ -1,0 +1,48 @@
+{% set version = "0.6.0" %}
+{% set sha256 = "168a98d3f597b633cfeeae7fe1c78a8dfd81f018b866cf7ce9e4c56086af891a" %}
+
+package:
+  name: python-snappy
+  version: {{ version }}
+
+source:
+  fn: python-snappy-{{ version }}.tar.gz
+  url: https://pypi.io/packages/source/p/python-snappy/python-snappy-{{ version }}.tar.gz
+  sha256: {{ sha256 }}
+
+build:
+  number: 0
+  script: {{ PYTHON }} -m pip install . --no-deps -vv
+
+requirements:
+  build:
+    - python                                 # [build_platform != target_platform]
+    - cross-python_{{ target_platform }}     # [build_platform != target_platform]
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+  host:
+    - python
+    - pip
+    - snappy
+    - msinttypes  # [win and py27]
+  run:
+    - python
+    - snappy
+
+test:
+  imports:
+    - snappy
+
+about:
+  home: https://github.com/andrix/python-snappy
+  license: BSD-3-Clause
+  license_family: BSD
+  license_file: LICENSE
+  summary: Python library for the snappy compression library from Google
+  dev_url: https://github.com/andrix/python-snappy
+
+extra:
+  recipe-maintainers:
+    - mariusvniekerk
+    - martindurant
+    - djsutherland

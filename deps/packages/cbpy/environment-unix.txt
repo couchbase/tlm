@@ -5,7 +5,6 @@
 #
 # #################################
 
-# Extra dependencies that are unique to Windows
-dependencies:
-  - wincertstore=0.2
-  - win_inet_pton=1.1.0
+# Extra dependencies that are unique to Unix (Linux or MacOS)
+libffi=3.3
+ncurses=6.2

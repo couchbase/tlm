@@ -1,0 +1,56 @@
+# #################################
+#
+# IMPORTANT: If you make any changes to this file, you must also update
+# couchbase-server-black-duck-manifest.yaml in this directory!
+#
+# #################################
+
+# These are the packages we explicitly depend on. If you change these
+# (packages OR versions), be sure to experimentally update the transitive
+# dependencies below!
+python=3.9.6
+msgpack-python=1.0.2
+natsort=7.1.1
+python-snappy=0.6.0
+requests=2.26.0
+# Our "faked" dependencies. By convention these have an extra ".9" appended to
+# the version number they're pretending to be. If we add more packages here in
+# future, of course make sure they are NOT in the Black Duck manifest.
+chardet=4.0.0.9
+pip=21.0.1.9
+readline=8.1.9
+# These are transitive dependencies of the above. We keep them pinned to avoid
+# surprises when newer versions are installed. Where possible we pin them to
+# the same version in cbdeps.
+#
+# The best way to create/update this list is to run the commands in
+# cbpy_unix.sh / cbpy_windows.bat by hand until the comment "Populate cbpy
+# environment". Then run
+#    conda install -y -c ./conda-pkgs \
+#        python=3.9.5 chardet=4.0.0.9 ... # all explicit and faked deps
+#    conda update --update-all
+#    conda list
+# This will need to be repeated on multiple platforms (Linux, Windows, and
+# Mac). Any resulting dependencies that are unique to specific platforms
+# should be put into the corresponding environment-xxxxx.txt file rather
+# than here; this file is for deps that are shared by all platforms.
+brotlipy=0.7.0
+ca-certificates=2021.5.30
+certifi=2021.5.30
+cffi=1.14.6
+charset-normalizer=2.0.0
+cryptography=3.4.7
+idna=3.1
+openssl=1.1.1l
+pycparser=2.20
+pyopenssl=20.0.1
+pysocks=1.7.1
+six=1.16.0
+snappy=1.1.8
+sqlite=3.36.0
+tk=8.6.11
+tzdata=2021a
+urllib3=1.26.6
+wheel=0.36.2
+xz=5.2.5
+zlib=1.2.11

@@ -79,9 +79,6 @@ geocouch-build-for-testing: compile
 go-mod-tidy: build/Makefile
 	(cd build && make go-mod-tidy)
 
-local-cbpy: build/Makefile
-	(cd build && make local-cbpy)
-
 analytics-install: build/Makefile
 	(cd build && make analytics)
 

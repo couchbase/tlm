@@ -4,11 +4,11 @@ components:
     # lines in construct.yaml, for ease of comparison
     python:
         bd-id: ee4d67e0-63f9-409d-a9be-1c30de64873d
-        versions: [ 3.9.5 ]
+        versions: [ 3.9.6 ]
 
     requests:
         bd-id: 93b03de5-fedb-4162-8a18-7f19fdbd252e
-        versions: [ 2.25.1 ]
+        versions: [ 2.26.0 ]
     msgpack-python:
         bd-id: d265c559-74ea-4baa-a993-2089ca47efde
         versions: [ 1.0.2 ]
@@ -28,19 +28,22 @@ components:
         versions: [ 2021.5.30 ]
     cffi:
         bd-id: 043e4252-a86b-4281-a1a3-a762fe0470de
-        versions: [ 1.14.5 ]
+        versions: [ 1.14.6 ]
+    charset-normalizer:
+        bd-id: a5066b09-b6fa-4065-b11b-f45326aa9332
+        versions: [ 2.0.0 ]
     python-cryptography:
         bd-id: 1fb0e6ce-44cf-454e-99d4-454ffd6ecffa
         versions: [ 3.4.7 ]
     idna:
         bd-id: 0be5e619-2387-4fe3-915e-8a60146b57dd
-        versions: [ 2.10 ]
+        versions: [ 3.1 ]
     # ld_impl_linux-64 is also part of gcc, at least I believe so;
     # it doesn't seem to exist as a separate package anywhere except
     # here in Anaconda-land
     libcxx:
         bd-id: 587d3e15-ea76-449b-94b1-ef12538584e4
-        versions: [ 10.0.0 ]
+        versions: [ 12.0.1 ]
     libffi:
         bd-id: 8a5d4e5f-eee6-441d-91cc-85c7bb5e9fb5
         versions: [ 3.3 ]
@@ -60,21 +63,18 @@ components:
     pysocks:
         bd-id: 5c2e7e08-0eb3-4d78-a6a7-45a36bad400c
         versions: [ 1.7.1 ]
-    setuptools:
-        bd-id: ac1b690f-ce51-4bd2-93c9-78e3f37757de
-        versions: [ 52.0.0 ]
     python-six:
         bd-id: 69184346-b974-4064-88a3-134a17f6bbb5
-        versions: [ 1.15.0 ]
+        versions: [ 1.16.0 ]
     google-snappy:
         bd-id: fd5e5c60-2c67-4d20-8be9-b7648156cef3
         versions: [ 1.1.8 ]
     sqlite:
         bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
-        versions: [ 3.35.4 ]
+        versions: [ "3.36.0" ]
     tk:
         bd-id: 1986cb95-15ac-47e9-8728-6bea10ce7963
-        versions: [ 8.6.10 ]
+        versions: [ 8.6.11 ]
     urllib3:
         bd-id: d222c710-38b5-4073-8347-63bb6526e77d
         versions: [ 1.26.6 ]

@@ -5,7 +5,9 @@
 #
 # #################################
 
-# Extra dependencies that are unique to MacOS
-
-dependencies:
-  - libcxx=10.0.0
+# Extra dependencies that are unique to Linux
+_libgcc_mutex=0.1
+_openmp_mutex=4.5
+ld_impl_linux-64=2.36.1
+libgcc-ng=11.1.0
+libstdcxx-ng=11.1.0

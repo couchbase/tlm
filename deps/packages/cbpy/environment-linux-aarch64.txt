@@ -5,9 +5,9 @@
 #
 # #################################
 
-# Extra dependencies that are unique to Linux
-dependencies:
-  - _libgcc_mutex=0.1
-  - ld_impl_linux-aarch64=2.36.1
-  - libgcc-ng=10.2.0
-  - libstdcxx-ng=10.2.0
+# Extra dependencies that are unique to Linux aarch64
+_openmp_mutex=4.5
+ld_impl_linux-aarch64=2.36.1
+libgcc-ng=11.2.0
+libstdcxx-ng=11.2.0
+libgomp=11.2.0

@@ -150,7 +150,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
   # Declare a dependency
   FUNCTION (DECLARE_DEP name)
-    PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION;BUILD" "V2;SKIP;NOINSTALL" ${ARGN})
+    PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION;BUILD;DESTINATION" "V2;SKIP;NOINSTALL" ${ARGN})
 
     # If this dependency has already been declared, skip it.
     # Exception: if we are building the cbdeps packages themselves then
@@ -223,7 +223,11 @@ IF (NOT CBDownloadDeps_INCLUDED)
     ENDIF (NOT dep_VERSION)
 
     # Compute paths for exploded tgz and binary dir
-    SET (_explode_dir "${CMAKE_CURRENT_BINARY_DIR}/${name}.exploded")
+    IF (dep_DESTINATION)
+      SET (_explode_dir "${dep_DESTINATION}")
+    ELSE ()
+      SET (_explode_dir "${CMAKE_CURRENT_BINARY_DIR}/${name}.exploded")
+    ENDIF ()
     SET (_binary_dir "${CMAKE_CURRENT_BINARY_DIR}/${name}.binary")
 
     # See if dependency is already downloaded. We assume the existence of a
@@ -248,11 +252,11 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
     # Always add the dep subdir; this will "re-install" the dep every time you
     # run CMake, which might be wasteful, but at least should be safe.
-    FILE (MAKE_DIRECTORY "${_binary_dir}")
     IF (EXISTS ${_explode_dir}/CMakeLists.txt)
       IF (dep_NOINSTALL)
         MESSAGE(STATUS "Skip running CMakeLists from the package")
       ELSE (dep_NOINSTALL)
+        FILE (MAKE_DIRECTORY "${_binary_dir}")
         ADD_SUBDIRECTORY ("${_explode_dir}" "${_binary_dir}" EXCLUDE_FROM_ALL)
       ENDIF (dep_NOINSTALL)
     ENDIF (EXISTS ${_explode_dir}/CMakeLists.txt)

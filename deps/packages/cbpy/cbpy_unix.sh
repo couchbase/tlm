@@ -2,53 +2,69 @@
 
 SRC_DIR=$1
 CBDEP=$2
-MINICONDA_VERSION=$3
+MINIFORGE_VERSION=$3
 INSTALL_DIR=$4
-
-CONSTRUCTOR_VERSION=3.2.1
 
 # Clear positional parameters so "activate" works in a moment
 set --
 
 chmod 755 "${CBDEP}"
 
-# Install and activate Miniconda3
-"${CBDEP}" install -d . miniconda3-py39 ${MINICONDA_VERSION}
-. ./miniconda3-${MINICONDA_VERSION}/bin/activate
-
-# Install conda-build
-conda install -y conda-build
-
-# Download, build, and install constructor
-git clone git://github.com/conda/constructor
-conda build --output-folder "./conda-pkgs" $(pwd)/constructor/conda.recipe
-conda install --channel "./conda-pkgs" constructor
-
-# Build our local stub packages
-conda build --output-folder "./conda-pkgs" ${SRC_DIR}/conda-pkgs/*
-
-# Build cbpy environment - it'd be great if we could just list all these in a
-# construct.yaml, but at least at the moment constructor produces broken
-# installers when you add packages from a local-only channel. (No,
-# channels_remap doesn't work either.)
-conda env create -p ./cbpy-environment -f "${SRC_DIR}/environment.yaml" --force
-conda env update -p ./cbpy-environment -f "${SRC_DIR}/environment-unix.yaml"
 if [ $(uname -s) = "Darwin" ]; then
     platform=osx
 else
     platform=linux-$(uname -m)
 fi
-conda env update -p ./cbpy-environment -f "${SRC_DIR}/environment-${platform}.yaml"
 
-# Construct cbpy
-mkdir -p constructor-cache
-constructor --verbose --cache-dir ./constructor-cache --output-dir "${INSTALL_DIR}" "${SRC_DIR}"
-rmdir "${INSTALL_DIR}/tmp"
+# Install and activate Miniforge3
+"${CBDEP}" install -d . miniforge3 ${MINIFORGE_VERSION}
+. ./miniforge3-${MINIFORGE_VERSION}/bin/activate
 
-# Has to have a .sh extension or else it whines about being run with bash
-mv "${INSTALL_DIR}/cbpy-installer" "${INSTALL_DIR}/cbpy-installer.sh"
+# Install conda-build (to build our 'faked' packages) and conda-pack
+conda install -y conda-build conda-pack conda-verify
+
+# Build our local stub packages per platform. Currently the only platform-
+# specific one is python-snappy, which is missing on conda-forge for
+# linux-aarch64. Build that first, otherwise our hacked "pip" confuses it.
+if [ -d "${SRC_DIR}/conda-pkgs/${platform}" ]; then
+    conda build --output-folder "./conda-pkgs" "${SRC_DIR}/conda-pkgs/${platform}/*"
+fi
+conda build --output-folder "./conda-pkgs" "${SRC_DIR}/conda-pkgs/all/*"
+
+
+# Create cbpy environment
+conda create -y -n cbpy
+
+# Populate cbpy environment - slightly different components per OS.
+# Ensure that we use ONLY our locally-build packages and packages
+# from conda-forge.
+conda install -y \
+    -n cbpy \
+    -c ./conda-pkgs -c conda-forge \
+    --override-channels --strict-channel-priority \
+    --file "${SRC_DIR}/environment-base.txt" \
+    --file "${SRC_DIR}/environment-${platform}.txt" \
+    --file "${SRC_DIR}/environment-unix.txt"
+
+# Pack cbpy and then unpack into final dir
+conda pack -n cbpy --output cbpy.tar
+conda deactivate
+mkdir -p "${INSTALL_DIR}"
+tar xf cbpy.tar -C "${INSTALL_DIR}"
+rm cbpy.tar
+
+# Prune installation
+pushd "${INSTALL_DIR}"
+rm -rf compiler_compat conda-meta include \
+    lib/cmake lib/pkgconfig \
+    lib/itcl* lib/tcl* lib/tk* \
+    lib/python*/distutils lib/python*/idlelib lib/python*/lib2to3 \
+    lib/python*/tkinter \
+    share/doc share/info share/man \
+    $(uname -m)-conda*
+cd bin
+rm [0-9a-or-z]* pydoc* py*config
+popd
 
 # Quick installation test
-conda deactivate
-bash "${INSTALL_DIR}/cbpy-installer.sh" -b -p "./cbpy"
-"./cbpy/bin/python" -c "import requests"
+"${INSTALL_DIR}/bin/python" -c "import requests"

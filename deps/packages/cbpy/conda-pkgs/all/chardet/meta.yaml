@@ -6,15 +6,13 @@ source:
   path: ./src
 
 requirements:
-  build:
-    - python
-    - setuptools
   run:
     - python
 
 build:
   script: python setup.py install
   noarch: python
+  include_recipe: false
 
 test:
   import:

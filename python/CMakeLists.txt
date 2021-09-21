@@ -13,24 +13,19 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# The version of cbpy, as extracted from tlm/deps/manifest.cmake. The build
-# number is used so that a newer cbpy will be re-installed into the
-# install/lib/python/runtime directory (as part of a Server build), and the
-# MacOS wrapper script will install cbpy into a differently-named directory in
-# the user's home dir.
+# The version of cbpy, as extracted from tlm/deps/manifest.cmake.
 SET (CBPY_VERSION "${CBDEP_cbpy_VERSION}")
-SET (CBPY_BLD_NUM "${CBDEP_cbpy_BLD_NUM}")
 
 # Set up various paths and locations for Python-related things:
 
 # Base directory for cbpy install - used by out-of-build programs such
-# as the non-installed wrapper scripts created by PyWrapper(). Note that
-# this directory is actually created by the local-cbpy target below.
-SET (CBPY_PATH lib/python/runtime)
+# as the non-installed wrapper scripts created by PyWrapper(). This must
+# match the DESTINATION in tlm/deps/manifest.cmake for cbpy.
+SET (CBPY_PATH lib/python/interp)
 SET (CBPY_INSTALL "${CMAKE_INSTALL_PREFIX}/${CBPY_PATH}" CACHE INTERNAL "")
-SET (CBPY_VER_FILE "${CBPY_INSTALL}/couchbase-${CBPY_VERSION}-${CBPY_BLD_NUM}.version")
 
-# Path to python interpreter in the local cbpy install.
+# Path to python interpreter in the install directory. Any build steps
+# that want to run python scripts should use ${PYTHON_EXE}.
 IF (WIN32)
   SET (_localpy "${CBPY_INSTALL}/python.exe")
 ELSE ()
@@ -38,48 +33,9 @@ ELSE ()
 ENDIF ()
 SET (PYTHON_EXE "${_localpy}" CACHE INTERNAL "Path to python interpreter")
 
-# Path to the cbdeps-downloaded cbpy installer itself.
-SET (_installer "${CMAKE_BINARY_DIR}/tlm/deps/cbpy.exploded/cbpy-installer")
-IF (WIN32)
-  SET (_installer "${_installer}.exe")
-ELSE ()
-  SET (_installer "${_installer}.sh")
-ENDIF()
-
-# Ship cbpy-installer with the Server installer
-INSTALL (FILES "${_installer}" DESTINATION lib/python)
-
 # Add the PyWrapper-related CMake functions.
 INCLUDE (PyWrapperFunctions.cmake)
 
-# Target to create local installation of our cbpy in the install directory.
-# This is used by local scripts such as those created by PyWrapper() (defined
-# in PyWrapperFunctions.cmake).
-IF (WIN32)
-  FILE (TO_NATIVE_PATH "${_installer}" _wininstaller)
-  FILE (TO_NATIVE_PATH "${CBPY_INSTALL}" _wincbpy)
-  ADD_CUSTOM_COMMAND (OUTPUT "${CBPY_VER_FILE}"
-    COMMENT "Installing local cbpy"
-    COMMAND rmdir /s /q "${_wincbpy}"
-    COMMAND cmd /c start /wait
-      "${_wininstaller}" /NoRegistry=1 /S "/D=${_wincbpy}"
-    COMMAND "${CMAKE_COMMAND}" -E touch "${CBPY_VER_FILE}"
-    VERBATIM)
-ELSE ()
-  ADD_CUSTOM_COMMAND (OUTPUT "${CBPY_VER_FILE}"
-    COMMENT "Installing local cbpy"
-    COMMAND rm -rf "${CBPY_INSTALL}"
-    COMMAND "${_installer}" -b -p "${CBPY_INSTALL}"
-    COMMAND "${CMAKE_COMMAND}" -E touch "${CBPY_VER_FILE}"
-    VERBATIM)
-ENDIF()
-
-ADD_CUSTOM_TARGET (local-cbpy ALL DEPENDS "${CBPY_VER_FILE}")
-
-# Clean targets
-
-ADD_CUSTOM_TARGET ("local-cbpy-clean"
-  COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CBPY_INSTALL}"
-  VERBATIM)
-
-ADD_DEPENDENCIES (realclean local-cbpy-clean)
+# Leaving this for historical purposes until other code
+# can be updated.
+ADD_CUSTOM_TARGET (local-cbpy ALL)
