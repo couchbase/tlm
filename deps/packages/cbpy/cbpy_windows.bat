@@ -37,25 +37,30 @@ cmake -E tar xf %TARBALL%
 del %TARBALL%
 
 rem Prune installation
+dir
 del api-ms-win-*.dll
 rmdir /s /q conda-meta
 rmdir /s /q include
 rem We have Library, Lib, and libs, all different. Yay.
-rmdir /s /q Library
+rem Lib\ seems to be the "real" python stuff. Library\bin contains .dlls for
+rem C-linked packages like snappy and sqlite3; other parts of Library are
+rem unnecessary. libs\ has nothing important for runtime.
 rmdir /s /q libs
-rmdir /s /q Lib\distutils
 rmdir /s /q Lib\idlelib
 rmdir /s /q Lib\lib2to3
 rmdir /s /q Lib\tkinter
+rmdir /s /q Library\cmake
+rmdir /s /q Library\include
+rmdir /s /q Library\lib
 rmdir /s /q Scripts
 rmdir /s /q tcl
 rmdir /s /q Tools
-del Uninstall-cbpy.exe
-del _conda.exe
 popd
 
-rem Quick installation test
-%INSTALL_DIR%\python.exe -c "import requests" || goto error
+rem Quick installation test - we need to emulate the py-wrapper.c approach
+rem and add Library\bin to PATH for the C-linked libraries to work
+set PATH=%INSTALL_DIR%\Library\bin
+%INSTALL_DIR%\python.exe %SRC_DIR%\test_cbpy.py || goto error
 
 goto :eof
 

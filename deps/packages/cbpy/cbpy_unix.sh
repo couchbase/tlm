@@ -58,7 +58,7 @@ pushd "${INSTALL_DIR}"
 rm -rf compiler_compat conda-meta include \
     lib/cmake lib/pkgconfig \
     lib/itcl* lib/tcl* lib/tk* \
-    lib/python*/distutils lib/python*/idlelib lib/python*/lib2to3 \
+    lib/python*/idlelib lib/python*/lib2to3 \
     lib/python*/tkinter \
     share/doc share/info share/man \
     $(uname -m)-conda*
@@ -67,4 +67,4 @@ rm [0-9a-or-z]* pydoc* py*config
 popd
 
 # Quick installation test
-"${INSTALL_DIR}/bin/python" -c "import requests"
+"${INSTALL_DIR}/bin/python" "${SRC_DIR}/test_cbpy.py"
