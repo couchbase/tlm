@@ -24,8 +24,9 @@ readline=8.1.9
 # the same version in cbdeps.
 #
 # The best way to create/update this list is to run the commands in
-# cbpy_unix.sh / cbpy_windows.bat by hand until the comment "Populate cbpy
-# environment". Then run
+# cbpy_unix.sh / cbpy_windows.bat by hand up to and including
+# "conda create -y -n cbpy". Then run:
+#    conda activate cbpy
 #    conda install -y -c ./conda-pkgs \
 #        python=3.9.5 chardet=4.0.0.9 ... # all explicit and faked deps
 #    conda update --update-all

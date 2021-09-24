@@ -1,7 +1,7 @@
 components:
 
     # Please keep these entries in the same order as the corresponding
-    # lines in construct.yaml, for ease of comparison
+    # lines in environment-*.txt, for ease of comparison
     python:
         bd-id: ee4d67e0-63f9-409d-a9be-1c30de64873d
         versions: [ 3.9.6 ]
