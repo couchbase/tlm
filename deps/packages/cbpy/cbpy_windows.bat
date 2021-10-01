@@ -9,11 +9,13 @@ rem Install and activate Miniforge3
 %CBDEP% install -d . miniforge3 %MINIFORGE_VERSION%
 call .\miniforge3-%MINIFORGE_VERSION%\Scripts\activate || goto error
 
-rem Install conda-build (to build our 'faked' packages) and conda-pack
+rem Install conda-build (to build our packages) conda-verify (to test packages
+rem being built) and conda-pack
 call conda install -y conda-build conda-pack conda-verify || goto error
 
-rem Build our local stub packages
-call conda build --output-folder .\conda-pkgs %SRC_DIR%\conda-pkgs\all\* || goto error
+rem Build our stubs and packages
+dir /A /B "%SRC_DIR%/conda-pkgs/stubs" | findstr /R ".">NUL && (call conda build --output-folder .\conda-pkgs "%SRC_DIR%/conda-pkgs/stubs/*" || goto error) || echo No packages in stubs
+dir /A /B "%SRC_DIR%/conda-pkgs/all" | findstr /R ".">NUL && (call conda build --output-folder .\conda-pkgs "%SRC_DIR%/conda-pkgs/all/*" || goto error) || echo No packages in all
 
 rem Create cbpy environment
 call conda create -y -n cbpy || goto error
@@ -23,8 +25,7 @@ call conda install -y ^
   -n cbpy ^
   -c ./conda-pkgs -c conda-forge ^
   --override-channels --strict-channel-priority ^
-  --file %SRC_DIR%/environment-base.txt ^
-  --file %SRC_DIR%/environment-win.txt || goto error
+  --file "%SRC_DIR%/environment-win.txt" || goto error
 
 rem Pack cbpy and then unpack into final dir
 call conda pack -n cbpy --output cbpy.tar || goto error
@@ -60,7 +61,7 @@ popd
 rem Quick installation test - we need to emulate the py-wrapper.c approach
 rem and add Library\bin to PATH for the C-linked libraries to work
 set PATH=%INSTALL_DIR%\Library\bin
-%INSTALL_DIR%\python.exe %SRC_DIR%\test_cbpy.py || goto error
+%INSTALL_DIR%\python.exe "%SRC_DIR%/test_cbpy.py" || goto error
 
 goto :eof
 

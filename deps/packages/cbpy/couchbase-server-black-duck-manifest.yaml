@@ -1,29 +1,17 @@
 components:
-
-    # Please keep these entries in the same order as the corresponding
-    # lines in environment-*.txt, for ease of comparison
-    python:
-        bd-id: ee4d67e0-63f9-409d-a9be-1c30de64873d
-        versions: [ 3.9.6 ]
-
-    requests:
-        bd-id: 93b03de5-fedb-4162-8a18-7f19fdbd252e
-        versions: [ 2.26.0 ]
-    msgpack-python:
-        bd-id: d265c559-74ea-4baa-a993-2089ca47efde
-        versions: [ 1.0.2 ]
-    natsort:
-        bd-id: c935b0a6-c4ad-449b-bea6-e953ad632518
-        versions: [ 7.1.1 ]
-    python-snappy:
-        bd-id: 47724afe-8603-46c1-9bb9-de8bbba8c11f
-        versions: [ 0.6.0 ]
-
-    # _libgcc_mutex is part of libgcc, which is covered elsewhere
+    _libgcc_mutex:
+        bd-id: c2c6416a-0d4a-4696-a53a-9e8fddf436b8
+        versions: [ 0.1 ]
+    _openmp_mutex:
+        bd-id: e96f3f9a-dc1b-488a-95d5-853f0b074d1c
+        versions: [ 4.5 ]
     brotlipy:
         bd-id: eeda27ea-0cb3-4fac-b767-42a7fb4dfd49
         versions: [ v0.7.0 ]
-    python-certifi:
+    ca-certificates:
+        bd-id: 530bae3a-a2ad-4bd6-810d-854fe6b57b9b
+        versions: [ 2021.5.30 ]
+    certifi:
         bd-id: f1890115-04dd-4eaf-8ff0-5e2643582990
         versions: [ 2021.5.30 ]
     cffi:
@@ -32,23 +20,30 @@ components:
     charset-normalizer:
         bd-id: a5066b09-b6fa-4065-b11b-f45326aa9332
         versions: [ 2.0.0 ]
-    python-cryptography:
+    cryptography:
         bd-id: 1fb0e6ce-44cf-454e-99d4-454ffd6ecffa
         versions: [ 3.4.7 ]
     idna:
         bd-id: 0be5e619-2387-4fe3-915e-8a60146b57dd
         versions: [ 3.1 ]
-    # ld_impl_linux-64 is also part of gcc, at least I believe so;
-    # it doesn't seem to exist as a separate package anywhere except
-    # here in Anaconda-land
     libcxx:
         bd-id: 587d3e15-ea76-449b-94b1-ef12538584e4
         versions: [ 12.0.1 ]
     libffi:
         bd-id: 8a5d4e5f-eee6-441d-91cc-85c7bb5e9fb5
-        versions: [ 3.3 ]
-    # libgcc-ng and libstdcxx-ng are part of libgcc, which is covered
-    # elsewhere
+        versions: [ 3.4.2 ]
+    libgcc-ng:
+        bd-id: 7fc4e9e4-a755-42d4-b0e3-ae2f2cc90728
+        versions: [ 11.2.0 ]
+    libgomp:
+        bd-id: 6e2c44eb-e153-4b09-9500-f61fda6353ac
+        versions: [ 11.2.0 ]
+    msgpack-python:
+        bd-id: d265c559-74ea-4baa-a993-2089ca47efde
+        versions: [ 1.0.2 ]
+    natsort:
+        bd-id: c935b0a6-c4ad-449b-bea6-e953ad632518
+        versions: [ 7.1.1 ]
     ncurses:
         bd-id: 7273e9b6-fd06-4da3-882b-391c9d4ea758
         versions: [ 6.2 ]
@@ -63,10 +58,22 @@ components:
     pysocks:
         bd-id: 5c2e7e08-0eb3-4d78-a6a7-45a36bad400c
         versions: [ 1.7.1 ]
-    python-six:
+    python:
+        bd-id: ee4d67e0-63f9-409d-a9be-1c30de64873d
+        versions: [ 3.9.7 ]
+    python_abi:
+        bd-id: ba4cb840-4316-4d85-ac00-5e39a2ff567e
+        versions: [ 3.9 ]
+    python-snappy:
+        bd-id: 47724afe-8603-46c1-9bb9-de8bbba8c11f
+        versions: [ 0.6.0 ]
+    requests:
+        bd-id: 93b03de5-fedb-4162-8a18-7f19fdbd252e
+        versions: [ 2.26.0 ]
+    six:
         bd-id: 69184346-b974-4064-88a3-134a17f6bbb5
         versions: [ 1.16.0 ]
-    google-snappy:
+    snappy:
         bd-id: fd5e5c60-2c67-4d20-8be9-b7648156cef3
         versions: [ 1.1.8 ]
     sqlite:
@@ -75,21 +82,21 @@ components:
     tk:
         bd-id: b64ca5f6-9e86-4f1f-932f-c5725affbfa5
         versions: [ 8.6.11 ]
+    tzdata:
+        bd-id: 1624d2ea-d07f-4fc3-837a-2391e0dfb299
+        versions: [ 2021a ]
+    ucrt:
+        bd-id: 631d950d-0d5f-4181-85a8-6645e4c01f8e
+        versions: [ 10.0.20348.0 ]
     urllib3:
         bd-id: d222c710-38b5-4073-8347-63bb6526e77d
-        versions: [ 1.26.6 ]
-    python-wheel:
-        bd-id: 9adf3d8e-5d1a-4a6a-8cd6-407f18ee396d
-        versions: [ 0.36.2 ]
-    xz:
-        bd-id: 59191267-61f3-42aa-9247-6b83d8085db5
-        versions: [ 5.2.5 ]
-    wincertstore:
-        bd-id: c71dc3e4-e480-4012-9514-41cfa26727bb
-        versions: [ 0.2 ]
+        versions: [ 1.26.7 ]
     win_inet_pton:
         bd-id: 196607cc-9260-4b6c-baba-f7cb9dd706b1
         versions: [ 1.1.0 ]
+    xz:
+        bd-id: 59191267-61f3-42aa-9247-6b83d8085db5
+        versions: [ 5.2.5 ]
     zlib:
         bd-id: b9185555-6e31-401e-b373-bfec7955a8ab
         versions: [ 1.2.11 ]

@@ -1,0 +1,2 @@
+"Faked" dependencies. By convention these have an extra ".9" appended to
+the version number they're pretending to be.

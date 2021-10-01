@@ -23,13 +23,17 @@ fi
 # Install conda-build (to build our 'faked' packages) and conda-pack
 conda install -y conda-build conda-pack conda-verify
 
-# Build our local stub packages per platform. Currently the only platform-
-# specific one is python-snappy, which is missing on conda-forge for
-# linux-aarch64. Build that first, otherwise our hacked "pip" confuses it.
+# Build our local packages and stubs per platform.
 if [ -d "${SRC_DIR}/conda-pkgs/${platform}" ]; then
     conda build --output-folder "./conda-pkgs" "${SRC_DIR}/conda-pkgs/${platform}/*"
 fi
-conda build --output-folder "./conda-pkgs" "${SRC_DIR}/conda-pkgs/all/*"
+for subdir in all stubs
+do
+    if [ "$(ls ${SRC_DIR}/conda-pkgs/${subdir})" ]
+    then
+        conda build --output-folder "./conda-pkgs" "${SRC_DIR}/conda-pkgs/${subdir}/*"
+    fi
+done
 
 
 # Create cbpy environment
@@ -42,9 +46,7 @@ conda install -y \
     -n cbpy \
     -c ./conda-pkgs -c conda-forge \
     --override-channels --strict-channel-priority \
-    --file "${SRC_DIR}/environment-base.txt" \
-    --file "${SRC_DIR}/environment-${platform}.txt" \
-    --file "${SRC_DIR}/environment-unix.txt"
+    --file "${SRC_DIR}/environment-${platform}.txt"
 
 # Pack cbpy and then unpack into final dir
 conda pack -n cbpy --output cbpy.tar

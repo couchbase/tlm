@@ -1,0 +1,8 @@
+# Packages listed in this file will not be checked against
+# couchbase-server-black-duck-manifest.yaml
+ld_impl_linux-64
+ld_impl_linux-aarch64
+libstdcxx-ng
+openssl
+vc
+vs2015_runtime

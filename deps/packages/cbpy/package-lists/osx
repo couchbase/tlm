@@ -1,0 +1,34 @@
+# packages in environment at /private/var/folders/r2/z9xhpj315zxg3w2978s001lw0000gp/T/tmp.9YV52KH5/miniforge3-4.10.3-5/envs/cbpy:
+#
+# Name                    Version                   Build  Channel
+brotlipy                  0.7.0           py39h89e85a6_1001    conda-forge
+ca-certificates           2021.5.30            h033912b_0    conda-forge
+certifi                   2021.5.30        py39h6e9494a_0    conda-forge
+cffi                      1.14.6           py39he338e87_1    conda-forge
+chardet                   4.0.0.9                       0    file:///private/var/folders/r2/z9xhpj315zxg3w2978s001lw0000gp/T/tmp.9YV52KH5/conda-pkgs
+charset-normalizer        2.0.0              pyhd8ed1ab_0    conda-forge
+cryptography              3.4.7            py39ha2c9959_0    conda-forge
+idna                      3.1                pyhd3deb0d_0    conda-forge
+libcxx                    12.0.1               habf9029_0    conda-forge
+libffi                    3.4.2                he49afe7_4    conda-forge
+msgpack-python            1.0.2            py39hf018cea_1    conda-forge
+natsort                   7.1.1              pyhd8ed1ab_0    conda-forge
+ncurses                   6.2                  h2e338ed_4    conda-forge
+openssl                   1.1.1l               h0d85af4_0    conda-forge
+pip                       21.0.1.9                      0    file:///private/var/folders/r2/z9xhpj315zxg3w2978s001lw0000gp/T/tmp.9YV52KH5/conda-pkgs
+pycparser                 2.20               pyh9f0ad1d_2    conda-forge
+pyopenssl                 20.0.1             pyhd8ed1ab_0    conda-forge
+pysocks                   1.7.1            py39h6e9494a_3    conda-forge
+python                    3.9.7           h1248fe1_2_cpython    conda-forge
+python-snappy             0.6.0            py39hfa214c3_0    conda-forge
+python_abi                3.9                      2_cp39    conda-forge
+readline                  8.1.9                         0    file:///private/var/folders/r2/z9xhpj315zxg3w2978s001lw0000gp/T/tmp.9YV52KH5/conda-pkgs
+requests                  2.26.0             pyhd8ed1ab_0    conda-forge
+six                       1.16.0             pyh6c4a22f_0    conda-forge
+snappy                    1.1.8                hb1e8313_3    conda-forge
+sqlite                    3.36.0               h23a322b_2    conda-forge
+tk                        8.6.11               h5dbffcc_1    conda-forge
+tzdata                    2021a                he74cb21_1    conda-forge
+urllib3                   1.26.7             pyhd8ed1ab_0    conda-forge
+xz                        5.2.5                haf1e3a3_1    conda-forge
+zlib                      1.2.11            h7795811_1010    conda-forge
