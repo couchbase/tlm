@@ -21,6 +21,7 @@ ExternalProject_Add (${_dep_package}
   INSTALL_COMMAND "${CMAKE_COMMAND}" -E copy
     "${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt"
     <INSTALL_DIR>/CMakeLists.txt
+  COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/lib/pkgconfig
 )
 
 # cbdeps boilerplate

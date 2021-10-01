@@ -189,7 +189,7 @@ IF (NOT WIN32)
     # deps/packages/rocksdb/CmakeLists.txt which we use to copy/rename the lib
     _ADD_DEP_PACKAGE(rocksdb 5.18.3 5.18.3-couchbase 6)
 ENDIF ()
-_ADD_DEP_PACKAGE(lz4 1.9.2 v1.9.2 1)
+_ADD_DEP_PACKAGE(lz4 1.9.2 v1.9.2 2)
 # maven 3.5.2-cb3 and 3.5.2-cb4 exist as attempts to make Windows work,
 # but are not correct.
 _ADD_DEP_PACKAGE(maven 3.5.2 master 6)
@@ -203,7 +203,7 @@ _ADD_DEP_PACKAGE(googletest 1.11.0 1.11.0 4)
 
 _ADD_DEP_PACKAGE(folly v2020.09.07.00-couchbase v2020.09.07.00-couchbase 1)
 _ADD_DEP_PACKAGE(grpc 1.28.1 v1.28.1 2)
-_ADD_DEP_PACKAGE(pcre 8.43 v8.43 2)
+_ADD_DEP_PACKAGE(pcre 8.43 v8.43 3)
 _ADD_DEP_PACKAGE(opentelemetry-cpp v1.0.0-rc4.cb v1.0.0-rc4.cb 1)
 _ADD_DEP_PACKAGE(opentracing-cpp v1.5.1 v1.5.1 4)
 _ADD_DEP_PACKAGE(prometheus-cpp v0.10.0-couchbase v0.10.0-couchbase 2)
