@@ -6,8 +6,11 @@
 python=3.9.7
 msgpack-python=1.0.2
 natsort=7.1.1
+pem=21.2.0
+pycryptodome=3.10.4
 python-snappy=0.6.0
 requests=2.26.0
+requests-toolbelt=0.9.1
 
 # "Faked" dependencies. By convention these have an extra ".9" appended to
 # the version number they're pretending to be.
@@ -26,20 +29,22 @@ certifi=2021.5.30
 cffi=1.14.6
 charset-normalizer=2.0.0
 cryptography=3.4.7
+gmp=6.2.1
 idna=3.1
 libcxx=12.0.1
 libffi=3.4.2
+libzlib=1.2.11
 ncurses=6.2
 openssl=1.1.1l
 pycparser=2.20
-pyopenssl=20.0.1
+pyopenssl=21.0.0
 pysocks=1.7.1
 python_abi=3.9
 six=1.16.0
 snappy=1.1.8
 sqlite=3.36.0
 tk=8.6.11
-tzdata=2021a
+tzdata=2021b
 urllib3=1.26.7
 xz=5.2.5
 zlib=1.2.11

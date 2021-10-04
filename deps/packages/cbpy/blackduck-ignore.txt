@@ -3,6 +3,7 @@
 ld_impl_linux-64
 ld_impl_linux-aarch64
 libstdcxx-ng
+libzlib
 openssl
 vc
 vs2015_runtime

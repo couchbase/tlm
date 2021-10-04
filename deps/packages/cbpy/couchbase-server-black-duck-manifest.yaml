@@ -23,6 +23,9 @@ components:
     cryptography:
         bd-id: 1fb0e6ce-44cf-454e-99d4-454ffd6ecffa
         versions: [ 3.4.7 ]
+    gmp:
+        bd-id: 7ecf3993-31a1-4489-acf6-326e64a3f5d8
+        versions: [ 6.2.1 ]
     idna:
         bd-id: 0be5e619-2387-4fe3-915e-8a60146b57dd
         versions: [ 3.1 ]
@@ -47,14 +50,20 @@ components:
     ncurses:
         bd-id: 7273e9b6-fd06-4da3-882b-391c9d4ea758
         versions: [ 6.2 ]
+    pem:
+        bd-id: e116f5a5-2fda-4341-9ce9-88ae369d0620
+        versions: [ 21.2.0 ]
     # as of July 29, 2021, quotes have to be around 2.20.
     # otherwise, zero at the end is stripped somehow and BD scan will fail.
     pycparser:
         bd-id: d4148456-5d7e-49b5-8ffe-c65d67ee52a6
         versions: [ "2.20" ]
+    pycryptodome:
+        bd-id: ad489d63-82a2-4eda-b53e-7d90f3206fb7
+        versions: [ 3.10.4 ]
     pyopenssl:
         bd-id: 69c65bd6-9d4a-427e-8b35-384c0ce8602e
-        versions: [ 20.0.1 ]
+        versions: [ 21.0.0 ]
     pysocks:
         bd-id: 5c2e7e08-0eb3-4d78-a6a7-45a36bad400c
         versions: [ 1.7.1 ]
@@ -70,6 +79,9 @@ components:
     requests:
         bd-id: 93b03de5-fedb-4162-8a18-7f19fdbd252e
         versions: [ 2.26.0 ]
+    requests-toolbelt:
+        bd-id: 06b17c61-ca1c-4b52-bc10-89abd65ad897
+        versions: [ 0.9.1 ]
     six:
         bd-id: 69184346-b974-4064-88a3-134a17f6bbb5
         versions: [ 1.16.0 ]
@@ -84,7 +96,7 @@ components:
         versions: [ 8.6.11 ]
     tzdata:
         bd-id: 1624d2ea-d07f-4fc3-837a-2391e0dfb299
-        versions: [ 2021a ]
+        versions: [ 2021b ]
     ucrt:
         bd-id: 631d950d-0d5f-4181-85a8-6645e4c01f8e
         versions: [ 10.0.20348.0 ]

@@ -1,30 +1,33 @@
-# packages in environment at C:\app\miniforge3-4.10.3-5\envs\cbpy:
+# packages in environment at c:\temp\cbpy2\miniforge3-4.10.3-5\envs\cbpy:
 #
 # Name                    Version                   Build  Channel
 brotlipy                  0.7.0           py39hb82d6ee_1001    conda-forge
 ca-certificates           2021.5.30            h5b45459_0    conda-forge
 certifi                   2021.5.30        py39hcbf5309_0    conda-forge
 cffi                      1.14.6           py39h0878f49_1    conda-forge
-chardet                   4.0.0.9                       0    file:///C:/app/conda-pkgs
+chardet                   4.0.0.9                       0    file:///c:/temp/cbpy2/conda-pkgs
 charset-normalizer        2.0.0              pyhd8ed1ab_0    conda-forge
 cryptography              3.4.7            py39hd8d06c1_0    conda-forge
 idna                      3.1                pyhd3deb0d_0    conda-forge
 msgpack-python            1.0.2            py39h2e07f2f_1    conda-forge
 natsort                   7.1.1              pyhd8ed1ab_0    conda-forge
 openssl                   1.1.1l               h8ffe710_0    conda-forge
-pip                       21.0.1.9                      0    file:///C:/app/conda-pkgs
+pem                       21.2.0                        0    file:///c:/temp/cbpy2/conda-pkgs
+pip                       21.0.1.9                      0    file:///c:/temp/cbpy2/conda-pkgs
 pycparser                 2.20               pyh9f0ad1d_2    conda-forge
-pyopenssl                 20.0.1             pyhd8ed1ab_0    conda-forge
+pycryptodome              3.10.4           py39hb82d6ee_0    conda-forge
+pyopenssl                 21.0.0             pyhd8ed1ab_0    conda-forge
 pysocks                   1.7.1            py39hcbf5309_3    conda-forge
-python                    3.9.7           h7840368_2_cpython    conda-forge
+python                    3.9.7           h7840368_3_cpython    conda-forge
 python-snappy             0.6.0            py39h1d87f24_0    conda-forge
 python_abi                3.9                      2_cp39    conda-forge
-readline                  8.1.9                         0    file:///C:/app/conda-pkgs
+readline                  8.1.9                         0    file:///c:/temp/cbpy2/conda-pkgs
 requests                  2.26.0             pyhd8ed1ab_0    conda-forge
+requests-toolbelt         0.9.1                      py_0    conda-forge
 six                       1.16.0             pyh6c4a22f_0    conda-forge
 snappy                    1.1.8                ha925a31_3    conda-forge
 sqlite                    3.36.0               h8ffe710_2    conda-forge
-tzdata                    2021a                he74cb21_1    conda-forge
+tzdata                    2021b                he74cb21_0    conda-forge
 ucrt                      10.0.20348.0         h57928b3_0    conda-forge
 urllib3                   1.26.7             pyhd8ed1ab_0    conda-forge
 vc                        14.2                 hb210afc_5    conda-forge

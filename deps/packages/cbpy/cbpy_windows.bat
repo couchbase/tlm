@@ -14,8 +14,8 @@ rem being built) and conda-pack
 call conda install -y conda-build conda-pack conda-verify || goto error
 
 rem Build our stubs and packages
-dir /A /B "%SRC_DIR%/conda-pkgs/stubs" | findstr /R ".">NUL && (call conda build --output-folder .\conda-pkgs "%SRC_DIR%/conda-pkgs/stubs/*" || goto error) || echo No packages in stubs
 dir /A /B "%SRC_DIR%/conda-pkgs/all" | findstr /R ".">NUL && (call conda build --output-folder .\conda-pkgs "%SRC_DIR%/conda-pkgs/all/*" || goto error) || echo No packages in all
+dir /A /B "%SRC_DIR%/conda-pkgs/stubs" | findstr /R ".">NUL && (call conda build --output-folder .\conda-pkgs "%SRC_DIR%/conda-pkgs/stubs/*" || goto error) || echo No packages in stubs
 
 rem Create cbpy environment
 call conda create -y -n cbpy || goto error

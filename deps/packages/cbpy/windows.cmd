@@ -14,8 +14,8 @@ powershell.exe -Command "invoke-webrequest -UseBasicParsing -uri https://package
 
 call .\miniforge3-%MINIFORGE_VERSION%\Scripts\activate || goto error
 call conda install -y conda-build conda-pack conda-verify || goto error
-dir /A /B %SCRIPTPATH%\conda-pkgs\stubs | findstr /R ".">NUL && (call conda build --output-folder .\conda-pkgs %SCRIPTPATH%\conda-pkgs\stubs\* || goto error) || echo No packages in stubs
 dir /A /B %SCRIPTPATH%\conda-pkgs\all | findstr /R ".">NUL && (call conda build --output-folder .\conda-pkgs %SCRIPTPATH%\conda-pkgs\all\* || goto error) || echo No packages in all
+dir /A /B %SCRIPTPATH%\conda-pkgs\stubs | findstr /R ".">NUL && (call conda build --output-folder .\conda-pkgs %SCRIPTPATH%\conda-pkgs\stubs\* || goto error) || echo No packages in stubs
 echo ACTIVATING ENV
 call conda create -y -n cbpy || goto error
 echo ENV ACTIVATED

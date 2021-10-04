@@ -1,8 +1,11 @@
 # Our explicit dependencies
 # when updating these, please ensure you follow the `Generating Environment
 # Files` instructions from README.md to generate new files
-python=3.9.6
+python=3.9.7
 msgpack-python=1.0.2
 natsort=7.1.1
+pem=21.2.0
+pycryptodome=3.10.4
 python-snappy=0.6.0
 requests=2.26.0
+requests-toolbelt=0.9.1
