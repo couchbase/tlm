@@ -60,7 +60,11 @@ SET (ENV{GOROOT})
 
 # Use GOPATH to tell Go where to store downloaded and cached Go modules.
 # It will put things into pkg/mod.
-SET (ENV{GOPATH} "${GO_BINARY_DIR}")
+IF (WIN32)
+  SET (ENV{GOPATH} "$ENV{HOMEDRIVE}/$ENV{HOMEPATH}/cbdepscache/gomodcache")
+ELSE ()
+  SET (ENV{GOPATH} "$ENV{HOME}/.cbdepscache/gomodcache")
+ENDIF ()
 
 # Set GO111MODULE since we're by definition building with modules (just in
 # case it's set to a bad value in the environment)
@@ -81,31 +85,42 @@ get_filename_component(REPOSYNC "${REPOSYNC}" REALPATH)
 SET (GCFLAGS "-trimpath=${REPOSYNC}" ${GCFLAGS})
 SET (ASMFLAGS "-trimpath=${REPOSYNC}")
 
+IF (DEFINED ENV{VERBOSE})
+  SET (CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT)
+ENDIF ()
+
+# Golang very annoyingly leaves all downloaded module directories as
+# read-only, so not even rm -rf works. Go 1.14 introduces a new flag
+# GOFLAGS=-modcacherw which fixes this
+IF (${GOVERSION} VERSION_GREATER_EQUAL 1.14)
+  SET (_go_rw_modcache -modcacherw)
+ENDIF ()
+
 # Execute "go build".
-SET (CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT)
 EXECUTE_PROCESS (
   RESULT_VARIABLE _failure
+  OUTPUT_VARIABLE _output
+  ERROR_VARIABLE _output
   COMMAND "${GOEXE}" build
     "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}"
     "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}"
-    ${_go_debug} ${_go_race}
+    ${_go_debug} ${_go_race} ${_go_rw_modcache}
     -mod=readonly
     -o "${OUTPUT}"
     "${PACKAGE}")
-IF (NOT WIN32)
-  # Golang very annoyingly leaves all downloaded module directories as
-  # read-only, so not even rm -rf works. Go 1.14 introduces a new flag
-  # GOFLAGS=-modcacherw which fixes this, but until we have switched
-  # entirely to 1.14 or higher, here's a work-around. Note we suppress
-  # and ignore any errors; this is just a convenience, so if it fails
-  # we don't want to fail the build.
+
+# For go versions 1.13 or lower, here's a work-around for the read-only
+# cache issue. Note we suppress and ignore any errors; this is just a
+# convenience, so if it fails we don't want to fail the build.
+IF (NOT WIN32 AND NOT _go_rw_modcache)
   EXECUTE_PROCESS (
-    COMMAND find "${GO_BINARY_DIR}/pkg/mod" -type d -print0
+    COMMAND find "$ENV{GOPATH}/pkg/mod" -type d -print0
     COMMAND xargs -0 chmod u+w
     OUTPUT_QUIET ERROR_QUIET
     RESULT_VARIABLE _ignored
   )
 ENDIF ()
+
 IF (CB_GO_CODE_COVERAGE)
   EXECUTE_PROCESS (
     COMMAND "${GOEXE}" test
@@ -117,5 +132,6 @@ IF (CB_GO_CODE_COVERAGE)
 ENDIF ()
 
 IF (_failure)
-  MESSAGE (FATAL_ERROR "Failed running go build")
+  MESSAGE ("Error running go build for package ${PACKAGE}!\n${_output}")
+  MESSAGE (FATAL_ERROR "Failed running go modules build for package ${PACKAGE}")
 ENDIF (_failure)

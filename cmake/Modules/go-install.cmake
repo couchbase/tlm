@@ -84,21 +84,21 @@ SET (ASMFLAGS "-trimpath=${REPOSYNC}")
 
 # Execute "go install".
 IF (DEFINED ENV{VERBOSE})
-  MESSAGE (STATUS "Executing: \"${GO_EXECUTABLE}\" install ${_bits_str} \"-tags=${GOTAGS}\" \"-gcflags=${GCFLAGS}\" \"-asmflags=${ASMFLAGS}\" \"-ldflags=${LDFLAGS}\" ${_go_debug} ${_go_race} \"${PACKAGE}\"")
+  SET (CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT)
 endif()
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
   COMMAND "${GO_EXECUTABLE}" install ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} ${_go_race} "${PACKAGE}")
   IF (CB_GO_CODE_COVERAGE)
-    MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} test -c -cover -covermode=count -coverpkg ${PACKAGE} -tags=${GOTAGS} -gcflags=${GCFLAGS} -asmflags=${ASMFLAGS} -ldflags=${LDFLAGS} ${_go_debug} ${PACKAGE}")
     EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" test -c -cover -covermode=count -coverpkg ${PACKAGE} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} "${PACKAGE}")
   ENDIF ()
 IF (_failure)
   MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-  MESSAGE (STATUS "@ 'go install' failed! Re-running as 'go build' to help debug...")
+  MESSAGE (STATUS "@ 'go install' failed for package ${PACKAGE}! Re-running as 'go build' to help debug...")
   MESSAGE (STATUS "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-  # Easier to debug
+  # Easier to debug - always have command echo here
+  SET (CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT)
   EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" build ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}" -x "${PACKAGE}")
-  MESSAGE (FATAL_ERROR "Failed running go install")
+  MESSAGE (FATAL_ERROR "Failed running go install for package ${PACKAGE}")
 ENDIF (_failure)
 
 # If OUTPUT is set, rename the final output binary to the desired
