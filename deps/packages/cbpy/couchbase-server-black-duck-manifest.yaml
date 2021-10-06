@@ -59,7 +59,7 @@ components:
         bd-id: d4148456-5d7e-49b5-8ffe-c65d67ee52a6
         versions: [ "2.20" ]
     pycryptodome:
-        bd-id: ad489d63-82a2-4eda-b53e-7d90f3206fb7
+        bd-id: 0262517f-43d2-4243-b451-bb029df9ea11
         versions: [ 3.10.4 ]
     pyopenssl:
         bd-id: 69c65bd6-9d4a-427e-8b35-384c0ce8602e
