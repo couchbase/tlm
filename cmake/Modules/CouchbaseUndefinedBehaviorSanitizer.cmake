@@ -18,12 +18,27 @@ OPTION(CB_UNDEFINEDSANITIZER "Enable UndefinedBehaviorSanitizer memory error det
 
 IF (CB_UNDEFINEDSANITIZER GREATER 0)
 
-    SET(UNDEFINED_SANITIZER_FLAG "-fsanitize=undefined -fno-sanitize=alignment -fno-sanitize-recover=all -fno-sanitize=float-divide-by-zero")
+    SET(UNDEFINED_SANITIZER_FLAG -fsanitize=undefined -fno-sanitize=alignment -fno-sanitize-recover=all -fno-sanitize=float-divide-by-zero)
+    # Need -fno-omit-frame-pointer to allow the backtraces to be symbolified.
+    LIST(APPEND UNDEFINED_SANITIZER_FLAG -fno-omit-frame-pointer)
+    # UBSan makes heavy use of RTTI to verify the type of objects
+    # match the pointer/reference they are accessed through at
+    # runtime. This requires typeinfo for essentially all types
+    # involved in static_cast<> / reinterpret_cast<>. To simplify
+    # providing this; change the default symbol visiibility to
+    # default (all symbols visible).
+    LIST(APPEND UNDEFINED_SANITIZER_FLAG -fvisibility=default)
+
+    SET(UNDEFINED_SANITIZER_LDFLAGS -fsanitize=undefined)
 
     CMAKE_PUSH_CHECK_STATE(RESET)
-    SET(CMAKE_REQUIRED_FLAGS ${UNDEFINED_SANITIZER_FLAG}) # Also needs to be a link flag for test to pass
-    CHECK_C_COMPILER_FLAG(${UNDEFINED_SANITIZER_FLAG} HAVE_FLAG_SANITIZE_UNDEFINED_C)
-    CHECK_CXX_COMPILER_FLAG(${UNDEFINED_SANITIZER_FLAG} HAVE_FLAG_SANITIZE_UNDEFINED_CXX)
+    # Pass the -fsanitize sub-options via CMAKE_REQUIRED_FLAGS - keeps
+    # the output of CHECK_{C,CXX}_COMPILER_FLAG() clean (it logs the
+    # flag being tested).
+    SET(CMAKE_REQUIRED_FLAGS ${UNDEFINED_SANITIZER_FLAGS})
+    SET(CMAKE_REQUIRED_LINK_OPTIONS ${UNDEFINED_SANITIZER_LDFLAGS}) # Also needs to be a link flag for test to pass
+    CHECK_C_COMPILER_FLAG(-fsanitize=undefined HAVE_FLAG_SANITIZE_UNDEFINED_C)
+    CHECK_CXX_COMPILER_FLAG(-fsanitize=undefined HAVE_FLAG_SANITIZE_UNDEFINED_CXX)
     CMAKE_POP_CHECK_STATE()
 
     IF ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "Clang")
@@ -42,26 +57,15 @@ IF (CB_UNDEFINEDSANITIZER GREATER 0)
     IF(HAVE_FLAG_SANITIZE_UNDEFINED_C AND HAVE_FLAG_SANITIZE_UNDEFINED_CXX)
         # Have UndefinedBehaviorSanitizer for C & C++; enable as per the user's selection.
 
-        # UBSan makes heavy use of RTTI to verify the type of objects
-        # match the pointer/reference they are accessed through at
-        # runtime. This requires typeinfo for essentially all types
-        # involved in static_cast<> / reinterpret_cast<>. To simplify
-        # providing this; change the default symbol visiibility to
-        # default (all symbols visible).
-        SET(UNDEFINED_SANITIZER_FLAG "${UNDEFINED_SANITIZER_FLAG} -fvisibility=default")
-
-        SET(UNDEFINED_SANITIZER_FLAG_DISABLE "-fno-sanitize=undefined -fvisibility=hidden")
-
         # Configure CTest's MemCheck mode.
         SET(MEMORYCHECK_TYPE UndefinedBehaviorSanitizer)
 
         if(CB_UNDEFINEDSANITIZER EQUAL 1)
             # Enable globally
-
-            # Need -fno-omit-frame-pointer to allow the backtraces to be symbolified.
-            SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${UNDEFINED_SANITIZER_FLAG} -fno-omit-frame-pointer")
-            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${UNDEFINED_SANITIZER_FLAG} -fno-omit-frame-pointer")
+            ADD_COMPILE_OPTIONS(${UNDEFINED_SANITIZER_FLAG})
+            ADD_LINK_OPTIONS(${UNDEFINED_SANITIZER_LDFLAGS})
             SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${UNDEFINED_SANITIZER_FLAG}")
+
 	    ADD_DEFINITIONS(-DUNDEFINED_SANITIZER)
 
             if (UNIX AND NOT APPLE AND NOT "${CMAKE_C_COMPILER_ID}" STREQUAL "Clang")
@@ -89,9 +93,9 @@ function(add_sanitize_undefined TARGET)
     endif ()
 
     set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY COMPILE_FLAGS " ${UNDEFINED_SANITIZER_FLAG} -fno-omit-frame-pointer")
+        PROPERTY COMPILE_FLAGS " ${UNDEFINED_SANITIZER_FLAG}")
     set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY LINK_FLAGS " ${UNDEFINED_SANITIZER_FLAG}")
+        PROPERTY LINK_FLAGS " ${UNDEFINED_SANITIZER_LDFLAGS}")
 endfunction()
 
 # Disable UBSAN for specific target. No-op if
@@ -101,9 +105,6 @@ function(remove_sanitize_undefined TARGET)
     if (NOT CB_UNDEFINEDSANITIZER)
         return()
     endif ()
-
-    set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY COMPILE_FLAGS " ${UNDEFINED_SANITIZER_FLAG_DISABLE}")
-    set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY LINK_FLAGS " ${UNDEFINED_SANITIZER_FLAG_DISABLE}")
+    remove_from_property(${TARGET} COMPILE_OPTIONS ${UNDEFINED_SANITIZER_FLAG})
+    remove_from_property(${TARGET} LINK_OPTIONS ${UNDEFINED_SANITIZER_LDFLAGS})
 endfunction()
