@@ -73,7 +73,7 @@ IF (CB_UNDEFINEDSANITIZER GREATER 0)
                 # (for example for RPM sanitized packages).
                 # Note: Clang statically links the UBSan runtime so we skip this
                 # for Clang.
-                install_sanitizer_library(UBSan "libubsan.so.1;libubsan.so.0" ${UNDEFINED_SANITIZER_FLAG} ${CMAKE_INSTALL_PREFIX}/lib)
+                install_sanitizer_library(UBSan "libubsan.so.1;libubsan.so.0" "${UNDEFINED_SANITIZER_FLAG}" ${CMAKE_INSTALL_PREFIX}/lib)
             endif()
 	endif()
 
