@@ -168,6 +168,16 @@ function(use_rpath_for_sanitizers)
 endfunction()
 
 
+# Check if ELEMENT exists in the list of values for PROPERTY_NAME
+# against TARGET.  If so, remove ELEMENT from the list of values.
+function(remove_from_property TARGET PROPERTY_NAME)
+    get_target_property(property_value ${TARGET} ${PROPERTY_NAME})
+    if (property_value)
+        list(REMOVE_ITEM property_value ${ARGN})
+        set_property(TARGET ${TARGET} PROPERTY ${PROPERTY_NAME} ${property_value})
+    endif()
+endfunction()
+
 include(CouchbaseAddressSanitizer)
 include(CouchbaseThreadSanitizer)
 include(CouchbaseUndefinedBehaviorSanitizer)

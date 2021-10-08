@@ -19,7 +19,7 @@ OPTION(CB_ADDRESSSANITIZER "Enable AddressSanitizer memory error detector."
 IF (CB_ADDRESSSANITIZER)
 
     CMAKE_PUSH_CHECK_STATE(RESET)
-    SET(CMAKE_REQUIRED_FLAGS "-fsanitize=address") # Also needs to be a link flag for test to pass
+    SET(CMAKE_REQUIRED_LINK_OPTIONS "-fsanitize=address") # Also needs to be a link flag for test to pass
     CHECK_C_COMPILER_FLAG("-fsanitize=address" HAVE_FLAG_SANITIZE_ADDRESS_C)
     CHECK_CXX_COMPILER_FLAG("-fsanitize=address" HAVE_FLAG_SANITIZE_ADDRESS_CXX)
     CMAKE_POP_CHECK_STATE()
@@ -40,9 +40,9 @@ IF (CB_ADDRESSSANITIZER)
     IF(HAVE_FLAG_SANITIZE_ADDRESS_C AND HAVE_FLAG_SANITIZE_ADDRESS_CXX)
         # Have AddressSanitizer for C & C++; enable as per the user's selection.
 
-        SET(ADDRESS_SANITIZER_FLAG "-fsanitize=address")
-
-        SET(ADDRESS_SANITIZER_FLAG_DISABLE "-fno-sanitize=address")
+        # Need -fno-omit-frame-pointer to allow the backtraces to be symbolified.
+        SET(ADDRESS_SANITIZER_FLAG -fsanitize=address -fno-omit-frame-pointer)
+        SET(ADDRESS_SANITIZER_LDFLAGS -fsanitize=address)
 
         # TC/jemalloc cause issues with AddressSanitizer - force
         # the use of the system allocator.
@@ -68,10 +68,8 @@ IF (CB_ADDRESSSANITIZER)
 
         if(NOT CB_ADDRESSSANITIZER EQUAL 2)
             # Enable globally
-
-            # Need -fno-omit-frame-pointer to allow the backtraces to be symbolified.
-            SET(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${ADDRESS_SANITIZER_FLAG} -fno-omit-frame-pointer")
-            SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${ADDRESS_SANITIZER_FLAG} -fno-omit-frame-pointer")
+            ADD_COMPILE_OPTIONS(${ADDRESS_SANITIZER_FLAG})
+            ADD_LINK_OPTIONS(${ADDRESS_SANITIZER_LDFLAGS})
             SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${ADDRESS_SANITIZER_FLAG}")
 
             use_rpath_for_sanitizers()
@@ -108,9 +106,9 @@ function(add_sanitize_memory TARGET)
     endif ()
 
     set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY COMPILE_FLAGS " ${ADDRESS_SANITIZER_FLAG} -fno-omit-frame-pointer")
+        PROPERTY COMPILE_FLAGS " ${ADDRESS_SANITIZER_FLAG}")
     set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY LINK_FLAGS " ${ADDRESS_SANITIZER_FLAG}")
+        PROPERTY LINK_FLAGS " ${ADDRESS_SANITIZER_LDFLAGS}")
 endfunction()
 
 # Disable AddressSanitizer for specific target. No-op if
@@ -121,8 +119,6 @@ function(remove_sanitize_memory TARGET)
         return()
     endif ()
 
-    set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY COMPILE_FLAGS " ${ADDRESS_SANITIZER_FLAG_DISABLE}")
-    set_property(TARGET ${TARGET} APPEND_STRING
-        PROPERTY LINK_FLAGS " ${ADDRESS_SANITIZER_FLAG_DISABLE}")
+    remove_from_property(${TARGET} COMPILE_OPTIONS ${ADDRESS_SANITIZER_FLAG})
+    remove_from_property(${TARGET} LINK_OPTIONS ${ADDRESS_SANITIZER_LDFLAGS})
 endfunction()
