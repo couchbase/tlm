@@ -40,13 +40,6 @@ IF (CB_THREADSANITIZER)
         ADD_COMPILE_OPTIONS(${THREAD_SANITIZER_FLAG})
         ADD_LINK_OPTIONS(${THREAD_SANITIZER_LDFLAGS})
 
-        # Ensure TSan flags are used for cgo compile and link, so Go
-        # programs linking to TSan-enabled C/C++ libraries have the
-        # correct tsan runtime library available.
-        SET(CMAKE_CGO_CFLAGS "${CMAKE_CGO_CFLAGS} ${THREAD_SANITIZER_FLAG}")
-        STRING(REPLACE ";" " " tsan_ldflags_list "${THREAD_SANITIZER_LDFLAGS}")
-        SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${tsan_ldflags_list}")
-
         use_rpath_for_sanitizers()
 
         # TC/jemalloc are incompatible with ThreadSanitizer - force

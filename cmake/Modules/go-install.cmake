@@ -27,12 +27,16 @@ IF (NOT APPLE)
   EXPORT_FLAGS (CGO_LIBRARY_DIRS CGO_LDFLAGS "-Wl,-rpath-link=")
 ENDIF ()
 
+# Convert CMake semicolon-separated lists into space-separated strings
+# for passing CGO flags via environment.
 IF (CGO_CFLAGS)
-  SET (ENV{CGO_CFLAGS} "$ENV{CGO_CFLAGS} ${CGO_CFLAGS}")
+  STRING(REPLACE ";" " " _cgo_cflags "${CGO_CFLAGS}")
+  SET (ENV{CGO_CFLAGS} "$ENV{CGO_CFLAGS} ${_cgo_cflags}")
 ENDIF ()
 
 IF (CGO_LDFLAGS)
-  SET (ENV{CGO_LDFLAGS} "$ENV{CGO_LDFLAGS} ${CGO_LDFLAGS}")
+  STRING(REPLACE ";" " " _cgo_ldflags "${CGO_LDFLAGS}")
+  SET (ENV{CGO_LDFLAGS} "$ENV{CGO_LDFLAGS} ${_cgo_ldflags}")
 ENDIF ()
 
 IF (NOT WIN32)

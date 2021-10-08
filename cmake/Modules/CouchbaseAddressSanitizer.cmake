@@ -70,7 +70,6 @@ IF (CB_ADDRESSSANITIZER)
             # Enable globally
             ADD_COMPILE_OPTIONS(${ADDRESS_SANITIZER_FLAG})
             ADD_LINK_OPTIONS(${ADDRESS_SANITIZER_LDFLAGS})
-            SET(CMAKE_CGO_LDFLAGS "${CMAKE_CGO_LDFLAGS} ${ADDRESS_SANITIZER_FLAG}")
 
             use_rpath_for_sanitizers()
 
