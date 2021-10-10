@@ -1,7 +1,7 @@
 #
 # This is the toplevel CMakeLists.txt that is used to build Couchbase
 #
-CMAKE_MINIMUM_REQUIRED(VERSION 3.16)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.19)
 
 STRING(REGEX REPLACE "[ ]" "a" modified_source_dir "${CMAKE_SOURCE_DIR}")
 IF (NOT modified_source_dir STREQUAL CMAKE_SOURCE_DIR)
@@ -186,6 +186,7 @@ INCLUDE(CouchbaseCompression)
 INCLUDE(CouchbaseUnityBuild)
 INCLUDE(CouchbasePrecompiledHeaders)
 INCLUDE(CouchbaseFunctions)
+INCLUDE(CouchbasePlugInUI)
 
 INCLUDE(FindCouchbaseBoost)
 INCLUDE(FindCouchbaseFolly)
@@ -345,12 +346,12 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ADD_SUBDIRECTORY(couchbase-cli)
       ADD_SUBDIRECTORY(couchdb)
       ADD_SUBDIRECTORY(geocouch)
-      ADD_SUBDIRECTORY(query-ui)
     ENDIF()
 
     SET (GODEPSDIR "${CMAKE_CURRENT_SOURCE_DIR}/godeps")
     IF (NOT BUILD_ONLY_TOOLS)
       ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
+      ADD_SUBDIRECTORY(query-ui)
       ADD_SUBDIRECTORY(vbmap)
 
       IF (BUILD_ENTERPRISE)
