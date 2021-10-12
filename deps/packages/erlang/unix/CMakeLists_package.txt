@@ -1,5 +1,0 @@
-FILE(COPY bin lib DESTINATION "${CMAKE_INSTALL_PREFIX}")
-
-# Invoke Erlang 'Install' to update the Erlang ROOTDIR
-EXECUTE_PROCESS(COMMAND ${CMAKE_INSTALL_PREFIX}/lib/erlang/Install
-    -minimal ${CMAKE_INSTALL_PREFIX}/lib/erlang)

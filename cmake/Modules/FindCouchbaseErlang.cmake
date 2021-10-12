@@ -26,9 +26,12 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
       GET_FILENAME_COMPONENT(ERL_REAL_EXE ${ERL_EXECUTABLE} REALPATH)
       GET_FILENAME_COMPONENT(ERL_LOCATION ${ERL_REAL_EXE} PATH)
 
+      SET(_erlang_exploded "${CMAKE_BINARY_DIR}/tlm/deps/erlang.exploded")
+
       FIND_PATH(ERL_NIF_INCLUDE_PATH erl_nif.h
                 HINTS
-                ${ERL_LOCATION}/../usr/include
+                "${_erlang_exploded}/usr/include"
+                "${ERL_LOCATION}/../usr/include"
                 PATHS
                 /usr/lib/erlang/usr/include
                 /usr/local/lib/erlang/usr/include

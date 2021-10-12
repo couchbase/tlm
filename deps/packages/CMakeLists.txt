@@ -90,7 +90,16 @@ ENDMACRO (_ADD_PACKAGE_STEP)
 #
 MACRO (_ADD_DEP_PACKAGE package upstream_ver cb_branch cb_release)
   IF (NOT DEFINED PACKAGE OR "${PACKAGE}" STREQUAL "${package}")
-    SET (_output_file_name "${package}-${PLATFORM}-${HOST_ARCH}-${upstream_ver}-cb${cb_release}")
+    IF (WIN32)
+      # All Windows cbdeps packages should just be called "windows", even
+      # though PLATFORM is eg. windows_msvc2017. Having PLATFORM include
+      # the compiler version is important for routing builds to the right
+      # Jenkins agents, but not for the resulting package name.
+      SET (_pkg_plat windows)
+    ELSE ()
+      SET (_pkg_plat ${PLATFORM})
+    ENDIF ()
+    SET (_output_file_name "${package}-${_pkg_plat}-${HOST_ARCH}-${upstream_ver}-cb${cb_release}")
     SET (_output_dir "${CMAKE_BINARY_DIR}/deps/${package}/${upstream_ver}-cb${cb_release}")
     SET (_output_file "${_output_dir}/${_output_file_name}")
     SET (_git_repo "git://github.com/couchbasedeps/${package}.git")
@@ -162,9 +171,6 @@ _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
 _ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 7)
 _ADD_DEP_PACKAGE(v8 8.3 8.3.110.13 5)
 _ADD_DEP_PACKAGE(jemalloc 5.2.1 5.2.1 6)
-
-# -cb11 was built and published but never used in builds
-_ADD_DEP_PACKAGE(erlang cheshirecat couchbase-cheshirecat 15)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
