@@ -44,7 +44,7 @@ DECLARE_DEP (libuv V2 VERSION 1.20.3 BUILD 22 PLATFORMS amzn2 centos7 debian9 de
 DECLARE_DEP (lz4 VERSION 1.9.2-cb2 PLATFORMS linux macosx)
 DECLARE_DEP (maven VERSION 3.5.2-cb6 PLATFORMS all)
 DECLARE_DEP (numactl VERSION 2.0.11-cb3 PLATFORMS amzn2 centos7 debian9 debian10 suse12 suse15 ubuntu18.04 ubuntu20.04)
-DECLARE_DEP (pcre VERSION 8.43-cb3 PLATFORMS linux macosx windows_msvc2017)
+DECLARE_DEP (pcre VERSION 8.44-cb1 PLATFORMS linux macosx windows_msvc2017)
 DECLARE_DEP (openssl V2 VERSION 1.1.1l BUILD 3 PLATFORMS linux macosx windows_msvc2017)
 DECLARE_DEP (numactl VERSION 2.0.11-cb3 PLATFORMS amzn2 centos7 debian9 debian10 suse12 suse15 ubuntu18.04 ubuntu20.04)
 DECLARE_DEP (prometheus V2 VERSION 2.22 BUILD 6 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
