@@ -25,7 +25,7 @@ components:
     erlang:
         bd-id: 2c804760-a3e3-4ba1-abfb-77525633b966
         versions: [ OTP-24.1.1 ]
-        cbdeps-versions: [ cheshirecat ]
+        cbdeps-versions: [ neo ]
     flatbuffers:
         bd-id: ae906881-37fd-4af4-8fe7-e435fd2056af
         versions: [ v1.10.0 ]
