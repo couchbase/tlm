@@ -49,6 +49,21 @@ SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.14" CACHE STRING
 
 PROJECT("Couchbase")
 
+# Double-check that "repo sync" (or the user) didn't mess up our copyfiles
+MACRO (CHECK_COPYFILE source_filename target_filename)
+  EXECUTE_PROCESS(
+    COMMAND "${CMAKE_COMMAND}" -E compare_files --ignore-eol
+      "${PROJECT_SOURCE_DIR}/${source_filename}"
+      "${PROJECT_SOURCE_DIR}/${target_filename}"
+    RESULT_VARIABLE _retval)
+  IF (_retval GREATER 0)
+    MESSAGE (FATAL_ERROR "${source_filename} is different than ${target_filename}!! "
+      "If you are editing one of those files, ensure that both copies are identical.")
+  ENDIF ()
+ENDMACRO ()
+CHECK_COPYFILE (tlm/CMakeLists.txt CMakeLists.txt)
+CHECK_COPYFILE (tlm/third-party-CMakeLists.txt third_party/CMakeLists.txt)
+
 OPTION(COUCHBASE_KV_COMMIT_VALIDATION
        "Only build modules used by KV commit validation"
        OFF)
