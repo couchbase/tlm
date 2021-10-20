@@ -97,9 +97,6 @@ components:
     tzdata:
         bd-id: 1624d2ea-d07f-4fc3-837a-2391e0dfb299
         versions: [ 2021b ]
-    ucrt:
-        bd-id: 631d950d-0d5f-4181-85a8-6645e4c01f8e
-        versions: [ 10.0.20348.0 ]
     urllib3:
         bd-id: d222c710-38b5-4073-8347-63bb6526e77d
         versions: [ 1.26.7 ]
