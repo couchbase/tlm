@@ -351,6 +351,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     SET (GODEPSDIR "${CMAKE_CURRENT_SOURCE_DIR}/godeps")
     IF (NOT BUILD_ONLY_TOOLS)
       ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
+      ADD_SUBDIRECTORY(vbmap)
 
       IF (BUILD_ENTERPRISE)
           ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing-ee)
