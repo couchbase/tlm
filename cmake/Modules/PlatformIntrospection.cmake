@@ -17,8 +17,8 @@ MACRO (_DETERMINE_ARCH var)
   ELSE ()
     # We tweak MacOS, which for some reason claims to be i386
     IF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-      # QQQ MacOS ARM M1 is coming up soon, need to fix this
-      SET (_arch x86_64)
+      # Use CMAKE_SYSTEM_PROCESSOR to determine x86_64 or arm64
+      SET (_arch ${CMAKE_SYSTEM_PROCESSOR})
     ELSEIF (CMAKE_SYSTEM_NAME STREQUAL "SunOS")
       EXECUTE_PROCESS (COMMAND isainfo -k
         COMMAND tr -d '\n'
