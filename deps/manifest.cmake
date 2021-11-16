@@ -20,7 +20,7 @@ DECLARE_DEP (benchmark VERSION v1.6.0-cb1 PLATFORMS amzn2 centos7 debian9 debian
 DECLARE_DEP (breakpad V2 VERSION 20200430 BUILD 1 PLATFORMS amzn2 centos7 debian9 debian10 suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (boost VERSION 1.74.0-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (cbpy VERSION 7.1.0-cb5 PLATFORMS linux macosx windows_msvc2017 DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python/interp")
-DECLARE_DEP (curl V2 VERSION 7.78.0 BUILD 4 PLATFORMS linux macosx windows_msvc2017)
+DECLARE_DEP (curl V2 VERSION 7.78.0 BUILD 5 PLATFORMS linux macosx windows_msvc2017)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (erlang V2 VERSION neo BUILD 2 PLATFORMS linux macosx windows)
 DECLARE_DEP (flatbuffers VERSION 1.10.0-cb5 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
