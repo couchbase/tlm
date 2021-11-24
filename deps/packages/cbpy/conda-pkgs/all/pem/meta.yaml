@@ -1,3 +1,11 @@
+# Copyright 2021-Present Couchbase, Inc.
+#
+# Use of this software is governed by the Business Source License included in
+# the file licenses/BSL-Couchbase.txt.  As of the Change Date specified in that
+# file, in accordance with the Business Source License, use of this software
+# will be governed by the Apache License, Version 2.0, included in the file
+# licenses/APL2.txt.
+
 {% set name = "pem" %}
 {% set version = "21.2.0" %}
 {% set sha256 = "c491833b092662626fd58a87375d450637d4ee94996ad9bbbd42593428e93e5a" %}
