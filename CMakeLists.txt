@@ -145,7 +145,7 @@ _install_gcc_file(libgcc_s.so)
 INCLUDE(CouchbaseDefaultValues)
 
 # If the user has synced any closed-source code, assume building EE
-IF (EXISTS "${PROJECT_SOURCE_DIR}/analytics")
+IF (EXISTS "${PROJECT_SOURCE_DIR}/cbbs")
   SET (_ee_found ON)
 ELSE ()
   SET (_ee_found OFF)
