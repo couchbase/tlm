@@ -113,10 +113,11 @@ components:
     cbpy: []
 
     # Include these here even though they're actually included in the builds
-    # by server-linux-build.sh.
+    # by server-linux-build.sh. We actually build gcc 10.2.0, but that
+    # version doesn't exist in Black Duck, so call it 10.2.1.
     libgcc:
         bd-id: e12b8d28-cc06-4ffe-9393-21982b677571
-        versions: [ 7.3.1 ]
+        versions: [ 10.2.1 ]
     libstdc++:
         bd-id: 899d93c9-1182-4d34-9349-5bf3e34aaa69
-        versions: [ 7.3.1 ]
+        versions: [ 10.2.1 ]
