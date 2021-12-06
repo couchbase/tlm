@@ -28,10 +28,9 @@ IF (NOT PLUG_IN_UI_INCLUDED)
 
     # rewrite the config file for installation
     SET (BIN_PREFIX "")
-    CONFIGURE_FILE ("${pluggable_ui_json_name}.json.in" "${pluggable_ui_json_name}.json")
-
+    CONFIGURE_FILE ("${PLUGGABLE_UI_JSON_NAME}.in" "${PLUGGABLE_UI_JSON_NAME}")
     # read interesting json fields
-    FILE (READ "${CMAKE_CURRENT_BINARY_DIR}/${pluggable_ui_json_name}.json" PLUGGABLE_UI_JSON)
+    FILE (READ "${CMAKE_CURRENT_BINARY_DIR}/${PLUGGABLE_UI_JSON_NAME}" PLUGGABLE_UI_JSON)
     STRING (JSON SERVICE_NAME GET ${PLUGGABLE_UI_JSON} service)
     STRING (JSON RES_API_PREFIX MEMBER ${PLUGGABLE_UI_JSON} rest-api-prefixes 0)
     STRING (JSON DOC_ROOT GET ${PLUGGABLE_UI_JSON} doc-root)
@@ -51,17 +50,10 @@ IF (NOT PLUG_IN_UI_INCLUDED)
       ${PLUGGABLE_UI_BIN}
       ${PLUGGABLE_UI_STAMP}
       ${RES_API_PREFIX})
-
     # copy rewritten config file and code to install directory
     INSTALL (
-      FILES "${PROJECT_BINARY_DIR}/${pluggable_ui_json_name}.json"
+      FILES "${PROJECT_BINARY_DIR}/${PLUGGABLE_UI_JSON_NAME}"
       DESTINATION "etc/couchbase")
-
-    # rewrite the config file for running locally (using cluster-run)
-    SET (BIN_PREFIX "${PROJECT_SOURCE_DIR}/")
-    CONFIGURE_FILE (
-      "${pluggable_ui_json_name}.json.in"
-      "${CMAKE_BINARY_DIR}/cluster_run_ui_plugins/${pluggable_ui_json_name}.cluster_run.json")
 
     INSTALL (DIRECTORY "${PLUGGABLE_UI_SRC}/"
       DESTINATION "${NS_UI_INSTALL_DIR}/_p/ui/${RES_API_PREFIX}"
