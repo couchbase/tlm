@@ -1,0 +1,3 @@
+# Dependencies explicit to linux-aarch64
+python=3.9.7=h7840368_3_cpython
+cryptography=3.4.7=py39hd8d06c1_0

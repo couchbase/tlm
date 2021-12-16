@@ -27,6 +27,5 @@ conda install -y conda-build conda-pack conda-verify
 
 conda create -y -n cbpy
 conda activate cbpy
-conda install -y -c "./conda-pkgs" $(grep -e "^[A-Za-z0-9\-]*=" ${script_dir}/cb-dependencies.txt | tr "\n" ' ') $(grep -e "^[A-Za-z0-9\-]*=" /cb-stubs.txt | tr "\n" ' ')
-conda update -y -c "./conda-pkgs" --update-all
+conda install -y -c "./conda-pkgs" $(grep -e "^[A-Za-z0-9\-]*=" ${script_dir}/cb-dependencies.txt ${script_dir}/cb-dependencies-osx.txt 2>/dev/null | tr "\n" ' ') $(grep -e "^[A-Za-z0-9\-]*=" ${script_dir}/cb-stubs.txt | tr "\n" ' ')
 conda list

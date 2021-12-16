@@ -18,22 +18,19 @@ components:
         versions: [ v0.7.0 ]
     ca-certificates:
         bd-id: 530bae3a-a2ad-4bd6-810d-854fe6b57b9b
-        versions: [ 2021.5.30 ]
+        versions: [ 2021.10.8 ]
     certifi:
         bd-id: f1890115-04dd-4eaf-8ff0-5e2643582990
-        versions: [ 2021.5.30 ]
+        versions: [ 2021.10.8 ]
     cffi:
         bd-id: 043e4252-a86b-4281-a1a3-a762fe0470de
-        versions: [ 1.14.6 ]
+        versions: [ 1.15.0 ]
     charset-normalizer:
         bd-id: a5066b09-b6fa-4065-b11b-f45326aa9332
-        versions: [ 2.0.0 ]
+        versions: [ 2.0.9 ]
     cryptography:
-        bd-id: 1fb0e6ce-44cf-454e-99d4-454ffd6ecffa
+        bd-id: f09c05ab-0954-400d-94e9-4de512ed42fa
         versions: [ 3.4.7 ]
-    gmp:
-        bd-id: 7ecf3993-31a1-4489-acf6-326e64a3f5d8
-        versions: [ 6.2.1 ]
     idna:
         bd-id: 0be5e619-2387-4fe3-915e-8a60146b57dd
         versions: [ 3.1 ]
@@ -65,7 +62,7 @@ components:
     # otherwise, zero at the end is stripped somehow and BD scan will fail.
     pycparser:
         bd-id: d4148456-5d7e-49b5-8ffe-c65d67ee52a6
-        versions: [ "2.20" ]
+        versions: [ "2.21" ]
     pycryptodome:
         bd-id: 0262517f-43d2-4243-b451-bb029df9ea11
         versions: [ 3.10.4 ]
@@ -98,13 +95,13 @@ components:
         versions: [ 1.1.8 ]
     sqlite:
         bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
-        versions: [ "3.36.0" ]
+        versions: [ "3.37.0" ]
     tk:
         bd-id: b64ca5f6-9e86-4f1f-932f-c5725affbfa5
         versions: [ 8.6.11 ]
     tzdata:
         bd-id: 1624d2ea-d07f-4fc3-837a-2391e0dfb299
-        versions: [ 2021b ]
+        versions: [ 2021e ]
     urllib3:
         bd-id: d222c710-38b5-4073-8347-63bb6526e77d
         versions: [ 1.26.7 ]

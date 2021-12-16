@@ -41,7 +41,7 @@ on each platform, at time of writing the targeted platforms are:
 
 On the targeted architecture, build and run `Dockerfile.linux`. e.g:
 
-`docker build -t cbpy -f Dockerfile.linux && docker run --rm -it cbpy`
+`docker build . -t cbpy -f Dockerfile.linux && docker run --rm -it cbpy`
 
 The results should be redirected/copied to `package-lists/linux-$(uname -m)`
 

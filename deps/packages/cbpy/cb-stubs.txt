@@ -1,3 +1,4 @@
 chardet=4.0.0.9
+gmp=6.2.1.9
 pip=21.0.1.9
 readline=8.1.9

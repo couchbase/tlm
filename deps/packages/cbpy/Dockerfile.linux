@@ -26,16 +26,15 @@ RUN set -x \
     && ([ "$(ls -A /conda-pkgs/linux-aarch64)" ] && conda build --output-folder "./conda-pkgs" "/conda-pkgs/linux-aarch64/*" || :) \
     && conda create -y -n cbpy
 
-COPY cb-dependencies.txt /
+COPY cb-dependencies*.txt /
 COPY cb-stubs.txt /
 
 RUN set -x \
     && . /app/miniforge3-${MINIFORGE_VERSION}/bin/activate \
     && conda activate cbpy \
     && conda install -y -c ./conda-pkgs python-snappy \
-        $(grep -e "^[A-Za-z0-9\-]*=" /cb-dependencies.txt | tr "\n" ' ') \
-        $(grep -e "^[A-Za-z0-9\-]*=" /cb-stubs.txt | tr "\n" ' ') \
-    && conda update -y -c ./conda-pkgs --update-all
+        $(grep -e "^[A-Za-z0-9\-]*=" /cb-dependencies.txt /cb-dependencies-linux-$(uname -m).txt 2>/dev/null | tr "\n" ' ') \
+        $(grep -e "^[A-Za-z0-9\-]*=" /cb-stubs.txt | tr "\n" ' ')
 
 CMD . ./miniforge3-${MINIFORGE_VERSION}/bin/activate \
     && conda activate cbpy \

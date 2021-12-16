@@ -27,6 +27,10 @@ call conda install -y ^
   --override-channels --strict-channel-priority ^
   --file "%SRC_DIR%/environment-win.txt" || goto error
 
+rem Remove gmp (pycryptodome soft dep)
+call conda list -n cbpy gmp | findstr gmp
+if %ERRORLEVEL% EQU 0 call conda remove -n cbpy gmp -y --force
+
 rem Pack cbpy and then unpack into final dir
 call conda pack -n cbpy --output cbpy.tar || goto error
 call conda deactivate || goto error

@@ -1,10 +1,10 @@
 @echo on
 set MINIFORGE_VERSION="4.10.3-5"
-set WD=c:\temp\cbpy2
+set WD=c:\temp\cbpy
 rem Note: this won't work interactively, if you're doing these steps by hand
 rem       set SCRIPTPATH manually
 set SCRIPTPATH=%~dp0
-rmdir %WD% /s /q || goto error
+if exist %WD% rmdir %WD% /s /q || goto error
 mkdir %WD%
 cd %WD%
 
@@ -21,13 +21,12 @@ call conda create -y -n cbpy || goto error
 echo ENV ACTIVATED
 
 rem Get the list of deps we'll want to `conda install`
-powershell.exe -Command "((Select-String -Path %SCRIPTPATH%\cb-dependencies.txt -Pattern '^[A-Za-z0-9\-]*=' -All | foreach {$_.Line}) -Join ' ') + ' ' | Out-File -NoNewline -Encoding ASCII %WD%\deps"
+powershell.exe -Command "((Select-String -Path %SCRIPTPATH%\cb-dependencies.txt,%SCRIPTPATH%\cb-dependencies-win.txt -Pattern '^[A-Za-z0-9\-]*=' -All | foreach {$_.Line}) -Join ' ') + ' ' | Out-File -NoNewline -Encoding ASCII %WD%\deps"
 powershell.exe -Command "((Select-String -Path %SCRIPTPATH%\cb-stubs.txt -Pattern '^[A-Za-z0-9\-]*=' -All | foreach {$_.Line}) -Join ' ') + ' ' | Out-File -NoNewline -Encoding ASCII -Append %WD%\deps"
 set /P deps=<%WD%\deps
 
 call conda activate cbpy || goto error
 call conda install -y -c ./conda-pkgs %deps% || goto error
-call conda update -y -c ./conda-pkgs --update-all || goto error
 call conda list || goto error
 
 goto :eof

@@ -43,7 +43,6 @@ do
     fi
 done
 
-
 # Create cbpy environment
 conda create -y -n cbpy
 
@@ -55,6 +54,12 @@ conda install -y \
     -c ./conda-pkgs -c conda-forge \
     --override-channels --strict-channel-priority \
     --file "${SRC_DIR}/environment-${platform}.txt"
+
+# Remove gmp (pycryptodome soft dep)
+if conda list -n cbpy gmp | grep gmp
+then
+    conda remove -n cbpy gmp -y --force
+fi
 
 # Pack cbpy and then unpack into final dir
 conda pack -n cbpy --output cbpy.tar
