@@ -121,10 +121,12 @@ ENDIF (NOT DEFINED CB_DOWNLOAD_DEPS)
 ADD_SUBDIRECTORY(tlm/deps)
 
 # Also install the necessary GCC libraries.
+# Note this is done regardless of if the compiler is GCC or Clang,
+# as either way we use GCC's standard libraries.
 MACRO (_install_gcc_file GCCFILENAME)
-  IF (UNIX AND NOT APPLE AND "${CMAKE_C_COMPILER_ID}" STREQUAL "GNU")
+  IF (UNIX AND NOT APPLE)
     EXECUTE_PROCESS(
-      COMMAND "${CMAKE_CXX_COMPILER}" -print-file-name=${GCCFILENAME}
+      COMMAND "${CMAKE_CXX_COMPILER}" ${CMAKE_CXX_FLAGS} -print-file-name=${GCCFILENAME}
       OUTPUT_VARIABLE _gccfile OUTPUT_STRIP_TRAILING_WHITESPACE
       ERROR_VARIABLE _errormsg
       RESULT_VARIABLE _failure)
