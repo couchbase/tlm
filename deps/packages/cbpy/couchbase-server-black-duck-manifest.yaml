@@ -27,7 +27,7 @@ components:
         versions: [ 1.15.0 ]
     charset-normalizer:
         bd-id: a5066b09-b6fa-4065-b11b-f45326aa9332
-        versions: [ 2.0.9 ]
+        versions: [ 2.0.10 ]
     cryptography:
         bd-id: f09c05ab-0954-400d-94e9-4de512ed42fa
         versions: [ 3.4.7 ]
@@ -54,7 +54,7 @@ components:
         versions: [ 7.1.1 ]
     ncurses:
         bd-id: 7273e9b6-fd06-4da3-882b-391c9d4ea758
-        versions: [ 6.2 ]
+        versions: [ "6.2.20211002" ]
     pem:
         bd-id: e116f5a5-2fda-4341-9ce9-88ae369d0620
         versions: [ 21.2.0 ]
@@ -104,7 +104,7 @@ components:
         versions: [ 2021e ]
     urllib3:
         bd-id: d222c710-38b5-4073-8347-63bb6526e77d
-        versions: [ 1.26.7 ]
+        versions: [ 1.26.8 ]
     win_inet_pton:
         bd-id: 196607cc-9260-4b6c-baba-f7cb9dd706b1
         versions: [ 1.1.0 ]

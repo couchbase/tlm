@@ -7,7 +7,7 @@ ca-certificates           2021.10.8            h4fd8a4c_0    conda-forge
 certifi                   2021.10.8        py39ha65689a_1    conda-forge
 cffi                      1.15.0           py39hab139ec_0    conda-forge
 chardet                   4.0.0.9                       0    file:///app/conda-pkgs
-charset-normalizer        2.0.9              pyhd8ed1ab_0    conda-forge
+charset-normalizer        2.0.10             pyhd8ed1ab_0    conda-forge
 cryptography              3.4.7            py39hc5d6c06_0    conda-forge
 gmp                       6.2.1.9                       0    file:///app/conda-pkgs
 idna                      3.1                pyhd3deb0d_0    conda-forge
@@ -19,7 +19,7 @@ libstdcxx-ng              11.2.0              h0d0a5bb_11    conda-forge
 libzlib                   1.2.11            hb9de7d4_1013    conda-forge
 msgpack-python            1.0.2            py39hb300cb6_2    conda-forge
 natsort                   7.1.1              pyhd8ed1ab_0    conda-forge
-ncurses                   6.2                  h7fd3ca4_4    conda-forge
+ncurses                   6.2.20211002         hbfd4b83_1    file:///app/conda-pkgs
 openssl                   1.1.1l               hf897c2e_0    conda-forge
 pem                       21.2.0                        0    file:///app/conda-pkgs
 pip                       21.0.1.9                      0    file:///app/conda-pkgs
@@ -38,6 +38,6 @@ snappy                    1.1.8                h54f1f3f_3    conda-forge
 sqlite                    3.37.0               hc164836_0    conda-forge
 tk                        8.6.11               hd8af866_1    conda-forge
 tzdata                    2021e                he74cb21_0    conda-forge
-urllib3                   1.26.7             pyhd8ed1ab_0    conda-forge
+urllib3                   1.26.8             pyhd8ed1ab_1    conda-forge
 xz                        5.2.5                h6dd45c4_1    conda-forge
 zlib                      1.2.11            hb9de7d4_1013    conda-forge

@@ -1,0 +1,103 @@
+
+# Adapted from https://github.com/conda-forge/ncurses-feedstock/blob/master/recipe/meta.yaml
+# to advance past CVE-2021-39537
+{% set version = "6.2" %}
+{% set weekly = "20211002" %}
+
+package:
+  name: ncurses
+  version: {{ version }}.{{ weekly }}
+
+source:
+  fn: ncurses-{{ version }}-{{ weekly }}.tgz
+  url: https://invisible-mirror.net/archives/ncurses/current/ncurses-{{ version }}-{{ weekly }}.tgz
+  sha256: e3903bec0cc1a49592d7c16e6c7b273e2390477285ba4ca2293c2d6c037c531f
+
+build:
+  skip: true  # [win]
+  number: 1
+  run_exports:
+    - {{ pin_subpackage('ncurses') }}
+  ignore_run_exports:
+    - libstdcxx-ng
+    - libcxx
+
+requirements:
+  build:
+    - {{ compiler('c') }}
+    - {{ compiler('cxx') }}
+    - make
+    - libtool
+    - ncurses  # [build_platform != target_platform]
+  host:
+    - libcxx        # [osx]
+    - libstdcxx-ng  # [linux]
+
+test:
+  commands:
+    # Test libraries
+    {% set ncurses_libraries = [
+        "libncurses",
+        "libtinfo",
+        "libform",
+        "libmenu",
+        "libpanel",
+    ] %}
+    {% for each_ncurses_library in ncurses_libraries %}
+    - test ! -f ${PREFIX}/lib/{{ each_ncurses_library }}.a
+    - test ! -f ${PREFIX}/lib/{{ each_ncurses_library }}w.a
+    - test -f ${PREFIX}/lib/{{ each_ncurses_library }}.dylib    # [osx]
+    - test -f ${PREFIX}/lib/{{ each_ncurses_library }}w.dylib   # [osx]
+    - test -f ${PREFIX}/lib/{{ each_ncurses_library }}.so       # [linux]
+    - test -f ${PREFIX}/lib/{{ each_ncurses_library }}w.so      # [linux]
+    {% endfor %}
+
+    # Test include directories
+    - test -d ${PREFIX}/include/ncurses
+    - test -d ${PREFIX}/include/ncursesw
+
+    # Test headers
+    {% set ncurses_headers = [
+        "curses.h",
+        "cursesapp.h",
+        "cursesf.h",
+        "cursesm.h",
+        "cursesp.h",
+        "cursesw.h",
+        "cursslk.h",
+        "eti.h",
+        "etip.h",
+        "form.h",
+        "menu.h",
+        "nc_tparm.h",
+        "ncurses.h",
+        "ncurses_dll.h",
+        "panel.h",
+        "term.h",
+        "term_entry.h",
+        "termcap.h",
+        "tic.h",
+        "unctrl.h"
+    ] %}
+    {% for each_ncurses_header in ncurses_headers %}
+    - test -L ${PREFIX}/include/ncurses/{{ each_ncurses_header }}
+    - test -L ${PREFIX}/include/ncursesw/{{ each_ncurses_header }}
+    - test -f ${PREFIX}/include/{{ each_ncurses_header }}
+    {% endfor %}
+
+about:
+  home: http://www.gnu.org/software/ncurses/
+  # See https://github.com/mirror/ncurses/blob/3ef920d65fb2d4046096131d868ae8d4bba79d46/package/debian/copyright
+  license: X11 AND BSD-3-Clause
+  license_file: COPYING
+  summary: Library for text-based user interfaces
+  description: |
+    The ncurses (new curses) library is a free software
+    emulation of curses in System V Release 4.0 (SVr4),
+    and more. It uses terminfo format, supports pads and
+    color and multiple highlights and forms characters and
+    function-key mapping, and has all the other SVr4-curses
+    enhancements over BSD curses. SVr4 curses is better
+    known today as X/Open Curses
+  doc_url: http://invisible-island.net/ncurses/NCURSES-Programming-HOWTO.html
+  dev_url: http://invisible-island.net/ncurses/

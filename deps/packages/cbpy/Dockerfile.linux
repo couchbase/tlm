@@ -5,7 +5,7 @@ ENV MINIFORGE_VERSION=${MINIFORGE_VERSION}
 
 RUN set -x \
     && apt update \
-    && apt install -y curl nano
+    && apt install -y binutils curl
 
 RUN set -x \
     && curl --fail -L -o /usr/bin/cbdep https://packages.couchbase.com/cbdep/cbdep-linux-$(uname -m) \
@@ -33,7 +33,7 @@ RUN set -x \
     && . /app/miniforge3-${MINIFORGE_VERSION}/bin/activate \
     && conda activate cbpy \
     && conda install -y -c ./conda-pkgs python-snappy \
-        $(grep -e "^[A-Za-z0-9\-]*=" /cb-dependencies.txt /cb-dependencies-linux-$(uname -m).txt 2>/dev/null | tr "\n" ' ') \
+        $(grep -e "^[A-Za-z0-9\-]*=" -h /cb-dependencies.txt /cb-dependencies-linux-$(uname -m).txt 2>/dev/null | tr "\n" ' ') \
         $(grep -e "^[A-Za-z0-9\-]*=" /cb-stubs.txt | tr "\n" ' ')
 
 CMD . ./miniforge3-${MINIFORGE_VERSION}/bin/activate \
