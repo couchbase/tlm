@@ -17,7 +17,9 @@ components:
     erlang-otp: [ OTP-20.3.8.11 ]
     flatbuffers: [ v1.10.0 ]
     folly: [ v2019.08.12.00 ]
-    glog: [ 0.3.5 ]
+    glog:
+        bd-id: 8a812196-830f-4c27-afad-e02244876887
+        versions: [ 0.3.5 ]
     grpc: [ 1.12.0 ]
     jemalloc: [ 5.2.1 ]
     json:
