@@ -111,9 +111,13 @@ MACRO (_install_gcc_file GCCFILENAME)
     ENDIF ()
     # We actually need to copy any files with longer filenames - this can be eg.
     # libstdc++.so.6, or libgcc_s.so.1.
+    # Note: RPM demands that .so files be executable or else it won't
+    # extract debug info from them.
     FILE (GLOB _gccfiles "${_gccfile}*")
     FOREACH (_gccfile ${_gccfiles})
-      INSTALL (FILES "${_gccfile}" DESTINATION lib)
+      INSTALL (FILES "${_gccfile}" DESTINATION lib
+               PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE
+                  GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE)
     ENDFOREACH ()
   ENDIF ()
 ENDMACRO (_install_gcc_file)
