@@ -10,11 +10,12 @@ IF (NOT PLUG_IN_UI_INCLUDED)
 
   MACRO(WATCH_AND_COPY_SOURCES src_dir bin_dir stamp_path service_name)
     FILE (GLOB_RECURSE UI_SRC_JS_FILES CONFIGURE_DEPENDS "${src_dir}/*.js")
+    FILE (GLOB_RECURSE UI_SRC_HTML_FILES CONFIGURE_DEPENDS "${src_dir}/*.html")
     ADD_CUSTOM_COMMAND (OUTPUT "${bin_dir}"
       COMMAND ${CMAKE_COMMAND} -E create_symlink "${src_dir}" "${bin_dir}")
     ADD_CUSTOM_COMMAND (OUTPUT "${stamp_path}.js.stamp"
       COMMAND "${CMAKE_COMMAND}" -E touch "${stamp_path}.js.stamp"
-      DEPENDS ${UI_SRC_JS_FILES}
+      DEPENDS ${UI_SRC_JS_FILES} ${UI_SRC_HTML_FILES}
       VERBATIM)
     ADD_CUSTOM_TARGET ("${service_name}_ui_build_prepare"
       DEPENDS "${bin_dir}"
