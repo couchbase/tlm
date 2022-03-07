@@ -15,7 +15,7 @@ else (WIN32)
 endif (WIN32)
 
 ExternalProject_Add(boost
-  GIT_REPOSITORY git://github.com/boostorg/boost
+  GIT_REPOSITORY https://github.com/boostorg/boost
   GIT_TAG ${_git_rev}
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND <SOURCE_DIR>/${boost_bootstrap} --prefix=<INSTALL_DIR>

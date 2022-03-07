@@ -12,7 +12,7 @@ SET (INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}/install")
 
 ### Download, configure and build libcxxabi ####################################
 ExternalProject_Add(libcxxabi
-  GIT_REPOSITORY git://github.com/couchbasedeps/libcxxabi.git
+  GIT_REPOSITORY https://github.com/couchbasedeps/libcxxabi.git
   GIT_TAG ${_git_rev}
 
   PREFIX libcxxabi
@@ -21,7 +21,7 @@ ExternalProject_Add(libcxxabi
   # (includes), but we can't just build libcxx first because it
   # depends on libcxxabi.so. So, we download libcxx again.
   UPDATE_COMMAND echo ${CMAKE_CURRENT_BINARY_DIR}
-    COMMAND git clone git://github.com/couchbasedeps/libcxx
+    COMMAND git clone https://github.com/couchbasedeps/libcxx
     ${CMAKE_CURRENT_BINARY_DIR}/libcxx-copy --single-branch -b ${_git_rev}
 
   # Configure step
