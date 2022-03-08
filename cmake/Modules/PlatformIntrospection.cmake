@@ -15,7 +15,7 @@ MACRO (_DETERMINE_ARCH var)
     # target architecture, so use that value first if set.
     STRING (TOLOWER "$ENV{target_arch}" _arch)
   ELSE ()
-    # We tweak MacOS, which for some reason claims to be i386
+    # Make sure MacOS is assigned with the right arch
     IF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
       # Use CMAKE_SYSTEM_PROCESSOR to determine x86_64 or arm64
       SET (_arch ${CMAKE_SYSTEM_PROCESSOR})

@@ -26,7 +26,14 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # a minimum version of Go. MB-31436.
   # And for notarization to work, we need to use Go 1.12. CBD-3006.
   # Go 1.13.x fixes a segment __DWARF issue. MB-36672.
-  SET (GO_MAC_MINIMUM_VERSION 1.13.3)
+
+  # Golang 1.16+ is required for native support of Apple Mac M1 chips
+
+  IF (CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+    SET (GO_MAC_MINIMUM_VERSION 1.16.3)
+  ELSE (CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+    SET (GO_MAC_MINIMUM_VERSION 1.13.3)
+  ENDIF (CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
 
   # This macro is called by GoInstall() / GoYacc() / etc. to find the
   # appropriate Go compiler to use. It will set the variable named by

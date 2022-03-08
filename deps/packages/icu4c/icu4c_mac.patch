@@ -1,0 +1,81 @@
+diff --git a/source/config/mh-darwin b/source/config/mh-darwin
+index e4ad4623..7b15709c 100644
+--- a/source/config/mh-darwin
++++ b/source/config/mh-darwin
+@@ -33,7 +33,7 @@ SHLIB.cc=	$(CXX) -dynamiclib -dynamic $(CXXFLAGS) $(LDFLAGS) $(LD_SOOPTIONS)
+ ifeq ($(ENABLE_RPATH),YES)
+ LD_SONAME = -Wl,-compatibility_version -Wl,$(SO_TARGET_VERSION_MAJOR) -Wl,-current_version -Wl,$(SO_TARGET_VERSION) -install_name $(libdir)/$(notdir $(MIDDLE_SO_TARGET))
+ else
+-LD_SONAME = -Wl,-compatibility_version -Wl,$(SO_TARGET_VERSION_MAJOR) -Wl,-current_version -Wl,$(SO_TARGET_VERSION) -install_name $(notdir $(MIDDLE_SO_TARGET))
++LD_SONAME = -Wl,-compatibility_version -Wl,$(SO_TARGET_VERSION_MAJOR) -Wl,-current_version -Wl,$(SO_TARGET_VERSION) -install_name $(notdir $(MIDDLE_SO_TARGET)) $(PKGDATA_TRAILING_SPACE)
+ endif
+ 
+ ## Compiler switch to embed a runtime search path
+diff --git a/source/config/pkgdataMakefile.in b/source/config/pkgdataMakefile.in
+index 7bf24cc6..66a63b6f 100644
+--- a/source/config/pkgdataMakefile.in
++++ b/source/config/pkgdataMakefile.in
+@@ -16,6 +16,7 @@ include $(top_builddir)/icudefs.mk
+ 
+ OUTPUTFILE=pkgdata.inc
+ MIDDLE_SO_TARGET=
++PKGDATA_TRAILING_SPACE=" "
+ 
+ all : clean 
+ 	@echo GENCCODE_ASSEMBLY_TYPE=$(GENCCODE_ASSEMBLY) >> $(OUTPUTFILE)
+diff --git a/source/data/pkgdataMakefile.in b/source/data/pkgdataMakefile.in
+index 4e21d03c..cd543b0f 100644
+--- a/source/data/pkgdataMakefile.in
++++ b/source/data/pkgdataMakefile.in
+@@ -16,6 +16,7 @@ include $(top_builddir)/icudefs.mk
+ 
+ OUTPUTFILE=icupkg.inc
+ MIDDLE_SO_TARGET=
++PKGDATA_TRAILING_SPACE=" "
+ 
+ all : clean 
+ 	@echo GENCCODE_ASSEMBLY_TYPE=$(GENCCODE_ASSEMBLY) >> $(OUTPUTFILE)
+diff --git a/source/extra/uconv/pkgdataMakefile.in b/source/extra/uconv/pkgdataMakefile.in
+index c5916f2a..f8a684fc 100644
+--- a/source/extra/uconv/pkgdataMakefile.in
++++ b/source/extra/uconv/pkgdataMakefile.in
+@@ -14,9 +14,9 @@ top_builddir = ../..
+ ## All the flags and other definitions are included here.
+ include $(top_builddir)/icudefs.mk
+ 
+-MIDDLE_SO_TARGET=
+-
+ OUTPUTFILE=pkgdata.inc
++MIDDLE_SO_TARGET=
++PKGDATA_TRAILING_SPACE=" "
+ 
+ all : clean 
+ 	@echo GENCCODE_ASSEMBLY_TYPE=$(GENCCODE_ASSEMBLY) >> $(OUTPUTFILE)
+diff --git a/source/test/testdata/pkgdataMakefile.in b/source/test/testdata/pkgdataMakefile.in
+index c5916f2a..f8a684fc 100644
+--- a/source/test/testdata/pkgdataMakefile.in
++++ b/source/test/testdata/pkgdataMakefile.in
+@@ -14,9 +14,9 @@ top_builddir = ../..
+ ## All the flags and other definitions are included here.
+ include $(top_builddir)/icudefs.mk
+ 
+-MIDDLE_SO_TARGET=
+-
+ OUTPUTFILE=pkgdata.inc
++MIDDLE_SO_TARGET=
++PKGDATA_TRAILING_SPACE=" "
+ 
+ all : clean 
+ 	@echo GENCCODE_ASSEMBLY_TYPE=$(GENCCODE_ASSEMBLY) >> $(OUTPUTFILE)
+diff --git a/source/tools/pkgdata/pkgdata.cpp b/source/tools/pkgdata/pkgdata.cpp
+index ffcf459c..53c401d9 100644
+--- a/source/tools/pkgdata/pkgdata.cpp
++++ b/source/tools/pkgdata/pkgdata.cpp
+@@ -544,6 +544,7 @@ normal_command_mode:
+     int result = system(cmd);
+     if (result != 0) {
+         fprintf(stderr, "-- return status = %d\n", result);
++        result = 1; // system() result code is platform specific.
+     }
+ 
+     if (cmd != cmdBuffer && cmd != command) {

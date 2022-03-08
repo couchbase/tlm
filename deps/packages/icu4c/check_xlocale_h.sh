@@ -8,7 +8,14 @@
 # will be governed by the Apache License, Version 2.0, included in the file
 # licenses/APL2.txt.
 
-XLOCALE_FILE=/usr/include/xlocale.h
+set -x
+
+if [ $(uname -s) = "Darwin" ]; then
+    XLOCALE_FILE=/Library/Developer/CommandLineTools/SDKs/MacOSX.sdk/usr/include/xlocale.h
+else
+    XLOCALE_FILE=/usr/include/xlocale.h
+fi
+
 LOCALE_FILE=/usr/include/locale.h
 
 if [ ! -e ${XLOCALE_FILE} ]; then

@@ -6,7 +6,7 @@
 set(_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/unused")
 set(_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 set(CMAKE_INSTALL_PREFIX "${_openssl_install}")
-declare_dep(openssl V2 VERSION 1.1.1k BUILD 1
+declare_dep(openssl V2 VERSION 1.1.1l BUILD 1
             PLATFORMS amzn2
                       centos7
                       debian9 debian10

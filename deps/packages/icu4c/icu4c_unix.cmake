@@ -3,12 +3,19 @@
 include(ExternalProject)
 
 # For APPLE we anyway set rpaths using install_name_tool below
+
+# Apply mac patch for ICU-20526 "fix pkgdata where LD_SONAME has a trailing space"
+# https://github.com/unicode-org/icu/commit/1c553b9cf28d25c0aaf961c5f587f4ad3cee2679
+# https://github.com/unicode-org/icu/commit/83a0542b5b52a30b7af736f5ef6b0405f6582867
+
 if (APPLE)
     SET(_rpath_options "")
     SET(_rpath-link_options "")
+    SET(patch_command PATCH_COMMAND patch -p1 < ${CMAKE_CURRENT_SOURCE_DIR}/icu4c_mac.patch)
 else (APPLE)
     SET(_rpath_options "--enable-rpath")
     SET(_rpath-link_options "--enable-rpath-link")
+    unset(patch_command)
 endif (APPLE)
 ### Download, configure and build icu4c ####################################
 _DETERMINE_CPU_COUNT(_parallelism)
@@ -16,8 +23,10 @@ ExternalProject_Add(icu4c
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
 
- CONFIGURE_COMMAND sudo "${CMAKE_CURRENT_SOURCE_DIR}/check_xlocale_h.sh"
- COMMAND <SOURCE_DIR>/source/configure LDFLAGS=${ICU_LDFLAGS}
+  ${patch_command}
+
+  CONFIGURE_COMMAND sudo "${CMAKE_CURRENT_SOURCE_DIR}/check_xlocale_h.sh"
+  COMMAND <SOURCE_DIR>/source/configure LDFLAGS=${ICU_LDFLAGS}
                                                   --prefix=<INSTALL_DIR>
                                                   --disable-extras
                                                   --disable-layout
