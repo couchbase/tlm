@@ -24,6 +24,7 @@ ExternalProject_Add(boost
       -j 4
       --prefix=<INSTALL_DIR>
       address-model=64
+      debug-symbols=on
       ${boost_extra_flags}
       link=static
       runtime-link=shared
