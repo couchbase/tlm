@@ -24,6 +24,7 @@ include(CMakePushCheckState)
 include(CheckSymbolExists)
 include(FindPackageHandleStandardArgs)
 include(PlatformIntrospection)
+include(SelectLibraryConfigurations)
 
 cb_get_supported_platform(_is_supported_platform)
 if (_is_supported_platform)
@@ -54,28 +55,24 @@ endif ()
 # install the .lib file to ${CMAKE_INSTALL_PREFIX} on Windows-
 # they are left in the exploded directory.
 find_library(JEMALLOC_LIBRARY_RELEASE
-             NAMES jemalloc libjemalloc
+             NAMES jemalloc
              HINTS ${CMAKE_INSTALL_PREFIX}/lib
                    ${_jemalloc_exploded}/lib/Release
                    ${_jemalloc_exploded}/lib
              ${_jemalloc_no_default_path})
 
 find_library(JEMALLOC_LIBRARY_DEBUG
-             NAMES jemalloc jemallocd libjemalloc
+             NAMES jemallocd
              HINTS ${CMAKE_INSTALL_PREFIX}/lib
                    ${_jemalloc_exploded}/lib/Debug
              ${_jemalloc_no_default_path})
 
 # Set JEMALLOC_LIBRARIES to the correct Debug / Release lib based on the
 # current BUILD_TYPE
-if (CMAKE_BUILD_TYPE STREQUAL "Debug" AND JEMALLOC_LIBRARY_DEBUG)
-    set (JEMALLOC_LIBRARIES ${JEMALLOC_LIBRARY_DEBUG})
-else ()
-    set (JEMALLOC_LIBRARIES ${JEMALLOC_LIBRARY_RELEASE})
-endif ()
+select_library_configurations(JEMALLOC)
 
-find_package_handle_standard_args(JEMALLOC
-  REQUIRED_VARS JEMALLOC_LIBRARIES JEMALLOC_INCLUDE_DIR)
+MESSAGE(STATUS "Found jemalloc headers: ${JEMALLOC_INCLUDE_DIR}")
+MESSAGE(STATUS "             libraries: ${JEMALLOC_LIBRARIES}")
 
 # Check that the found jemalloc library has it's symbols prefixed with 'je_'
 cmake_push_check_state(RESET)
