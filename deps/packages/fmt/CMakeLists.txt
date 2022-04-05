@@ -9,6 +9,11 @@ ExternalProject_Add(fmt
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
 	     -D CMAKE_BUILD_TYPE=RelWithDebInfo
          -D CMAKE_CXX_VISIBILITY_PRESET=hidden
+         # Explicilty set LIBDIR to 'lib' so for single linux
+         # builds (CentOS 7) we don't put the libraries under
+         # `lib64` which is not a default search path for
+         # find_package() when we later consume this cbdep.
+         -D CMAKE_INSTALL_LIBDIR=lib
          -D CMAKE_POSITION_INDEPENDENT_CODE=ON
 
   BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
