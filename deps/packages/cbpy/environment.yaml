@@ -38,7 +38,7 @@ dependencies:
   - cffi=1.14.5
   - cryptography=3.4.6
   - idna=2.10
-  - openssl=1.1.1l
+  - openssl=1.1.1n
   - pycparser=2.20
   - pyopenssl=20.0.1
   - pysocks=1.7.1
