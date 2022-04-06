@@ -226,6 +226,7 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _is_supported_platform)
        "amzn2"
        "centos6" "centos7" "centos8"
        "debian8" "debian9" "debian10"
+       "linux"
        "macosx"
        "rhel8"
        "suse12" "suse15"
