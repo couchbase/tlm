@@ -96,6 +96,17 @@ MACRO (_ADD_DEP_PACKAGE package upstream_ver cb_branch cb_release)
       # the compiler version is important for routing builds to the right
       # Jenkins agents, but not for the resulting package name.
       SET (_pkg_plat windows)
+    ELSEIF (CB_DEP_TARGET_PLATFORM)
+      # For certain groups of platforms (currently Linux
+      # distributions) we build a single cbdep package which is used
+      # for multiple different distributions - e.g. centos7 and
+      # ubuntu20.04 can all use a package targetting "linux".
+      # Similary for architecture-neutral packages (say only
+      # containing Java bytecode) we use the platform "all".
+      #
+      # Therefore, allow the platform of the output package to be
+      # overridden by setting CB_DEP_TARGET_PLATFORM.
+      SET (_pkg_plat ${CB_DEP_TARGET_PLATFORM})
     ELSE ()
       SET (_pkg_plat ${PLATFORM})
     ENDIF ()
