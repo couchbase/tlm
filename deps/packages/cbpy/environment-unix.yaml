@@ -8,4 +8,7 @@
 # Extra dependencies that are unique to Unix (Linux or MacOS)
 dependencies:
   - libffi=3.3
-  - ncurses=6.2
+  - ncurses=6.3
+  - tk=8.6.11
+  - xz=5.2.5
+  - zlib=1.2.11

@@ -4,11 +4,11 @@ components:
     # lines in construct.yaml, for ease of comparison
     python:
         bd-id: ee4d67e0-63f9-409d-a9be-1c30de64873d
-        versions: [ 3.9.5 ]
+        versions: [ 3.9.12 ]
 
     requests:
         bd-id: 93b03de5-fedb-4162-8a18-7f19fdbd252e
-        versions: [ 2.25.1 ]
+        versions: [ 2.27.1 ]
     msgpack-python:
         bd-id: d265c559-74ea-4baa-a993-2089ca47efde
         versions: [ 1.0.2 ]
@@ -23,46 +23,70 @@ components:
     brotlipy:
         bd-id: eeda27ea-0cb3-4fac-b767-42a7fb4dfd49
         versions: [ v0.7.0 ]
+    ca-certificates:
+        bd-id: 530bae3a-a2ad-4bd6-810d-854fe6b57b9b
+        versions: [2022.3.29]
     python-certifi:
         bd-id: f1890115-04dd-4eaf-8ff0-5e2643582990
-        versions: [ 2021.5.30 ]
+        versions: [ 2021.10.8 ]
     cffi:
         bd-id: 043e4252-a86b-4281-a1a3-a762fe0470de
-        versions: [ 1.14.5 ]
+        versions: [ 1.15.0 ]
+    charset-normalizer:
+        bd-id: a5066b09-b6fa-4065-b11b-f45326aa9332
+        versions: [2.0.4]
+    colorama:
+        bd-id: 10878ec1-f139-4e18-b0af-ccf70de6c7a8
+        versions: [0.4.4]
     python-cryptography:
         bd-id: 1fb0e6ce-44cf-454e-99d4-454ffd6ecffa
-        versions: [ 3.4.6 ]
+        versions: [ 36.0.0 ]
     idna:
         bd-id: 0be5e619-2387-4fe3-915e-8a60146b57dd
-        versions: [ 2.10 ]
+        versions: [ 3.3 ]
+    openssl:
+        bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
+        versions: [ 1.0.0 ]
+    pycosat:
+        bd-id: 8b01f11a-0cf8-4cfc-a8e8-45dd1e4cf481
+        versions: [ 0.6.3 ]
     # ld_impl_linux-64 is also part of gcc, at least I believe so;
     # it doesn't seem to exist as a separate package anywhere except
     # here in Anaconda-land
     libcxx:
         bd-id: 587d3e15-ea76-449b-94b1-ef12538584e4
-        versions: [ 10.0.0 ]
+        versions: [ 12.0.0 ]
+    _openmp_mutex:
+        bd-id: e96f3f9a-dc1b-488a-95d5-853f0b074d1c
+        versions: [ 4.5 ]
     libffi:
         bd-id: 8a5d4e5f-eee6-441d-91cc-85c7bb5e9fb5
         versions: [ 3.3 ]
+    libgomp:
+        bd-id: 6e2c44eb-e153-4b09-9500-f61fda6353ac
+        versions: [ 9.3.0 ]
     # libgcc-ng and libstdcxx-ng are part of libgcc, which is covered
     # elsewhere
     ncurses:
         bd-id: 7273e9b6-fd06-4da3-882b-391c9d4ea758
-        versions: [ 6.2 ]
+        versions: [ 6.3 ]
     # as of July 29, 2021, quotes have to be around 2.20.
     # otherwise, zero at the end is stripped somehow and BD scan will fail.
     pycparser:
         bd-id: d4148456-5d7e-49b5-8ffe-c65d67ee52a6
-        versions: [ "2.20" ]
+        versions: [ "2.21" ]
     pyopenssl:
         bd-id: 69c65bd6-9d4a-427e-8b35-384c0ce8602e
-        versions: [ 20.0.1 ]
+        versions: [ 22.0.0 ]
     pysocks:
         bd-id: 5c2e7e08-0eb3-4d78-a6a7-45a36bad400c
         versions: [ 1.7.1 ]
+    ruamel_yaml:
+        bd-id: 0652a046-f0a9-410e-b876-15f43264d33b
+        versions: [ 0.15.100 ]
     setuptools:
         bd-id: ac1b690f-ce51-4bd2-93c9-78e3f37757de
-        versions: [ 52.0.0 ]
+        versions: [ 58.0.4 ]
     python-six:
         bd-id: 69184346-b974-4064-88a3-134a17f6bbb5
         versions: [ 1.15.0 ]
@@ -71,16 +95,33 @@ components:
         versions: [ 1.1.8 ]
     sqlite:
         bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
-        versions: [ 3.35.4 ]
+        versions: [ 3.38.2 ]
+    tqdm:
+        bd-id: ccb750cb-70f4-450b-979b-bc403c947137
+        versions: [ 4.63.0 ]
+    tzdata:
+        bd-id: 1624d2ea-d07f-4fc3-837a-2391e0dfb299
+        versions: [ 2022a ]
     tk:
-        bd-id: 1986cb95-15ac-47e9-8728-6bea10ce7963
-        versions: [ 8.6.10 ]
+        bd-id: b64ca5f6-9e86-4f1f-932f-c5725affbfa5
+        versions: [ 8.6.11 ]
     urllib3:
         bd-id: d222c710-38b5-4073-8347-63bb6526e77d
-        versions: [ 1.26.6 ]
+        versions: [ 1.26.8 ]
     python-wheel:
         bd-id: 9adf3d8e-5d1a-4a6a-8cd6-407f18ee396d
-        versions: [ 0.36.2 ]
+        versions: [ 0.37.1 ]
+    yaml:
+        bd-id: d9cfee15-5919-48ef-aff9-c39e86096e37
+        versions: [ 0.2.5 ]
+    menuinst:
+        bd-id: ccb3bbab-4a25-4278-bc73-80a460f40c58
+        versions: [ 1.4.18 ]
+    pywin32:
+        bd-id: 06f66c15-3a44-44a3-930b-1cbe2b872dc8
+        versions: [ 302 ]
+    # vc is a metapackage so is not listed
+    # vs2015_runtime is impossible to search for in blackduck KB so is not listed
     xz:
         bd-id: 59191267-61f3-42aa-9247-6b83d8085db5
         versions: [ 5.2.5 ]

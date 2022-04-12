@@ -8,6 +8,8 @@
 # Extra dependencies that are unique to Linux
 dependencies:
   - _libgcc_mutex=0.1
-  - ld_impl_linux-64=2.33.1
-  - libgcc-ng=9.1.0
-  - libstdcxx-ng=9.1.0
+  - _openmp_mutex=4.5
+  - ld_impl_linux-64=2.35.1
+  - libgcc-ng=9.3.0
+  - libgomp=9.3.0
+  - libstdcxx-ng=9.3.0
