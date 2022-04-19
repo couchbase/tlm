@@ -1,0 +1,7 @@
+# UndefinedBehavourSanitizer suppressions file for Couchbase
+# https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html#runtime-suppressions
+
+# MB-49880: "runtime error: member call on address 0x60d000000380 which does not point to an object of type 'v8::Platform'"
+# Suppress this issue while being investigated, as to not cause CV to fail
+# for other jobs.
+vptr:std::default_delete<v8::Platform>::operator()(v8::Platform*)
