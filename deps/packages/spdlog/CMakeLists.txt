@@ -2,7 +2,7 @@ include(ExternalProject)
 
 _DETERMINE_CPU_COUNT(_parallelism)
 
-DECLARE_DEP (fmt VERSION 8.1.1-cb1 PLATFORMS linux macosx windows)
+DECLARE_DEP (fmt VERSION 7.1.3-cb2 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 
 # Given we build spdlog twice on Windows, define the common cmake
 # arguments once.
@@ -13,11 +13,6 @@ list(APPEND cache_args -DSPDLOG_BUILD_EXAMPLE:BOOL=OFF)
 # Use the same (external) fmtlib library as the rest of the server build.
 list(APPEND cache_args -DSPDLOG_FMT_EXTERNAL:BOOL=ON)
 list(APPEND cache_args -DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
-
-# Explicitly set LIBDIR to 'lib' so for single linux builds (CentOS 7)
-# we don't put the libraries under `lib64` which is not a default
-# search path for find_package() when we later consume this cbdep.
-list(APPEND cache_args -DCMAKE_INSTALL_LIBDIR:STRING=lib)
 
 # Spdlog v1.8.5 and older only allows the setting of custom levels via a
 # compile/pre-processor definition. Historically we accomplished this using
@@ -42,16 +37,17 @@ list(APPEND cache_args -DCMAKE_INSTALL_LIBDIR:STRING=lib)
 # been changed already but isn't in a released version). We can then remove the
 # PATCH_COMMAND and our version of tweakme.h.
 
-# Note - it would be nice to be able to build and run spdlog's unit tests
-# (SPDLOG_BUILD_TESTS=ON) to verify the build , however as we change the names
-# of the log levels, a number of tests fail as they expect the default level
-# names.
+# spdlog 1.8.5 has some bugs with it's CMake package scripts - it uses absolute
+# paths for the locations of spdlog.a etc. We therefore apply a second patch
+# (relocatable_export_package.patch) to fix this while we wait for the fix to
+# be upstreamed.
 ExternalProject_Add(spdlog
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
 
         PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/custom_level_names.patch
+              COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/relocatable_export_package.patch
         CMAKE_CACHE_ARGS ${cache_args}
         CMAKE_ARGS -D CMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
 
@@ -69,6 +65,7 @@ if (${PLATFORM} STREQUAL "ubuntu18.04" OR ${PLATFORM} MATCHES "macos")
             INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install/tsan_root
 
             PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/custom_level_names.patch
+                  COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/relocatable_export_package.patch
             CMAKE_CACHE_ARGS ${cache_args}
                 "-DCMAKE_C_COMPILER:STRING=clang"
                 "-DCMAKE_CXX_COMPILER:STRING=clang++"
@@ -87,6 +84,7 @@ if (WIN32)
             GIT_REPOSITORY ${_git_repo}
             GIT_TAG ${_git_rev}
             PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/custom_level_names.patch
+                  COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/relocatable_export_package.patch
             CMAKE_CACHE_ARGS ${cache_args}
             CMAKE_ARGS -D CMAKE_BUILD_TYPE=Debug
 
