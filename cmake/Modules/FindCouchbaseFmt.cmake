@@ -14,5 +14,9 @@
 #   limitations under the License.
 
 # Locate fmt library from cbdeps.
-find_package(fmt REQUIRED CONFIG
-    PATHS ${CMAKE_BINARY_DIR}/tlm/deps/fmt.exploded/)
+set(fmt_ROOT ${CMAKE_BINARY_DIR}/tlm/deps/fmt.exploded)
+
+find_package(fmt REQUIRED)
+if(fmt_FOUND)
+    message(STATUS "Found fmt at: ${fmt_DIR}")
+endif()
