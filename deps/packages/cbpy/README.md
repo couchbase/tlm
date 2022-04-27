@@ -52,7 +52,7 @@ Run `windows.cmd` on a Windows system, redirect/copy the output to
 
 ## MacOS
 
-Run macos.sh when in this directory
+On each targeted architecture, run macos.sh when in this directory
 
 `./macos.sh`
 
@@ -66,7 +66,8 @@ When the containers/scripts have been run on all platforms, you should have:
     package-lists/
         linux-aarch64
         linux-x86_64
-        osx
+        osx-x86_64
+        osx-arm64
         win
 
 At that point, run `create-environment-files.py`. It will error out if

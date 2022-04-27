@@ -19,7 +19,7 @@ set --
 chmod 755 "${CBDEP}"
 
 if [ $(uname -s) = "Darwin" ]; then
-    platform=osx
+    platform=osx-$(uname -m)
 else
     platform=linux-$(uname -m)
 fi
@@ -70,6 +70,21 @@ rm cbpy.tar
 
 # Prune installation
 pushd "${INSTALL_DIR}"
+
+# Ensure lib files are codesigned on Mac so that they can be loaded.
+# Maybe we need to expand this to Mac x86_64.
+# Temporarily add "set +e" to avoid exit due to "codesign --display" error
+set +e
+ if [ ${platform} = "osx-arm64" ]; then
+     for f in $(find . -name '*.dylib' -type f); do
+        codesign --display "$f"
+        if [ $? -ne 0 ]; then
+             codesign --force --deep -s - "$f"
+         fi
+     done
+ fi
+set -e
+
 rm -rf compiler_compat conda-meta include \
     lib/cmake lib/pkgconfig \
     lib/itcl* lib/tcl* lib/tk* \
@@ -79,7 +94,9 @@ rm -rf compiler_compat conda-meta include \
     $(uname -m)-conda*
 cd bin
 rm [0-9a-or-z]* pydoc* py*config
+
 popd
+
 
 # Quick installation test
 "${INSTALL_DIR}/bin/python" "${SRC_DIR}/test_cbpy.py"

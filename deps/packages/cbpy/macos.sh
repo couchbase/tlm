@@ -13,6 +13,7 @@ MINIFORGE_VERSION=4.10.3-5
 script_dir=$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 pkgs="$script_dir/conda-pkgs"
 
+platform=$(uname -m)
 WD=$(mktemp -d)
 pushd $WD
 
@@ -27,5 +28,5 @@ conda install -y conda-build conda-pack conda-verify
 
 conda create -y -n cbpy
 conda activate cbpy
-conda install -y -c "./conda-pkgs" $(grep -e "^[A-Za-z0-9\-]*=" -h ${script_dir}/cb-dependencies.txt ${script_dir}/cb-dependencies-osx.txt 2>/dev/null | tr "\n" ' ') $(grep -e "^[A-Za-z0-9\-]*=" ${script_dir}/cb-stubs.txt | tr "\n" ' ')
-conda list
+conda install -y -c "./conda-pkgs" $(grep -e "^[A-Za-z0-9\-]*=" -h ${script_dir}/cb-dependencies.txt ${script_dir}/cb-dependencies-osx-${platform}.txt 2>/dev/null | tr "\n" ' ') $(grep -e "^[A-Za-z0-9\-]*=" ${script_dir}/cb-stubs.txt | tr "\n" ' ')
+conda list > ${script_dir}/package-lists/osx-${platform}

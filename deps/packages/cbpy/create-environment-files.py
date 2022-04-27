@@ -24,7 +24,7 @@ from shutil import copy
 from string import Template
 from collections import defaultdict
 
-platforms = ["linux-x86_64", "linux-aarch64", "osx", "win"]
+platforms = ["linux-x86_64", "linux-aarch64", "osx-x86_64", "osx-arm64", "win"]
 blackduck_manifest = yaml.safe_load(open("couchbase-server-black-duck-manifest.yaml"))
 bd_ignored = [x.strip() for x in open("blackduck-ignore.txt").readlines() if not x.startswith("#") and x != ""]
 

@@ -3,9 +3,8 @@
 #
 # Packages we explicitly depend on.
 
-python=3.9.7=h1248fe1_3_cpython
-cryptography=3.4.7=py39ha2c9959_0
-ncurses=6.2.20211002
+python=3.9.7=h54d631c_3_cpython
+cryptography=3.4.7=py39h73257c9_0
 msgpack-python=1.0.2
 natsort=7.1.1
 pem=21.2.0
@@ -30,21 +29,22 @@ brotlipy=0.7.0
 ca-certificates=2021.10.8
 certifi=2021.10.8
 cffi=1.15.0
-charset-normalizer=2.0.10
-idna=3.1
-libcxx=12.0.1
+charset-normalizer=2.0.12
+idna=3.3
+libcxx=13.0.1
 libffi=3.4.2
 libzlib=1.2.11
-openssl=1.1.1l
+ncurses=6.3
+openssl=1.1.1n
 pycparser=2.21
 pyopenssl=21.0.0
 pysocks=1.7.1
 python_abi=3.9
 six=1.16.0
 snappy=1.1.8
-sqlite=3.37.0
-tk=8.6.11
-tzdata=2021e
-urllib3=1.26.8
+sqlite=3.37.1
+tk=8.6.12
+tzdata=2022a
+urllib3=1.26.9
 xz=5.2.5
 zlib=1.2.11
