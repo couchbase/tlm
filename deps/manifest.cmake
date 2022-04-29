@@ -47,7 +47,7 @@ DECLARE_DEP (numactl VERSION 2.0.11-cb3 PLATFORMS centos8 debian10 rhel8 ubuntu2
 DECLARE_DEP (openssl V2 VERSION 1.1.1n BUILD 1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (pcre VERSION 8.43-cb1 PLATFORMS amzn2 centos7 centos8 debian9 debian10 rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (pcre VERSION 8.43-cb2 PLATFORMS macosx ubuntu20.04)
-DECLARE_DEP (prometheus V2 VERSION 2.22 BUILD 3 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (prometheus V2 VERSION 2.23 BUILD 3 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (prometheus-cpp VERSION v0.10.0-couchbase-cb2 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 3 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 # We don't want RocksDB to end up in shipped production builds.
