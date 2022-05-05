@@ -138,6 +138,25 @@ MACRO (_DETERMINE_PLATFORM var)
   SET (${var} ${_plat})
 ENDMACRO (_DETERMINE_PLATFORM)
 
+# Returns exactly "linux", "macos", or "windows" depending on local
+# platform. (Or maybe "sunos" or "freebsd".... not tested.)
+MACRO (_DETERMINE_BASIC_PLATFORM var)
+  _DETERMINE_PLATFORMS (_local_platforms)
+  IF ("linux" IN_LIST _local_platforms)
+    SET (${var} "linux")
+  ELSEIF ("windows" IN_LIST _local_platforms)
+    SET (${var} "windows")
+  ELSEIF ("macosx" IN_LIST _local_platforms)
+    # Should fix the macosx/macos inconsistency someday - cbdeps packages
+    # use "macosx" while the resulting installers use "macos". The latter
+    # is more correct.
+    SET (${var} "macos")
+  ELSE ()
+    # Fallback
+    LIST (GET _local_platforms 0 ${var})
+  ENDIF ()
+ENDMACRO (_DETERMINE_BASIC_PLATFORM)
+
 # Returns a simple string describing the current Linux distribution
 # compatibility. Possible return values currently include:
 # ubuntu14.04, ubuntu12.04, ubuntu10.04, centos5, centos6, debian7, debian8.

@@ -295,6 +295,9 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # INSTALL_PATH - if specified, a CMake INSTALL() directive will be
   # created to install the output into the named path
   #
+  # ALT_INSTALL_PATHS - if specified, the executable will be copied
+  # to each listed directory when built (not at install time).
+  #
   # OUTPUT - name of the produced executable. Default value is the basename of
   # PACKAGE, per the go compiler. On Windows, ".exe" will be appended.
   #
@@ -304,7 +307,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   #
   MACRO (GoModBuild)
 
-    PARSE_ARGUMENTS (Go "DEPENDS;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
+    PARSE_ARGUMENTS (Go "DEPENDS;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS;ALT_INSTALL_PATHS"
         "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GOVERSION;GCFLAGS;GOTAGS;GOBUILDMODE;LDFLAGS"
       "NOCONSOLE" ${ARGN})
 
@@ -375,6 +378,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
         -D "LDFLAGS=${_ldflags}"
         -D "PACKAGE=${Go_PACKAGE}"
         -D "OUTPUT=${_exe}"
+        -D "ALT_INSTALL_PATHS=${Go_ALT_INSTALL_PATHS}"
         -D "CGO_INCLUDE_DIRS=${Go_CGO_INCLUDE_DIRS}"
         -D "CGO_LIBRARY_DIRS=${Go_CGO_LIBRARY_DIRS}"
         -D "CB_GO_CODE_COVERAGE=${CB_GO_CODE_COVERAGE}"
