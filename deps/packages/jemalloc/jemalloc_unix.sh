@@ -16,7 +16,8 @@ configure_args="--prefix=${INSTALL_DIR} \
    --with-jemalloc-prefix=je_ \
    --disable-cache-oblivious \
    --disable-zone-allocator \
-   --disable-initial-exec-tls"
+   --disable-initial-exec-tls \
+   --disable-cxx"
 
 # Profiling only supported on non-Darwin.
 if [ $(uname -s) != "Darwin" ]; then

@@ -3,7 +3,7 @@ set PATH=%PATH%;c:\cygwin\bin
 
 set INSTALL_DIR=%1
 
-set configure_args=--prefix=%INSTALL_DIR% --with-jemalloc-prefix=je_ --disable-cache-oblivious --disable-zone-allocator --enable-prof
+set configure_args=--prefix=%INSTALL_DIR% --with-jemalloc-prefix=je_ --disable-cache-oblivious --disable-zone-allocator --enable-prof --disable-cxx
 sh -c "./autogen.sh CC=cl %configure_args%" || exit /b
 rem Set up install directory paths
 sh -c "mkdir -p %INSTALL_DIR% && mkdir -p %INSTALL_DIR%/bin && mkdir -p %INSTALL_DIR%/lib && mkdir -p %INSTALL_DIR%/include" || exit /b
