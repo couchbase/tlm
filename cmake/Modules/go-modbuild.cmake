@@ -117,6 +117,14 @@ EXECUTE_PROCESS (
     -o "${OUTPUT}"
     "${PACKAGE}")
 
+# If necessary, copy to alternate tools-install location.
+FOREACH (_altinstallpath ${ALT_INSTALL_PATHS})
+  FILE (
+    INSTALL "${OUTPUT}"
+    DESTINATION "${_altinstallpath}"
+    USE_SOURCE_PERMISSIONS)
+ENDFOREACH ()
+
 # For go versions 1.13 or lower, here's a work-around for the read-only
 # cache issue. Note we suppress and ignore any errors; this is just a
 # convenience, so if it fails we don't want to fail the build.

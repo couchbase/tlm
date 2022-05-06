@@ -105,6 +105,10 @@ clean-xfd-hard: clean-xfd
 
 clean-all: clean-xfd-hard
 
+tools-package: build/Makefile
+	(cd build && make tools-package)
+
+
 # "Convenience" target for forcing CMake to recompute PRODUCT_VERSION.
 # Only useful if PRODUCT_VERSION was previously explicitly specified with
 # -D on the CMake command line, or if you're re-syncing your manifest from
