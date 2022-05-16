@@ -46,7 +46,7 @@ components:
         versions: [ 3.3 ]
     openssl:
         bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
-        versions: [ 1.1.1n ]
+        versions: [ 1.1.1o ]
     pycosat:
         bd-id: 8b01f11a-0cf8-4cfc-a8e8-45dd1e4cf481
         versions: [ 0.6.3 ]
