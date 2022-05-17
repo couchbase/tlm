@@ -12,7 +12,7 @@ gmp                       6.2.1.9                       0    file:///c:/Temp/cbp
 idna                      3.3                pyhd8ed1ab_0    conda-forge
 msgpack-python            1.0.2            py39h2e07f2f_2    conda-forge
 natsort                   7.1.1              pyhd8ed1ab_0    conda-forge
-openssl                   1.1.1n               h8ffe710_0    conda-forge
+openssl                   1.1.1o               h8ffe710_0    conda-forge
 pem                       21.2.0                        0    file:///c:/Temp/cbpy/conda-pkgs
 pip                       21.0.1.9                      0    file:///c:/Temp/cbpy/conda-pkgs
 pycparser                 2.21               pyhd8ed1ab_0    conda-forge

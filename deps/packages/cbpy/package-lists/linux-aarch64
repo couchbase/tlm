@@ -20,7 +20,7 @@ libzlib                   1.2.11            h4e544f5_1014    conda-forge
 msgpack-python            1.0.2            py39hb300cb6_2    conda-forge
 natsort                   7.1.1              pyhd8ed1ab_0    conda-forge
 ncurses                   6.3                  headf329_1    conda-forge
-openssl                   1.1.1n               h4e544f5_0    conda-forge
+openssl                   1.1.1o               h4e544f5_0    conda-forge
 pem                       21.2.0                        0    file:///app/conda-pkgs
 pip                       21.0.1.9                      0    file:///app/conda-pkgs
 pycparser                 2.21               pyhd8ed1ab_0    conda-forge

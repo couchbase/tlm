@@ -16,7 +16,7 @@ libzlib                   1.2.11            h6c3fc93_1014    conda-forge
 msgpack-python            1.0.2            py39hf018cea_2    conda-forge
 natsort                   7.1.1              pyhd8ed1ab_0    conda-forge
 ncurses                   6.3                  h96cf925_1    conda-forge
-openssl                   1.1.1n               h6c3fc93_0    conda-forge
+openssl                   1.1.1o               hfe4f2af_0    conda-forge
 pem                       21.2.0                        0    file:///private/var/folders/r2/z9xhpj315zxg3w2978s001lw0000gp/T/tmp.hdQn3SdK/conda-pkgs
 pip                       21.0.1.9                      0    file:///private/var/folders/r2/z9xhpj315zxg3w2978s001lw0000gp/T/tmp.hdQn3SdK/conda-pkgs
 pycparser                 2.21               pyhd8ed1ab_0    conda-forge
