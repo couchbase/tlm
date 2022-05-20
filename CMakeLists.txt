@@ -42,9 +42,9 @@ SET(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
 
 #
 # Choose deployment target on macOS.
-# As of Cheshire-Cat, minimum supported is Mojave (10.14).
+# As of Neo, minimum supported is Catalina (10.15).
 #
-SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.14" CACHE STRING
+SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING
     "Minimum supported version of MacOS X")
 
 PROJECT("Couchbase")
