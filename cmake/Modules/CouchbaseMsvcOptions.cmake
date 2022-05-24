@@ -30,9 +30,6 @@ if (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 19.10)
         list(APPEND _cb_cxx_flags "/external:I ${dir}")
     endforeach (dir ${CB_SYSTEM_HEADER_DIRS})
     set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "/external:I ")
-
-    # forestdb hash needs this in MSVC 2017 (should be fixed there eventually)
-    list(APPEND _cb_cxx_flags "/Zc:offsetof-")
 endif()
 
 # Don't include most of Windows.h - speeds up build by avoiding preprocessing
