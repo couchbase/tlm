@@ -10,7 +10,7 @@ rem Install and activate Miniconda3
 call .\miniconda3-%MINICONDA_VERSION%\Scripts\activate || goto error
 
 rem Install conda-build and constructor
-call conda install -y conda-build=3.21.8 constructor=3.2.1 || goto error
+call conda install -y conda-build=3.21.8 constructor=3.2.1 nsis=3.01=8 || goto error
 
 rem Build our local stub packages
 call conda build --output-folder .\conda-pkgs %SRC_DIR%\conda-pkgs\* || goto error
