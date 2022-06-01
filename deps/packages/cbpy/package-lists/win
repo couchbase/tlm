@@ -2,8 +2,8 @@
 #
 # Name                    Version                   Build  Channel
 brotlipy                  0.7.0           py39hb82d6ee_1004    conda-forge
-ca-certificates           2021.10.8            h5b45459_0    conda-forge
-certifi                   2021.10.8        py39hcbf5309_2    conda-forge
+ca-certificates           2022.5.18.1          h5b45459_0    conda-forge
+certifi                   2022.5.18.1      py39hcbf5309_0    conda-forge
 cffi                      1.15.0           py39h0878f49_0    conda-forge
 chardet                   4.0.0.9                       0    file:///c:/Temp/cbpy/conda-pkgs
 charset-normalizer        2.0.12             pyhd8ed1ab_0    conda-forge
@@ -26,8 +26,8 @@ readline                  8.1.9                         0    file:///c:/Temp/cbp
 requests                  2.26.0             pyhd8ed1ab_1    conda-forge
 requests-toolbelt         0.9.1                      py_0    conda-forge
 six                       1.16.0             pyh6c4a22f_0    conda-forge
-snappy                    1.1.8                ha925a31_3    conda-forge
-sqlite                    3.37.1               h8ffe710_0    conda-forge
+snappy                    1.1.9                h82413e6_1    conda-forge
+sqlite                    3.38.5               h8ffe710_0    conda-forge
 tzdata                    2022a                h191b570_0    conda-forge
 ucrt                      10.0.20348.0         h57928b3_0    conda-forge
 urllib3                   1.26.9             pyhd8ed1ab_0    conda-forge

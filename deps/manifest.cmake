@@ -19,7 +19,7 @@
 DECLARE_DEP (benchmark VERSION v1.6.0-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (breakpad V2 VERSION 20200430 BUILD 1 PLATFORMS amzn2 centos7 debian9 debian10 suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (boost VERSION 1.74.0-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
-DECLARE_DEP (cbpy VERSION 7.1.0-cb10 PLATFORMS linux macosx windows DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python/interp")
+DECLARE_DEP (cbpy VERSION 7.1.0-cb11 PLATFORMS linux macosx windows DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python/interp")
 DECLARE_DEP (curl V2 VERSION 7.78.0 BUILD 7 PLATFORMS linux macosx windows)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (erlang V2 VERSION neo BUILD 7 PLATFORMS linux macosx windows)
@@ -60,7 +60,7 @@ DECLARE_DEP (snappy VERSION 1.1.8-cb4 PLATFORMS linux macosx windows_msvc2017)
 DECLARE_DEP (spdlog VERSION v1.8.5-cb3 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (v8 VERSION 8.3-cb4 PLATFORMS centos7 debian9 debian10 suse12 suse15 ubuntu18.04 ubuntu20.04)
 DECLARE_DEP (v8 VERSION 8.3-cb5 PLATFORMS amzn2 macosx windows_msvc2017)
-DECLARE_DEP (zlib V2 VERSION 1.2.11 BUILD 8 PLATFORMS linux macosx windows_msvc2017)
+DECLARE_DEP (zlib V2 VERSION 1.2.12 BUILD 1 PLATFORMS linux macosx windows_msvc2017)
 DECLARE_DEP (zstd-cpp V2 VERSION 1.5.0 BUILD 2 PLATFORMS linux macosx windows)
 
 #

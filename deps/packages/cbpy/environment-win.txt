@@ -26,8 +26,8 @@ readline=8.1.9
 # version in cbdeps.
 
 brotlipy=0.7.0
-ca-certificates=2021.10.8
-certifi=2021.10.8
+ca-certificates=2022.5.18.1
+certifi=2022.5.18.1
 cffi=1.15.0
 charset-normalizer=2.0.12
 idna=3.3
@@ -37,8 +37,8 @@ pyopenssl=21.0.0
 pysocks=1.7.1
 python_abi=3.9
 six=1.16.0
-snappy=1.1.8
-sqlite=3.37.1
+snappy=1.1.9
+sqlite=3.38.5
 tzdata=2022a
 ucrt=10.0.20348.0
 urllib3=1.26.9

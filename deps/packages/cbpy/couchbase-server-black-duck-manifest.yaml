@@ -18,10 +18,10 @@ components:
         versions: [ v0.7.0 ]
     ca-certificates:
         bd-id: 530bae3a-a2ad-4bd6-810d-854fe6b57b9b
-        versions: [ 2021.10.8 ]
+        versions: [ 2022.5.18.1 ]
     certifi:
         bd-id: f1890115-04dd-4eaf-8ff0-5e2643582990
-        versions: [ 2021.10.8 ]
+        versions: [ 2022.5.18.1 ]
     cffi:
         bd-id: 043e4252-a86b-4281-a1a3-a762fe0470de
         versions: [ 1.15.0 ]
@@ -36,16 +36,16 @@ components:
         versions: [ 3.3 ]
     libcxx:
         bd-id: 587d3e15-ea76-449b-94b1-ef12538584e4
-        versions: [ 13.0.1 ]
+        versions: [ 14.0.4 ]
     libffi:
         bd-id: 8a5d4e5f-eee6-441d-91cc-85c7bb5e9fb5
         versions: [ 3.4.2 ]
     libgcc-ng:
         bd-id: 7fc4e9e4-a755-42d4-b0e3-ae2f2cc90728
-        versions: [ 11.2.0 ]
+        versions: [ 12.1.0 ]
     libgomp:
         bd-id: 6e2c44eb-e153-4b09-9500-f61fda6353ac
-        versions: [ 11.2.0 ]
+        versions: [ 12.1.0 ]
     msgpack-python:
         bd-id: d265c559-74ea-4baa-a993-2089ca47efde
         versions: [ 1.0.2 ]
@@ -92,10 +92,10 @@ components:
         versions: [ 1.16.0 ]
     snappy:
         bd-id: fd5e5c60-2c67-4d20-8be9-b7648156cef3
-        versions: [ 1.1.8 ]
+        versions: [ 1.1.9 ]
     sqlite:
         bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
-        versions: [ "3.37.1" ]
+        versions: [ "3.38.5" ]
     tk:
         bd-id: b64ca5f6-9e86-4f1f-932f-c5725affbfa5
         versions: [ 8.6.12 ]
@@ -113,4 +113,4 @@ components:
         versions: [ 5.2.5 ]
     zlib:
         bd-id: b9185555-6e31-401e-b373-bfec7955a8ab
-        versions: [ 1.2.11 ]
+        versions: [ 1.2.12 ]
