@@ -58,6 +58,9 @@ components:
     libevent:
         bd-id: 3164e153-3508-415c-af53-443dea356811
         versions: [ 2.1.11 ]
+    libsodium:
+        bd-id: ba5415c0-56f8-4f08-9659-32daef232284
+        versions: [ 1.0.18 ]
     liburing:
         bd-id: b37c3c42-04f2-4ac7-b52c-dc98252e0875
         versions: [ 0.6 ]
