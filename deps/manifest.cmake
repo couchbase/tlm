@@ -38,7 +38,7 @@ DECLARE_DEP (grpc VERSION 1.28.1-cb2 PLATFORMS amzn2 centos7 debian9 debian10 ma
 DECLARE_DEP (jemalloc VERSION 5.3.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (json VERSION 3.9.0-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (libevent VERSION 2.1.11-cb7 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
-DECLARE_DEP (libsodium V2 VERSION 1.0.18 BUILD 2 PLATFORMS linux macosx windows)
+DECLARE_DEP (libsodium V2 VERSION 1.0.18 BUILD 3 PLATFORMS linux macosx windows)
 DECLARE_DEP (liburing V2 VERSION 0.6 BUILD 2 PLATFORMS amzn2 centos7 debian9 debian10 suse12 suse15 ubuntu18.04 ubuntu20.04)
 DECLARE_DEP (libuv V2 VERSION 1.20.3 BUILD 17 PLATFORMS windows_msvc2017)
 DECLARE_DEP (libuv V2 VERSION 1.20.3 BUILD 22 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04)
