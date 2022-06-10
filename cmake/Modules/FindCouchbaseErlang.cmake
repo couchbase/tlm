@@ -126,9 +126,18 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
       SET (Rebar_COMMAND "compile")
     ENDIF (NOT Rebar_COMMAND)
 
+    get_filename_component(LIBSODIUM_LIB_DIR "${LIBSODIUM_LIBRARIES}" PATH)
+
+    IF (APPLE)
+        SET (_sysroot_arg "OSX_SYSROOT=${CMAKE_OSX_SYSROOT}")
+    ENDIF ()
+
     ADD_CUSTOM_TARGET (${Rebar_TARGET} ${_all}
       "${CMAKE_COMMAND}" -E env
       CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
+      ${_sysroot_arg}
+      LIBSODIUM_INCLUDE_DIR=${LIBSODIUM_INCLUDE_DIR}
+      LIBSODIUM_LIB_DIR=${LIBSODIUM_LIB_DIR}
       "${ESCRIPT_EXECUTABLE}" "${rebar_script}" ${Rebar_REBAR_OPTS}
       ${Rebar_COMMAND}
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
