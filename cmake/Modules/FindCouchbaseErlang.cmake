@@ -130,14 +130,25 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
 
     IF (APPLE)
         SET (_sysroot_arg "OSX_SYSROOT=${CMAKE_OSX_SYSROOT}")
-    ENDIF ()
+    ENDIF (APPLE)
+
+    # This is a hach to work around the problem with rebar CC invocation
+    # when CC path contains a space
+    IF (WIN32)
+        SET (REBAR_CC cl.exe)
+        SET (REBAR_CXX cl.exe)
+    ELSE (WIN32)
+        SET (REBAR_CC "${CMAKE_C_COMPILER}")
+        SET (REBAR_CXX "${CMAKE_CXX_COMPILER}")
+    ENDIF(WIN32)
 
     ADD_CUSTOM_TARGET (${Rebar_TARGET} ${_all}
       "${CMAKE_COMMAND}" -E env
-      CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
+      CC=${REBAR_CC} CXX=${REBAR_CXX}
       ${_sysroot_arg}
       LIBSODIUM_INCLUDE_DIR=${LIBSODIUM_INCLUDE_DIR}
       LIBSODIUM_LIB_DIR=${LIBSODIUM_LIB_DIR}
+      LIBSODIUM_LIBRARIES=${LIBSODIUM_LIBRARIES}
       "${ESCRIPT_EXECUTABLE}" "${rebar_script}" ${Rebar_REBAR_OPTS}
       ${Rebar_COMMAND}
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
@@ -146,7 +157,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
       SET(_eunit_target "${Rebar_TARGET}-eunit")
       ADD_CUSTOM_TARGET ("${_eunit_target}"
         "${CMAKE_COMMAND}" -E env
-        CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
+        CC=${REBAR_CC} CXX=${REBAR_CXX}
         "${ESCRIPT_EXECUTABLE}" "${rebar_script}"
         compile_only=true ${Rebar_EUNIT_OPTS} eunit
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
@@ -170,7 +181,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
     IF (NOT Rebar_NOCLEAN)
       ADD_CUSTOM_TARGET ("${Rebar_TARGET}-clean"
         "${CMAKE_COMMAND}" -E env
-        CC=${CMAKE_C_COMPILER} CXX=${CMAKE_CXX_COMPILER}
+        CC=${REBAR_CC} CXX=${REBAR_CXX}
         "${ESCRIPT_EXECUTABLE}" "${rebar_script}" clean
         COMMAND "${CMAKE_COMMAND}" -E remove_directory ebin
         COMMAND "${CMAKE_COMMAND}" -E remove_directory .eunit
