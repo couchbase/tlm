@@ -95,8 +95,8 @@ set(folly_dependancies ${DOUBLE_CONVERSION_LIBRARIES}
             Boost::system
             Boost::thread
             fmt::fmt
-            ${LIBEVENT_LIBRARIES}
-            ${OPENSSL_LIBRARIES})
+            OpenSSL::SSL
+            ${LIBEVENT_LIBRARIES})
 if (APPLE)
     # on macOS we require c++abi for ___cxa_increment_exception_refcount
     # as used by lang/Exception.cpp

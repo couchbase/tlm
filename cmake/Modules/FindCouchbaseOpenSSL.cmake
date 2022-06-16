@@ -15,56 +15,38 @@
 
 # Locate OpenSSL library
 #
-# For Windows and MacOSX we bundle our own version, but for the
-# other platforms we should search for a system-wide installed
-# version.
+# This module defines the same outputs as CMake's FindOpenSSL.cmake
+#  (https://cmake.org/cmake/help/latest/module/FindOpenSSL.html), primarily:
 #
-# This module defines
+# The import targets:
+#
+#  OpenSSL::SSL - The OpenSSL ssl library, if found.
+#  OpenSSL::Crypto - The OpenSSL crypto library, if found.
+#
+# The variables:
+#
 #  OPENSSL_FOUND, Set when OpenSSL is detected
-#  OPENSSL_LIBRARIES, Library path and libs
+#  OPENSSL_LIBRARIES, All OpenSSL libraries and their dependancies.
 #  OPENSSL_INCLUDE_DIR, where to find the OpenSSL headers
 
-if (NOT DEFINED OPENSSL_FOUND)
-    include(PlatformIntrospection)
-    cb_get_supported_platform(_is_supported_platform)
-    if (_is_supported_platform)
-        # Supported platforms should only use the provided hints and pick it up
-        # from cbdeps
-        set(_openssl_no_default_path NO_DEFAULT_PATH)
-    endif ()
+include(PlatformIntrospection)
+cb_get_supported_platform(_is_supported_platform)
+if (_is_supported_platform)
+    # Supported platforms should only use the provided hints and pick it up
+    # from cbdeps
+    set(OPENSSL_ROOT_DIR ${CMAKE_BINARY_DIR}/tlm/deps/openssl.exploded)
 
-    set(_openssl_exploded ${CMAKE_BINARY_DIR}/tlm/deps/openssl.exploded)
-    set(_openssl_libraries "ssl;libssl;crypto;libcrypto")
+    set(original_CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH ${CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH})
+    set(original_CMAKE_FIND_USE_CMAKE_SYSTEM_PATH ${CMAKE_FIND_USE_CMAKE_SYSTEM_PATH})
 
-    find_path(OPENSSL_INCLUDE_DIR openssl/ssl.h
-              HINTS ${_openssl_exploded}
-              PATH_SUFFIXES include
-              NO_CMAKE_PATH
-              NO_CMAKE_ENVIRONMENT_PATH
-              ${_openssl_no_default_path})
+    set(CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH FALSE)
+    set(CMAKE_FIND_USE_CMAKE_SYSTEM_PATH FALSE)
+endif ()
 
-    string(STRIP ${OPENSSL_INCLUDE_DIR} OPENSSL_INCLUDE_DIR)
-    if (NOT OPENSSL_LIBRARIES)
-        foreach (_mylib ${_openssl_libraries})
-            unset(_the_lib CACHE)
-            find_library(_the_lib
-                         NAMES ${_mylib}
-                         HINTS ${CMAKE_INSTALL_PREFIX}/lib
-                         ${_openssl_no_default_path})
-            if (_the_lib)
-                list(APPEND _openssl_libs_found ${_the_lib})
-            endif (_the_lib)
-        endforeach (_mylib)
-        set(OPENSSL_LIBRARIES ${_openssl_libs_found} CACHE STRING "OpenSSL Libraries" FORCE)
-    endif (NOT OPENSSL_LIBRARIES)
+find_package(OpenSSL REQUIRED COMPONENTS Crypto SSL)
 
-    if (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
-        message(STATUS "Found OpenSSL headers in: ${OPENSSL_INCLUDE_DIR}")
-        message(STATUS "               libraries: ${OPENSSL_LIBRARIES}")
-    else (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
-        message(FATAL_ERROR "Can't build Couchbase without openssl")
-    endif (OPENSSL_LIBRARIES AND OPENSSL_INCLUDE_DIR)
+if (_is_supported_platform)
+   set(CMAKE_FIND_USE_CMAKE_SYSTEM_PATH ${original_CMAKE_FIND_USE_CMAKE_SYSTEM_PATH})
+   set(CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH ${original_CMAKE_FIND_USE_SYSTEM_ENVIRONMENT_PATH})
+endif ()
 
-    set(OPENSSL_FOUND true CACHE BOOL "Found OpenSSL" FORCE)
-    mark_as_advanced(OPENSSL_FOUND OPENSSL_INCLUDE_DIR OPENSSL_LIBRARIES)
-endif (NOT DEFINED OPENSSL_FOUND)
