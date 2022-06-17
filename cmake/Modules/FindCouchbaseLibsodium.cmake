@@ -50,12 +50,13 @@ if (NOT DEFINED LIBSODIUM_FOUND)
 
     set(LIBSODIUM_FOUND true CACHE BOOL "Found libsodium" FORCE)
     mark_as_advanced(LIBSODIUM_FOUND LIBSODIUM_INCLUDE_DIR LIBSODIUM_LIBRARIES)
+endif (NOT DEFINED LIBSODIUM_FOUND)
 
+if (NOT TARGET libsodium::libsodium)
     add_library(libsodium::libsodium STATIC IMPORTED)
     set_target_properties(libsodium::libsodium
             PROPERTIES
             IMPORTED_LOCATION ${LIBSODIUM_LIBRARIES})
     target_include_directories(libsodium::libsodium
             INTERFACE ${LIBSODIUM_INCLUDE_DIR})
-
-endif (NOT DEFINED LIBSODIUM_FOUND)
+endif ()
