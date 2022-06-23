@@ -17,6 +17,8 @@ MAKETYPE=NMake Makefiles
 RM=rmdir
 # Options passed to the command to nuke directories
 RMOPTS=/Q /S
+# Default CMake options needed for this platform
+PLATFORM_CMAKE_OPTIONS=
 # Other options you would like to pass to cmake
 EXTRA_CMAKE_OPTIONS=
 # Command used to remove read only flag for files
@@ -28,7 +30,7 @@ SEPARATOR=\\
 
 CMAKE=cmake
 
-CMAKE_ARGS=-G "$(MAKETYPE)" $(EXTRA_CMAKE_OPTIONS)
+CMAKE_ARGS=-G "$(MAKETYPE)" $(PLATFORM_CMAKE_OPTIONS) $(EXTRA_CMAKE_OPTIONS)
 
 
 all: CMakeLists.txt Makefile GNUmakefile build/Makefile compile
