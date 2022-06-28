@@ -1,12 +1,11 @@
-This directory contains build steps to create "cbpy-installer", which is an
-Anaconda-based installer for a customized Python 3 distribution. This
-distribution will be installed on customer machines, and that installation
-will be used for all Python 3 scripts that we ship.
+Due to Anaconda's increased enforcement of access to their repositories,
+we are switching Couchbase Server 6.6.x to use the cbdeps version of
+cbpy that is pre-built, which makes our build simpler and faster. It
+also has more updated third-party components which have fewer security
+vulnerabilities.
 
-Therefore, if you write any Python 3 scripts that require a new third-party
-Python library, we must add it here to ensure that it is available in
-production.
-
-The generated installer will also be installed locally in
-$BUILD_DIR/tlm/python/cbpy, for use by local scripts such as those created
-by PyWrapper() (defined in PyWrapperFunctions.cmake).
+As of now the cbdeps package itself does not contain a Black Duck
+manifest, so we have to manually copy it from the cheshire-cat branch of
+tlm. Whenever we update the cbpy package used in 6.6.x, we must remember
+to copy the corresponding couchbase-server-black-duck-manifest.yaml into
+this directory so it will be picked up by our scans.
