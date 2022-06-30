@@ -25,7 +25,7 @@ DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS amzn2 centos7 debian9
 DECLARE_DEP (erlang V2 VERSION neo BUILD 6 PLATFORMS linux macosx windows)
 DECLARE_DEP (flatbuffers VERSION 1.10.0-cb5 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (fmt VERSION 8.1.1-cb2 PLATFORMS linux macosx windows)
-DECLARE_DEP (folly VERSION v2022.05.23.00-couchbase-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows)
+DECLARE_DEP (folly VERSION v2022.05.23.00-couchbase-cb2 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (googletest VERSION 1.11.0-cb4 PLATFORMS linux macosx windows_msvc2017)
 DECLARE_DEP (grpc VERSION 1.28.1-cb1 PLATFORMS windows_msvc2017)
