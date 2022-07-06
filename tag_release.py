@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Copyright 2015-Present Couchbase, Inc.
@@ -30,8 +30,8 @@ import sys
 import xml.etree.ElementTree
 
 if len(sys.argv) < 3:
-    print >> sys.stderr, "Usage: {} <release> <projects...>".format(
-        sys.argv[0])
+    print("Usage: {} <release> <projects...>".format(
+        sys.argv[0]), file=sys.stderr)
     exit(1)
 
 release = sys.argv[1]
@@ -44,11 +44,11 @@ for subdir in manifest_subdirs:
         break
 
 if not manifest_path:
-    print >> sys.stderr, "Unable to locate manifest '" + release + ".xml' - searched in:"
+    print("Unable to locate manifest '" + release + ".xml' - searched in:", file=sys.stderr)
     for subdir in manifest_subdirs:
-        print >> sys.stderr, "\t" + subdir
-    print >> sys.stderr, "Check specified release and current working " \
-        "directory (should be run from top-level of repo checkout)."
+        print("\t" + subdir, file=sys.stderr)
+    print("Check specified release and current working " \
+        "directory (should be run from top-level of repo checkout).", file=sys.stderr)
     exit(2)
 
 projects_to_tag = sys.argv[2:]
@@ -58,8 +58,8 @@ for p in e.findall('project'):
     if p.attrib['name'] in projects_to_tag:
         name = p.attrib['name']
         sha = p.attrib['revision']
-        print "pushd " + name
-        print """git tag -a -m "{0} release ({1})" v{0} {2}""".format(
-            release, name, sha)
-        print "git push review v{0}".format(release)
-        print "popd"
+        print("pushd " + name)
+        print("""git tag -a -m "{0} release ({1})" v{0} {2}""".format(
+            release, name, sha))
+        print("git push review v{0}".format(release))
+        print("popd")
