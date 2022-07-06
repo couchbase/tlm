@@ -157,8 +157,6 @@ mark_as_advanced(
         CMAKE_EXE_LINKER_FLAGS_DEBUGOPTIMIZED
         CMAKE_SHARED_LINKER_FLAGS_DEBUGOPTIMIZED )
 
-set_property(GLOBAL PROPERTY DEBUG_CONFIGURATIONS "Debug;DebugOptimized")
-
 # Override the normal compile options for a directory and build with
 # CB_CXX_FLAGS_OPTIMIZE_FOR_DEBUG if the build type isn't Debug.
 function(add_compile_options_disable_optimization)
