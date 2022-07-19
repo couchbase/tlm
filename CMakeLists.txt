@@ -503,21 +503,21 @@ STRING (CONCAT _archive_base
   "-${_platform}"
   "_${CB_DOWNLOAD_DEPS_ARCH}"
 )
-IF (WIN32)
+IF (WIN32 OR APPLE)
   ADD_CUSTOM_TARGET (tools-package
     COMMAND "${CMAKE_COMMAND}" -E
-      tar cf "${_archive_base}.zip" --format=zip bin
+      tar cf "${_archive_base}.zip" --format=zip "."
     WORKING_DIRECTORY "${TOOLS_INSTALL_PREFIX}"
     COMMENT "Creating Standalone Tools package at ${_archive_base}.zip"
   )
-ELSE (WIN32)
+ELSE (WIN32 OR APPLE)
   ADD_CUSTOM_TARGET (tools-package
     COMMAND "${CMAKE_COMMAND}" -E
       tar czf "${_archive_base}.tar.gz" "*"
     WORKING_DIRECTORY "${TOOLS_INSTALL_PREFIX}"
     COMMENT "Creating Standalone Tools package at ${_archive_base}.tar.gz"
   )
-ENDIF (WIN32)
+ENDIF (WIN32 OR APPLE)
 
 # End of top-level CMakeLists.txt - now all targets have been defined,
 # introspect them and define 'everything' and <project>_everything targets.
