@@ -206,6 +206,17 @@ cd build
 cmake -G Ninja -D CB_PARALLEL_LINK_JOBS=4 -D CMAKE_BUILD_TYPE=Debug ..
 ```
 
+Apple Silicon:
+
+Currently, we do not support native compilation to Apple Silicon ARMv8.5 64bit
+(Wo __do__ support ARMv8 for Linux). So to build Couchbase  Server locally on an
+Apple Silicon machine you will need to compile for x86-64. Compiling for x86-64
+is automatically handled for you if you use the basic build  with `make`, but
+when building with `Ninja`, you need to explicitly specify the following
+additional options.
+
+    cmake -G "Ninja" -D CMAKE_APPLE_SILICON_PROCESSOR=x86_64 -D CMAKE_OSX_ARCHITECTURES=x86_64 ..
+
 Then use `ninja` instead of your normal command - for example to build and
 install everything run (from `build/` dir):
 ```commandline
