@@ -161,10 +161,12 @@ Couchbase Server. You likely will not be interested in anything beyond this
 point unless you work for Couchbase and have specific development issues to
 work on.
 
-### "Best" Developer build
+### "Best" Developer experience
 
 If you're building Couchbase Server more than just a one-off, there are
-a few modifications you can make to speed up your compile-edit-debug cycle.
+a few modifications you can make to make your life easier and speed up
+your compile-edit-debug cycle.
+
 The most significant two are:
 
 1. Use Ninja as the CMake generator - [Ninja](https://ninja-build.org) is
@@ -183,6 +185,29 @@ default generator (GNU Make) are:
    and also improves debuggability over the default _RelWithDebInfo_ build
    type. Note it does produce slower code, so this isn't suitable if you're
    doing any performance measuremnts.
+
+Another tip would be to put the following in your `~/.profile` file:
+
+```commandline
+which ninja > /dev/zero
+if [ $? -eq 0 ]
+then
+  export CMAKE_GENERATOR=Ninja
+  export CB_PARALLEL_LINK_JOBS=4
+fi
+```
+
+And cmake would use Ninja by default if it is available on your system so
+that you no longer need to pass `-G Ninja` and `-D CB_PARALLEL_LINK_JOBS=4`
+every time you want to run cmake.
+
+If you happen to use the "hack" with `CB_DOWNLOAD_DEPS_PATFORM` mentioned
+above (for instance trying to build on Ubuntu 22.04) you could put the
+following in your `~/.profile` to avoid having to specify it every time:
+
+```commandline
+export CB_DOWNLOAD_DEPS_PLATFORM="ubuntu22.04;linux"
+```
 
 #### Prerequisites
 
