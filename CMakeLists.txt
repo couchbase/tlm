@@ -214,7 +214,7 @@ ENDIF ($ENV{CB_TOOLS_ONLY})
 # count but relatively low RAM, to avoid linker getting OOM-killed (particulary
 # for Debug / Sanitizer build which seem to have much higher RAM usage).
 # Only works with the Ninja generator.
-SET(CB_PARALLEL_LINK_JOBS "" CACHE STRING "Define the maximum number of concurrent link jobs.")
+SET(CB_PARALLEL_LINK_JOBS "$ENV{CB_PARALLEL_LINK_JOBS}" CACHE STRING "Define the maximum number of concurrent link jobs.")
 IF(CB_PARALLEL_LINK_JOBS)
   SET_PROPERTY(GLOBAL APPEND PROPERTY JOB_POOLS link_job_pool=${CB_PARALLEL_LINK_JOBS})
   SET(CMAKE_JOB_POOL_LINK link_job_pool)
