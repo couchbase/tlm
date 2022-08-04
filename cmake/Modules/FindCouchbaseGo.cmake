@@ -13,12 +13,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   ###################################################################
   # THINGS YOU MAY NEED TO UPDATE OVER TIME
 
-  # Here are the currently-used versions of Golang, per major version.
-  # Update these as security vulnerabilities need to be corrected.
-  # Delete them when we no longer wish to support a given Go version.
-  SET (CB_GO_1_17_VERSION 1.17.12)
-  SET (CB_GO_1_18_VERSION 1.18.4)
-
   # On MacOS, we frequently need to enforce a newer version of Go.
   SET (GO_MAC_MINIMUM_VERSION 1.17)
 
@@ -78,9 +72,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF ()
 
     # Map X.Y version to specific version for download for all shipped binaries
-    STRING (REPLACE "." "_" _major_underscore "${_major_version}")
-    SET (_ver_final "${CB_GO_${_major_underscore}_VERSION}")
-    IF (NOT _ver_final)
+    SET (GOVER_FILE
+      "${CMAKE_SOURCE_DIR}/golang/versions/${_major_version}.txt"
+    )
+    IF (NOT EXISTS "${GOVER_FILE}")
       IF (${UNSHIPPED})
         # Just revert to the originally-requested version
         MESSAGE (STATUS "Go version ${VERSION} is not supported, but using "
@@ -89,6 +84,8 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       ELSE ()
         MESSAGE (FATAL_ERROR "Go version ${_request_version} no longer supported - please upgrade!")
       ENDIF ()
+    ELSE ()
+      FILE (STRINGS "${GOVER_FILE}" _ver_final LIMIT_COUNT 1)
     ENDIF ()
 
     GET_GO_VERSION ("${_ver_final}" ${var})
@@ -100,6 +97,9 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # No compiler yet
   SET (GO_SINGLE_EXECUTABLE)
   SET (GO_SINGLE_ROOT)
+
+  # Master target for "all go binaries"
+  ADD_CUSTOM_TARGET(all-go)
 
   # Set up clean targets. Note: the hardcoded godeps and goproj is kind of
   # a hack; it should build that up from the GOPATHs passed to GoInstall.
@@ -275,6 +275,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     IF (Go_DEPENDS)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
     ENDIF (Go_DEPENDS)
+    ADD_DEPENDENCIES (all-go ${Go_TARGET})
     MESSAGE (STATUS "Added Go build target '${Go_TARGET}' using Go ${_gover}")
 
     # The go compiler itself does parallel building, so to avoid
@@ -460,6 +461,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     IF (Go_DEPENDS)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
     ENDIF ()
+    ADD_DEPENDENCIES (all-go ${Go_TARGET})
     MESSAGE (STATUS "Added Go Modules build target '${Go_TARGET}' using Go ${_gover}")
 
     # go-modbuild.cmake will produce the output executable in the

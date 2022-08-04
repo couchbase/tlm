@@ -81,6 +81,9 @@ geocouch-build-for-testing: compile
 go-mod-tidy: build/Makefile
 	(cd build && make go-mod-tidy)
 
+all-go: build/Makefile
+	cd build && $(MAKE) all-go
+
 analytics-install: build/Makefile
 	(cd build && make analytics)
 
