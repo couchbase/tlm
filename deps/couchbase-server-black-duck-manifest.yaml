@@ -26,7 +26,7 @@ components:
         cbdeps-versions: [ 20200430 ]
     curl:
         bd-id: 5495fd92-f4e5-4099-aa40-bd0f22b2f602
-        versions: [ 7.78.0 ]
+        versions: [ 7.84.0 ]
     double-conversion:
         bd-id: 7f59c14e-52c9-440b-bee8-2427850c3e90
         versions: [ v3.0.0 ]
