@@ -302,6 +302,9 @@ ELSE ()
   ENDIF ()
 ENDIF ()
 
+# Toplevel target for generated source files from different projects
+ADD_CUSTOM_TARGET(generated_source_files)
+
 IF (BUILD_ENTERPRISE)
   MESSAGE (STATUS "Building Couchbase Server ${PRODUCT_VERSION} Enterprise Edition")
   ADD_DEFINITIONS(-DCOUCHBASE_ENTERPRISE_EDITION=1)
