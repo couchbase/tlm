@@ -218,7 +218,7 @@ _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 1)
 _ADD_DEP_PACKAGE(benchmark v1.6.0 v1.6.0 1)
 _ADD_DEP_PACKAGE(googletest 1.11.0 1.11.0 4)
 
-_ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 2)
+_ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 3)
 _ADD_DEP_PACKAGE(grpc 1.28.1 v1.28.1 2)
 _ADD_DEP_PACKAGE(pcre 8.44 v8.44 1)
 _ADD_DEP_PACKAGE(opentelemetry-cpp v1.0.0-rc4.cb v1.0.0-rc4.cb 1)
