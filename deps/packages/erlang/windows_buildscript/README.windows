@@ -1,4 +1,12 @@
 Currently the Windows build is not integrated into the cbdeps system fully.
+However we have a job which will generally build it successfully:
+
+http://server.jenkins.couchbase.com/job/cbdeps-erlang-window-build/
+
+Commit your local change to tlm and push it to your own fork on GitHub,
+then run this job.
+
+Rest of this file is mostly for historical information:
 
 We have an ansible playbook setup for window2016 to build Erlang R20
 https://github.com/couchbase/build-infra/tree/master/ansible/windows/erlang

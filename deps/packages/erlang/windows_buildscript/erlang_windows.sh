@@ -17,7 +17,7 @@ cb_buildnumber=$2
 #uninstaller, then run it in silent mode:
 #/cygdrive/c/Program\ Files/OpenSSL-Win64/unins000.exe /silent
 
-OPENSSL_VER=1_1_1L
+OPENSSL_VER=1_1_1q
 curl -OL https://slproweb.com/download/Win64OpenSSL-${OPENSSL_VER}.exe
 rm -rf /cygdrive/c/Program\ Files/OpenSSL-Win64
 ./Win64OpenSSL-${OPENSSL_VER}.exe /silent
