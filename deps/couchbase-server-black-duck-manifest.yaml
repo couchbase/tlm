@@ -50,6 +50,9 @@ components:
     libevent:
         bd-id: 3164e153-3508-415c-af53-443dea356811
         versions: [ 2.1.11 ]
+    libicu:
+        bd-id: a7441c50-9be3-493b-82ed-19666236acef
+        versions: [ 65.1 ]
     libuv:
         bd-id: ecefe33e-be8d-47b7-b02a-ee0cfe7ab2f2
         versions: [ 1.20.3 ]
