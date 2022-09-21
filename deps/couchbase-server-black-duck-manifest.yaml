@@ -58,6 +58,9 @@ components:
     libevent:
         bd-id: 3164e153-3508-415c-af53-443dea356811
         versions: [ 2.1.11 ]
+    libicu:
+        bd-id: a7441c50-9be3-493b-82ed-19666236acef
+        versions: [ 71.1 ]
     libsodium:
         bd-id: ba5415c0-56f8-4f08-9659-32daef232284
         versions: [ 1.0.18 ]
@@ -93,11 +96,10 @@ components:
         versions: [ v1.10.0 ]
     v8:
         bd-id: 3eec43ae-12a3-4035-bceb-9b5bd8eefe79
-        versions: [ 8.3.110.13 ]
-        cbdeps-versions: [ 8.3 ]
+        versions: [ 10.7.21 ]
     zlib:
         bd-id: b9185555-6e31-401e-b373-bfec7955a8ab
-        versions: [ 1.2.11 ]
+        versions: [ 1.2.12 ]
     zstd-cpp:
         bd-id: 54703c9e-7b84-44e9-9da0-64e3eb4788d5
         versions: [ 1.5.0 ]
