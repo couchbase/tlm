@@ -376,19 +376,21 @@ IF (NOT CBDownloadDeps_INCLUDED)
     IF (NOT cbdep_INSTALL_DIR)
       SET (cbdep_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}")
     ENDIF ()
-    MESSAGE (STATUS "Downloading and caching ${cbdep_PACKAGE}-${cbdep_VERSION}")
-    EXECUTE_PROCESS (
-      COMMAND "${CBDEP}" install
-        -d "${cbdep_INSTALL_DIR}"
-        ${cbdep_PACKAGE} ${cbdep_VERSION}
-      RESULT_VARIABLE _cbdep_result
-      OUTPUT_VARIABLE _cbdep_out
-      ERROR_VARIABLE _cbdep_out
-    )
-    IF (_cbdep_result)
-      FILE (REMOVE_RECURSE "${cbdep_INSTALL_DIR}")
-      MESSAGE (FATAL_ERROR "Failed installing cbdep ${cbdep_PACKAGE} ${cbdep_VERSION}: ${_cbdep_out}")
-    ENDIF ()
+    IF(NOT IS_DIRECTORY "${cbdep_INSTALL_DIR}/${cbdep_PACKAGE}-${cbdep_VERSION}")
+      MESSAGE (STATUS "Downloading and caching ${cbdep_PACKAGE}-${cbdep_VERSION}")
+      EXECUTE_PROCESS (
+        COMMAND "${CBDEP}" install
+          -d "${cbdep_INSTALL_DIR}"
+          ${cbdep_PACKAGE} ${cbdep_VERSION}
+        RESULT_VARIABLE _cbdep_result
+        OUTPUT_VARIABLE _cbdep_out
+        ERROR_VARIABLE _cbdep_out
+      )
+      IF (_cbdep_result)
+        FILE (REMOVE_RECURSE "${cbdep_INSTALL_DIR}")
+        MESSAGE (FATAL_ERROR "Failed installing cbdep ${cbdep_PACKAGE} ${cbdep_VERSION}: ${_cbdep_out}")
+      ENDIF ()
+    ENDIF()
   ENDMACRO (CBDEP_INSTALL)
 
   CB_GET_SUPPORTED_PLATFORM (_is_supported_platform)
