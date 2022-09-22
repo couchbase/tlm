@@ -130,6 +130,9 @@ same "repo init" and "repo sync" steps as above, then run:
     cmake -G Ninja -D CMAKE_C_COMPILER=cl -D CMAKE_CXX_COMPILER=cl -D CMAKE_BUILD_TYPE=RelWithDebInfo ..
     ninja install
 
+### Running Couchbase Server locally
+Instructions to run Couchbase Server locally (for development) are provided in the [ns_server repo](https://github.com/couchbase/ns_server#running).
+
 ### Specifying what to build
 
 The default make target if not explicilty specified is `all` - this builds all
@@ -234,7 +237,7 @@ cmake -G Ninja -D CB_PARALLEL_LINK_JOBS=4 -D CMAKE_BUILD_TYPE=Debug ..
 Apple Silicon:
 
 Currently, we do not support native compilation to Apple Silicon ARMv8.5 64bit
-(Wo __do__ support ARMv8 for Linux). So to build Couchbase  Server locally on an
+(We __do__ support ARMv8 for Linux). So to build Couchbase Server locally on an
 Apple Silicon machine you will need to compile for x86-64. Compiling for x86-64
 is automatically handled for you if you use the basic build  with `make`, but
 when building with `Ninja`, you need to explicitly specify the following
