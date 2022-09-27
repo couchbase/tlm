@@ -97,11 +97,52 @@ IF (DEFINED ENV{VERBOSE})
   SET (CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT)
 ENDIF ()
 
-# Golang very annoyingly leaves all downloaded module directories as
-# read-only, so not even rm -rf works. Go 1.14 introduces a new flag
-# GOFLAGS=-modcacherw which fixes this
-IF (${GOVERSION} VERSION_GREATER_EQUAL 1.14)
-  SET (_go_rw_modcache -modcacherw)
+# If this git repository has local git changes anyway, allow "go build"
+# to update go.mod/go.sum. If it does NOT have local changes, normally
+# we would want -mod=readonly to cause a build failure; however in
+# practice this is very disruptive for devs because changing their own
+# projects can break the build in other projects (because of our
+# extensive use of "replace" directives in go.mod files), causing them
+# to also need to manage changes in those other projects. For indexing
+# in particular this is bad due to the git indirection through the
+# "unstable" branch. So, instead we copy go.mod to the build directory
+# and tell Go to use that copy in read/write mode. This has the effect
+# of allowing the build to silently update and then ignore go.mod. It's
+# not ideal but it seems to be the best compromise available currently.
+
+# First see if there are any local git modifications. This requires two
+# commands to be completely safe
+# (https://unix.stackexchange.com/posts/394674/timeline).
+EXECUTE_PROCESS (
+  RESULT_VARIABLE _ignored
+  OUTPUT_VARIABLE _ignored
+  ERROR_VARIABLE _ignored
+  COMMAND git update-index --really-refresh
+)
+EXECUTE_PROCESS (
+  RESULT_VARIABLE _localchanges
+  OUTPUT_VARIABLE _ignored
+  ERROR_VARIABLE _ignored
+  COMMAND git diff-index --quiet HEAD
+)
+SET (_go_modfile)
+IF (NOT _localchanges)
+  # Need a name that's guaranteed to be unique per target, to avoid race
+  # conditions, so just tack it onto the eventual output exe name
+  SET (_modfile "${OUTPUT}-go.mod")
+  EXECUTE_PROCESS (
+    OUTPUT_FILE "${_modfile}"
+    RESULT_VARIABLE _failure
+    ERROR_VARIABLE _output
+    COMMAND "${GOEXE}" mod edit -print
+  )
+  IF (_failure)
+    MESSAGE (
+      FATAL_ERROR
+      "Error creating temporary mod file ${OUTPUT}-go.mod: ${_output}"
+    )
+  ENDIF ()
+  SET (_go_modfile "-modfile=${_modfile}")
 ENDIF ()
 
 # Execute "go build".
@@ -112,8 +153,8 @@ EXECUTE_PROCESS (
   COMMAND "${GOEXE}" build
     "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}"
     "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}"
-    ${_go_debug} ${_go_race} ${_go_rw_modcache}
-    -mod=readonly
+    ${_go_debug} ${_go_race} ${_go_modfile}
+    -mod=mod -modcacherw
     -o "${OUTPUT}"
     "${PACKAGE}")
 
@@ -124,18 +165,6 @@ FOREACH (_altinstallpath ${ALT_INSTALL_PATHS})
     DESTINATION "${_altinstallpath}"
     USE_SOURCE_PERMISSIONS)
 ENDFOREACH ()
-
-# For go versions 1.13 or lower, here's a work-around for the read-only
-# cache issue. Note we suppress and ignore any errors; this is just a
-# convenience, so if it fails we don't want to fail the build.
-IF (NOT WIN32 AND NOT _go_rw_modcache)
-  EXECUTE_PROCESS (
-    COMMAND find "$ENV{GOPATH}/pkg/mod" -type d -print0
-    COMMAND xargs -0 chmod u+w
-    OUTPUT_QUIET ERROR_QUIET
-    RESULT_VARIABLE _ignored
-  )
-ENDIF ()
 
 IF (CB_GO_CODE_COVERAGE)
   EXECUTE_PROCESS (
