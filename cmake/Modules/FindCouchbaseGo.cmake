@@ -16,6 +16,17 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # On MacOS, we frequently need to enforce a newer version of Go.
   SET (GO_MAC_MINIMUM_VERSION 1.17)
 
+  # List of private Go module paths that are missing when syncing
+  # strictly the source-available projects.
+  SET (GO_PRIVATE_MODULE_PATHS
+    cbftx
+    hebrew
+    goproj/src/github.com/couchbase/eventing-ee
+    goproj/src/github.com/couchbase/plasma
+    goproj/src/github.com/couchbase/query-ee
+    goproj/src/github.com/couchbase/regulator
+  )
+
   # END THINGS YOU MAY NEED TO UPDATE OVER TIME
   ####################################################################
 
@@ -31,6 +42,21 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
   # Have to remember cwd when this find is INCLUDE()d
   SET (TLM_MODULES_DIR "${CMAKE_CURRENT_LIST_DIR}")
+
+  # Create any 'private' module paths
+  IF (NOT BUILD_ENTERPRISE)
+    FOREACH (PRIV_PATH ${GO_PRIVATE_MODULE_PATHS})
+      SET (_fakedir "${PROJECT_SOURCE_DIR}/${PRIV_PATH}")
+      IF (NOT IS_DIRECTORY "${_fakedir}")
+        MESSAGE (STATUS "Creating directory ${_fakedir} with empty go.mod")
+        FILE (MAKE_DIRECTORY "${_fakedir}")
+      ENDIF ()
+      SET (_fakegomod "${_fakedir}/go.mod")
+      IF (NOT EXISTS "${_fakegomod}")
+        FILE (TOUCH "${_fakedir}/go.mod")
+      ENDIF ()
+    ENDFOREACH ()
+  ENDIF ()
 
   # This macro is called by GoInstall() / GoYacc() / etc. to find the
   # appropriate Go compiler to use. It will set the variable named by
@@ -495,36 +521,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
   ENDMACRO (GoModBuild)
 
-  # Macro which creates an empty Go module (a directory with a 0-byte
-  # go.mod file) only when called during a CE build. This is necessary
-  # to work around issues with closed-source Go modules. CBD-3491
-  #
-  # Required arguments:
-  #
-  # MODULE - basename of module, eg. cbftx, query-ee
-  #
-  # Optional arguments:
-  #
-  # PATH - relative path to module as specified in go.mod; defaults
-  #        to ../<MODULE>
-
+  # NO LONGER NEEEDED - remove this when query and cbft remove their usage
   MACRO (GoPrivateMod)
 
-    PARSE_ARGUMENTS (Go "" "MODULE;PATH" "" ${ARGN})
-    IF (NOT Go_MODULE)
-      MESSAGE (FATAL_ERROR "MODULE argument is required!")
-    ENDIF ()
-    IF (NOT Go_PATH)
-      SET (Go_PATH "../${Go_MODULE}")
-    ENDIF ()
-
-    IF (NOT BUILD_ENTERPRISE)
-      SET (_fakedir "${CMAKE_CURRENT_SOURCE_DIR}/${Go_PATH}")
-      MESSAGE (STATUS "Creating directory ${_fakedir} "
-        "with empty go.mod")
-      FILE (MAKE_DIRECTORY "${_fakedir}")
-      FILE (TOUCH "${_fakedir}/go.mod")
-    ENDIF ()
+    MESSAGE (WARNING "GoPrivateMod() no longer used - please delete")
 
   ENDMACRO (GoPrivateMod)
 
