@@ -15,7 +15,6 @@ DECLARE_DEP (jemalloc VERSION 5.3.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (libevent VERSION 2.1.11-cb7 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (openssl V2 VERSION 1.1.1n BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (snappy VERSION 1.1.8-cb4 PLATFORMS linux macosx windows_msvc2017)
-DECLARE_DEP (zlib V2 VERSION 1.2.11 BUILD 8 PLATFORMS linux macosx windows_msvc2017)
 
 # Restore the INSTALL_PREFIX
 set(CMAKE_INSTALL_PREFIX ${_orig_install_prefix})
@@ -45,6 +44,7 @@ list(APPEND cache_args -DBoost_NO_SYSTEM_PATHS:BOOL=ON)
 list(APPEND cache_args -DBoost_NO_BOOST_CMAKE:BOOL=ON)
 list(APPEND cache_args -DBOOST_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/boost.exploded)
 list(APPEND cache_args -DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
+list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:BOOL=TRUE)
 
 if(APPLE)
    # Folly makes use of std::filesystem functionality which is introduced in
