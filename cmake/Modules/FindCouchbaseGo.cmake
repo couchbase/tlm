@@ -4,38 +4,18 @@
 # in the production builds. The GoInstall() and GoYacc() macros have an
 # option GOVERSION argument which allows individual targets to specify the
 # version of Go they request / require.
-#
-# The build can work in two modes: a "multi-go" mode or a "single-go" mode.
-#
-# MULTI-GO MODE
-# In "multi-go" mode, the build will download exactly the required versions of
-# the Go compiler. The build will fail if the exact Go versions cannot be
-# obtained, and it will not search for Go anywhere else.
-# This is how the production builds work.
-#
-#   NOTE: the build can only support a single Go 1.4.x version safely due to
-#   limitations in the Go compiler's ability to specify where to output
-#   compiled artifacts. To ensure that all components throughout the build
-#   that need Go 1.4 use the same version, you should specify
-#   "GOVERSION 1.4.x". The specific version this corresponds to is defined
-#   in this file by the variable GO_14x_VERSION. Any attempt to specify
-#   a specific 1.4 version will raise an error.
-#
-# SINGLE-GO MODE
-# In "single-go" mode, the build only expects to find a single Go compiler
-# on the PATH, CMAKE_PREFIX_PATH, or similar. In this case, there is a global
-# GO_MINIMUM_VERSION which is checked at configuration time against the
-# actual compiler which was found. Also, if a target specifies a GOVERSION
-# argument that is *higher* than the version found, the build will also fail.
-# In this mode, an exact match for GOVERSION is not required.
-#
-# Multi-go is enabled by default. To disable it, set the CMake variable
-# CB_MULTI_GO to any false value (or set the same-named environment variable).
-
-
 
 # Prevent double-definition if two projects use this script
 IF (NOT FindCouchbaseGo_INCLUDED)
+
+  ###################################################################
+  # THINGS YOU MAY NEED TO UPDATE OVER TIME
+
+  # On MacOS, we frequently need to enforce a newer version of Go.
+  SET (GO_MAC_MINIMUM_VERSION 1.17)
+
+  # END THINGS YOU MAY NEED TO UPDATE OVER TIME
+  ####################################################################
 
   SET (CB_GO_CODE_COVERAGE 0 CACHE BOOL "Whether to use Go code coverage")
   SET (CB_GO_RACE_DETECTOR 0 CACHE BOOL "Whether to add race detector flag while generating go binaries")
@@ -50,131 +30,66 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # Have to remember cwd when this find is INCLUDE()d
   SET (TLM_MODULES_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
-  # This macro is called if Multi-Go mode is not enabled is not set. It will
-  # find a single version of Go on the PATH and sets GO_SINGLE_EXECUTABLE and
-  # GO_SINGLE_ROOT.
-  MACRO (FIND_SINGLE_GO)
-
-    # This is actually not accurate - Go 1.5 is required for some components.
-    # But we can't bump this up until all production builds are off Sherlock-
-    # class build slaves.
-    SET(GO_MINIMUM_VERSION 1.4)
-
-    # Find go compiler on the PATH
-    FIND_PROGRAM (GO_SINGLE_EXECUTABLE NAMES go DOC "Go executable")
-    IF (GO_SINGLE_EXECUTABLE)
-      EXECUTE_PROCESS (COMMAND ${GO_SINGLE_EXECUTABLE} version
-                       OUTPUT_VARIABLE GO_VERSION_STRING)
-      STRING (REGEX REPLACE "^go version go([0-9.]+).*$" "\\1" GO_VERSION ${GO_VERSION_STRING})
-      # I've seen cases where the version contains a trailing newline
-      STRING(STRIP "${GO_VERSION}" GO_VERSION)
-      MESSAGE (STATUS "Found Go compiler: ${GO_SINGLE_EXECUTABLE} (${GO_VERSION})")
-
-      IF (GO_VERSION VERSION_LESS GO_MINIMUM_VERSION)
-        STRING (REGEX MATCH "^go version devel .*" go_dev_version "${GO_VERSION}")
-        IF (go_dev_version)
-          MESSAGE(STATUS "WARNING: You are using a development version of go")
-          MESSAGE(STATUS "         Go version of ${GO_MINIMUM_VERSION} or higher required")
-          MESSAGE(STATUS "         You may experience problems caused by this")
-        ELSE (go_dev_version)
-          MESSAGE (FATAL_ERROR "Go version of ${GO_MINIMUM_VERSION} or higher required (found version ${GO_VERSION})")
-        ENDIF (go_dev_version)
-      ENDIF(GO_VERSION VERSION_LESS GO_MINIMUM_VERSION)
-
-      EXECUTE_PROCESS (COMMAND "${GO_SINGLE_EXECUTABLE}" env GOROOT
-        OUTPUT_VARIABLE GO_SINGLE_ROOT OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-    ELSE (GO_SINGLE_EXECUTABLE)
-      MESSAGE (FATAL_ERROR "Go compiler not found!")
-    ENDIF (GO_SINGLE_EXECUTABLE)
-  ENDMACRO (FIND_SINGLE_GO)
-
-  # This macro is called if Multi-Go mode is selected.
-  MACRO (ENABLE_MULTI_GO)
-    MESSAGE (STATUS "Multi-Go mode enabled; all desired Go compiler versions "
-      "will be downloaded for the build")
-    INCLUDE (CBDownloadDeps)
-    SET (GO_14x_VERSION 1.4.2)
-    IF (${CMAKE_SYSTEM_NAME} STREQUAL "FreeBSD")
-      # 1.4.2 is not available for FreeBSD, but 1.4.3 is.
-      # 1.4.3 cannot be default, because darwin build is missing.
-      SET (GO_14x_VERSION 1.4.3)
-    ENDIF ()
-
-    # No compiler yet
-    SET (GO_SINGLE_EXECUTABLE)
-    SET (GO_SINGLE_ROOT)
-  ENDMACRO (ENABLE_MULTI_GO)
-
-  # On MacOS, to ensure compatibility with MacOS Mojave, we must enforce
-  # a minimum version of Go. MB-31436.
-  # And for notarization to work, we need to use Go 1.12. CBD-3006.
-  # Go 1.13.x fixes a segment __DWARF issue. MB-36672.
-  SET (GO_MAC_MINIMUM_VERSION 1.13.3)
-
   # This macro is called by GoInstall() / GoYacc() / etc. to find the
-  # appropriate Go compiler to use, based on whether or not Multi-Go mode
-  # is enabled and the requested version. It will set the variable named by
+  # appropriate Go compiler to use. It will set the variable named by
   # "var" to the full path of the corresponding GOROOT, or raise an error
   # if the requested version cannot be found. It will set the variable named
   # by "ver" to the actual version of Go used.
   MACRO (GET_GOROOT VERSION var ver)
-    IF (CB_MULTI_GO)
-      SET (_version ${VERSION})
+    SET (_request_version ${VERSION})
 
-      # Ensure no attempt to use a specific 1.4.
-      IF ("${_version}" MATCHES "^1.4.[0-9]+$")
-        MESSAGE (FATAL_ERROR "Cannot specify GOVERSION ${_version}; "
-          "use only '1.4.x'")
-      ENDIF ()
-
-      # Map '1.4.x' special version to global default
-      IF ("${_version}" STREQUAL "1.4.x")
-        SET (_version "${GO_14x_VERSION}")
-      ENDIF ()
-
-      # MB-20509: MacOS Sierra requires a minimum of Go 1.7.1
-      IF (APPLE)
-        IF (${_version} VERSION_LESS "${GO_MAC_MINIMUM_VERSION}")
-          IF ("$ENV{CB_MAC_GO_WARNING}" STREQUAL "")
-            MESSAGE (${_go_warning} "Forcing Go version ${GO_MAC_MINIMUM_VERSION} on MacOS (MB-31436) "
-              "(to suppress this warning, set environment variable "
-              "CB_MAC_GO_WARNING to any value")
-            SET (_go_warning WARNING)
-            SET (ENV{CB_MAC_GO_WARNING} true)
-          ENDIF ()
-          SET (_version ${GO_MAC_MINIMUM_VERSION})
+    # MacOS often requires a newer Go version for $REASONS
+    IF (APPLE)
+      IF (${_request_version} VERSION_LESS "${GO_MAC_MINIMUM_VERSION}")
+        IF ("$ENV{CB_MAC_GO_WARNING}" STREQUAL "")
+          MESSAGE (${_go_warning} "Forcing Go version ${GO_MAC_MINIMUM_VERSION} on MacOS "
+            "(to suppress this warning, set environment variable "
+            "CB_MAC_GO_WARNING to any value")
+          SET (_go_warning WARNING)
+          SET (ENV{CB_MAC_GO_WARNING} true)
         ENDIF ()
+        SET (_request_version ${GO_MAC_MINIMUM_VERSION})
       ENDIF ()
+    ENDIF ()
 
-      GET_GO_VERSION ("${_version}" ${var})
-      SET (${ver} ${_version})
+    # Compute the major version from the requested version.
+    # Transition: existing code specifies a complete Go version, eg. 1.18.4.
+    # We want to trim that to a major version, eg. 1.18.
+    STRING (REGEX MATCHALL "[0-9]+" _ver_bits "${_request_version}")
+    LIST (LENGTH _ver_bits _num_ver_bits)
+    IF (_num_ver_bits EQUAL 2)
+      SET (_major_version "${_request_version}")
+    ELSEIF (_num_ver_bits EQUAL 3)
+      LIST (POP_BACK _ver_bits)
+      LIST (JOIN _ver_bits "." _major_version)
+      IF (NOT ${UNSHIPPED})
+        MESSAGE (WARNING "Please change GOVERSION to ${_major_version}, not ${_request_version}")
+      ENDIF ()
+    ELSE ()
+      MESSAGE (FATAL_ERROR "Illegal Go version ${_request_version}!")
+    ENDIF ()
 
-    ELSE (CB_MULTI_GO)
-      # QQQ For now just ignore the requested Go version since only one is
-      # available. We should do a version check compared to the Go version
-      # which was found to ensure it is equal or greater than the requested
-      # version.
+    # Map X.Y version to specific version for download for all shipped binaries
+    SET (GOVER_FILE
+      "${CMAKE_SOURCE_DIR}/golang/versions/${_major_version}.txt"
+    )
+    IF (NOT EXISTS "${GOVER_FILE}")
+      IF (${UNSHIPPED})
+        # Just revert to the originally-requested version
+        MESSAGE (STATUS "Go version ${VERSION} is not supported, but using "
+                 "anyway as target is unshipped (but consider upgrading)")
+        SET (_ver_final "${VERSION}")
+      ELSE ()
+        MESSAGE (WARNING "Go version ${_request_version} no longer supported - forcing to 1.18.7")
+        SET (_ver_final 1.18.7)
+      ENDIF ()
+    ELSE ()
+      FILE (STRINGS "${GOVER_FILE}" _ver_final LIMIT_COUNT 1)
+    ENDIF ()
 
-      # Return the constant values.
-      SET (${var} "${GO_SINGLE_ROOT}")
-      SET (${ver} "${GO_VERSION}")
-    ENDIF (CB_MULTI_GO)
+    GET_GO_VERSION ("${_ver_final}" ${var})
+    SET (${ver} ${_ver_final})
   ENDMACRO (GET_GOROOT)
-
-  # Switch here between two types of find-go behaviour (see file header
-  # comment)
-  IF (DEFINED ENV{CB_MULTI_GO})
-    SET (_multi_go $ENV{CB_MULTI_GO})
-  ELSE ()
-    SET (_multi_go 1)
-  ENDIF ()
-  SET (CB_MULTI_GO "${_multi_go}" CACHE BOOL "CB Multi-go behaviour")
-  IF (CB_MULTI_GO)
-    ENABLE_MULTI_GO ()
-  ELSE ()
-    FIND_SINGLE_GO ()
-  ENDIF ()
 
   # Set up clean targets. Note: the hardcoded godeps and goproj is kind of
   # a hack; it should build that up from the GOPATHs passed to GoInstall.
@@ -298,7 +213,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       SET (_ldflags "${_ldflags} -r \$ORIGIN/../lib")
     ENDIF()
 
-    # Compute path to Go compiler, depending on the Go mode (single or multi)
+    # Compute path to Go compiler
     GET_GOROOT ("${Go_GOVERSION}" _goroot _gover)
 
     # Go install target
@@ -423,7 +338,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     SET (_ldflags "${Go_LDFLAGS}")
   ENDIF (WIN32  AND ${Go_NOCONSOLE})
 
-  # Compute path to Go compiler, depending on the Go mode (single or multi)
+  # Compute path to Go compiler
   GET_GOROOT ("${Go_GOVERSION}" _goroot _gover)
 
   add_test(NAME "${Go_TARGET}"
@@ -488,7 +403,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
     SET(Go_OUTPUT "${_ypath}/y.go")
 
-    # Compute path to Go compiler, depending on the Go mode (single or multi)
+    # Compute path to Go compiler
     GET_GOROOT ("${Go_GOVERSION}" _goroot _gover)
 
     ADD_CUSTOM_COMMAND(OUTPUT "${Go_OUTPUT}"

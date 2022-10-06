@@ -74,6 +74,9 @@ IF ("${GOVERSION}" VERSION_GREATER 1.4.9)
   STRING (REPLACE ";" " " _bits_str "${_bits}")
 ENDIF ()
 
+# Set GO111MODULE to "off" since we're by definition not building with modules
+SET (ENV{GO111MODULE} "off")
+
 # Attempt to hide build-system-specific paths in resulting binaries.
 get_filename_component(REPOSYNC "${REPOSYNC}" REALPATH)
 SET (GCFLAGS "-trimpath=${REPOSYNC}" ${GCFLAGS})
