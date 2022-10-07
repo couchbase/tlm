@@ -207,3 +207,22 @@ function(remove_sanitizers TARGET)
     remove_sanitize_undefined(${TARGET})
     remove_sanitize_libfuzzer(${TARGET})
 endfunction()
+
+
+# If at least one sanitizer enabled, Override the normal ADD_TEST
+# macro to set environment variables for each enabled sanitizer. This
+# allows us to specify default behaviour of our sanitizers
+# (suppressions extra diagnostic info etc.).
+if(CB_SANITIZERS)
+    function(ADD_TEST name)
+        if(${ARGV0} STREQUAL "NAME")
+            set(_name ${ARGV1})
+        else()
+            set(_name ${ARGV0})
+        endif()
+        _ADD_TEST(${ARGV})
+        add_sanitizer_env_vars_memory(${_name})
+        add_sanitizer_env_vars_thread(${_name})
+        add_sanitizer_env_vars_undefined(${_name})
+    endfunction()
+endif()

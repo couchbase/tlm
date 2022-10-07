@@ -51,21 +51,6 @@ IF (CB_ADDRESSSANITIZER)
         # Configure CTest's MemCheck to AddressSanitizer.
         SET(MEMORYCHECK_TYPE AddressSanitizer)
 
-        # Override the normal ADD_TEST macro to set the ASAN_OPTIONS
-        # environment variable - this allows us to specify the
-        # suppressions file to use.
-        FUNCTION(ADD_TEST name)
-            IF(${ARGV0} STREQUAL "NAME")
-               SET(_name ${ARGV1})
-            ELSE()
-               SET(_name ${ARGV0})
-            ENDIF()
-            _ADD_TEST(${ARGV})
-            SET(lsan_options "suppressions=${CMAKE_SOURCE_DIR}/tlm/lsan.suppressions")
-            SET_TESTS_PROPERTIES(${_name} PROPERTIES ENVIRONMENT
-                                 "LSAN_OPTIONS=${lsan_options};ASAN_SYMBOLIZER_PATH=${LLVM_SYMBOLIZER}")
-        ENDFUNCTION()
-
         if(NOT CB_ADDRESSSANITIZER EQUAL 2)
             # Enable globally
             ADD_COMPILE_OPTIONS(${ADDRESS_SANITIZER_FLAG})
@@ -120,4 +105,17 @@ function(remove_sanitize_memory TARGET)
 
     remove_from_property(${TARGET} COMPILE_OPTIONS ${ADDRESS_SANITIZER_FLAG})
     remove_from_property(${TARGET} LINK_OPTIONS ${ADDRESS_SANITIZER_LDFLAGS})
+endfunction()
+
+# Define environment variables to set for tests running under
+# ASan. Typically used by top-level CouchbaseSanitizers.cmake.
+function(add_sanitizer_env_vars_memory TARGET)
+    if(NOT CB_ADDRESSSANITIZER)
+        return()
+    endif()
+
+    set(lsan_options "suppressions=${CMAKE_SOURCE_DIR}/tlm/lsan.suppressions")
+    set_property(TEST ${TARGET} APPEND PROPERTY ENVIRONMENT
+                 "ASAN_SYMBOLIZER_PATH=${LLVM_SYMBOLIZER}"
+                 "LSAN_OPTIONS=${lsan_options}")
 endfunction()

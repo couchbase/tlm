@@ -107,3 +107,21 @@ function(remove_sanitize_undefined TARGET)
     remove_from_property(${TARGET} COMPILE_OPTIONS ${UNDEFINED_SANITIZER_FLAG})
     remove_from_property(${TARGET} LINK_OPTIONS ${UNDEFINED_SANITIZER_LDFLAGS})
 endfunction()
+
+# Define environment variables to set for tests running under
+# UBSan. Typically used by top-level CouchbaseSanitizers.cmake.
+function(add_sanitizer_env_vars_undefined TARGET)
+    if(NOT CB_UNDEFINEDSANITIZER)
+        return()
+    endif()
+
+    set(ubsan_options "suppressions=${CMAKE_SOURCE_DIR}/tlm/ubsan.suppressions print_stacktrace=1")
+
+    # Prepend to any existing UBSAN_OPTION env var, to allow drivers
+    # of the build (like Jenkins jobs) to override options set here -
+    # for example logging output to files instead of stderr.
+    set(ubsan_options "${ubsan_options} $ENV{UBSAN_OPTIONS}")
+
+    set_property(TEST ${TARGET} APPEND PROPERTY ENVIRONMENT
+                 "UBSAN_OPTIONS=${ubsan_options}")
+endfunction()
