@@ -36,7 +36,7 @@ components:
         bd-id: a5066b09-b6fa-4065-b11b-f45326aa9332
         versions: [2.0.4]
     colorama:
-        bd-id: 10878ec1-f139-4e18-b0af-ccf70de6c7a8
+        bd-id: 7881fc93-08be-4c7c-a706-96dc08608748
         versions: [0.4.4]
     python-cryptography:
         bd-id: 1fb0e6ce-44cf-454e-99d4-454ffd6ecffa
