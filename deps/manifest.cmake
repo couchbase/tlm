@@ -49,7 +49,7 @@ DECLARE_DEP (maven VERSION 3.5.2-cb5 PLATFORMS amzn2 centos6 centos7 debian8 deb
 DECLARE_DEP (maven VERSION 3.5.2-cb6 PLATFORMS centos8 debian10 rhel8 ubuntu20.04)
 DECLARE_DEP (numactl VERSION 2.0.11-cb1 PLATFORMS amzn2 centos6 centos7 debian7 debian8 debian9 suse11 suse12 suse15 ubuntu14.04 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (numactl VERSION 2.0.11-cb3 PLATFORMS centos8 debian10 rhel8 ubuntu20.04)
-DECLARE_DEP (openssl V2 VERSION 1.1.1l BUILD 1 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (openssl V2 VERSION 1.1.1q BUILD 1 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (opentracing-cpp VERSION v1.5.1-cb1 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse11 suse12 ubuntu16.04 ubuntu18.04)
 DECLARE_DEP (opentracing-cpp VERSION v1.5.1-cb2 PLATFORMS windows_msvc2017)
 DECLARE_DEP (opentracing-cpp VERSION v1.5.1-cb4 PLATFORMS centos8 debian10 rhel8 ubuntu20.04)
