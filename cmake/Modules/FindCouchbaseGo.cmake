@@ -5,9 +5,17 @@
 # GOVERSION argument which allows individual targets to specify the
 # version of Go they request / require.
 
-
 # Prevent double-definition if two projects use this script
 IF (NOT FindCouchbaseGo_INCLUDED)
+
+  ###################################################################
+  # THINGS YOU MAY NEED TO UPDATE OVER TIME
+
+  # On MacOS, we frequently need to enforce a newer version of Go.
+  SET (GO_MAC_MINIMUM_VERSION 1.17)
+
+  # END THINGS YOU MAY NEED TO UPDATE OVER TIME
+  ####################################################################
 
   SET (CB_GO_CODE_COVERAGE 0 CACHE BOOL "Whether to use Go code coverage")
   SET (CB_GO_RACE_DETECTOR 0 CACHE BOOL "Whether to add race detector flag while generating go binaries")
@@ -22,43 +30,67 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # Have to remember cwd when this find is INCLUDE()d
   SET (TLM_MODULES_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
-  # On MacOS, to ensure compatibility with MacOS Mojave, we must enforce
-  # a minimum version of Go. MB-31436.
-  # And for notarization to work, we need to use Go 1.12. CBD-3006.
-  # Go 1.13.x fixes a segment __DWARF issue. MB-36672.
-  SET (GO_MAC_MINIMUM_VERSION 1.13.3)
-
   # This macro is called by GoInstall() / GoYacc() / etc. to find the
   # appropriate Go compiler to use. It will set the variable named by
   # "var" to the full path of the corresponding GOROOT, or raise an error
   # if the requested version cannot be found. It will set the variable named
   # by "ver" to the actual version of Go used.
   MACRO (GET_GOROOT VERSION var ver)
-    SET (_version ${VERSION})
+    SET (_request_version ${VERSION})
 
     # MacOS often requires a newer Go version for $REASONS
     IF (APPLE)
-      IF (${_version} VERSION_LESS "${GO_MAC_MINIMUM_VERSION}")
+      IF (${_request_version} VERSION_LESS "${GO_MAC_MINIMUM_VERSION}")
         IF ("$ENV{CB_MAC_GO_WARNING}" STREQUAL "")
-          MESSAGE (${_go_warning} "Forcing Go version ${GO_MAC_MINIMUM_VERSION} on MacOS (MB-31436) "
+          MESSAGE (${_go_warning} "Forcing Go version ${GO_MAC_MINIMUM_VERSION} on MacOS "
             "(to suppress this warning, set environment variable "
             "CB_MAC_GO_WARNING to any value")
           SET (_go_warning WARNING)
           SET (ENV{CB_MAC_GO_WARNING} true)
         ENDIF ()
-        SET (_version ${GO_MAC_MINIMUM_VERSION})
+        SET (_request_version ${GO_MAC_MINIMUM_VERSION})
       ENDIF ()
     ENDIF ()
 
-    GET_GO_VERSION ("${_version}" ${var})
-    SET (${ver} ${_version})
+    # Compute the major version from the requested version.
+    # Transition: existing code specifies a complete Go version, eg. 1.18.4.
+    # We want to trim that to a major version, eg. 1.18.
+    STRING (REGEX MATCHALL "[0-9]+" _ver_bits "${_request_version}")
+    LIST (LENGTH _ver_bits _num_ver_bits)
+    IF (_num_ver_bits EQUAL 2)
+      SET (_major_version "${_request_version}")
+    ELSEIF (_num_ver_bits EQUAL 3)
+      # Remove 3rd element of list (index 2)
+      LIST (REMOVE_AT _ver_bits 2)
+      LIST (JOIN _ver_bits "." _major_version)
+      IF (NOT ${UNSHIPPED})
+        MESSAGE (WARNING "Please change GOVERSION to ${_major_version}, not ${_request_version}")
+      ENDIF ()
+    ELSE ()
+      MESSAGE (FATAL_ERROR "Illegal Go version ${_request_version}!")
+    ENDIF ()
+
+    # Map X.Y version to specific version for download for all shipped binaries
+    SET (GOVER_FILE
+      "${CMAKE_SOURCE_DIR}/golang/versions/${_major_version}.txt"
+    )
+    IF (NOT EXISTS "${GOVER_FILE}")
+      IF (${UNSHIPPED})
+        # Just revert to the originally-requested version
+        MESSAGE (STATUS "Go version ${VERSION} is not supported, but using "
+                 "anyway as target is unshipped (but consider upgrading)")
+        SET (_ver_final "${VERSION}")
+      ELSE ()
+        MESSAGE (WARNING "Go version ${_request_version} no longer supported - forcing to 1.18.7")
+        SET (_ver_final 1.18.7)
+      ENDIF ()
+    ELSE ()
+      FILE (STRINGS "${GOVER_FILE}" _ver_final LIMIT_COUNT 1)
+    ENDIF ()
+
+    GET_GO_VERSION ("${_ver_final}" ${var})
+    SET (${ver} ${_ver_final})
   ENDMACRO (GET_GOROOT)
-
-  INCLUDE (CBDownloadDeps)
-
-  # No compiler yet
-  SET (GO_SINGLE_EXECUTABLE)
-  SET (GO_SINGLE_ROOT)
 
   # Set up clean targets. Note: the hardcoded godeps and goproj is kind of
   # a hack; it should build that up from the GOPATHs passed to GoInstall.

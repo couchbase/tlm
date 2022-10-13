@@ -74,6 +74,9 @@ SET (ENV{GO111MODULE} "off")
 SET (_bits -pkgdir "${GO_BINARY_DIR}")
 STRING (REPLACE ";" " " _bits_str "${_bits}")
 
+# Set GO111MODULE to "off" since we're by definition not building with modules
+SET (ENV{GO111MODULE} "off")
+
 # Attempt to hide build-system-specific paths in resulting binaries.
 get_filename_component(REPOSYNC "${REPOSYNC}" REALPATH)
 SET (GCFLAGS "-trimpath=${REPOSYNC}" ${GCFLAGS})

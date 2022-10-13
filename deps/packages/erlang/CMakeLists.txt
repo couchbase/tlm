@@ -11,7 +11,7 @@ SET (_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 SET (CMAKE_INSTALL_PREFIX "${_openssl_install}")
 DECLARE_DEP (openssl V2 VERSION 1.1.1o BUILD 1
              PLATFORMS amzn2
-                       centos7
+                       centos7 centos8
                        debian9 debian10
                        macosx
                        suse12 suse15
