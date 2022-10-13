@@ -1,0 +1,29 @@
+# UndefinedBehavourSanitizer suppressions file for Couchbase
+# https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html#runtime-suppressions
+
+# MB-49880: "runtime error: member call on address 0x60d000000380 which does not point to an object of type 'v8::Platform'"
+# Suppress this issue while being investigated, as to not cause CV to fail
+# for other jobs.
+vptr:std::default_delete<v8::Platform>::operator()(v8::Platform*)
+
+# Similar to previous suppression - V8 v10.7.21 uses shared_ptr for
+# v8::internal::Isolate* objects and we do not have necessary RTTI
+# type info in our libv8 for UBSan to be able to check vptr matches.
+# This results in warnings of the following when running couchstore
+# views unit tests:
+#     shared_ptr_base.h:155:46: runtime error: member access within address 0x60c000000a00 which does not point to an object of type 'std::_Sp_counted_base<__gnu_cxx::_S_atomic>'
+#     0x60c000000a00: note: object has invalid vptr
+#      05 00 00 3a  f0 f3 44 08 51 7f 00 00  01 00 00 00 01 00 00 00  00 00 00 00 00 00 00 00  00 00 00 00
+#                   ^~~~~~~~~~~~~~~~~~~~~~~
+#                   invalid vptr
+#         #0 0x7f510a75f231 in std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release() include/c++/10.2.0/bits/shared_ptr_base.h:155:46
+#         #1 0x7f51079eb84b in v8::internal::wasm::WasmEngine::RemoveIsolate(v8::internal::Isolate*) (install-asan-ubsan/lib/libv8.so+0x102884b)
+#         #2 0x7f51072dccc8 in v8::internal::Isolate::Deinit() (install-asan-ubsan/lib/libv8.so+0x919cc8)
+#         #3 0x7f51072df5ff in v8::internal::Isolate::Delete(v8::internal::Isolate*) (install-asan-ubsan/lib/libv8.so+0x91c5ff)
+#         #4 0x4e66fe in destroyContext(mapreduce_ctx_t*) build-asan-ubsan/../couchstore/src/views/mapreduce/mapreduce.cc:177:19
+#         #5 0x4f3cc2 in mapreduce_free_context(void*) build-asan-ubsan/../couchstore/src/views/mapreduce/mapreduce_c.cc:232:9
+#         #6 0x4fd0c7 in test_sum_function() build-asan-ubsan/../couchstore/tests/mapreduce/builtin.cc:71:5
+#         #7 0x4fcd14 in main build-asan-ubsan/../couchstore/tests/mapreduce/builtin.cc:153:5
+#         #8 0x7f510459ac86 in __libc_start_main /build/glibc-uZu3wS/glibc-2.27/csu/../csu/libc-start.c:310
+#         #9 0x43aab9 in _start (build-asan-ubsan/couchstore/couchstore_mapreduce-builtin-test+0x43aab9)
+vptr:std::_Sp_counted_base<(__gnu_cxx::_Lock_policy)2>::_M_release()
