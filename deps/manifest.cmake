@@ -17,7 +17,7 @@ DECLARE_DEP (breakpad V2 VERSION 0.1.0 BUILD 6 PLATFORMS centos8 debian10 rhel8)
 DECLARE_DEP (breakpad V2 VERSION 20200430 BUILD 1 PLATFORMS ubuntu20.04)
 DECLARE_DEP (boost VERSION 1.67.0-cb7 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 # NOTE: If you change cbpy versions, be sure to read tlm/python/README.txt!
-DECLARE_DEP (cbpy VERSION 7.0.4-cb7 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (cbpy VERSION 7.0.5-cb1 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (curl V2 VERSION 7.66.0 BUILD 4 PLATFORMS amzn2 centos7 centos8 debian8 debian9 debian10 rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
 DECLARE_DEP (curl V2 VERSION 7.66.0 BUILD 8 PLATFORMS macosx ubuntu20.04)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb2 PLATFORMS amzn2 centos6 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2015 windows_msvc2017)
