@@ -117,22 +117,23 @@ if (${PLATFORM} STREQUAL "ubuntu18.04" OR ${PLATFORM} MATCHES "macos")
    ExternalProject_Add_StepDependencies(folly download follytsan)
 endif()
 
-# Additionally build a Debug variant on Windows, as for a debug build of
-# CB Server we need all dependancies _also_ linked against Debug CRT.
-if (WIN32)
-   ExternalProject_Add(folly_WinDebugCRT
+# Additionally build a Debug variant.
+# This is required on Windows, as for a debug build of CB Server we need all
+# dependencies _also_ linked against Debug CRT.
+# We also build it for macOS / Linux as it can be useful to have a build of
+# folly with Debug checks enabled.
+ExternalProject_Add(folly.debug
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
         CMAKE_CACHE_ARGS ${cache_args}
             -DCMAKE_BUILD_TYPE:STRING=Debug
+            -DCMAKE_DEBUG_POSTFIX:STRING=d
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-        INSTALL_COMMAND cmake -E copy folly.lib ${CMAKE_CURRENT_BINARY_DIR}/install/lib/follyd.lib
         )
-   ExternalProject_Add_StepDependencies(folly download folly_WinDebugCRT)
-endif()
+ExternalProject_Add_StepDependencies(folly download folly.debug)
 
 # cbdeps boilerplate
 _ADD_PACKAGE_STEP()
