@@ -13,20 +13,6 @@ IF (NOT modified_binary_dir STREQUAL CMAKE_BINARY_DIR)
   MESSAGE(FATAL_ERROR "Couchbase cannot be built in a build directory containing a space character")
 ENDIF (NOT modified_binary_dir STREQUAL CMAKE_BINARY_DIR)
 
-# Use gcc from an alternate location if available (and the user didn't
-# ask for something else using the standard CMAKE_C/CXX_COMPILER
-# variables or CC / CXX env vars).
-SET (CB_GCC_PATH /opt/gcc-10.2.0 CACHE PATH "Preferred location for GCC, if available")
-IF (NOT DEFINED CMAKE_C_COMPILER AND
-    NOT DEFINED CMAKE_CXX_COMPILER AND
-    NOT DEFINED ENV{CC} AND
-    NOT DEFINED ENV{CXX})
-  IF (EXISTS "${CB_GCC_PATH}")
-    SET (CMAKE_C_COMPILER "${CB_GCC_PATH}/bin/gcc" CACHE PATH "Path to C Compiler" FORCE)
-    SET (CMAKE_CXX_COMPILER "${CB_GCC_PATH}/bin/g++" CACHE PATH "Path to C++ Compiler" FORCE)
-  ENDIF ()
-ENDIF ()
-
 # The PROJECT() macro sets it's own default build type, so need to specify
 # ours first.
 IF (NOT DEFINED CMAKE_BUILD_TYPE)
@@ -46,6 +32,11 @@ SET(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
 #
 SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING
     "Minimum supported version of macOS" FORCE)
+
+# Select the compiler to use (must be performed before the project()
+# command).
+LIST (APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
+INCLUDE(CouchbaseSelectCompiler)
 
 PROJECT("Couchbase")
 
@@ -139,7 +130,6 @@ IF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     LIST(APPEND CMAKE_PREFIX_PATH "${CMAKE_INSTALL_PREFIX}")
 ENDIF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
-LIST (APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
 SET (COUCHBASE_SERVER_BUILD True CACHE BOOL "Indicating this is a server build")
 
 # Try to download the prebuilt 3rd-party dependencies by default

@@ -14,9 +14,11 @@
 
 CMAKE_MINIMUM_REQUIRED(VERSION 3.16)
 
+LIST (APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/../../cmake/Modules")
+INCLUDE (CouchbaseSelectCompiler)
+
 PROJECT (cbdeps_packages)
 
-LIST (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../../cmake/Modules")
 INCLUDE (PlatformIntrospection)
 INCLUDE (CBDownloadDeps)
 INCLUDE (CouchbaseCompilerOptions)
