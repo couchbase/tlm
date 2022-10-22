@@ -165,7 +165,7 @@ _ADD_DEP_PACKAGE(v8 8.3 8.3.110.13 4)
 _ADD_DEP_PACKAGE(jemalloc 5.2.1 5.2.1 5)
 
 # -cb11 was built and published but never used in builds
-_ADD_DEP_PACKAGE(erlang cheshirecat couchbase-cheshirecat 17)
+_ADD_DEP_PACKAGE(erlang cheshirecat couchbase-cheshirecat 18)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
