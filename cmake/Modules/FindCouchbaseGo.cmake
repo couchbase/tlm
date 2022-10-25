@@ -337,6 +337,15 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # Top-level target which depends on all individual -tidy targets.
   ADD_CUSTOM_TARGET (go-mod-tidy)
 
+  # Top-level target which runs go-mod-tidy repeatedly until no new
+  # module changes are detected. This is necessary due to our use of
+  # "replace" directives in go.mod files and circular dependencies.
+  ADD_CUSTOM_TARGET (go-mod-tidy-all
+    COMMAND "${CMAKE_COMMAND}" -P "${TLM_MODULES_DIR}/go-modtidyall.cmake"
+    WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
+    COMMENT "Ensuring all go.mod files are tidied"
+    VERBATIM)
+
   # Adds a target named TARGET which (always) calls "go build
   # PACKAGE".  This delegates incremental-build responsibilities to
   # the go compiler, which is generally what you want. This target
