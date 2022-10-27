@@ -20,12 +20,6 @@ LIST (APPEND CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../../cmake/Modules")
 INCLUDE (PlatformIntrospection)
 INCLUDE (CBDownloadDeps)
 
-_DETERMINE_PLATFORM (cbcache_platform)
-_DETERMINE_ARCH (cbcache_arch)
-
-MESSAGE (STATUS "Set platform to ${cbcache_platform} for dependency downloads")
-MESSAGE (STATUS "Set arch to ${cbcache_arch} for dependency downloads")
-
 # Generate a .md5 file
 MACRO (_ADD_MD5_FILE_STEP sourcefile md5file package)
   ExternalProject_Add_Step (${package} md5
@@ -111,7 +105,13 @@ ENDMACRO (_ADD_DEP_PACKAGE)
 # Standard code run on include to perform common checks and setup useful vars
 #
 _DETERMINE_ARCH(HOST_ARCH)
+# Use the "most specific" local platform name, since we need a single value
+# here for putting into filenames
 _DETERMINE_PLATFORM(PLATFORM)
+IF (PLATFORM STREQUAL "unknown")
+  MESSAGE (FATAL_ERROR "Cannot build cbdeps on unrecognized platform!")
+ENDIF ()
+MESSAGE (STATUS "Set platform to ${PLATFORM} and arch to ${HOST_ARCH} for building cbdeps package")
 
 #
 # Check for autotools stuff, as many of the deps require them.

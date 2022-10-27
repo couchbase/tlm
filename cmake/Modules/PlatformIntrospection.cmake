@@ -6,7 +6,7 @@ include(ProcessorCount)
 cmake_policy(SET CMP0054 NEW)
 
 # Returns a simple string describing the current architecture. Possible
-# return values currently include: amd64, x86_64, x86.
+# return values currently include: amd64, x86_64, x86, aarch64.
 MACRO (_DETERMINE_ARCH var)
   IF (DEFINED CB_DOWNLOAD_DEPS_ARCH)
     SET (_arch ${CB_DOWNLOAD_DEPS_ARCH})
@@ -14,10 +14,10 @@ MACRO (_DETERMINE_ARCH var)
     # target_arch is used by environment.bat to represent the desired
     # target architecture, so use that value first if set.
     STRING (TOLOWER "$ENV{target_arch}" _arch)
-  ELSE (DEFINED CB_DOWNLOAD_DEPS_ARCH)
+  ELSE ()
     # We tweak MacOS, which for some reason claims to be i386
     IF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-      # QQQ MacOS 10.7 could be 32-bit; we should catch and abort
+      # QQQ MacOS ARM M1 is coming up soon, need to fix this
       SET (_arch x86_64)
     ELSEIF (CMAKE_SYSTEM_NAME STREQUAL "SunOS")
       EXECUTE_PROCESS (COMMAND isainfo -k
@@ -33,16 +33,16 @@ MACRO (_DETERMINE_ARCH var)
       ELSE ()
         STRING (TOLOWER "$ENV{PROCESSOR_ARCHITECTURE}" _arch)
       ENDIF ()
-    ELSE (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+    ELSE ()
+      # Fallback default, including Linux
       STRING (TOLOWER ${CMAKE_SYSTEM_PROCESSOR} _arch)
     ENDIF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-    SET (CB_DOWNLOAD_DEPS_ARCH ${_arch} CACHE STRING
-      "Architecture for downloaded dependencies")
-    MARK_AS_ADVANCED (CB_DOWNLOAD_DEPS_ARCH)
   ENDIF (DEFINED CB_DOWNLOAD_DEPS_ARCH)
+  SET (CB_DOWNLOAD_DEPS_ARCH ${_arch} CACHE STRING
+    "Architecture for downloaded dependencies" FORCE)
+  MARK_AS_ADVANCED (CB_DOWNLOAD_DEPS_ARCH)
   SET (${var} ${_arch})
 ENDMACRO (_DETERMINE_ARCH)
-
 
 # Returns a lowercased version of a given lsb_release field.
 MACRO (_LSB_RELEASE field retval)
@@ -75,46 +75,68 @@ MACRO (_OS_RELEASE field retval)
   SET (${retval} "${_value}")
 ENDMACRO (_OS_RELEASE)
 
-# Returns a simple string describing the current platform. Possible
+# Returns a list of values describing the current platform. Possible
 # return values currently include: windows_msvc2017; windows_msvc2015;
 # windows_msvc2013; windows_msvc2012; macosx; or any value from
-# _DETERMINE_LINUX_DISTRO.
-MACRO (_DETERMINE_PLATFORM var)
+# _DETERMINE_LINUX_DISTRO; as well as generic values "linux" and "all".
+FUNCTION (_DETERMINE_PLATFORMS var)
+  # Return early if platforms already introspected
+  IF (DEFINED CBDEPS_HOST_PLATFORMS)
+    SET (${var} ${CBDEPS_HOST_PLATFORMS} PARENT_SCOPE)
+    RETURN ()
+  ENDIF ()
+  # Allow users to override base platform
   IF (DEFINED CB_DOWNLOAD_DEPS_PLATFORM)
     SET (_plat ${CB_DOWNLOAD_DEPS_PLATFORM})
-  ELSE (DEFINED CB_DOWNLOAD_DEPS_PLATFORM)
+  ELSE ()
     SET (_plat ${CMAKE_SYSTEM_NAME})
     IF (_plat STREQUAL "Windows" OR _plat STREQUAL "WindowsStore")
-	  if (${MSVC_VERSION} LESS 1800)
-	    SET (_plat "windows_msvc2012")
-	  elseif (${MSVC_VERSION} LESS 1900)
-	    SET (_plat "windows_msvc2013")
-	  elseif (${MSVC_VERSION} LESS 1910)
-	    SET (_plat "windows_msvc2015")
-	  elseif (${MSVC_VERSION} LESS 1920)
-	    SET (_plat "windows_msvc2017")
-	  ELSE()
+      IF (${MSVC_VERSION} LESS 1800)
+        SET (_plat "windows_msvc2012")
+      elseif (${MSVC_VERSION} LESS 1900)
+        SET (_plat "windows_msvc2013")
+      elseif (${MSVC_VERSION} LESS 1910)
+        SET (_plat "windows_msvc2015")
+      elseif (${MSVC_VERSION} LESS 1920)
+        SET (_plat "windows_msvc2017")
+      ELSE()
         MESSAGE(FATAL_ERROR "Unsupported MSVC version: ${MSVC_VERSION}")
       ENDIF ()
+      # Also generic "windows"
+      LIST (APPEND _plat "windows")
     ELSEIF (_plat STREQUAL "Darwin")
       SET (_plat "macosx")
     ELSEIF (_plat STREQUAL "Linux")
       _DETERMINE_LINUX_DISTRO (_plat)
+      # Also generic "linux"
+      LIST (APPEND _plat "linux")
     ELSEIF (_plat STREQUAL "SunOS")
       SET (_plat "sunos")
     ELSEIF (_plat STREQUAL "FreeBSD")
       SET (_plat "freebsd")
-    ELSE (_plat STREQUAL "Windows")
+    ELSE ()
       MESSAGE (WARNING "Sorry, don't recognize your system ${_plat}. ")
       SET (_plat "unknown")
-    ENDIF (_plat STREQUAL "Windows" OR _plat STREQUAL "WindowsStore")
-    SET (CB_DOWNLOAD_DEPS_PLATFORM ${_plat} CACHE STRING
-      "Platform for downloaded dependencies")
-    MARK_AS_ADVANCED (CB_DOWNLOAD_DEPS_PLATFORM)
-  ENDIF (DEFINED CB_DOWNLOAD_DEPS_PLATFORM)
+    ENDIF ()
+  ENDIF ()
+
+  # And finally generic "all"
+  LIST (APPEND _plat "all")
+  SET (CBDEPS_HOST_PLATFORMS ${_plat} CACHE STRING
+    "Platform for downloaded dependencies" FORCE)
+  MARK_AS_ADVANCED (CBDEPS_HOST_PLATFORMS)
+
+  SET (${var} ${_plat} PARENT_SCOPE)
+ENDFUNCTION (_DETERMINE_PLATFORMS)
+
+# Returns a simple string describing the most-specific version of the
+# current platform. This is the first entry in the list returned from
+# _DETERMINE_PLATFORMS(). This is mostly for backwards compatibility.
+MACRO (_DETERMINE_PLATFORM var)
+  _DETERMINE_PLATFORMS (_local_platforms)
+  LIST (GET _local_platforms 0 _plat)
   SET (${var} ${_plat})
 ENDMACRO (_DETERMINE_PLATFORM)
-
 
 # Returns a simple string describing the current Linux distribution
 # compatibility. Possible return values currently include:
@@ -184,9 +206,8 @@ MACRO (_DETERMINE_CPU_COUNT _var)
   SET(${_var} ${_count})
 ENDMACRO (_DETERMINE_CPU_COUNT)
 
-# Sets _platform to the name of the current platform if it is a supported
-# platform, or a False value otherwise.
-# _platform is in the same format as _DETERMINE_PLATFORM().
+# Sets the variable named by _is_supported_platform to a True value if the
+# current platform is a supported platform, or a False value otherwise.
 # "Supported" means that we produce and distribute builds to
 # customers on that platform.
 # QQQ This list should come from manifest/product-config.json ultimately.
@@ -194,10 +215,10 @@ ENDMACRO (_DETERMINE_CPU_COUNT)
 # for *any* product that uses cbdeps 1.0 - eg, centos6 is still here
 # because couchbase-lite-core needs it, even though couchbase-server no
 # longer supports it.
-MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
-  SET (${_supported_platform} 0)
+MACRO (CB_GET_SUPPORTED_PLATFORM _is_supported_platform)
+  SET (${_is_supported_platform} 0)
 
-  # First get the current platform
+  # First get the current platforms
   _DETERMINE_PLATFORM(_platform)
 
   # .. and check it against the list, returning it if found.
@@ -212,6 +233,6 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _supported_platform)
        "windows_msvc2017")
   LIST (FIND _supported_platforms ${_platform} _index)
   IF (_index GREATER "-1")
-    SET(${_supported_platform} ${_platform})
+    SET(${_is_supported_platform} 1)
   ENDIF (_index GREATER "-1")
 ENDMACRO (CB_GET_SUPPORTED_PLATFORM)

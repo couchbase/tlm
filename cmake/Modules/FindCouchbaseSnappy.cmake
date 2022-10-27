@@ -22,8 +22,8 @@
 if (NOT DEFINED SNAPPY_FOUND)
     include(PlatformIntrospection)
 
-    cb_get_supported_platform(_supported_platform)
-    if (_supported_platform)
+    cb_get_supported_platform(_is_supported_platform)
+    if (_is_supported_platform)
         # Supported platforms should only use the provided hints and pick it up
         # from cbdeps
         set(_snappy_no_default_path NO_DEFAULT_PATH)

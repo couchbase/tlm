@@ -23,8 +23,8 @@
 if (NOT DEFINED BREAKPAD_FOUND)
     include(PlatformIntrospection)
 
-    cb_get_supported_platform(_supported_platform)
-    if (_supported_platform AND NOT APPLE)
+    cb_get_supported_platform(_is_supported_platform)
+    if (_is_supported_platform AND NOT APPLE)
         string(TOLOWER ${CMAKE_SYSTEM_NAME} LCASE_SYSTEM)
 
         set(_breakpad_exploded ${CMAKE_BINARY_DIR}/tlm/deps/breakpad.exploded)
@@ -79,7 +79,7 @@ if (NOT DEFINED BREAKPAD_FOUND)
             message(STATUS "   headers: ${BREAKPAD_INCLUDE_DIR}")
             message(STATUS "   library: ${BREAKPAD_LIBRARIES}")
         else (BREAKPAD_LIBRARIES AND BREAKPAD_INCLUDE_DIR AND MINIDUMP2CORE)
-            message(FATAL_ERROR "Google Breakpad not found (required on supported production platform '${_supported_platform}').")
+            message(FATAL_ERROR "Google Breakpad not found (required on supported production platforms).")
         endif (BREAKPAD_LIBRARIES AND BREAKPAD_INCLUDE_DIR AND MINIDUMP2CORE)
 
         mark_as_advanced(BREAKPAD_FOUND BREAKPAD_LIBRARIES BREAKPAD_INCLUDE_DIR MINIDUMP2CORE)

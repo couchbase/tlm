@@ -24,8 +24,8 @@ if (NOT DEFINED CURL_FOUND)
     # Use include files directly from cbdeps exploded download
     set(_curl_exploded "${CMAKE_BINARY_DIR}/tlm/deps/curl.exploded")
 
-    cb_get_supported_platform(_supported_platform)
-    if (_supported_platform)
+    cb_get_supported_platform(_is_supported_platform)
+    if (_is_supported_platform)
         if (EXISTS ${_curl_exploded} AND IS_DIRECTORY ${_curl_exploded})
             # Supported platforms should only use the provided hints and
             # pick it up from cbdeps (but we don't bundle this for all
