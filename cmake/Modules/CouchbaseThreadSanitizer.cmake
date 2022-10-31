@@ -62,6 +62,17 @@ IF (CB_THREADSANITIZER)
                                       ${CMAKE_INSTALL_PREFIX}/lib)
         endif()
 
+        # Define the TSAN_OPTIONS env var which should be set when running tests
+        # under TSan. Note this is automatically applied to tests defined via
+        # add_test() command - see add_sanitizer_env_vars_thread(), but we also
+        # expose it as a CMake variable so tests defined other ways can
+        # manually add it.
+        set(tsan_options "suppressions=${CMAKE_SOURCE_DIR}/tlm/tsan.suppressions second_deadlock_stack=1 history_size=7")
+        # On some platforms (at least macOS Mojave), mutex deadlocking is
+        # not enabled by default.
+        string(APPEND tsan_options " detect_deadlocks=1")
+        set(THREAD_SANITIZER_TEST_ENV "TSAN_OPTIONS=${tsan_options}")
+
         MESSAGE(STATUS "ThreadSanitizer enabled - forcing use of 'system' memory allocator.")
     ELSE()
         MESSAGE(FATAL_ERROR "CB_THREADSANITIZER enabled but compiler doesn't support ThreadSanitizer - cannot continue.")
@@ -93,12 +104,6 @@ function(add_sanitizer_env_vars_thread TARGET)
     if(NOT CB_THREADSANITIZER)
         return()
     endif()
-
-    set(tsan_options "suppressions=${CMAKE_SOURCE_DIR}/tlm/tsan.suppressions second_deadlock_stack=1 history_size=7")
-
-    # On some platforms (at least macOS Mojave), mutex deadlocking is
-    # not enabled by default.
-    set(tsan_options "${tsan_options} detect_deadlocks=1")
 
     # Prepend to any existing TSAN_OPTION env var, to allow drivers
     # of the build (like Jenkins jobs) to override options set here -
