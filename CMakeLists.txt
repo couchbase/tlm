@@ -26,13 +26,6 @@ SET(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
     "Choose the type of build, options are: Debug DebugOptimized Release RelWithDebInfo MinSizeRel."
     FORCE)
 
-#
-# Choose deployment target on macOS.
-# As of Neo, minimum supported is Catalina (10.15).
-#
-SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING
-    "Minimum supported version of macOS" FORCE)
-
 # Select the compiler to use (must be performed before the project()
 # command).
 LIST (APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
@@ -60,6 +53,27 @@ if (APPLE
             " building for the native architecture on Apple Silicon, explicitly"
             " set the CMake variable CMAKE_APPLE_SILICON_PROCESSOR to 'arm64')")
 endif ()
+
+#
+# Choose deployment target on macOS.
+# We only support x86-64 currently (for development), and as of Neo the
+# minimum supported OS is Catalina (10.15).
+# However there is experimental support for arm64, whose cbdeps are built with
+# Monterey (12) and hence also need to set CMAKE_OSX_DEPLOYMENT_TARGET to 12.0
+# to avoid linker warnings every time a cbdep is linked.
+if(APPLE)
+    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
+        set(target "10.15")
+    elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
+        set(target "12.0")
+    else()
+        message(FATAL_ERROR "Unknown macOS CMAKE_HOST_SYSTEM_PROCESSOR "
+                "'${CMAKE_HOST_SYSTEM_PROCESSOR}'. "
+                "Supported values: x86_64 or arm64.")
+    endif()
+    set(CMAKE_OSX_DEPLOYMENT_TARGET ${target} CACHE STRING
+            "Minimum supported version of macOS" FORCE)
+endif()
 
 # We also have a "sub-project", the tools project, which requires a few
 # additional INSTALL() and other directives. Those targets should
