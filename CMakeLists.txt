@@ -28,10 +28,26 @@ SET(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
 
 #
 # Choose deployment target on macOS.
-# As of Neo, minimum supported is Catalina (10.15).
+
+# We only support x86-64 currently (for development), and as of Neo,
+# minimum supported is Catalina (10.15).
+# However there is experimental support for arm64, whose cbdeps are built with
+# Monterey (12) and hence also need to set CMAKE_OSX_DEPLOYMENT_TARGET to 12.0
+# to avoid linker warnings every time a cbdep is linked.
 #
-SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING
-    "Minimum supported version of macOS" FORCE)
+IF (APPLE)
+    IF (CMAKE_APPLE_SILICON_PROCESSOR STREQUAL "x86_64")
+        SET(target "10.15")
+    ELSEIF (CMAKE_APPLE_SILICON_PROCESSOR STREQUAL "arm64")
+        SET(target "12.0")
+    ELSE()
+        MESSAGE(FATAL_ERROR "Unknown CMAKE_APPLE_SILICON_PROCESSOR "
+                            "'${CMAKE_APPLE_SILICON_PROCESSOR}'. "
+                            "Supported values: x86_64 or arm64.")
+    ENDIF ()
+    SET(CMAKE_OSX_DEPLOYMENT_TARGET ${target} CACHE STRING
+      "Minimum supported version of macOS" FORCE)
+ENDIF ()
 
 # Select the compiler to use (must be performed before the project()
 # command).
