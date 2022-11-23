@@ -97,20 +97,24 @@ IF (NOT CBDownloadDeps_INCLUDED)
     ENDIF (EXISTS "${path}")
   ENDFUNCTION ()
 
-  FUNCTION (_GET_DEP_FILENAME name version var)
-    _DETERMINE_PLATFORM (_platform)
-    _DETERMINE_ARCH (_arch)
+  FUNCTION (_GET_DEP_FILENAME name version platform var)
+    # Special case for "all" platform - must be "noarch"
+    IF ("${platform}" STREQUAL "all")
+      SET (_arch "noarch")
+    ELSE ()
+      _DETERMINE_ARCH (_arch)
+    ENDIF ()
 
     # Compute relative paths to dependency on local filesystem
     # and in remote repository
-    SET (${var} "${name}-${_platform}-${_arch}-${version}.tgz" PARENT_SCOPE)
+    SET (${var} "${name}-${platform}-${_arch}-${version}.tgz" PARENT_SCOPE)
   ENDFUNCTION ()
 
   # Downloads a dependency to the cache dir. First checks the cache for
   # an up-to-date copy based on md5.  Sets the variable named by 'var'
   # to the downloaded dependency .tgz.
-  FUNCTION (_DOWNLOAD_DEP name version var)
-    _GET_DEP_FILENAME("${name}" "${version}" _rel_path)
+  FUNCTION (_DOWNLOAD_DEP name version platform var)
+    _GET_DEP_FILENAME("${name}" "${version}" "${platform}" _rel_path)
     SET (_repo_url "${CB_DOWNLOAD_DEPS_REPO}/${name}/${version}/${_rel_path}")
     _DOWNLOAD_URL_TO_CACHE ("${_repo_url}" _cachefile)
     SET (${var} "${_cachefile}" PARENT_SCOPE)
@@ -155,14 +159,14 @@ IF (NOT CBDownloadDeps_INCLUDED)
     IF (_num_platforms GREATER 0)
       SET (_found_platform 0)
       FOREACH (_platform ${dep_PLATFORMS})
-        IF ("${_this_platform}" STREQUAL "${_platform}")
-          SET (_found_platform 1)
+        IF ("${_this_platform}" STREQUAL "${_platform}" OR "${_platform}" STREQUAL "all")
+          SET (_found_platform "${_platform}")
           BREAK ()
-        ENDIF ("${_this_platform}" STREQUAL "${_platform}")
+        ENDIF ()
       ENDFOREACH (_platform)
       IF (NOT _found_platform AND NOT _supported_platform)
         # check if we maybe have locally built dep file
-        _GET_DEP_FILENAME("${name}" "${dep_VERSION}" _dep_filename)
+        _GET_DEP_FILENAME("${name}" "${dep_VERSION}" "${_this_platform}" _dep_filename)
         SET(_dep_path "${CB_DOWNLOAD_DEPS_CACHE}/${_dep_filename}")
         SET(_dep_md5path "${CB_DOWNLOAD_DEPS_CACHE}/${_dep_filename}.md5")
 
@@ -171,7 +175,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
         IF (_dep_found)
           MESSAGE (STATUS "Found locally built dependency file ${_dep_path}. "
             "Going to use it even though the platform ${_this_platform} is unsupported")
-          SET (_found_platform 1)
+          SET (_found_platform "${_this_platform}")
         ENDIF ()
       ENDIF (NOT _found_platform AND NOT _supported_platform)
       IF (NOT _found_platform)
@@ -209,7 +213,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
     IF (EXPLODED_VERSION STREQUAL ${dep_VERSION})
       MESSAGE (STATUS "Dependency '${name} (${dep_VERSION})' already downloaded")
     ELSE (EXPLODED_VERSION STREQUAL ${dep_VERSION})
-      _DOWNLOAD_DEP (${name} ${dep_VERSION} _cachedep)
+      _DOWNLOAD_DEP (${name} ${dep_VERSION} ${_found_platform} _cachedep)
 
       # Explode tgz into build directory.
       MESSAGE (STATUS "Installing dependency: ${name}-${dep_VERSION}...")
