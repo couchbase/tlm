@@ -32,7 +32,7 @@ components:
         versions: [ v3.0.0 ]
     erlang:
         bd-id: 2c804760-a3e3-4ba1-abfb-77525633b966
-        versions: [ 24.3.4.5 ]
+        versions: [ 24.3.4.4 ]
         cbdeps-versions: [ neo ]
     flatbuffers:
         bd-id: ae906881-37fd-4af4-8fe7-e435fd2056af
