@@ -51,7 +51,7 @@ components:
     libnuma1: [ 2.0.11 ]
     openssl:
         bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
-        versions: [ 1.1.1q ]
+        versions: [ 1.1.1q, 1.1.1s ]
     opentracing-cpp: [ v1.5.1 ]
     pcre:
         bd-id: 8c9723be-a23f-4974-9645-54c471aed433
