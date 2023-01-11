@@ -6,15 +6,11 @@
 set(_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/unused")
 set(_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 set(CMAKE_INSTALL_PREFIX "${_openssl_install}")
-declare_dep(openssl V2 VERSION 1.1.1l BUILD 1
-            PLATFORMS amzn2
-                      centos7
-                      debian9 debian10
-                      macosx
-                      suse12 suse15
-                      ubuntu18.04 ubuntu20.04 windows_msvc2017)
+
+declare_dep(openssl V2 VERSION 3.0.7 BUILD 2 PLATFORMS linux macosx windows)
 
 set(CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
+
 set(_libevent_extra_options -D "OPENSSL_ROOT_DIR=${CMAKE_BINARY_DIR}/libevent/openssl.exploded")
 
 if (APPLE)

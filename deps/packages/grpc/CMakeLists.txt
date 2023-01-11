@@ -9,7 +9,7 @@ set(_deps_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
 set(CMAKE_INSTALL_PREFIX "${_deps_install}")
 
 # Install grpc's prereqs that we already provide
-DECLARE_DEP (openssl V2 VERSION 1.1.1k BUILD 3 PLATFORMS amzn2 centos7 debian9 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (openssl V2 VERSION 3.0.7 BUILD 2 PLATFORMS linux macosx windows)
 DECLARE_DEP (zlib V2 VERSION 1.2.11 BUILD 7 PLATFORMS amzn2 centos7 debian9 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 
 # Restore the INSTALL_PREFIX
