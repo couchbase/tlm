@@ -12,7 +12,7 @@ DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS amzn2 centos7 debian9
 DECLARE_DEP (fmt VERSION 8.1.1-cb2 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb1 PLATFORMS amzn2 centos6 centos7 centos8 debian8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04 windows_msvc2015 windows_msvc2017)
 DECLARE_DEP (jemalloc VERSION 5.3.0-cb1 PLATFORMS linux macosx windows)
-DECLARE_DEP (libevent VERSION 2.1.11-cb8 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (libevent VERSION 2.1.11-cb8 PLATFORMS linux macosx windows)
 DECLARE_DEP (openssl V2 VERSION 3.0.7 BUILD 2 PLATFORMS linux macosx windows)
 DECLARE_DEP (snappy VERSION 1.1.8-cb4 PLATFORMS linux macosx windows_msvc2017)
 
