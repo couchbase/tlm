@@ -220,7 +220,7 @@ _ADD_DEP_PACKAGE(benchmark v1.6.0 v1.6.0 1)
 _ADD_DEP_PACKAGE(googletest 1.11.0 1.11.0 4)
 
 _ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 8)
-_ADD_DEP_PACKAGE(grpc 1.49.2 v1.49.2 3)
+_ADD_DEP_PACKAGE(grpc 1.49.2 v1.49.2 4)
 _ADD_DEP_PACKAGE(pcre 8.44 v8.44 1)
 _ADD_DEP_PACKAGE(opentelemetry-cpp v1.0.0-rc4.cb v1.0.0-rc4.cb 1)
 _ADD_DEP_PACKAGE(opentracing-cpp v1.5.1 v1.5.1 4)

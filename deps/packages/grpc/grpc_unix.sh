@@ -19,6 +19,7 @@ mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
   -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+  -DCMAKE_INSTALL_LIBDIR=lib \
   -Dprotobuf_BUILD_TESTS=OFF \
   -D CMAKE_PREFIX_PATH="${CBDEPS_DIR}/zlib.exploded" \
   ..
@@ -30,6 +31,7 @@ mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
   -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+  -DCMAKE_INSTALL_LIBDIR=lib \
   -DCARES_STATIC=ON -DCARES_STATIC_PIC=ON -DCARES_SHARED=OFF \
   ..
 make -j8 install
@@ -40,6 +42,7 @@ mkdir .build
 cd .build
 cmake -D CMAKE_BUILD_TYPE=RelWithDebInfo \
   -D CMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
+  -D CMAKE_INSTALL_LIBDIR=lib \
   -D CMAKE_PREFIX_PATH="${CBDEPS_DIR}/zlib.exploded;${CBDEPS_DIR}/openssl.exploded;${INSTALL_DIR}" \
   -DgRPC_INSTALL=ON \
   -DgRPC_BUILD_TESTS=OFF \
