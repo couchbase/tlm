@@ -52,7 +52,6 @@ if (NOT DEFINED GRPC_FOUND)
              grpc++_reflection
              grpc++_unsecure
              grpc_unsecure
-             grpc_cronet
              grpc
              address_sorting
              gpr
@@ -62,7 +61,6 @@ if (NOT DEFINED GRPC_FOUND)
              absl_strings_internal
              absl_raw_logging_internal
              absl_throw_delegate
-             absl_dynamic_annotations
              absl_int128
              absl_log_severity
              absl_bad_optional_access

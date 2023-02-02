@@ -32,7 +32,7 @@ components:
         versions: [ v3.0.0 ]
     erlang:
         bd-id: 2c804760-a3e3-4ba1-abfb-77525633b966
-        versions: [ 24.3.4.4 ]
+        versions: [ 25.1.2 ]
     flatbuffers:
         bd-id: ae906881-37fd-4af4-8fe7-e435fd2056af
         versions: [ v1.10.0 ]
@@ -47,7 +47,7 @@ components:
         versions: [ 0.4.0 ]
     grpc:
         bd-id: a38e1dc0-f53d-4dc1-adb4-6328fc424fb5
-        versions: [ 1.28.1 ]
+        versions: [ 1.49.2 ]
     jemalloc:
         bd-id: 2504dce9-b1c9-4037-9b03-8a222d9a1570
         versions: [ 5.3.0 ]
@@ -77,7 +77,7 @@ components:
         versions: [ 2.0.11 ]
     openssl:
         bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
-        versions: [ 1.1.1p ]
+        versions: [ 3.0.7 ]
     pcre:
         bd-id: 8c9723be-a23f-4974-9645-54c471aed433
         versions: [ 8.44 ]
