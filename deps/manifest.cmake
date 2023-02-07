@@ -19,7 +19,7 @@
 DECLARE_DEP (benchmark VERSION v1.6.0-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (breakpad V2 VERSION 20200430 BUILD 1 PLATFORMS amzn2 centos7 debian9 debian10 suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (boost VERSION 1.74.0-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
-DECLARE_DEP (cbpy VERSION 7.1.0-cb11 PLATFORMS linux macosx windows DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python/interp")
+DECLARE_DEP (cbpy VERSION 7.5.0-cb1 PLATFORMS linux macosx windows DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python/interp")
 DECLARE_DEP (curl V2 VERSION 7.84.0 BUILD 2 PLATFORMS linux macosx windows)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb4 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (erlang V2 VERSION 24.3.4.4 BUILD 3 PLATFORMS linux macosx windows)
@@ -47,7 +47,7 @@ DECLARE_DEP (numactl VERSION 2.0.11-cb3 PLATFORMS amzn2 centos7 debian9 debian10
 DECLARE_DEP (pcre VERSION 8.44-cb1 PLATFORMS linux macosx windows_msvc2017)
 DECLARE_DEP (openssl V2 VERSION 1.1.1q BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (numactl VERSION 2.0.11-cb3 PLATFORMS amzn2 centos7 debian9 debian10 suse12 suse15 ubuntu18.04 ubuntu20.04)
-DECLARE_DEP (prometheus V2 VERSION 2.23 BUILD 8 PLATFORMS linux macosx windows)
+DECLARE_DEP (prometheus V2 VERSION 2.33.3 BUILD 3 PLATFORMS linux macosx windows)
 DECLARE_DEP (prometheus-cpp VERSION v0.10.0-couchbase-cb2 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 4 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 # We don't want RocksDB to end up in shipped production builds.

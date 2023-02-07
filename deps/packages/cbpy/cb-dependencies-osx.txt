@@ -1,3 +1,0 @@
-# Dependencies explicit to osx
-python=3.9.7=h1248fe1_3_cpython
-cryptography=3.4.7=py39ha2c9959_0
