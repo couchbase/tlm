@@ -419,5 +419,4 @@ IF (NOT CBDownloadDeps_INCLUDED)
   FILE (MAKE_DIRECTORY "${CB_DOWNLOAD_DEPS_CACHE}")
   MESSAGE (STATUS "Third-party dependencies will be cached in "
     "${CB_DOWNLOAD_DEPS_CACHE}")
-    ELSE (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
 ENDIF (NOT CBDownloadDeps_INCLUDED)
