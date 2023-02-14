@@ -1,11 +1,9 @@
 # This module provides facilities for building Go code.
 #
-# The Couchbase build utilizes several different versions of the Go
-# compiler in the production builds. Several macros here accept
-# GOVERSION arguments to specify a Go version. This should be a *major*
-# version, eg. "1.18", not a fully-specified version such as "1.18.4".
-# This is to facilitate easily upgrading Go to remediate security
-# vulnerabilities.
+# The Couchbase build utilizes several different versions of the Go compiler
+# in the production builds. The GoInstall() and GoYacc() macros have an
+# GOVERSION argument which allows individual targets to specify the
+# version of Go they request / require.
 
 # Prevent double-definition if two projects use this script
 IF (NOT FindCouchbaseGo_INCLUDED)
@@ -117,12 +115,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     GET_GO_VERSION ("${_ver_final}" ${var})
     SET (${ver} ${_ver_final})
   ENDMACRO (GET_GOROOT)
-
-  INCLUDE (CBDownloadDeps)
-
-  # No compiler yet
-  SET (GO_SINGLE_EXECUTABLE)
-  SET (GO_SINGLE_ROOT)
 
   # Master target for "all go binaries"
   ADD_CUSTOM_TARGET(all-go)
