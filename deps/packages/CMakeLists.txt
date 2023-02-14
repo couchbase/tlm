@@ -186,7 +186,7 @@ IF (NOT WIN32)
     # deps/packages/rocksdb/CmakeLists.txt which we use to copy/rename the lib
     _ADD_DEP_PACKAGE(rocksdb 5.18.3 5.18.3-couchbase 5)
 ENDIF ()
-_ADD_DEP_PACKAGE(lz4 1.9.2 v1.9.2 1)
+_ADD_DEP_PACKAGE(lz4 1.9.2 v1.9.2 3)
 # maven 3.5.2-cb3 and 3.5.2-cb4 exist as attempts to make Windows work,
 # but are not correct.
 _ADD_DEP_PACKAGE(maven 3.5.2 master 6)
