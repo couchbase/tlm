@@ -21,6 +21,7 @@ fi
 CPPFLAGS=-I/usr/local/include ./configure \
     --prefix=${INSTALL_DIR} \
     --with-jemalloc-prefix=je_ \
+    --with-lg-tcache-limit=15 \
     --disable-cache-oblivious \
     --disable-zone-allocator \
     --disable-initial-exec-tls \

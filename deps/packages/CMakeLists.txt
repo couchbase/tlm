@@ -169,7 +169,7 @@ _ADD_DEP_PACKAGE(snappy 1.1.8 1.1.8 4)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
 _ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 7)
-_ADD_DEP_PACKAGE(jemalloc 5.2.1 5.2.1 6)
+_ADD_DEP_PACKAGE(jemalloc 5.2.1 5.2.1-couchbase 9)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
