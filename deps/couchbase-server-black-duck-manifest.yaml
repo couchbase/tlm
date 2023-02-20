@@ -98,7 +98,7 @@ components:
         versions: [ 10.7.21 ]
     zlib:
         bd-id: b9185555-6e31-401e-b373-bfec7955a8ab
-        versions: [ 1.2.12 ]
+        versions: [ 1.2.13 ]
     zstd-cpp:
         bd-id: 54703c9e-7b84-44e9-9da0-64e3eb4788d5
         versions: [ 1.5.0 ]
