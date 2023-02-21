@@ -5,7 +5,7 @@ include(ExternalProject)
 ### Download, configure and build libcouchbase ####################################
 if (WIN32)
     ExternalProject_Add(libcouchbase
-        GIT_REPOSITORY git://github.com/couchbase/libcouchbase.git
+        GIT_REPOSITORY https://github.com/couchbase/libcouchbase.git
         GIT_TAG ${_git_rev}
 
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -E make_directory <SOURCE_DIR>/build
@@ -52,7 +52,7 @@ else (WIN32)
 
     _DETERMINE_CPU_COUNT(_parallelism)
     ExternalProject_Add(libcouchbase
-        GIT_REPOSITORY git://github.com/couchbase/libcouchbase.git
+        GIT_REPOSITORY https://github.com/couchbase/libcouchbase.git
         GIT_TAG ${_git_rev}
 
         CONFIGURE_COMMAND ${CMAKE_COMMAND} -E make_directory <SOURCE_DIR>/build

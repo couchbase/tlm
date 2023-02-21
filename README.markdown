@@ -103,7 +103,7 @@ convenience:
 
     trond@ok > mkdir source
     trond@ok > cd source
-    trond@ok source> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
+    trond@ok source> repo init -u https://github.com/couchbase/manifest -m branch-master.xml
     trond@ok source> repo sync
     trond@ok source> make
 
@@ -117,7 +117,7 @@ git repositories containing closed source) you need to tell repo
 to fetch additional source by adding `-g enterprise,default` to
 repo init:
 
-    trond@ok source> repo init -u git://github.com/couchbase/manifest -m branch-master.xml -g enterprise,default
+    trond@ok source> repo init -u https://github.com/couchbase/manifest -m branch-master.xml -g enterprise,default
 
 ### Simple build (Windows)
 
@@ -264,7 +264,7 @@ yourself by invoking cmake yourself:
     trond@ok > mkdir source
     trond@ok > mkdir build
     trond@ok > cd source
-    trond@ok source> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
+    trond@ok source> repo init -u https://github.com/couchbase/manifest -m branch-master.xml
     trond@ok source> repo sync
     trond@ok source> cd ../build
     trond@ok build> cmake -D CMAKE_INSTALL_PREFIX=/opt/couchbase -D CMAKE_BUILD_TYPE=Debug -D DTRACE_FOUND:BOOL=True -D DTRACE:FILEPATH=/usr/sbin/dtrace CMAKE_PREFIX_PATH="/opt/r14b04;/opt/couchbase"
@@ -275,7 +275,7 @@ Or pass extra options to the convenience Makefile provided:
     trond@ok > mkdir source
     trond@ok > mkdir build
     trond@ok > cd source
-    trond@ok source> repo init -u git://github.com/couchbase/manifest -m branch-master.xml
+    trond@ok source> repo init -u https://github.com/couchbase/manifest -m branch-master.xml
     trond@ok source> repo sync
     trond@ok source> make PREFIX=/opt/couchbase CMAKE_PREFIX_PATH="/opt/r14b04;/opt/couchbase" EXTRA_CMAKE_OPTIONS='-D DTRACE_FOUND:BOOL=True -D DTRACE:FILEPATH=/usr/sbin/dtrace'
 
