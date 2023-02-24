@@ -25,16 +25,6 @@ cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
 make -j8 install
 cd ../../../..
 
-cd third_party/cares/cares
-mkdir build
-cd build
-cmake -DCMAKE_BUILD_TYPE=RelWithDebInfo \
-  -DCMAKE_INSTALL_PREFIX=${INSTALL_DIR} \
-  -DCARES_STATIC=ON -DCARES_STATIC_PIC=ON -DCARES_SHARED=OFF \
-  ..
-make -j8 install
-cd ../../../..
-
 # Build grpc binaries and libraries
 mkdir .build
 cd .build
@@ -45,7 +35,8 @@ cmake -D CMAKE_BUILD_TYPE=RelWithDebInfo \
   -DgRPC_BUILD_TESTS=OFF \
   -DgRPC_PROTOBUF_PROVIDER=package \
   -DgRPC_ZLIB_PROVIDER=package \
-  -DgRPC_CARES_PROVIDER=package \
+  -DgRPC_CARES_PROVIDER=module \
+  -DCARES_STATIC_PIC=ON \
   -DgRPC_SSL_PROVIDER=package \
   ..
 make -j8 install

@@ -75,7 +75,7 @@ components:
         versions: [ 2.0.11 ]
     openssl:
         bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
-        versions: [ 1.1.1q ]
+        versions: [ 1.1.1t ]
     pcre:
         bd-id: 8c9723be-a23f-4974-9645-54c471aed433
         versions: [ 8.44 ]

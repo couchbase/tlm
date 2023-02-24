@@ -18,18 +18,6 @@ cmake -G Ninja ^
 ninja install || goto error
 cd ..\..\..\..
 
-cd third_party\cares\cares
-mkdir build
-cd build
-cmake -G Ninja ^
-  -DCMAKE_C_COMPILER=cl -DCMAKE_CXX_COMPILER=cl ^
-  -DCMAKE_BUILD_TYPE=RelWithDebInfo ^
-  -DCMAKE_INSTALL_PREFIX=%INSTALL_DIR% ^
-  -DCARES_STATIC=ON -DCARES_STATIC_PIC=ON -DCARES_SHARED=OFF ^
-  .. || goto error
-ninja install || goto error
-cd ..\..\..\..
-
 rem Build grpc binaries and libraries
 rem Protobuf_USE_STATIC_LIBS necessary due to bug in CMake:
 rem https://gitlab.kitware.com/paraview/paraview/issues/19527
@@ -44,7 +32,8 @@ cmake -G Ninja ^
   -DgRPC_BUILD_TESTS=OFF ^
   -DgRPC_PROTOBUF_PROVIDER=package ^
   -DgRPC_ZLIB_PROVIDER=package ^
-  -DgRPC_CARES_PROVIDER=package ^
+  -DgRPC_CARES_PROVIDER=module ^
+  -DCARES_STATIC_PIC=ON ^
   -DgRPC_SSL_PROVIDER=package ^
   -DgRPC_BUILD_GRPC_RUBY_PLUGIN=OFF ^
   -DgRPC_BUILD_GRPC_PHP_PLUGIN=OFF ^
