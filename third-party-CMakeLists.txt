@@ -12,3 +12,16 @@ add_subdirectory(gsl-lite EXCLUDE_FROM_ALL)
 # Disable building examples and tests for HdrHistogram.
 set(HDR_HISTOGRAM_BUILD_PROGRAMS OFF CACHE BOOL "Build hdr_histogram tests and examples")
 add_subdirectory(HdrHistogram_c)
+
+# Disable building anything we don't use.
+set(SIMDUTF_SINGLE_HEADER OFF)
+set(SIMDUTF_BENCHMARKS OFF)
+set(SIMDUTF_TESTS OFF)
+set(SIMDUTF_ICONV OFF)
+set(SIMDUTF_TOOLS OFF)
+# Explicitly specify C++ version for simdutf. The library "targets" C++11,
+# however, it uses binary literals, which are a C++14 feature and we get
+# warnings.
+set(SIMDUTF_CXX_STANDARD ${CMAKE_CXX_STANDARD})
+# Add simdutf
+add_subdirectory(simdutf EXCLUDE_FROM_ALL SYSTEM)
