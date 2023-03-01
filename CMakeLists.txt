@@ -33,27 +33,6 @@ INCLUDE(CouchbaseSelectCompiler)
 
 PROJECT("Couchbase")
 
-if (APPLE
-    AND NOT CMAKE_APPLE_SILICON_PROCESSOR
-    AND CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-    # Need to remove CMake's calculated & cached value for
-    # CMAKE_HOST_SYSTEM_PROCESSOR in
-    # CMakeFiles/<VERSION>/CMakeSystem.cmake otherwise it if the user
-    # runs cmake again it will ignore the
-    # '-DCMAKE_APPLE_SILICON_PROCESSOR' option and use the value
-    # created for this run (i.e. arm64)."
-    file(REMOVE_RECURSE "${CMAKE_BINARY_DIR}/CMakeFiles")
-    message(FATAL_ERROR "Native compilation to Apple Silicon is currently"
-            " not supported. Please compile to x86-64 using options:\n"
-            "-DCMAKE_APPLE_SILICON_PROCESSOR=x86_64 "
-            "-DCMAKE_OSX_ARCHITECTURES=x86_64\n"
-            "Removing CMake cached system information in 'CMakeFiles/' to allow "
-            "reconfiguration.\n"
-            "(If you know what you are doing and want to experiment with"
-            " building for the native architecture on Apple Silicon, explicitly"
-            " set the CMake variable CMAKE_APPLE_SILICON_PROCESSOR to 'arm64')")
-endif ()
-
 #
 # Choose deployment target on macOS.
 # We only support x86-64 currently (for development), and as of Neo the
