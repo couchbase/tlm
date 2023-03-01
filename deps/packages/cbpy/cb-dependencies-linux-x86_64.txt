@@ -1,3 +1,1 @@
-# Dependencies explicit to linux-x86_64
-python=3.9.7=hb7a2778_3_cpython
-cryptography=3.4.7=py39hbca0aa6_0
+# Dependencies specific to linux-x86_64

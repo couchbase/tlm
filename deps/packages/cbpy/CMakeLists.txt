@@ -1,7 +1,11 @@
 # A stubbed "external" project, because the cbpy build instructions
 # are actually right here.
 
-SET (CBDEP_VERSION 1.0.4)
+# This is the Master Version of Python to use everywhere!
+SET (PYTHON_VERSION 3.9.16)
+
+# These are tool versions, shouldn't need changing often
+SET (CBDEP_VERSION 1.1.1)
 SET (MINIFORGE_VERSION 4.10.3-5)
 
 include(ExternalProject)
@@ -24,7 +28,8 @@ ELSE ()
 ENDIF ()
 
 SET (_install_dir "${CMAKE_BINARY_DIR}/install")
-FILE (TO_NATIVE_PATH "${_install_dir}" _install_dir)
+FILE (TO_NATIVE_PATH "${_install_dir}" _install_native_dir)
+FILE (TO_NATIVE_PATH "${CMAKE_CURRENT_SOURCE_DIR}" _source_native_dir)
 
 # We abuse the DOWNLOAD step here to grab cbdep for us. cbdep knows the
 # vagaries of downloading and installing a local Miniforge to kickstart
@@ -34,11 +39,15 @@ FILE (TO_NATIVE_PATH "${_install_dir}" _install_dir)
 #    is where it should dump stuff
 #  - We pass CMAKE_CURRENT_SOURCE_DIR to the script so it knows where to
 #    find conda-pkgs etc.
+# Also, we set BINARY_DIR (which is where the CWD will be when the real build
+# script is invoked) to a specific short relative path, because conda gets
+# buggy if environment paths are longer than 127 characters long.
 ExternalProject_Add(cbpy
   URL "${_cbdep_url_base}${_cbdep_url_ext}"
   DOWNLOAD_NO_EXTRACT true
   CONFIGURE_COMMAND ""
-  BUILD_COMMAND "${_build_script}" "${CMAKE_CURRENT_SOURCE_DIR}" <DOWNLOADED_FILE> ${MINIFORGE_VERSION} <INSTALL_DIR>
+  BINARY_DIR build
+  BUILD_COMMAND "${_build_script}" "${_source_native_dir}" <DOWNLOADED_FILE> ${MINIFORGE_VERSION} ${PYTHON_VERSION} "${_install_native_dir}"
   INSTALL_DIR "${_install_dir}"
   INSTALL_COMMAND ""
 )

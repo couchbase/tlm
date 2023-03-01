@@ -99,10 +99,7 @@ components:
         versions: [ 0.10.1 ]
     snappy:
         bd-id: fd5e5c60-2c67-4d20-8be9-b7648156cef3
-        versions: [ 1.1.8 ]
-    sqlite:
-        bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
-        versions: [ "3.37.1" ]
+        versions: [ 1.1.9 ]
     tk:
         bd-id: b64ca5f6-9e86-4f1f-932f-c5725affbfa5
         versions: [ 8.6.12 ]
