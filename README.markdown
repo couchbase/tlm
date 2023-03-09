@@ -233,31 +233,7 @@ mkdir build
 cd build
 cmake -G Ninja -D CB_PARALLEL_LINK_JOBS=4 -D CMAKE_BUILD_TYPE=Debug ..
 ```
-
-> **Note**
->
-> **macOS: force x86-64 binaries)**
->
-> We do not _officially_ support native compilation to Apple Silicon ARMv8.5 64bit
-> (we __do__ support ARMv8 for Linux). So to build on an Apple Silicon machine you
-> will need to compile for x86-64 - which will use Rosetta 2 to actually run
-> the resulting x86-64 binaries.
->
-> This is automatically handled if you use the basic build with `make`, but
-> when building with `Ninja`, you need to explicitly specify the following
-> additional options:
->
->     cmake -G "Ninja" -D CMAKE_APPLE_SILICON_PROCESSOR=x86_64 -D CMAKE_OSX_ARCHITECTURES=x86_64 ..
->
->
-> **Experimental native arm64 support**
->
-> The _master_ branch has support for native arm64 builds. To use this,
-> set the CMake variable `CMAKE_APPLE_SILICON_PROCESSOR` to `arm64` - e.g.:
->
->     cmake -G "Ninja" -D CMAKE_APPLE_SILICON_PROCESSOR=arm64 ..
-
-To build, use `ninja` instead of your normal command - for example to build and
+Then use `ninja` instead of your normal command - for example to build and
 install everything run (from `build/` dir):
 ```commandline
 ninja install
