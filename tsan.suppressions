@@ -15,6 +15,7 @@ race:TestCrashRecoveryGarbeledDate
 # memcached ISOTime::generatetimestamp is using libc mktime which updates
 # the TZ env-variable through tzset (_internal). This shows up as a data-race.
 race:tzset_internal
+race:tzset
 
 # ThreadSanitizer appears to report a false positive data race in
 # operator delete via std::string::assign for std::string when using
