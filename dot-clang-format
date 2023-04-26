@@ -91,3 +91,8 @@ SpacesInSquareBrackets: false
 Standard:        Auto
 TabWidth:        8
 UseTab:          Never
+
+---
+
+Language: Proto
+BasedOnStyle: Google
