@@ -43,7 +43,7 @@ if (NOT DEFINED ICU_FOUND)
         ENDIF()
 
         if (NOT ICU_LIBRARIES)
-            set(_icu_libraries "icuuc.dll;icui18n.dll")
+            set(_icu_libraries "icuuc.dll;third_party_icu_icui18n.dll")
             foreach (_mylib ${_icu_libraries})
                 unset(_the_lib CACHE)
                 find_library(_the_lib
