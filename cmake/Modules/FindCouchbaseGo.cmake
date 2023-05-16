@@ -78,6 +78,14 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   MACRO (GET_GOROOT VERSION var ver UNSHIPPED)
     SET (_request_version ${VERSION})
 
+    # If one of the constant Go versions is specified, read in the
+    # corresponding Go major version from the golang repo
+    IF ("${VERSION}" STREQUAL "SUPPORTED_OLDER" OR
+        "${VERSION}" STREQUAL "SUPPORTED_NEWER")
+      FILE (STRINGS "${CMAKE_SOURCE_DIR}/golang/versions/${VERSION}.txt"
+            _request_version LIMIT_COUNT 1)
+    ENDIF ()
+
     # MacOS often requires a newer Go version for $REASONS
     IF (APPLE)
       IF (${_request_version} VERSION_LESS "${GO_MAC_MINIMUM_VERSION}")
