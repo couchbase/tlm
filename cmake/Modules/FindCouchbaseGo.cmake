@@ -632,48 +632,48 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   #
   MACRO (GoYacc)
 
+    PARSE_ARGUMENTS (goyacc "DEPENDS" "TARGET;YFILE;GOVERSION" "" ${ARGN})
+
     # Only build this target if somebody uses this macro
     IF (NOT TARGET goyacc)
       GoInstall (TARGET goyacc UNSHIPPED
       PACKAGE golang.org/x/tools/cmd/goyacc
-      GOVERSION 1.11.6
+      GOVERSION ${goyacc_GOVERSION}
       GOPATH "${CMAKE_SOURCE_DIR}/godeps")
     ENDIF ()
 
-    PARSE_ARGUMENTS (Go "DEPENDS" "TARGET;YFILE;GOVERSION" "" ${ARGN})
-
-    IF (NOT Go_TARGET)
+    IF (NOT goyacc_TARGET)
       MESSAGE (FATAL_ERROR "TARGET is required!")
-    ENDIF (NOT Go_TARGET)
-    IF (NOT Go_YFILE)
+    ENDIF (NOT goyacc_TARGET)
+    IF (NOT goyacc_YFILE)
       MESSAGE (FATAL_ERROR "YFILE is required!")
-    ENDIF (NOT Go_YFILE)
+    ENDIF (NOT goyacc_YFILE)
 
-    GET_FILENAME_COMPONENT (_ypath "${Go_YFILE}" PATH)
-    GET_FILENAME_COMPONENT (_yfile "${Go_YFILE}" NAME)
+    GET_FILENAME_COMPONENT (_ypath "${goyacc_YFILE}" PATH)
+    GET_FILENAME_COMPONENT (_yfile "${goyacc_YFILE}" NAME)
 
-    SET(Go_OUTPUT "${_ypath}/y.go")
+    SET(goyacc_OUTPUT "${_ypath}/y.go")
 
     # Compute path to Go compiler
-    GET_GOROOT ("${Go_GOVERSION}" _goroot _gover 1)
+    GET_GOROOT ("${goyacc_GOVERSION}" _goroot _gover 1)
 
-    ADD_CUSTOM_COMMAND(OUTPUT "${Go_OUTPUT}"
+    ADD_CUSTOM_COMMAND(OUTPUT "${goyacc_OUTPUT}"
                        COMMAND "${CMAKE_COMMAND}"
                        -D "GOROOT=${_goroot}"
                        -D "GOYACC_EXECUTABLE=${CMAKE_SOURCE_DIR}/godeps/bin/goyacc"
                        -D "YFILE=${_yfile}"
                        -P "${TLM_MODULES_DIR}/go-yacc.cmake"
-                       DEPENDS ${Go_YFILE} goyacc
+                       DEPENDS ${goyacc_YFILE} goyacc
                        WORKING_DIRECTORY "${_ypath}"
-                       COMMENT "Build Go yacc target ${Go_TARGET} using Go ${_gover}"
+                       COMMENT "Build Go yacc target ${goyacc_TARGET} using Go ${_gover}"
                        VERBATIM)
 
-    ADD_CUSTOM_TARGET ("${Go_TARGET}"
-                       DEPENDS "${Go_OUTPUT}")
-    MESSAGE (STATUS "Added Go yacc target '${Go_TARGET}' using Go ${_gover}")
+    ADD_CUSTOM_TARGET ("${goyacc_TARGET}"
+                       DEPENDS "${goyacc_OUTPUT}")
+    MESSAGE (STATUS "Added Go yacc target '${goyacc_TARGET}' using Go ${_gover}")
 
     IF (Go_DEPENDS)
-      ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
+      ADD_DEPENDENCIES (${goyacc_TARGET} ${goyacc_DEPENDS})
     ENDIF (Go_DEPENDS)
 
   ENDMACRO (GoYacc)
