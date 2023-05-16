@@ -1,9 +1,23 @@
 # This module provides facilities for building Go code.
 #
-# The Couchbase build utilizes several different versions of the Go compiler
-# in the production builds. The GoInstall() and GoYacc() macros have an
-# GOVERSION argument which allows individual targets to specify the
-# version of Go they request / require.
+# The Couchbase build utilizes several different versions of the Go
+# compiler in the production builds. The GoInstall() and GoYacc() macros
+# have an GOVERSION argument which allows individual targets to specify
+# the version of Go they request / require. This argument should take
+# one of these forms:
+#
+#   X.Y, eg. 1.19 - major Go version to use (specific minor version used
+#      will be determined by the centralized Go version management from
+#      the "golang" repository)
+#
+#   SUPPORTED_OLDER, SUPPORTED_NEWER - at any point in time only two
+#      major versions of Go are supported by Google. By specifying one
+#      of these two constants, the code will be built using the older or
+#      newer of these versions. Again the specific minor version used
+#      will be determined by the centralized Go version management.
+#
+#   X.Y.Z, eg. 1.19.4 (deprecated) - this will be translated to X.Y with
+#      a warning to update.
 
 # Prevent double-definition if two projects use this script
 IF (NOT FindCouchbaseGo_INCLUDED)
@@ -37,6 +51,14 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # by "ver" to the actual version of Go used.
   MACRO (GET_GOROOT VERSION var ver UNSHIPPED)
     SET (_request_version ${VERSION})
+
+    # If one of the constant Go versions is specified, read in the
+    # corresponding Go major version from the golang repo
+    IF ("${VERSION}" STREQUAL "SUPPORTED_OLDER" OR
+        "${VERSION}" STREQUAL "SUPPORTED_NEWER")
+      FILE (STRINGS "${CMAKE_SOURCE_DIR}/golang/versions/${VERSION}.txt"
+            _request_version LIMIT_COUNT 1)
+    ENDIF ()
 
     # MacOS often requires a newer Go version for $REASONS
     IF (APPLE)
