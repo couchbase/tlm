@@ -48,7 +48,7 @@ if (NOT DEFINED V8_FOUND)
         ENDIF ()
 
         if (NOT V8_LIBRARIES)
-            set(_v8_libraries "v8.dll;v8_libplatform.dll;v8_libbase.dll;zlib.dll")
+            set(_v8_libraries "v8.dll;v8_libplatform.dll;v8_libbase.dll;third_party_icu_icui18n.dll;third_party_zlib.dll")
             foreach (_mylib ${_v8_libraries})
                 unset(_the_lib CACHE)
                 find_library(_the_lib
@@ -63,7 +63,7 @@ if (NOT DEFINED V8_FOUND)
         endif (NOT V8_LIBRARIES)
     else (WIN32)
         if (NOT V8_LIBRARIES)
-            set(_v8_libraries "v8;v8_libplatform;v8_libbase;libchrome_zlib")
+            set(_v8_libraries "v8;v8_libplatform;v8_libbase;chrome_zlib;icuuc;third_party_icu_icui18n")
             foreach (_mylib ${_v8_libraries})
                 unset(_the_lib CACHE)
                 find_library(_the_lib
