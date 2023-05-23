@@ -76,3 +76,6 @@ function(define_everything_targets)
         endif(NOT (target_type STREQUAL "INTERFACE" OR target_type STREQUAL "INTERFACE_LIBRARY"))
     endforeach()
 endfunction()
+
+# Register the above as an end-of-cmake-time hook.
+SET_PROPERTY (GLOBAL APPEND PROPERTY CB_CMAKE_END_HOOKS define_everything_targets)
