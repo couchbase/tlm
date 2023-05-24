@@ -48,7 +48,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # collected by GET_GOROOT().
   FUNCTION (WRITE_GO_VERSIONS_REPORT)
     MESSAGE (STATUS "Producing Go version usage report")
-    SET (_reportfile "${CMAKE_BINARY_DIR}/tlm/go-versions.yaml")
+    SET (_reportfile "${CMAKE_BINARY_DIR}/tlm/couchbase-server-${PRODUCT_VERSION}-go-versions.yaml")
     FILE (WRITE "${_reportfile}"
       "product: couchbase-server\n"
       "version: ${PRODUCT_VERSION}\n"
