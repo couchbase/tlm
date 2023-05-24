@@ -518,6 +518,13 @@ ELSE (WIN32 OR APPLE)
   )
 ENDIF (WIN32 OR APPLE)
 
-# End of top-level CMakeLists.txt - now all targets have been defined,
-# introspect them and define 'everything' and <project>_everything targets.
-define_everything_targets()
+# End of top-level CMakeLists.txt - call any end-processing hooks.
+# You may add your own hooks with:
+#
+#   SET_PROPERTY (GLOBAL APPEND PROPERTY CB_CMAKE_END_HOOKS <function name>)
+#
+# These will be called with no arguments.
+GET_PROPERTY (_end_hooks GLOBAL PROPERTY CB_CMAKE_END_HOOKS)
+FOREACH (_hook ${_end_hooks})
+    CMAKE_LANGUAGE (EVAL CODE "${_hook}()")
+ENDFOREACH ()

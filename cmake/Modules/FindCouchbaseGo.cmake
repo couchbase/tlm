@@ -41,15 +41,59 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
   INCLUDE (ParseArguments)
 
-  # Have to remember cwd when this find is INCLUDE()d
+  # Have to remember cwd when this file is INCLUDE()d
   SET (TLM_MODULES_DIR "${CMAKE_CURRENT_LIST_DIR}")
 
+  # End-cmake-hook which will write out all the go-version report information
+  # collected by GET_GOROOT().
+  FUNCTION (WRITE_GO_VERSIONS_REPORT)
+    MESSAGE (STATUS "Producing Go version usage report")
+    SET (_reportfile "${CMAKE_BINARY_DIR}/tlm/couchbase-server-${PRODUCT_VERSION}-go-versions.yaml")
+    FILE (WRITE "${_reportfile}"
+      "product: couchbase-server\n"
+      "version: ${PRODUCT_VERSION}\n"
+      "go-versions:\n"
+    )
+    GET_PROPERTY (_govers GLOBAL PROPERTY CB_GO_VERSIONS)
+    FOREACH (_gover ${_govers})
+      FILE (APPEND "${_reportfile}" "  - ${_gover}:\n")
+      GET_PROPERTY (_goverusages GLOBAL PROPERTY CB_GO_VERSION_${_gover})
+      FOREACH (_goverusage ${_goverusages})
+        # Each entry here is a comma-separated list of four components. Turn
+        # it into a CMake ;-separated list.
+        STRING (REPLACE "," ";" _goverdetails "${_goverusage}")
+        LIST (GET _goverdetails 0 _target)
+        LIST (GET _goverdetails 1 _repodir)
+        LIST (GET _goverdetails 2 _requestversion)
+        LIST (GET _goverdetails 3 _usage)
+        LIST (GET _goverdetails 4 _unshipped)
+        IF (_unshipped)
+          SET (_unshipped "true")
+        ELSE ()
+          SET (_unshipped "false")
+        ENDIF ()
+        FILE (APPEND "${_reportfile}"
+          "    - target: ${_target}\n"
+          "      repodir: ${_repodir}\n"
+          "      requestversion: ${_requestversion}\n"
+          "      usage: ${_usage}\n"
+          "      unshipped: ${_unshipped}\n"
+        )
+      ENDFOREACH ()
+    ENDFOREACH ()
+  ENDFUNCTION (WRITE_GO_VERSIONS_REPORT)
+  SET_PROPERTY (GLOBAL APPEND PROPERTY CB_CMAKE_END_HOOKS WRITE_GO_VERSIONS_REPORT)
+
   # This macro is called by GoInstall() / GoYacc() / etc. to find the
-  # appropriate Go compiler to use. It will set the variable named by
-  # "var" to the full path of the corresponding GOROOT, or raise an error
-  # if the requested version cannot be found. It will set the variable named
-  # by "ver" to the actual version of Go used.
-  MACRO (GET_GOROOT VERSION var ver UNSHIPPED)
+  # appropriate Go compiler to use. This is also responsible for
+  # creating the go-versions.csv artifact.
+  # Parameters:
+  #   var - variable to set to the full path of GOROOT
+  #   ver - variable to set to the final used Go version
+  #   TARGET - name of target this root is being used for
+  #   USAGE - usage of TARGET
+  #   UNSHIPPED - true if TARGET is not a shipped deliverable
+  MACRO (GET_GOROOT VERSION var ver TARGET USAGE UNSHIPPED)
     SET (_request_version ${VERSION})
 
     # If one of the constant Go versions is specified, read in the
@@ -110,6 +154,17 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
     GET_GO_VERSION ("${_ver_final}" ${var})
     SET (${ver} ${_ver_final})
+
+    # Save this request keyed by final Go version, as well as updating the
+    # list of used Go versions.
+    FILE (RELATIVE_PATH _repodir "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
+    SET_PROPERTY (GLOBAL APPEND PROPERTY "CB_GO_VERSION_${_ver_final}"
+        "${TARGET},${_repodir},${VERSION},${USAGE},${UNSHIPPED}")
+    GET_PROPERTY (_go_versions GLOBAL PROPERTY CB_GO_VERSIONS)
+    LIST (APPEND _go_versions "${_ver_final}")
+    LIST (REMOVE_DUPLICATES _go_versions)
+    LIST (SORT _go_versions COMPARE NATURAL)
+    SET_PROPERTY (GLOBAL PROPERTY CB_GO_VERSIONS "${_go_versions}")
   ENDMACRO (GET_GOROOT)
 
   # Master target for "all go binaries"
@@ -241,7 +296,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF()
 
     # Compute path to Go compiler
-    GET_GOROOT ("${Go_GOVERSION}" _goroot _gover ${Go_UNSHIPPED})
+    GET_GOROOT ("${Go_GOVERSION}" _goroot _gover ${Go_TARGET} non-modules-build ${Go_UNSHIPPED})
 
     # Go install target
     ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
@@ -421,7 +476,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF()
 
     # Compute path to Go compiler
-    GET_GOROOT ("${Go_GOVERSION}" _goroot _gover ${Go_UNSHIPPED})
+    GET_GOROOT ("${Go_GOVERSION}" _goroot _gover ${Go_TARGET} modules-build ${Go_UNSHIPPED})
     SET (_goexe "${_goroot}/bin/go")
 
     # Path to go binary dir for this target
@@ -590,7 +645,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   ENDIF (WIN32  AND ${Go_NOCONSOLE})
 
   # Compute path to Go compiler
-  GET_GOROOT ("${Go_GOVERSION}" _goroot _gover 1)
+  GET_GOROOT ("${Go_GOVERSION}" _goroot _gover ${Go_TARGET} test 1)
 
   add_test(NAME "${Go_TARGET}"
              COMMAND "${CMAKE_COMMAND}"
@@ -655,7 +710,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     SET(goyacc_OUTPUT "${_ypath}/y.go")
 
     # Compute path to Go compiler
-    GET_GOROOT ("${goyacc_GOVERSION}" _goroot _gover 1)
+    GET_GOROOT ("${goyacc_GOVERSION}" _goroot _gover ${goyacc_TARGET} yacc 1)
 
     ADD_CUSTOM_COMMAND(OUTPUT "${goyacc_OUTPUT}"
                        COMMAND "${CMAKE_COMMAND}"
