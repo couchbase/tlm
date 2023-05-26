@@ -48,7 +48,7 @@ DECLARE_DEP (pcre VERSION 8.44-cb3 PLATFORMS linux macosx windows)
 DECLARE_DEP (openssl V2 VERSION 3.1.1 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (numactl VERSION 2.0.11-cb4 PLATFORMS linux)
 DECLARE_DEP (prometheus V2 VERSION 2.45.0 BUILD 1 PLATFORMS linux macosx windows)
-DECLARE_DEP (prometheus-cpp VERSION v0.10.0-couchbase-cb4 PLATFORMS linux macosx windows)
+DECLARE_DEP (prometheus-cpp VERSION v1.1.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 7 PLATFORMS linux macosx windows)
 # We don't want RocksDB to end up in shipped production builds.
 # NB: I don't indent this IF() block just in case, because I know that some
