@@ -13,104 +13,111 @@ components:
     _openmp_mutex:
         bd-id: e96f3f9a-dc1b-488a-95d5-853f0b074d1c
         versions: [ 4.5 ]
-    brotlipy:
-        bd-id: eeda27ea-0cb3-4fac-b767-42a7fb4dfd49
-        versions: [ v0.7.0 ]
+    brotli:
+        bd-id: 53eb95f4-9124-43d0-913c-f27e94320dfa
+        versions: [ 1.0.9 ]
+    bzip2:
+        bd-id: 102488a4-212e-4ab3-8fc6-338f3f5b120e
+        versions: [ 1.0.8 ]
     ca-certificates:
         bd-id: 530bae3a-a2ad-4bd6-810d-854fe6b57b9b
-        versions: [ 2022.5.18.1 ]
+        versions: [ 2023.5.7 ]
     certifi:
         bd-id: f1890115-04dd-4eaf-8ff0-5e2643582990
-        versions: [ 2022.5.18.1 ]
+        versions: [ 2023.5.7 ]
     cffi:
         bd-id: 043e4252-a86b-4281-a1a3-a762fe0470de
-        versions: [ 1.15.0 ]
+        versions: [ 1.15.1 ]
     charset-normalizer:
         bd-id: a5066b09-b6fa-4065-b11b-f45326aa9332
-        versions: [ 2.0.12 ]
+        versions: [ 3.1.0 ]
     cryptography:
         bd-id: f09c05ab-0954-400d-94e9-4de512ed42fa
-        versions: [ 3.4.7 ]
+        versions: [ 38.0.4 ]
     idna:
         bd-id: 0be5e619-2387-4fe3-915e-8a60146b57dd
-        versions: [ 3.3 ]
+        versions: [ 3.4 ]
     libcxx:
         bd-id: 587d3e15-ea76-449b-94b1-ef12538584e4
-        versions: [ 14.0.4 ]
+        versions: [ 16.0.4 ]
     libffi:
         bd-id: 8a5d4e5f-eee6-441d-91cc-85c7bb5e9fb5
         versions: [ 3.4.2 ]
     libgcc-ng:
         bd-id: 7fc4e9e4-a755-42d4-b0e3-ae2f2cc90728
-        versions: [ 12.1.0 ]
+        versions: [ 12.2.0 ]
     libgomp:
         bd-id: 6e2c44eb-e153-4b09-9500-f61fda6353ac
-        versions: [ 12.1.0 ]
+        versions: [ 12.2.0 ]
+    libnsl:
+        bd-id: 593ed15d-7aaf-4ef3-91bf-691c6dc31ccc
+        versions: [ 2.0.0 ]
+    libsqlite:
+        bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
+        versions: [ 3.42.0 ]
+    libuuid:
+        bd-id: d35f4c89-cd3f-457b-9c48-598bb01b3f0b
+        versions: [ 2.38.1 ]
     msgpack-python:
         bd-id: d265c559-74ea-4baa-a993-2089ca47efde
-        versions: [ 1.0.2 ]
+        versions: [ 1.0.5 ]
     natsort:
         bd-id: c935b0a6-c4ad-449b-bea6-e953ad632518
-        versions: [ 7.1.1 ]
+        versions: [ 8.3.1 ]
     ncurses:
         bd-id: 7273e9b6-fd06-4da3-882b-391c9d4ea758
         versions: [ "6.3" ]
+    openssl:
+        bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
+        versions: [ 3.1.1 ]
     pem:
         bd-id: e116f5a5-2fda-4341-9ce9-88ae369d0620
         versions: [ 21.2.0 ]
-    # as of July 29, 2021, quotes have to be around 2.20.
-    # otherwise, zero at the end is stripped somehow and BD scan will fail.
     pycparser:
         bd-id: d4148456-5d7e-49b5-8ffe-c65d67ee52a6
         versions: [ "2.21" ]
     pycryptodome:
         bd-id: 0262517f-43d2-4243-b451-bb029df9ea11
-        versions: [ 3.10.4 ]
+        versions: [ 3.18.0 ]
     pyopenssl:
         bd-id: 69c65bd6-9d4a-427e-8b35-384c0ce8602e
-        versions: [ 21.0.0 ]
+        versions: [ 23.2.0 ]
     pysocks:
         bd-id: 5c2e7e08-0eb3-4d78-a6a7-45a36bad400c
         versions: [ 1.7.1 ]
     python:
         bd-id: ee4d67e0-63f9-409d-a9be-1c30de64873d
-        versions: [ 3.9.7 ]
+        versions: [ 3.9.16 ]
     python_abi:
         bd-id: ba4cb840-4316-4d85-ac00-5e39a2ff567e
         versions: [ 3.9 ]
     python-snappy:
         bd-id: 47724afe-8603-46c1-9bb9-de8bbba8c11f
-        versions: [ 0.6.0 ]
+        versions: [ 0.6.1 ]
     requests:
         bd-id: 93b03de5-fedb-4162-8a18-7f19fdbd252e
-        versions: [ 2.26.0 ]
+        versions: [ 2.31.0 ]
     requests-toolbelt:
         bd-id: 06b17c61-ca1c-4b52-bc10-89abd65ad897
-        versions: [ 0.9.1 ]
-    six:
-        bd-id: 69184346-b974-4064-88a3-134a17f6bbb5
-        versions: [ 1.16.0 ]
+        versions: [ 1.0.0 ]
     snappy:
         bd-id: fd5e5c60-2c67-4d20-8be9-b7648156cef3
-        versions: [ 1.1.9 ]
-    sqlite:
-        bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
-        versions: [ "3.38.5" ]
+        versions: [ 1.1.10 ]
     tk:
         bd-id: b64ca5f6-9e86-4f1f-932f-c5725affbfa5
         versions: [ 8.6.12 ]
     tzdata:
         bd-id: 1624d2ea-d07f-4fc3-837a-2391e0dfb299
-        versions: [ 2022a ]
+        versions: [ 2023c ]
     urllib3:
         bd-id: d222c710-38b5-4073-8347-63bb6526e77d
-        versions: [ 1.26.9 ]
+        versions: [ 2.0.2 ]
     win_inet_pton:
         bd-id: 196607cc-9260-4b6c-baba-f7cb9dd706b1
         versions: [ 1.1.0 ]
     xz:
         bd-id: 59191267-61f3-42aa-9247-6b83d8085db5
-        versions: [ 5.2.5 ]
+        versions: [ 5.2.6 ]
     zlib:
         bd-id: b9185555-6e31-401e-b373-bfec7955a8ab
-        versions: [ 1.2.12 ]
+        versions: [ 1.2.13 ]
