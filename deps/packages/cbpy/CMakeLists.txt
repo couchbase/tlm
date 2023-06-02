@@ -5,8 +5,8 @@
 SET (PYTHON_VERSION 3.9.16)
 
 # These are tool versions, shouldn't need changing often
-SET (CBDEP_VERSION 1.1.1)
-SET (MINIFORGE_VERSION 4.10.3-5)
+SET (CBDEP_VERSION 1.1.6)
+SET (MINIFORGE_VERSION 23.1.0-0)
 
 include(ExternalProject)
 

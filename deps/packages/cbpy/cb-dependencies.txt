@@ -4,7 +4,10 @@
 # Note! Don't list "python" itself here - that has to be specified prior
 # to the creation of the environment, so it is defined in CMakeLists.txt.
 
-cryptography>=39.0.1
+# We have to lock cryptography to < 39.0 because they removed an API
+# that is used by the urllib3.contrib.pyopenssl module that is vendored
+# inside of requests. See MB-57219.
+cryptography<39
 msgpack-python>=1.0.2
 natsort>=7.1.1
 pycryptodome>=3.10.4
@@ -12,6 +15,6 @@ python-snappy>=0.6.0
 requests>=2.28.2
 requests-toolbelt>=0.9.1
 zlib>=1.2.13
-
+pyopenssl>=23.2.0
 # Locally built, so fixed version number
 pem=21.2.0

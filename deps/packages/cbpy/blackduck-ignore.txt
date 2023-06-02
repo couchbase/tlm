@@ -1,10 +1,20 @@
 # Packages listed in this file will not be checked against
-# couchbase-server-black-duck-manifest.yaml
+# couchbase-server-black-duck-manifest.yaml - mostly OS/compiler
+# runtime libraries that are notoriously difficult to find in
+# Black Duck, or are already handled by tlm/deps's manifest
 ld_impl_linux-64
 ld_impl_linux-aarch64
 libstdcxx-ng
 libzlib
-openssl
 ucrt
 vc
 vs2015_runtime
+vc14_runtime
+
+# brotli is now split into several components by conda-forge, but
+# couchbase-server-black-duck-manifest.yaml just lists "brotli".
+# Ignored the sub-packages.
+brotli-bin
+libbrotlicommon
+libbrotlidec
+libbrotlienc

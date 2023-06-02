@@ -24,6 +24,9 @@ import yaml
 from collections import defaultdict
 
 platforms = ["linux-x86_64", "linux-aarch64", "macosx-x86_64", "macosx-arm64", "windows-amd64"]
+bd_ignored = set()
+actually_ignored = set()
+cb_stubs = set()
 
 def dd():
     return defaultdict(dd)
@@ -77,6 +80,9 @@ def detect_blackduck_drift():
     for target_platform in environment_deps:
         for dep in environment_deps[target_platform]:
             if dep in bd_ignored:
+                actually_ignored.add(dep)
+                continue
+            if dep in cb_stubs:
                 continue
             if dep in blackduck_manifest['components']:
                 bd_dep_name = dep
@@ -99,6 +105,11 @@ def detect_blackduck_drift():
         if not found:
             blackduck['removed'][bd_dep] = ""
 
+    # See if any things we're ignoring are no longer relevant
+    unnecessary_ignored = bd_ignored - actually_ignored
+    if unnecessary_ignored:
+        blackduck['unnecessary_ignored'] = unnecessary_ignored
+
     # If we've got missing/drifted/removed packages, just show the relevant
     # info and error out
     if any(problem in blackduck for problem in ['missing', 'drifted', 'removed']):
@@ -118,6 +129,12 @@ def detect_blackduck_drift():
             print("Deps in BD manifest but no longer in environments:")
             for dep in blackduck['removed']:
                 print("  ", dep)
+        if blackduck['unnecessary_ignored']:
+            print()
+            print("Deps in blackduck-ignore.txt that are no longer part of cbpy")
+            for dep in blackduck['unnecessary_ignored']:
+                print("  ", dep)
+        print()
         sys.exit(1)
 
 parser = argparse.ArgumentParser(
@@ -145,11 +162,11 @@ cbpy_version = args.version
 with (tlm_dir / "couchbase-server-black-duck-manifest.yaml").open() as m:
     blackduck_manifest = yaml.safe_load(m)
 with (tlm_dir / "blackduck-ignore.txt").open() as i:
-    bd_ignored = [
+    bd_ignored.update([
         x.strip() for x in i.readlines()
-        if not x.startswith("#") and x != ""
-    ]
-bd_ignored.extend(read_dependencies_file(tlm_dir / "cb-stubs.txt").keys())
+        if not x.startswith("#") and x != "\n"
+    ])
+cb_stubs.update(read_dependencies_file(tlm_dir / "cb-stubs.txt").keys())
 
 # Load enviroment files from tarballs
 environment_deps = {}
