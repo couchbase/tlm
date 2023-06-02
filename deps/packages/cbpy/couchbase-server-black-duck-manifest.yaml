@@ -15,7 +15,7 @@ components:
         versions: [ 4.5 ]
     brotli:
         bd-id: 53eb95f4-9124-43d0-913c-f27e94320dfa
-        versions: [ 1.0.9 ]
+        versions: [ v1.0.9 ]
     bzip2:
         bd-id: 102488a4-212e-4ab3-8fc6-338f3f5b120e
         versions: [ 1.0.8 ]
