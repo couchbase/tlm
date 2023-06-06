@@ -4,9 +4,8 @@
 SET (_dep_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
 SET (_temp_cmake_install_prefix "${CMAKE_INSTALL_PREFIX}")
 SET (CMAKE_INSTALL_PREFIX "${_dep_install}")
-DECLARE_DEP (snappy VERSION 1.1.1 PLATFORMS windows_msvc2017)
-DECLARE_DEP (snappy VERSION 1.1.1-cb5 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04)
-DECLARE_DEP (lz4 VERSION 1.9.2-cb1 PLATFORMS amzn2 centos7 centos8 debian9 debian10 macosx rhel8 suse12 suse15 ubuntu16.04 ubuntu18.04 ubuntu20.04)
+DECLARE_DEP (snappy VERSION 1.1.8-cb5 PLATFORMS linux macosx windows)
+DECLARE_DEP (lz4 VERSION 1.9.2-cb4 PLATFORMS linux macosx)
 SET (CMAKE_INSTALL_PREFIX "${_temp_cmake_install_prefix}")
 
 include(ExternalProject)

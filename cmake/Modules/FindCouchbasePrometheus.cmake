@@ -13,6 +13,8 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
+set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS ON)
+
 set(_prometheus_exploded ${CMAKE_BINARY_DIR}/tlm/deps/prometheus-cpp.exploded)
 
 if (NOT DEFINED prometheus-cpp_ROOT AND EXISTS ${_prometheus_exploded})

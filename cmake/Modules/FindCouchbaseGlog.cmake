@@ -7,6 +7,8 @@ include(FindPackageHandleStandardArgs)
 include(PlatformIntrospection)
 include(SelectLibraryConfigurations)
 
+set_property(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS ON)
+
 cb_get_supported_platform(_is_supported_platform)
 if (_is_supported_platform)
     # Supported platforms should only use the provided hints and pick it up

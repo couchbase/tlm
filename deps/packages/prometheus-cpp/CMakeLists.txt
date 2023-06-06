@@ -11,8 +11,7 @@ set(_deps_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
 set(CMAKE_INSTALL_PREFIX "${_deps_install}")
 
 # Install prometheus-cpp prereqs that we already provide
-DECLARE_DEP (zlib V2 VERSION 1.2.11 BUILD 7 PLATFORMS amzn2 centos7 debian8 debian9 macosx suse12 suse15 ubuntu16.04 ubuntu18.04 windows_msvc2017)
-DECLARE_DEP (zlib V2 VERSION 1.2.11 BUILD 7 PLATFORMS rhel8 ubuntu20.04)
+DECLARE_DEP (zlib V2 VERSION 1.2.13 BUILD 2 PLATFORMS linux macosx windows)
 
 # Restore the INSTALL_PREFIX
 set(CMAKE_INSTALL_PREFIX ${_orig_install_prefix})

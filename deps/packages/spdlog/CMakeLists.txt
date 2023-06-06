@@ -2,7 +2,7 @@ include(ExternalProject)
 
 _DETERMINE_CPU_COUNT(_parallelism)
 
-DECLARE_DEP (fmt VERSION 8.1.1-cb2 PLATFORMS linux macosx windows)
+DECLARE_DEP (fmt VERSION 8.1.1-cb3 PLATFORMS linux macosx windows)
 
 # Given we build spdlog twice on Windows, define the common cmake
 # arguments once.
