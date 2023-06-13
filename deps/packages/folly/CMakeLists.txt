@@ -92,12 +92,8 @@ ExternalProject_Add(folly
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
         )
 
-# We generally only run TSan on ubuntu dockers, but on occasion a local build is
-# required. Only build the TSan package on ubuntu and macos platforms to save
-# time.
-# Currently only building for Ubuntu 18.04 as that's the main CV platform and
-# Ubuntu 20.04's clang is broken - see CBD-4186.
-if (${PLATFORM} STREQUAL "ubuntu18.04" OR ${PLATFORM} MATCHES "macos")
+# Only build the TSan packages for linux and macos platforms to save time.
+if (${PLATFORM} STREQUAL "linux" OR ${PLATFORM} MATCHES "macos")
    # Not designed to be built independently of the normal folly package build. The
    # build will only install the package and not the source.
    ExternalProject_Add(follytsan
