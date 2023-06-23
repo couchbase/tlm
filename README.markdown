@@ -12,9 +12,9 @@ of utility CMake libraries in cmake/Modules.
   * Visual Studio 2017 or newer
   * Xcode
   * clang
-* CMake 3.16 or newer
+* CMake 3.19 or newer
 * Google repo (in order to fetch all of the source code)
-* A build tool such as Make or Ninja
+* [Ninja](https://ninja-build.org) build
 * ccache may speed up the development cycle when clang / gcc is used
 
 Our production builds currently use gcc-10.2.0 on Linux platforms;
@@ -38,86 +38,47 @@ for building Couchbase Server. If you are familiar with Ansible, it may be
 useful to look at the Ansible scripts we use to configure our build VMs.
 They are available here: https://github.com/couchbase/build-infra/tree/master/ansible/windows/couchbase-server/window2016
 
-### Additional software requirements on unsupported platforms
-
-Couchbase Server requires a great many libraries, computer languages, and
-build tools to successfully build. The list in the previous section should
-be all that is required to be installed prior to starting building, however.
-The remaining packages are pre-built by Couchbase and downloaded as part of
-the build on supported platforms.
-
-Supported platforms include, at this time of writing:
-
-* Windows (10, 2016, or newer)
-* MacOS (10.12 or newer)
-* Linux
-  * Ubuntu 16.04 or 18.04
-  * Debian 8 or 9
-  * SUSE 12 or 15
-  * Centos 7 or 8
-  * Amazon Linux 2
-
-If you are building on another platform, you will need to also provide all
-of the required tools and libraries. The canonical list of these packages
-can be found in the file `tlm\deps\manifest.cmake`. For the most part, if
-you install these tools and then ensure that `CMAKE_PREFIX_PATH` points to
-their installation directories, CMake will pick them up as part of the
-build. It is however beyond the scope of this document to cover exactly how
-all of those tools must be built and installed for use in a Couchbase Server
-build. We strongly recommend restricting building to supported platforms.
-
-If you are building on a platform which is similar to a supported platform
-but not exactly the same, you may be able to "lie" to the build about what
-platform you are on and have it download the supported pre-built binaries for
-a different platform. For instance, if you are building on Ubuntu 18.10,
-it may work to tell the build system that you're actually on Ubuntu 18.04 and
-have it download the required packages for you. To do this, set the CMake
-variable `CB_DOWNLOAD_DEPS_PLATFORM` to one of the platform strings from
-`manifest.cmake`, eg.
-
-    cmake -D CB_DOWNLOAD_DEPS_PLATFORM=macosx .....
-
-Note: On Linux systems, you may have to specify `;linux` as part of the
-platform string, eg.
-
-    cmake -D CB_DOWNLOAD_DEPS_PLATFORM="ubuntu18.04;linux" ....
-
-Be sure to use quotes around that value to prevent the ; from being
-interpreted by your shell.
-
 ## How to build
 
 Couchbase utilizes [CMake][cmake_link] in order to provide build support for
-a wide range of platforms. CMake isn't a build system like GNU Autotools,
-but a tool that generates build information for external systems like:
-Visual Studio projects, XCode projects and Makefiles to name a few. Internal
-builds of Couchbase (and hence what we test) use Makefiles on Linux and
-MacOS and Ninja on Windows. Other systems _may_ however work, but you're
-pretty much on your own if you try to use them.
+a wide range of platforms. Internal builds of Couchbase (and hence what we test)
+use Ninja. Other systems _may_ however work, but you're pretty much on your own
+if you try to use them.
 
 ### Simple build (Linux and MacOS)
 
-If you just want to build Couchbase and without any special
-configuration, you may use the Makefile we've supplied for your
-convenience:
+If you just want to build Couchbase and without any special configuration,
+you may use the `Build.sh` script we supplied for your convenience:
 
     trond@ok > mkdir source
     trond@ok > cd source
     trond@ok source> repo init -u https://github.com/couchbase/manifest -m branch-master.xml
     trond@ok source> repo sync
-    trond@ok source> make
+    trond@ok source> ./Build.sh
 
-This would install the build software in a subdirectory named
-`install`. To change this you may run:
+This would install the build software in a subdirectory named `install`. `Build.sh`
+accepts a limited set of options which may be used to "tweak" your build:
 
-    trond@ok source> make EXTRA_CMAKE_OPTIONS='-DCMAKE_INSTALL_PREFIX=/opt/couchbase'
+    -s source_root  Source directory (default: current working directory (aka cwd))
+    -b build_root   Build directory (default: <cwd>/build)
+    -i install_root Install directory (default: <cwd>/install)
+    -X              Set Mac platform to x86_64 (Only needed when
+                    building on Mac running arm64)
+    -T              Enable thread sanitizer
+    -A              Enable address sanitizer
+    -U              Enable undefined behavior sanitizer
+    -R              Set build type to RelWithDebInfo
 
-If you want to build the Enterprise Edition (requires access to
-git repositories containing closed source) you need to tell repo
-to fetch additional source by adding `-g enterprise,default` to
-repo init:
+`Build.sh` respects the following environment variables:
 
-    trond@ok source> repo init -u https://github.com/couchbase/manifest -m branch-master.xml -g enterprise,default
+* `CB_PARALLEL_LINK_JOBS` The number of link jobs to run in parallel.
+  Due to static linking (and C++) each link process may consume *a lot*
+  of memory (I've seen it go beyond 1GB). The default is set to two
+  link steps in parallel.
+* `EXTRA_CMAKE_OPTIONS` Extra options you would like to pass on to
+  cmake.
+* `CMAKE_BUILD_TYPE` By default it produce a `Debug` build; this may be
+  set to `Debug`, `Release`, `RelWithDebInfo` or `MinSizeRel`.
 
 ### Simple build (Windows)
 
@@ -131,11 +92,12 @@ same "repo init" and "repo sync" steps as above, then run:
     ninja install
 
 ### Running Couchbase Server locally
-Instructions to run Couchbase Server locally (for development) are provided in the [ns_server repo](https://github.com/couchbase/ns_server#running).
+Instructions to run Couchbase Server locally (for development) are provided
+in the [ns_server repo](https://github.com/couchbase/ns_server#running).
 
 ### Specifying what to build
 
-The default make target if not explicilty specified is `all` - this builds all
+The default build target if not explicitly specified is `all` - this builds all
 binaries required for the shipping product. This is sufficient to run Couchbase
 Server itself, but doesn't include unit test / benchmark binaries etc.
 
@@ -143,12 +105,11 @@ The following additional targets are available:
 
 * `everything` : Builds both production binaries, along with unit tests, benchmarks etc for
 all subprojects.
-* `<PROJECT>_everything`
-: Builds all binaries for the specific project, e.g `platform_everything`.
-(Similar to `make -C <PROJECT> all`, but also builds non-shipping binaries)
-* `install`
-: Standard CMake target; builds all production binaries and installs them to
-`CMAKE_INSTALL_PREFIX`.
+* `install` : Standard CMake target; builds all production binaries and installs them to
+  `CMAKE_INSTALL_PREFIX`.
+* `test` : Run all the unit tests
+* `<PROJECT>_everything` : Builds all binaries for the specific project, e.g `platform_everything`.
+* `<PROJECT>/test` : Run all the unit tests for the specific project.
 
 ### cbbackupmgr, cbimport and cbexport
 
@@ -170,91 +131,31 @@ If you're building Couchbase Server more than just a one-off, there are
 a few modifications you can make to make your life easier and speed up
 your compile-edit-debug cycle.
 
-The most significant two are:
-
-1. Use Ninja as the CMake generator - [Ninja](https://ninja-build.org) is
-"a small build system which focuses on speed". It's main advantages over the
-default generator (GNU Make) are:
-   1. Automatic parallelism based on machine CPUs, and better CPU utilisation.
-   2. Much faster to determine "what's changed" for incremental builds -
-   Ninja takes less than 1 second to figure out what source files have changed
-   in a complete server build; GNU Make is closer to 10s.
-   3. Allows for limiting the number of parallel link jobs. Due to the fact
-   that we're using static linking each link process may require a lot of
-   memory (I've seen them exceed 2GB resident memory). Pass
-   `-D CB_PARALLEL_LINK_JOBS=4` to `cmake` to limit the number of parallel
-   link jobs to 4
-2. Use a non-optimised (Debug) build. This is around 2x faster to compile,
-   and also improves debuggability over the default _RelWithDebInfo_ build
-   type. Note it does produce slower code, so this isn't suitable if you're
-   doing any performance measuremnts.
+Use a non-optimised (Debug) build. This is around 2x faster to compile,
+and also improves debuggability over the default _RelWithDebInfo_ build
+type. Note it does produce slower code, so this isn't suitable if you're
+doing any performance measuremnts.
 
 Another tip would be to put the following in your `~/.profile` file:
 
 ```commandline
-which ninja > /dev/zero
-if [ $? -eq 0 ]
-then
-  export CMAKE_GENERATOR=Ninja
-  export CB_PARALLEL_LINK_JOBS=4
-fi
+export CMAKE_GENERATOR=Ninja
+export CB_PARALLEL_LINK_JOBS=4
 ```
 
 And cmake would use Ninja by default if it is available on your system so
 that you no longer need to pass `-G Ninja` and `-D CB_PARALLEL_LINK_JOBS=4`
 every time you want to run cmake.
 
-If you happen to use the "hack" with `CB_DOWNLOAD_DEPS_PATFORM` mentioned
-above (for instance trying to build on Ubuntu 22.04) you could put the
-following in your `~/.profile` to avoid having to specify it every time:
+#### Tips for people transitioning from make
 
-```commandline
-export CB_DOWNLOAD_DEPS_PLATFORM="ubuntu22.04;linux"
-```
-
-#### Prerequisites
-
-Ninja is available in most Linux distos now, and via homebrew on macOS:
-
-macOS:
-```commandline
-brew install ninja
-```
-Debian / Ubuntu:
-```commandline
-apt install ninja-build
-```
-
-Once you have Ninja available, configure your build tree to use it and enable
-Debug build type:
-
-```commandline
-mkdir build
-cd build
-cmake -G Ninja -D CB_PARALLEL_LINK_JOBS=4 -D CMAKE_BUILD_TYPE=Debug ..
-```
-Then use `ninja` instead of your normal command - for example to build and
-install everything run (from `build/` dir):
-```commandline
-ninja install
-```
-
-That will compile and install everything, automatically selecting a suitable
-compile parallelism based on CPU core count.
-
-#### Tips
-
-* You _cannot_ change a CMake generator once a tree is configured; so if you've
-already configured a given build tree you'll need to remove `build/` and re-run
-CMake with the above args.
-
-* Ninja can build specific targets just like GNU Make, simply specify the name
+* Ninja can build specific targets just like make, simply specify the name
 of the target as you would with make:
 ```commandline
 ninja memcached
 ```
 
-* Ninja can also build only a single project of the tree (like GNU Make),
+* Ninja can also build only a single project of the tree (like make),
 however the syntax is a bit different - instead of changing into the
 subdirectory and running `make`, you _always_ run Ninja from the toplevel
 build dir, but specify `<project>/all` as the target - for example:
@@ -286,31 +187,14 @@ document. To find the tunables you have two options: look in
 during a normal build (see `build/CMakeCache.txt`)
 
 There are two ways to customize your own builds. You can do it all by
-yourself by invoking cmake yourself:
+yourself by passing the options via `-D KEY=VALUE` as part of
+invoking cmake directly:
 
-    trond@ok > mkdir source
-    trond@ok > mkdir build
-    trond@ok > cd source
-    trond@ok source> repo init -u https://github.com/couchbase/manifest -m branch-master.xml
-    trond@ok source> repo sync
-    trond@ok source> cd ../build
-    trond@ok build> cmake -D CMAKE_INSTALL_PREFIX=/opt/couchbase -D CMAKE_BUILD_TYPE=Debug -D DTRACE_FOUND:BOOL=True -D DTRACE:FILEPATH=/usr/sbin/dtrace CMAKE_PREFIX_PATH="/opt/r14b04;/opt/couchbase"
-    trond@ok build> gmake all install
+    trond@ok build> cmake -D KEY=VALUE <path_to_source>
 
-Or pass extra options to the convenience Makefile provided:
+Or pass extra options to the convenience `Build.sh` script provided:
 
-    trond@ok > mkdir source
-    trond@ok > mkdir build
-    trond@ok > cd source
-    trond@ok source> repo init -u https://github.com/couchbase/manifest -m branch-master.xml
-    trond@ok source> repo sync
-    trond@ok source> make PREFIX=/opt/couchbase CMAKE_PREFIX_PATH="/opt/r14b04;/opt/couchbase" EXTRA_CMAKE_OPTIONS='-D DTRACE_FOUND:BOOL=True -D DTRACE:FILEPATH=/usr/sbin/dtrace'
-
-Use `CMAKE_PREFIX_PATH` to specify a "list" of directories to search
-for tools/libraries if they are stored in "non-standard"
-locations. Ex:
-
-    CMAKE_PREFIX_PATH="/opt/r14b04;/opt/couchbase;/opt/local"
+    trond@ok source> EXTRA_CMAKE_OPTIONS="-D KEY=VALYE" ./Build.sh
 
 ## Static Analysis
 
