@@ -28,8 +28,8 @@ components:
     cffi:
         bd-id: 043e4252-a86b-4281-a1a3-a762fe0470de
         versions: [ 1.15.1 ]
-    charset-normalizer:
-        bd-id: a5066b09-b6fa-4065-b11b-f45326aa9332
+    python3-charset-normalizer:
+        bd-id: 961db792-aeb0-450b-ba00-4f9b0afa6dda
         versions: [ 3.1.0 ]
     cryptography:
         bd-id: f09c05ab-0954-400d-94e9-4de512ed42fa
