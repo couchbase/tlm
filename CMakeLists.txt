@@ -41,7 +41,9 @@ PROJECT("Couchbase")
 # Monterey (12) and hence also need to set CMAKE_OSX_DEPLOYMENT_TARGET to 12.0
 # to avoid linker warnings every time a cbdep is linked.
 if(APPLE)
-    if(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
+    if (CB_OVERRIDE_OSX_DEPLOYMENT_TARGET)
+        set(target ${CB_OVERRIDE_OSX_DEPLOYMENT_TARGET})
+    elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
         set(target "10.15")
     elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
         set(target "12.0")
