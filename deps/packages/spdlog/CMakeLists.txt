@@ -2,7 +2,7 @@ include(ExternalProject)
 
 _DETERMINE_CPU_COUNT(_parallelism)
 
-DECLARE_DEP (fmt VERSION 8.1.1-cb3 PLATFORMS linux macosx windows)
+DECLARE_DEP (fmt VERSION 8.1.1-cb4 PLATFORMS linux macosx windows)
 
 # Given we build spdlog twice on Windows, define the common cmake
 # arguments once.
@@ -52,12 +52,9 @@ ExternalProject_Add(spdlog
 
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism})
 
-# We generally only run TSan on Ubuntu dockers, but on occasion a local build is
-# required. Only build the TSan package on ubuntu and macos platforms to save
+# Only build the TSan package on linux and macos platforms to save
 # time.
-# Currently only building for Ubuntu 18.04 as that's the main CV platform and
-# Ubuntu 20.04's clang is broken - see CBD-4186.
-if (${PLATFORM} STREQUAL "ubuntu18.04" OR ${PLATFORM} MATCHES "macos")
+if (${PLATFORM} STREQUAL "linux" OR ${PLATFORM} MATCHES "macos")
     ExternalProject_Add(spdlog_tsan
             GIT_REPOSITORY ${_git_repo}
             GIT_TAG ${_git_rev}

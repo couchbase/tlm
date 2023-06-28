@@ -11,16 +11,25 @@ if (NOT DEFINED ZSTD_CPP_FOUND)
         set(_zstd_cpp_no_default_path NO_DEFAULT_PATH)
     endif ()
 
-    set(_zstd_cpp_include_dir ${CMAKE_BINARY_DIR}/tlm/deps/zstd-cpp.exploded/include)
-    set(_zstd_cpp_library_dir ${CMAKE_INSTALL_PREFIX}/lib)
+    if (NOT DEFINED _zstd_cpp_include_dir)
+        set(_zstd_cpp_include_dir ${CMAKE_BINARY_DIR}/tlm/deps/zstd-cpp.exploded/include)
+    endif ()
+    if (NOT DEFINED _zstd_cpp_library_dir)
+        set(_zstd_cpp_library_dir ${CMAKE_BINARY_DIR}/tlm/deps/zstd-cpp.exploded/lib)
+    endif ()
 
-    find_path(ZSTD_CPP_INCLUDE_DIR zstd.h
-              HINTS ${_zstd_cpp_include_dir}
+    find_path(ZSTD_CPP_INCLUDE_DIR
+              NAMES zstd.h
+              PATHS
+              ${_zstd_cpp_include_dir}
+              ${_zstd_cpp_rocksdb_include_dir}
               ${_zstd_cpp_no_default_path})
 
     find_library(ZSTD_CPP_LIBRARIES
                  NAMES zstd
-                 HINTS ${_zstd_cpp_library_dir}
+                 PATHS
+                 ${_zstd_cpp_library_dir}
+                 ${_zstd_cpp_rocksdb_library_dir}
                  ${_zstd_cpp_no_default_path})
 
     if (ZSTD_CPP_INCLUDE_DIR AND ZSTD_CPP_LIBRARIES)

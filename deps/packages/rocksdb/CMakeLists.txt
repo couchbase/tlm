@@ -4,11 +4,28 @@
 SET (_dep_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
 SET (_temp_cmake_install_prefix "${CMAKE_INSTALL_PREFIX}")
 SET (CMAKE_INSTALL_PREFIX "${_dep_install}")
-DECLARE_DEP (snappy VERSION 1.1.8-cb5 PLATFORMS linux macosx windows)
-DECLARE_DEP (lz4 VERSION 1.9.2-cb4 PLATFORMS linux macosx)
+DECLARE_DEP (lz4 VERSION 1.9.2-cb5 PLATFORMS linux macosx)
+DECLARE_DEP (snappy VERSION 1.1.8-cb6 PLATFORMS linux macosx windows)
+DECLARE_DEP (zlib V2 VERSION 1.2.13 BUILD 2 PLATFORMS linux macosx windows)
+DECLARE_DEP (zstd-cpp V2 VERSION 1.5.0 BUILD 3 PLATFORMS linux macosx windows)
 SET (CMAKE_INSTALL_PREFIX "${_temp_cmake_install_prefix}")
 
-include(ExternalProject)
+INCLUDE(ExternalProject)
+
+# Ensure we're landing on the right zstd
+set(_zstd_cpp_rocksdb_include_dir ${CMAKE_BINARY_DIR}/rocksdb/zstd-cpp.exploded/include)
+set(_zstd_cpp_rocksdb_library_dir ${CMAKE_BINARY_DIR}/rocksdb/zstd-cpp.exploded/lib)
+INCLUDE(FindCouchbaseZstd)
+
+# Figure out platform specific library name + version from the git rev
+STRING (REGEX REPLACE "([0-9]+\\.[0-9]+\\.[0-9]+).*" "\\1" _rocksdb_version ${_git_rev})
+if (APPLE)
+    SET (package_name librocksdb.${_rocksdb_version}.dylib)
+    SET (tsan_package_name librocksdbtsan.${_rocksdb_version}.dylib)
+else ()
+    SET (package_name librocksdb.so.${_rocksdb_version})
+    SET (tsan_package_name librocksdbtsan.so.${_rocksdb_version})
+endif ()
 
 ### Download, configure and build rocksdb  ####################################
 _DETERMINE_CPU_COUNT(_parallelism)
@@ -30,22 +47,9 @@ ExternalProject_Add(rocksdb
   COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
 )
 
-# This is trash, but the naming style of these shared libraries makes it a pain
-# in the ass to rename and this is simple.
-if (APPLE)
-    SET (package_name librocksdb.5.18.3.dylib)
-    SET (tsan_package_name librocksdbtsan.5.18.3.dylib)
-else (APPLE)
-    SET (package_name librocksdb.so.5.18.3)
-    SET (tsan_package_name librocksdbtsan.so.5.18.3)
-endif(APPLE)
-
 # We build a separate TSan library for RocksDB as we otherwise end up with some
 # odd issues if the linker picks up unannotated symbols.
-# We generally only run TSan on ubuntu dockers, but on occasionally a local
-# build is required. Only build the TSan package on ubuntu and macos platforms
-# to save time.
-if (${PLATFORM} MATCHES "ubuntu" OR ${PLATFORM} MATCHES "macos")
+if (${PLATFORM} MATCHES "linux" OR ${PLATFORM} MATCHES "macos")
     ExternalProject_Add(rocksdbtsan
         # Steps should be same as normal RocksDB build
         GIT_REPOSITORY ${_git_repo}
@@ -63,17 +67,29 @@ if (${PLATFORM} MATCHES "ubuntu" OR ${PLATFORM} MATCHES "macos")
 
         # Rename the current package so that we can ship both together and pick
         # the correct one when we build.
-        COMMAND ls &&
-        cp ${package_name} ${CMAKE_CURRENT_BINARY_DIR}/install/lib/${tsan_package_name}
+        COMMAND cp ${package_name} ${CMAKE_CURRENT_BINARY_DIR}/install/lib/${tsan_package_name}
     )
     ExternalProject_Add_StepDependencies(rocksdb download rocksdbtsan)
 endif()
 
-# OS X-only: Custom post-build step to set the shared library install name.
+# OS X-only: Custom post-build step to set the shared lib install name/rpath
 if (APPLE)
   ExternalProject_Add_Step(rocksdb install_name
     COMMAND install_name_tool -id @rpath/${package_name} <BINARY_DIR>/${package_name}
+    DEPENDEES build
+    DEPENDERS install
+    WORKING_DIRECTORY <BINARY_DIR>
+  )
 
+  ExternalProject_Add_Step(rocksdb set_rpath
+    COMMAND install_name_tool -add_rpath @executable_path <BINARY_DIR>/${package_name}
+    DEPENDEES build
+    DEPENDERS install
+    WORKING_DIRECTORY <BINARY_DIR>
+  )
+
+  ExternalProject_Add_Step(rocksdbtsan set_rpath
+    COMMAND install_name_tool -add_rpath @executable_path <BINARY_DIR>/${package_name}
     DEPENDEES build
     DEPENDERS install
     WORKING_DIRECTORY <BINARY_DIR>

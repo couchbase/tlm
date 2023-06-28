@@ -13,7 +13,7 @@
 # (e.g. CFLAGS).
 
 export PLATFORM_LDFLAGS=-L${_dep_install}/lib
-export CFLAGS="-I${_dep_install}/include -I${CMAKE_CURRENT_BINARY_DIR}/lz4.exploded/include ${W_NO_ERROR_FLAGS}"
+export CFLAGS="-I${CMAKE_CURRENT_BINARY_DIR}/lz4.exploded/include -I${CMAKE_CURRENT_BINARY_DIR}/zlib.exploded/include -I${CMAKE_CURRENT_BINARY_DIR}/zstd-cpp.exploded/include ${W_NO_ERROR_FLAGS}"
 export DEBUG_LEVEL=0
 export PORTABLE=1
 export USE_RTTI=1
