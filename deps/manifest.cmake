@@ -60,7 +60,7 @@ DECLARE_DEP (snappy VERSION 1.1.8-cb6 PLATFORMS linux macosx windows)
 DECLARE_DEP (spdlog VERSION v1.10.0-cb6 PLATFORMS linux macosx windows)
 DECLARE_DEP (v8 V2 VERSION 11.4.185.1 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (zlib V2 VERSION 1.2.13 BUILD 2 PLATFORMS linux macosx windows)
-DECLARE_DEP (zstd-cpp V2 VERSION 1.5.0 BUILD 3 PLATFORMS linux macosx windows)
+DECLARE_DEP (zstd-cpp V2 VERSION 1.5.0 BUILD 4 PLATFORMS linux macosx windows)
 
 #
 # IMPORTANT: If you add a new package here or update an existing package
