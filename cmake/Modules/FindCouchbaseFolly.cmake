@@ -49,16 +49,18 @@ find_library(FOLLY_LIBRARY_RELEASE
              HINTS ${_folly_exploded}/lib
              ${_folly_no_default_path})
 
-find_library(FOLLY_LIBRARY_DEBUG
-             NAMES follyd
-             HINTS ${_folly_exploded}/lib
-             ${_jemalloc_no_default_path})
-
 if (CB_THREADSANITIZER)
+    # MB-57715 Use TSAN version for debug builds as well
+    set(FOLLY_LIBRARY_DEBUG ${FOLLY_LIBRARY_RELEASE})
     find_library(FOLLY_LIBRARIES_UNSANITIZED
                  NAMES folly
                  HINTS ${_folly_exploded}/lib
                  ${_jemalloc_no_default_path})
+else ()
+    find_library(FOLLY_LIBRARY_DEBUG
+            NAMES follyd
+            HINTS ${_folly_exploded}/lib
+            ${_jemalloc_no_default_path})
 endif()
 
 # Defines FOLLY_LIBRARY / LIBRARIES to the correct Debug / Release
