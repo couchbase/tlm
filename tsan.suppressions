@@ -1,12 +1,6 @@
 # ThreadSanitizer suppressions file for Couchbase
 # https://github.com/google/sanitizers/wiki/ThreadSanitizerSuppressions
 
-# In memcached we choose to ignore accesses to the conn structs from
-# other threads when printing connection statistics. We accept the
-# possible stale / outdated information as we don't want to add
-# additional locking overhead / complexity in the common case.
-race:connection_stats
-
 # The auditd unit tests trigger a heap-use-after-free error, however Valgrind doesn't
 # detect anything wrong and ThreadSanitizer is known to have issues with exceptions
 # so I'm pretty sure this a false positive.
