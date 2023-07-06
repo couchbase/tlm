@@ -178,7 +178,7 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 #
 # And here is the set of "latest" dependencies.
 #
-_ADD_DEP_PACKAGE(snappy 1.1.8 1.1.8 5)
+_ADD_DEP_PACKAGE(snappy 1.1.10 1.1.10 2)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
 _ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 11)
@@ -205,7 +205,7 @@ IF (NOT WIN32)
     # As the output package for rocksdb contains the version in the name, it is
     # also necessary to update the package name in
     # deps/packages/rocksdb/CmakeLists.txt which we use to copy/rename the lib
-    _ADD_DEP_PACKAGE(rocksdb 5.18.3 5.18.3-couchbase 8)
+    _ADD_DEP_PACKAGE(rocksdb 5.18.3 5.18.3-couchbase 9)
 ENDIF ()
 _ADD_DEP_PACKAGE(lz4 1.9.2 v1.9.2 5)
 # maven 3.5.2-cb3 and 3.5.2-cb4 exist as attempts to make Windows work,

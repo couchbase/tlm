@@ -1,0 +1,43 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index c3062e2..7dbbc49 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -53,8 +53,8 @@ if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+   add_definitions(-D_HAS_EXCEPTIONS=0)
+ 
+   # Disable RTTI.
+-  string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /GR-")
++  #string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
++  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /GR-")
+ else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+   # Use -Wall for clang and gcc.
+   if(NOT CMAKE_CXX_FLAGS MATCHES "-Wall")
+@@ -68,9 +68,13 @@ else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+ 
+   # Use -Werror for clang only.
+   if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+-    if(NOT CMAKE_CXX_FLAGS MATCHES "-Werror")
+-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Werror")
+-    endif(NOT CMAKE_CXX_FLAGS MATCHES "-Werror")
++    EXECUTE_PROCESS( COMMAND ${CMAKE_CXX_COMPILER} --version OUTPUT_VARIABLE clang_full_version_string )
++    string (REGEX REPLACE ".*clang version ([0-9]+\\.[0-9]+).*" "\\1" CLANG_VERSION_STRING ${clang_full_version_string})
++    if(CLANG_VERSION_STRING GREATER_EQUAL 13.0)
++      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-but-set-variable")
++    else()
++      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-const-variable")
++    endif()
+   endif(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+ 
+   # Disable C++ exceptions.
+@@ -78,8 +82,8 @@ else(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-exceptions")
+ 
+   # Disable RTTI.
+-  string(REGEX REPLACE "-frtti" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
++  #string(REGEX REPLACE "-frtti" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
++  #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
+ endif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+ 
+ # BUILD_SHARED_LIBS is a standard CMake variable, but we declare it here to make
