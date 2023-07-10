@@ -101,7 +101,7 @@ components:
         versions: [ v1.10.0 ]
     v8:
         bd-id: 3eec43ae-12a3-4035-bceb-9b5bd8eefe79
-        versions: [ 11.4.185.1 ]
+        versions: [ 11.6.189.8 ]
     zlib:
         bd-id: b9185555-6e31-401e-b373-bfec7955a8ab
         versions: [ 1.2.13 ]
