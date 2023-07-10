@@ -18,9 +18,7 @@ components:
 
     boost:
         bd-id: 4eac8f37-d9e5-4344-83d0-be0e9fd42a6a
-        # Black Duck doesn't know "1.74.0", so this one seem closest
-        versions: [ 1.74.0.2 ]
-        cbdeps-versions: [ 1.74.0 ]
+        versions: [ 1.82.0 ]
     # Note: breakpad doesn't really have "releases". I picked this version from
     # Black Duck's history as being moderately close to the date of the code we
     # use.
@@ -97,7 +95,7 @@ components:
         versions: [ v3.2.14 ]
     snappy:
         bd-id: fd5e5c60-2c67-4d20-8be9-b7648156cef3
-        versions: [ 1.1.1, 1.1.8 ]
+        versions: [ 1.1.10 ]
     spdlog:
         bd-id: 7785114c-5b78-4aad-8771-72a739a1f06e
         versions: [ v1.10.0 ]
