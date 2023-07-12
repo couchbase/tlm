@@ -13,9 +13,9 @@ codedir=$(cd "$D0/@CODE_REL@" && pwd)
 libdir=$(cd "$D0/@LIB_REL@" && pwd)
 pydir=$(cd "$D0/@PY_REL@" && pwd)
 
-PYTHONPATH="$codedir:$PYTHONPATH"
+PYTHONPATH="$codedir"
 export PYTHONPATH
-@LIB_PATH_VAR@="$pydir/lib:$libdir:$@LIB_PATH_VAR@"
+@LIB_PATH_VAR@="$pydir/lib:$libdir"
 export @LIB_PATH_VAR@
 
-exec "$pydir"/bin/python3 "$codedir"/$(basename "$0") "$@"
+exec "$pydir"/bin/python3 -s "$codedir"/$(basename "$0") "$@"

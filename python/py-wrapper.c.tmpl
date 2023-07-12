@@ -70,8 +70,13 @@ int main(int argc, char** argv) {
   }
 
   /* Update environment */
+  /* We don't skip any existing PATH in case the Python script */
+  /* calls out to external binaries */
   prependEnv("PATH", cbLibDir);
   prependEnv("PATH", pyLibDir);
+  /* However we overwrite PYTHONPATH to prevent any surprises - */
+  /* we only want to run our own packages */
+  _putenv("PYTHONPATH=");
   prependEnv("PYTHONPATH", codePath);
 
   /* Stick program name on end of codePath */
@@ -94,7 +99,7 @@ int main(int argc, char** argv) {
 
   /* Form final command line, with all the requisite quotes and spaces */
   char pyCmdLine[32768];
-  sprintf(pyCmdLine, "\"%s\" \"%s\" %s", pyExe, codePath, cmdLine);
+  sprintf(pyCmdLine, "\"%s\" -s \"%s\" %s", pyExe, codePath, cmdLine);
 
   /* Exec real python */
   STARTUPINFO si;
