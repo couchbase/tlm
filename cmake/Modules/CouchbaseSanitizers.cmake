@@ -207,3 +207,48 @@ function(remove_sanitizers TARGET)
     remove_sanitize_undefined(${TARGET})
     remove_sanitize_libfuzzer(${TARGET})
 endfunction()
+
+# If at least one sanitizer enabled, Override the normal ADD_TEST
+# macro to set environment variables for each enabled sanitizer. This
+# allows us to specify default behaviour of our sanitizers
+# (suppressions extra diagnostic info etc.).
+if(CB_SANITIZERS)
+    function(ADD_TEST name)
+        if(${ARGV0} STREQUAL "NAME")
+            set(_name ${ARGV1})
+        else()
+            set(_name ${ARGV0})
+        endif()
+        _ADD_TEST(${ARGV})
+        add_sanitizer_env_vars_memory(${_name})
+        add_sanitizer_env_vars_thread(${_name})
+        add_sanitizer_env_vars_undefined(${_name})
+    endfunction()
+endif()
+
+# gtest_discover_tests() sanitizer support.
+# For tests registered via gtest_discover_test(), we cannot rely on
+# add_sanitizers() to set the necessary sanitizer env vars (via
+# add_sanitizer_env_vars_memory et al), because the set of test names is
+# generated at runtime and hence CMake cannot know the name of the test target
+# to set properties on.
+# Instead we must pass the environment variables which need to be set to
+# gtest_discover_tests() via the ENVIRONMENT property. However, due to CMake's
+# lack of proper list typing, we need to use a bracket argument to prevent the
+# ENVIRONMENT "sub-list" in the properties below being expanded
+# and treated as additional properties - e.g. without brackets, the PROPERTIES:
+#
+#   TIMEOUT 600 ENVIRONMENT TSAN_OPTIONS=xxx ASAN_OPTIONS=yyy
+#
+# is incorrectly expanded three properties:
+#   TIMEOUT:600
+#   ENVIRONMENT:TSAN_OPTIONS=xxx
+#   ASAN_OPTIONS=yyy
+#
+# instead of what we need:
+#   TIMEOUT:600
+#   ENVIRONMENT:TSAN_OPTIONS=xxx;ASAN_OPTIONS=yyy
+list(APPEND _all_sanitizer_env ${THREAD_SANITIZER_TEST_ENV}
+                               ${ADDRESS_SANITIZER_TEST_ENV}
+                               ${UNDEFINED_SANITIZER_TEST_ENV})
+set(GTEST_ALL_SANITIZERS_ENV "[==[${_all_sanitizer_env}]==]")

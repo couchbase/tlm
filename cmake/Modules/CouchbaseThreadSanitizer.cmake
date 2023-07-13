@@ -62,25 +62,20 @@ IF (CB_THREADSANITIZER)
                                       ${CMAKE_INSTALL_PREFIX}/lib)
         endif()
 
-        SET(THREAD_SANITIZER_TEST_ENV "TSAN_OPTIONS=suppressions=${CMAKE_SOURCE_DIR}/tlm/tsan.suppressions\ second_deadlock_stack=1\ history_size=7")
+        # Define the TSAN_OPTIONS env var which should be set when running tests
+        # under TSan. Note this is automatically applied to tests defined via
+        # add_test() command - see add_sanitizer_env_vars_thread(), but we also
+        # expose it as a CMake variable so tests defined other ways can
+        # manually add it.
+        set(tsan_options "suppressions=${CMAKE_SOURCE_DIR}/tlm/tsan.suppressions second_deadlock_stack=1 history_size=7")
         # On some platforms (at least macOS Mojave), mutex deadlocking is
         # not enabled by default.
-        SET(THREAD_SANITIZER_TEST_ENV "${THREAD_SANITIZER_TEST_ENV}\ detect_deadlocks=1")
-
-        # Override the normal ADD_TEST macro to set the TSAN_OPTIONS
-        # environment variable - this allows us to specify the
-        # suppressions file to use.
-        FUNCTION(ADD_TEST name)
-            IF(${ARGV0} STREQUAL "NAME")
-               SET(_name ${ARGV1})
-            ELSE()
-               SET(_name ${ARGV0})
-            ENDIF()
-            _ADD_TEST(${ARGV})
-
-            SET_TESTS_PROPERTIES(${_name} PROPERTIES ENVIRONMENT
-                                 ${THREAD_SANITIZER_TEST_ENV})
-        ENDFUNCTION()
+        string(APPEND tsan_options " detect_deadlocks=1")
+        # Prepend to any existing TSAN_OPTION env var, to allow drivers
+        # of the build (like Jenkins jobs) to override options set here -
+        # for example logging output to files instead of stderr.
+        set(tsan_options "${tsan_options} $ENV{TSAN_OPTIONS}")
+        set(THREAD_SANITIZER_TEST_ENV "TSAN_OPTIONS=${tsan_options}")
 
         MESSAGE(STATUS "ThreadSanitizer enabled - forcing use of 'system' memory allocator.")
     ELSE()
@@ -105,4 +100,15 @@ function(remove_sanitize_thread TARGET)
         remove_from_property(${TARGET} LINK_LIBRARIES tsan)
         remove_from_property(${TARGET} INTERFACE_LINK_LIBRARIES tsan)
     endif()
+endfunction()
+
+# Define environment variables to set for tests running under
+# TSan. Typically used by top-level CouchbaseSanitizers.cmake.
+function(add_sanitizer_env_vars_thread TARGET)
+    if(NOT CB_THREADSANITIZER)
+        return()
+    endif()
+
+    set_property(TEST ${TARGET} APPEND PROPERTY ENVIRONMENT
+            "${THREAD_SANITIZER_TEST_ENV}")
 endfunction()

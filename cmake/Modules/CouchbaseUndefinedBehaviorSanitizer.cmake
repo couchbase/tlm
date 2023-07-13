@@ -75,7 +75,19 @@ IF (CB_UNDEFINEDSANITIZER GREATER 0)
                 # for Clang.
                 install_sanitizer_library(UBSan "libubsan.so.1;libubsan.so.0" "${UNDEFINED_SANITIZER_FLAG}" ${CMAKE_INSTALL_PREFIX}/lib)
             endif()
-	endif()
+        endif()
+
+        # Define the UBSAN_OPTIONS env var which should be set when running tests
+        # under UBSan. Note this is automatically applied to tests defined via
+        # add_test() command - see add_sanitizer_env_vars_undefined(), but we
+        # also expose it as a CMake variable so tests defined other ways can
+        # manually add it.
+        set(ubsan_options "suppressions=${CMAKE_SOURCE_DIR}/tlm/ubsan.suppressions print_stacktrace=1")
+        # Prepend to any existing UBSAN_OPTION env var, to allow drivers
+        # of the build (like Jenkins jobs) to override options set here -
+        # for example logging output to files instead of stderr.
+        set(ubsan_options "${ubsan_options} $ENV{UBSAN_OPTIONS}")
+        set(UNDEFINED_SANITIZER_TEST_ENV "UBSAN_OPTIONS=${ubsan_options}")
 
         MESSAGE(STATUS "UndefinedBehaviorSanitizer enabled (mode ${CB_UNDEFINEDSANITIZER})")
     ELSE()
@@ -106,4 +118,15 @@ function(remove_sanitize_undefined TARGET)
     endif ()
     remove_from_property(${TARGET} COMPILE_OPTIONS ${UNDEFINED_SANITIZER_FLAG})
     remove_from_property(${TARGET} LINK_OPTIONS ${UNDEFINED_SANITIZER_LDFLAGS})
+endfunction()
+
+# Define environment variables to set for tests running under
+# UBSan. Typically used by top-level CouchbaseSanitizers.cmake.
+function(add_sanitizer_env_vars_undefined TARGET)
+    if(NOT CB_UNDEFINEDSANITIZER)
+        return()
+    endif()
+
+    set_property(TEST ${TARGET} APPEND PROPERTY ENVIRONMENT
+            "${UNDEFINED_SANITIZER_TEST_ENV}")
 endfunction()
