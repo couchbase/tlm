@@ -13,7 +13,14 @@ set(tests)
 function(add_command NAME)
   set(_args "")
   foreach(_arg ${ARGN})
-    if(_arg MATCHES "[^-./:a-zA-Z0-9_]")
+    # Couchbase mod : allow us to pass a bracket arguments as-is.
+    # This allows passing of lists (semicolon separated) as arguments for
+    # the command without them being split. Example use-case:
+    # set_tests_properties(ENVIRONMENT...) where we want to specify multiple
+    # environment variable properties.
+    if (_arg MATCHES "^\\[==\\[.*\\]==\\]$")
+      set(_args "${_args} ${_arg}")
+    elseif(_arg MATCHES "[^-./:a-zA-Z0-9_]")
       set(_args "${_args} [==[${_arg}]==]")
     else()
       set(_args "${_args} ${_arg}")

@@ -75,6 +75,16 @@ IF (CB_ADDRESSSANITIZER)
             endif ()
         endif ()
 
+        # Define the ASAN/LSAN_OPTIONS env vars which should be set when running
+        # tests under ASan. Note this is automatically applied to tests defined
+        # via add_test() command - see add_sanitizer_env_vars_memory(), but we
+        # also expose it as a CMake variable so tests defined other ways can
+        # manually add it.
+        set(lsan_options "suppressions=${CMAKE_SOURCE_DIR}/tlm/lsan.suppressions")
+        set(ADDRESS_SANITIZER_TEST_ENV
+                LSAN_OPTIONS=${lsan_options}
+                ASAN_SYMBOLIZER_PATH=${LLVM_SYMBOLIZER})
+
         MESSAGE(STATUS "AddressSanitizer enabled (mode ${CB_ADDRESSSANITIZER})")
     ELSE()
         MESSAGE(FATAL_ERROR "CB_ADDRESSSANITIZER enabled but compiler doesn't support AddressSanitizer - cannot continue.")
@@ -114,8 +124,6 @@ function(add_sanitizer_env_vars_memory TARGET)
         return()
     endif()
 
-    set(lsan_options "suppressions=${CMAKE_SOURCE_DIR}/tlm/lsan.suppressions")
     set_property(TEST ${TARGET} APPEND PROPERTY ENVIRONMENT
-                 "ASAN_SYMBOLIZER_PATH=${LLVM_SYMBOLIZER}"
-                 "LSAN_OPTIONS=${lsan_options}")
+                 "${ADDRESS_SANITIZER_TEST_ENV}")
 endfunction()

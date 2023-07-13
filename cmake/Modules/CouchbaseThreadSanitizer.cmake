@@ -71,6 +71,10 @@ IF (CB_THREADSANITIZER)
         # On some platforms (at least macOS Mojave), mutex deadlocking is
         # not enabled by default.
         string(APPEND tsan_options " detect_deadlocks=1")
+        # Prepend to any existing TSAN_OPTION env var, to allow drivers
+        # of the build (like Jenkins jobs) to override options set here -
+        # for example logging output to files instead of stderr.
+        set(tsan_options "${tsan_options} $ENV{TSAN_OPTIONS}")
         set(THREAD_SANITIZER_TEST_ENV "TSAN_OPTIONS=${tsan_options}")
 
         MESSAGE(STATUS "ThreadSanitizer enabled - forcing use of 'system' memory allocator.")
@@ -105,11 +109,6 @@ function(add_sanitizer_env_vars_thread TARGET)
         return()
     endif()
 
-    # Prepend to any existing TSAN_OPTION env var, to allow drivers
-    # of the build (like Jenkins jobs) to override options set here -
-    # for example logging output to files instead of stderr.
-    set(tsan_options "${tsan_options} $ENV{TSAN_OPTIONS}")
-
     set_property(TEST ${TARGET} APPEND PROPERTY ENVIRONMENT
-                 "TSAN_OPTIONS=${tsan_options}")
+            "${THREAD_SANITIZER_TEST_ENV}")
 endfunction()
