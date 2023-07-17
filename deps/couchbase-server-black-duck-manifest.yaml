@@ -81,7 +81,7 @@ components:
         versions: [ 8.44 ]
     prometheus:
         bd-id: 04b82d3f-8119-4a41-bfb6-e71168773767
-        versions: [ v2.23.0 ]
+        versions: [ v2.33.4 ]
     prometheus-cpp:
         bd-id: 61784658-b7fb-4df4-aeb4-b572a5db0de0
         versions: [ v0.10.0 ]
