@@ -47,7 +47,7 @@ DECLARE_DEP (maven VERSION 3.5.2-cb6 PLATFORMS all)
 DECLARE_DEP (pcre VERSION 8.44-cb3 PLATFORMS linux macosx windows)
 DECLARE_DEP (openssl V2 VERSION 3.0.7 BUILD 3 PLATFORMS linux macosx windows)
 DECLARE_DEP (numactl VERSION 2.0.11-cb4 PLATFORMS linux)
-DECLARE_DEP (prometheus V2 VERSION 2.33.3 BUILD 4 PLATFORMS linux macosx windows)
+DECLARE_DEP (prometheus V2 VERSION 2.33.4 BUILD 2 PLATFORMS linux macosx windows)
 DECLARE_DEP (prometheus-cpp VERSION v0.10.0-couchbase-cb4 PLATFORMS linux macosx windows)
 DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 7 PLATFORMS linux macosx windows)
 # We don't want RocksDB to end up in shipped production builds.
