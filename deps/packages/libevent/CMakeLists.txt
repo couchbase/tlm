@@ -7,7 +7,7 @@ set(_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/unused")
 set(_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 set(CMAKE_INSTALL_PREFIX "${_openssl_install}")
 
-declare_dep(openssl V2 VERSION 3.0.7 BUILD 3 PLATFORMS linux macosx windows)
+declare_dep(openssl V2 VERSION 3.1.1 BUILD 1 PLATFORMS linux macosx windows)
 
 set(CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 

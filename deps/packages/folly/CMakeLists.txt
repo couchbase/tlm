@@ -13,7 +13,7 @@ DECLARE_DEP (fmt VERSION 8.1.1-cb4 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows_msvc2015 windows)
 DECLARE_DEP (jemalloc VERSION 5.3.0-cb3 PLATFORMS linux macosx windows)
 DECLARE_DEP (libevent VERSION 2.1.11-cb11 PLATFORMS linux macosx windows)
-DECLARE_DEP (openssl V2 VERSION 3.0.7 BUILD 3 PLATFORMS linux macosx windows)
+DECLARE_DEP (openssl V2 VERSION 3.1.1 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (snappy VERSION 1.1.10-cb2 PLATFORMS linux macosx windows)
 
 # Restore the INSTALL_PREFIX
