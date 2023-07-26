@@ -123,7 +123,7 @@ then
    cmake -G Ninja \
          ${macos_cross_compilation_flags} \
          -D CMAKE_INSTALL_PREFIX=${install_root} \
-         -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE-Debug} \
+         -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE-DebugOptimized} \
          -D CB_PARALLEL_LINK_JOBS=${cb_parallel_link_jobs} \
          ${EXTRA_CMAKE_OPTIONS} \
          ${tsan_cmake_option} ${asan_cmake_option} ${ubsan_cmake_option} \

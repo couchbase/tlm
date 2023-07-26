@@ -77,8 +77,8 @@ accepts a limited set of options which may be used to "tweak" your build:
   link steps in parallel.
 * `EXTRA_CMAKE_OPTIONS` Extra options you would like to pass on to
   cmake.
-* `CMAKE_BUILD_TYPE` By default it produce a `Debug` build; this may be
-  set to `Debug`, `Release`, `RelWithDebInfo` or `MinSizeRel`.
+* `CMAKE_BUILD_TYPE` By default it produce a `DebugOptimized` build; this may be
+  set to `Debug`, `DebugOptimized`, `Release`, `RelWithDebInfo` or `MinSizeRel`.
 
 ### Simple build (Windows)
 
@@ -131,10 +131,10 @@ If you're building Couchbase Server more than just a one-off, there are
 a few modifications you can make to make your life easier and speed up
 your compile-edit-debug cycle.
 
-Use a non-optimised (Debug) build. This is around 2x faster to compile,
-and also improves debuggability over the default _RelWithDebInfo_ build
-type. Note it does produce slower code, so this isn't suitable if you're
-doing any performance measuremnts.
+Use a non-optimised build type - e.g. DebugOptimized. This is around
+2x faster to compile, and also improves debuggability over the default
+_RelWithDebInfo_ build type. Note it does produce slower code, so this
+isn't suitable if you're doing any performance measuremnts.
 
 Another tip would be to put the following in your `~/.profile` file:
 
