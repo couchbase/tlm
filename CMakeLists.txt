@@ -437,11 +437,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       SET (LCB_SNAPPY_INCLUDE_DIR "${SNAPPY_INCLUDE_DIR}" CACHE PATH "Path to Server's snappy headers" FORCE)
       SET (CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Override libdir to violate FHS" FORCE)
 
-      # Temporarily adjust our C++ compiler options
-      SET (_temp_cxx_flags "${CMAKE_CXX_FLAGS}")
-      STRING (REPLACE "-Werror=missing-braces" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
       ADD_SUBDIRECTORY(libcouchbase)
-      SET (CMAKE_CXX_FLAGS "${_temp_cxx_flags}")
     ENDIF()
 
     IF (NOT BUILD_ONLY_TOOLS)

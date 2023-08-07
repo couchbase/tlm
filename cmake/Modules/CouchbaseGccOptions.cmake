@@ -77,7 +77,6 @@ list(APPEND _cb_cxx_flags
      -pedantic
      -Wall
      -Wredundant-decls
-     -Werror=missing-braces
      -fno-strict-aliasing
      -Werror=switch)
 
