@@ -2,11 +2,11 @@
 # are actually right here.
 
 # This is the Master Version of Python to use everywhere!
-SET (PYTHON_VERSION 3.9.16)
+SET (PYTHON_VERSION 3.11.4)
 
 # These are tool versions, shouldn't need changing often
 SET (CBDEP_VERSION 1.1.6)
-SET (MINIFORGE_VERSION 23.1.0-0)
+SET (MINIFORGE_VERSION 23.1.0-3)
 
 include(ExternalProject)
 

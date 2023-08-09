@@ -10,11 +10,3 @@ ucrt
 vc
 vs2015_runtime
 vc14_runtime
-
-# brotli is now split into several components by conda-forge, but
-# couchbase-server-black-duck-manifest.yaml just lists "brotli".
-# Ignored the sub-packages.
-brotli-bin
-libbrotlicommon
-libbrotlidec
-libbrotlienc

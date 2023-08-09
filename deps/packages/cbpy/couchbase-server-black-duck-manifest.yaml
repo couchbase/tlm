@@ -13,7 +13,7 @@ components:
     _openmp_mutex:
         bd-id: e96f3f9a-dc1b-488a-95d5-853f0b074d1c
         versions: [ 4.5 ]
-    brotli:
+    brotli-python:
         bd-id: 53eb95f4-9124-43d0-913c-f27e94320dfa
         versions: [ v1.0.9 ]
     bzip2:
@@ -21,34 +21,37 @@ components:
         versions: [ 1.0.8 ]
     ca-certificates:
         bd-id: 530bae3a-a2ad-4bd6-810d-854fe6b57b9b
-        versions: [ 2023.5.7 ]
+        versions: [ 2023.7.22 ]
     certifi:
         bd-id: f1890115-04dd-4eaf-8ff0-5e2643582990
-        versions: [ 2023.5.7 ]
+        versions: [ 2023.7.22 ]
     cffi:
         bd-id: 043e4252-a86b-4281-a1a3-a762fe0470de
         versions: [ 1.15.1 ]
-    python3-charset-normalizer:
+    charset-normalizer:
         bd-id: 961db792-aeb0-450b-ba00-4f9b0afa6dda
-        versions: [ 3.1.0 ]
+        versions: [ 3.2.0 ]
     cryptography:
         bd-id: f09c05ab-0954-400d-94e9-4de512ed42fa
-        versions: [ 38.0.4 ]
+        versions: [ 41.0.3 ]
     idna:
         bd-id: 0be5e619-2387-4fe3-915e-8a60146b57dd
         versions: [ 3.4 ]
     libcxx:
         bd-id: 587d3e15-ea76-449b-94b1-ef12538584e4
-        versions: [ 16.0.4 ]
+        versions: [ 16.0.6 ]
+    libexpat:
+        bd-id: 22e24be7-3d1d-469d-b1c0-a0d545ba5073
+        versions: [ 2.5.0 ]
     libffi:
         bd-id: 8a5d4e5f-eee6-441d-91cc-85c7bb5e9fb5
         versions: [ 3.4.2 ]
     libgcc-ng:
         bd-id: 7fc4e9e4-a755-42d4-b0e3-ae2f2cc90728
-        versions: [ 12.2.0 ]
+        versions: [ 13.1.0 ]
     libgomp:
         bd-id: 6e2c44eb-e153-4b09-9500-f61fda6353ac
-        versions: [ 12.2.0 ]
+        versions: [ 13.1.0 ]
     libnsl:
         bd-id: 593ed15d-7aaf-4ef3-91bf-691c6dc31ccc
         versions: [ 2.0.0 ]
@@ -63,13 +66,13 @@ components:
         versions: [ 1.0.5 ]
     natsort:
         bd-id: c935b0a6-c4ad-449b-bea6-e953ad632518
-        versions: [ 8.3.1 ]
+        versions: [ 8.4.0 ]
     ncurses:
         bd-id: 7273e9b6-fd06-4da3-882b-391c9d4ea758
-        versions: [ "6.3" ]
+        versions: [ "6.4" ]
     openssl:
         bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
-        versions: [ 3.1.1 ]
+        versions: [ 3.1.2 ]
     pem:
         bd-id: e116f5a5-2fda-4341-9ce9-88ae369d0620
         versions: [ 21.2.0 ]
@@ -87,10 +90,10 @@ components:
         versions: [ 1.7.1 ]
     python:
         bd-id: ee4d67e0-63f9-409d-a9be-1c30de64873d
-        versions: [ 3.9.16 ]
+        versions: [ 3.11.4 ]
     python_abi:
         bd-id: ba4cb840-4316-4d85-ac00-5e39a2ff567e
-        versions: [ 3.9 ]
+        versions: [ 3.11 ]
     python-snappy:
         bd-id: 47724afe-8603-46c1-9bb9-de8bbba8c11f
         versions: [ 0.6.1 ]
@@ -111,7 +114,7 @@ components:
         versions: [ 2023c ]
     urllib3:
         bd-id: d222c710-38b5-4073-8347-63bb6526e77d
-        versions: [ 2.0.2 ]
+        versions: [ 2.0.4 ]
     win_inet_pton:
         bd-id: 196607cc-9260-4b6c-baba-f7cb9dd706b1
         versions: [ 1.1.0 ]
