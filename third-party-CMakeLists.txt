@@ -22,6 +22,7 @@ set(SIMDUTF_TOOLS OFF)
 # Explicitly specify C++ version for simdutf. The library "targets" C++11,
 # however, it uses binary literals, which are a C++14 feature and we get
 # warnings.
-set(SIMDUTF_CXX_STANDARD ${CMAKE_CXX_STANDARD})
+set(SIMDUTF_CXX_STANDARD ${CMAKE_CXX_STANDARD} CACHE STRING
+    "the C++ standard to use for simdutf")
 # Add simdutf
 add_subdirectory(simdutf EXCLUDE_FROM_ALL SYSTEM)
