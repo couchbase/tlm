@@ -40,11 +40,6 @@ endif ()
 # normal library 'libfolly.a' if we are building with TSan enabled.
 if(CB_THREADSANITIZER)
     set(folly_lib follytsan)
-elseif(CB_ADDRESSSANITIZER)
-    # We also have a separate ASan+UBsan build of the library as otherwise
-    # ASan/UBSan build flags spurious errors when linking to Folly (as we
-    # end up with a mix of sanitized & unsanitized code).
-    set(folly_lib follyasan_ubsan)
 else(CB_THREADSANITIZER)
     set(folly_lib folly)
 endif(CB_THREADSANITIZER)
@@ -54,7 +49,7 @@ find_library(FOLLY_LIBRARY_RELEASE
              HINTS ${_folly_exploded}/lib
              ${_folly_no_default_path})
 
-if (CB_THREADSANITIZER OR CB_ADDRESSSANITIZER OR CB_UNDEFINEDSANITIZER)
+if (CB_THREADSANITIZER)
     # MB-57715 Use TSAN version for debug builds as well
     set(FOLLY_LIBRARY_DEBUG ${FOLLY_LIBRARY_RELEASE})
     find_library(FOLLY_LIBRARIES_UNSANITIZED

@@ -92,8 +92,8 @@ ExternalProject_Add(folly
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
         )
 
-# Only build the TSan/ASAN/UBSAN packages for unix-like platforms
-if (UNIX)
+# Only build the TSan packages for linux and macos platforms to save time.
+if (${PLATFORM} STREQUAL "linux" OR ${PLATFORM} MATCHES "macos")
    # Not designed to be built independently of the normal folly package build. The
    # build will only install the package and not the source.
    ExternalProject_Add(follytsan
@@ -111,25 +111,6 @@ if (UNIX)
         cp libfolly.a ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libfollytsan.a
         )
    ExternalProject_Add_StepDependencies(folly download follytsan)
-
-   # Not designed to be built independently of the normal folly package build. The
-   # build will only install the package and not the source.
-   ExternalProject_Add(folly.asan_ubsan
-            GIT_REPOSITORY ${_git_repo}
-            GIT_TAG ${_git_rev}
-            PATCH_COMMAND ${folly_patch_command}
-            CMAKE_CACHE_ARGS ${cache_args}
-                -DCMAKE_BUILD_TYPE:STRING=DebugOptimized
-                -DCMAKE_C_COMPILER:STRING=clang
-                -DCMAKE_CXX_COMPILER:STRING=clang++
-                "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags} -fsanitize=address -fsanitize=undefined"
-            BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
-            BUILD_IN_SOURCE 1
-            INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-            INSTALL_COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/install/lib &&
-            cp libfolly.a ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libfollyasan_ubsan.a
-            )
-   ExternalProject_Add_StepDependencies(folly download folly.asan_ubsan)
 endif()
 
 # Additionally build a Debug variant.
