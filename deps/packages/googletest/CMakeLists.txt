@@ -2,7 +2,7 @@ include(ExternalProject)
 
 ExternalProject_Add(googletest
     GIT_REPOSITORY ${_git_repo}
-    GIT_TAG release-${_git_rev}
+    GIT_TAG v${_git_rev}
 
     CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
                -D CMAKE_BUILD_TYPE=RelWithDebInfo
