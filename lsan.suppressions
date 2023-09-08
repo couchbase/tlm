@@ -8,3 +8,7 @@
 # MB-41894: v8 8.3 with pointer compression disabled has some read-only memory
 # Supressing isolate leaks until we enable pointer compression
 leak:v8::Isolate::New
+
+# CBD-5603: RocksDB memory leaks on single-linux workers
+# See also - https://github.com/facebook/rocksdb/issues/5931
+leak:__cxa_thread_atexit
