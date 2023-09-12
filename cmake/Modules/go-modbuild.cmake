@@ -30,7 +30,6 @@ IF (CGO_LDFLAGS)
 ENDIF ()
 
 IF (NOT WIN32 AND NOT APPLE)
-  IF (CB_THREADSANITIZER OR CB_ADDRESSSANITIZER OR CB_UNDEFINEDSANITIZER)
     # Only use the CMAKE C compiler for cgo on non-Windows platforms;
     # on Windows we use a different compiler (gcc) for cgo than for
     # the main build MSVC).
@@ -39,7 +38,6 @@ IF (NOT WIN32 AND NOT APPLE)
     # CMAKE_C_COMPILER (which is 'cc' by default), using Golang's
     # default of 'clang' is fine hence also skip the override here.
     SET (ENV{CC} "${CMAKE_C_COMPILER}")
-  ENDIF (CB_THREADSANITIZER OR CB_ADDRESSSANITIZER OR CB_UNDEFINEDSANITIZER)
 ENDIF()
 
 # Our globally-desired RPATH for all Go executables (so far anyway)
