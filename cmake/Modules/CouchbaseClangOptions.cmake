@@ -17,10 +17,6 @@
 include(CheckCXXCompilerFlag)
 
 # Add common flags for C and C++
-foreach (dir ${CB_SYSTEM_HEADER_DIRS})
-    list(APPEND _cb_c_flags "-isystem ${dir}")
-endforeach (dir ${CB_SYSTEM_HEADER_DIRS})
-
 if (CB_CODE_COVERAGE)
     list(APPEND _cb_c_flags
          --coverage
