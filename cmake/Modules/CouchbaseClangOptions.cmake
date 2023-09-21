@@ -41,6 +41,18 @@ if (CMAKE_GENERATOR STREQUAL "Ninja")
     list(APPEND _cb_c_flags -fcolor-diagnostics)
 endif ()
 
+# AppleClang-15 enables the linker option '-warn_duplicate_libraries' by
+# default - "Warn if the input contains duplicate library options".
+# Across our tree we have various places where a given library ends up listed
+# twice on a linker line - for example 'libplatform' which could be a direct
+# and indirect dependent of a target.
+# Listing a library twice is benign - the linker will just include it once
+# in the order of the first instance, so disable this warning to avoid the
+# noise
+if (APPLE AND ${CMAKE_C_COMPILER_VERSION} VERSION_GREATER_EQUAL 15.0)
+    list(APPEND _cb_c_flags -Wl,-no_warn_duplicate_libraries)
+endif()
+
 # MB-58769: Enable C++17 deprecated unary & binary functions as they
 # are used by the version of Boost (1.74) we use.
 add_compile_definitions(_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION)
