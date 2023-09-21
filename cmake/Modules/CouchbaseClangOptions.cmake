@@ -41,6 +41,10 @@ if (CMAKE_GENERATOR STREQUAL "Ninja")
     list(APPEND _cb_c_flags -fcolor-diagnostics)
 endif ()
 
+# MB-58769: Enable C++17 deprecated unary & binary functions as they
+# are used by the version of Boost (1.74) we use.
+add_compile_definitions(_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION)
+
 # Copy the flags over to C++
 set(_cb_cxx_flags ${_cb_c_flags})
 
