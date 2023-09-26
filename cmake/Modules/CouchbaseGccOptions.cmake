@@ -39,7 +39,8 @@ list(APPEND cb_c_flags
      -Werror=missing-declarations
      -Wredundant-decls
      -fno-strict-aliasing
-     -Wno-overlength-strings)
+     -Wno-overlength-strings
+     -Wshadow=compatible-local)
 
 # Convert the list to a string
 string(REPLACE ";" " " _cb_c_options "${_cb_c_flags}")
@@ -59,7 +60,8 @@ list(APPEND _cb_cxx_flags
      -Wall
      -Wredundant-decls
      -fno-strict-aliasing
-     -Werror=switch)
+     -Werror=switch
+     -Wshadow=compatible-local)
 
 SET(CB_GNU_CXX11_OPTION "-std=gnu++17")
 
