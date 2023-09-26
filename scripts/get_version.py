@@ -40,7 +40,11 @@ if manifest == '':
 
 root = ET.fromstring(manifest.decode('utf-8'))
 
-verattr = root.find('project[@name="build"]/annotation[@name="VERSION"]')
+# If SERVER_VERSION exists, use that in preference to VERSION
+verattr = root.find('project[@name="build"]/annotation[@name="SERVER_VERSION"]')
+if verattr is None:
+    verattr = root.find('project[@name="build"]/annotation[@name="VERSION"]')
+
 if verattr is not None:
     version = verattr.get('value')
     if version is not None:
