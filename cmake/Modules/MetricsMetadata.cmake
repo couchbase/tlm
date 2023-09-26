@@ -30,8 +30,8 @@ IF (NOT MetricsMetadata_INCLUDED)
       MESSAGE (FATAL_ERROR "COMPONENT is required!")
     ENDIF ()
 
-    IF (CB_PRODUCTION_BUILD AND NOT JQ_EXE)
-      MESSAGE (FATAL_ERROR "'jq' not found - required for production builds!")
+    IF (CB_PRODUCTION_BUILD AND NOT JQ_EXE AND UNIX AND NOT APPLE)
+      MESSAGE (FATAL_ERROR "'jq' not found - required for Linux production builds!")
     ENDIF ()
 
     SET (_outdir "${CMAKE_CURRENT_BINARY_DIR}/etc/couchbase/${mm_COMPONENT}")
