@@ -244,6 +244,7 @@ INCLUDE(FindCouchbaseLibsodium)
 INCLUDE(FindCouchbaseLiburing)
 include(FindCouchbaseBenchmark)
 include(FindCouchbaseGoogletest)
+INCLUDE(FindCouchbaseSimdutf)
 INCLUDE(FindCouchbaseSpdlog)
 INCLUDE(FindCouchbaseZstd)
 

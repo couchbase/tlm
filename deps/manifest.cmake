@@ -55,6 +55,7 @@ DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 7 PLATFORMS linux macosx windo
 IF (NOT CB_PRODUCTION_BUILD)
 DECLARE_DEP (rocksdb VERSION 5.18.3-cb9 PLATFORMS linux macosx)
 ENDIF (NOT CB_PRODUCTION_BUILD)
+DECLARE_DEP (simdutf VERSION 3.2.14-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (snappy VERSION 1.1.10-cb2 PLATFORMS linux macosx windows)
 DECLARE_DEP (spdlog VERSION v1.10.0-cb6 PLATFORMS linux macosx windows)
 DECLARE_DEP (v8 V2 VERSION 11.6.189.8 BUILD 1 PLATFORMS linux macosx windows)
