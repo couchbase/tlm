@@ -49,6 +49,12 @@ if (APPLE AND ${CMAKE_C_COMPILER_VERSION} VERSION_GREATER_EQUAL 15.0)
     list(APPEND _cb_c_flags -Wl,-no_warn_duplicate_libraries)
 endif()
 
+# Clang-15 emits DWARF v5 debugging information by default, however
+# most of our build images lack a version of GDB which supports
+# DWARFv5 (GDB 10 needed). To maintain compatibility with the current
+# GDB versions, limit DWARF version to 4.
+list(APPEND _cb_c_flags -fdebug-default-version=4)
+
 # Copy the flags over to C++
 set(_cb_cxx_flags ${_cb_c_flags})
 
