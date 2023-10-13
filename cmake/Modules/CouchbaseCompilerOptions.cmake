@@ -23,6 +23,22 @@ if (UNIX AND NOT APPLE)
   endif ()
 endif()
 
+# If building with a version of compiler which defaults to PIE code
+# (--enable-default-pie) such as GCC 10.2+ or Clang 15+, we can
+# encounter linker errors when linking against precompiled static
+# libraries similar to:
+#
+#     /usr/bin/ld: foo.a(bar.cc.o): relocation R_X86_64_32 against `.rodata.str1.8' can not be used when making a PIE object; recompile with -fPIC
+#
+# Address this by disabling the effect of '--enable-default-pie' - set
+# the default to non- position-independent executables.
+#
+include(CheckCCompilerFlag)
+check_c_compiler_flag(-no-pie HAVE_NO_PIE)
+if (HAVE_NO_PIE)
+  string(APPEND CMAKE_EXE_LINKER_FLAGS " -no-pie")
+endif ()
+
 #
 # Set flags for the C and C++ Compiler
 #
