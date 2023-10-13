@@ -30,21 +30,6 @@ if (NOT COUCHBASE_OMIT_FRAME_POINTER)
    list(APPEND _cb_c_flags -fno-omit-frame-pointer)
 endif()
 
-# If building with a version of GCC which defaults to PIE code
-# (--enable-default-pie), we can encounter linker errors when linking
-# against precompiled static libraries similar to:
-#
-#     /usr/bin/ld: foo.a(bar.cc.o): relocation R_X86_64_32 against `.rodata.str1.8' can not be used when making a PIE object; recompile with -fPIC
-#
-# Address this by disabling the effect of '--enable-default-pie' - set
-# the default to non- position-independent executables.
-#
-include(CheckCCompilerFlag)
-check_c_compiler_flag(-no-pie HAVE_NO_PIE)
-if (HAVE_NO_PIE)
-  string(APPEND CMAKE_EXE_LINKER_FLAGS " -no-pie")
-endif ()
-
 list(APPEND _cb_c_flags -fvisibility=hidden -pthread)
 # Copy the flags over to C++
 set(_cb_cxx_flags ${_cb_c_flags})
