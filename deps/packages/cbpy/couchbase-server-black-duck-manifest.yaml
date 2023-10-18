@@ -15,7 +15,7 @@ components:
         versions: [ 4.5 ]
     brotli-python:
         bd-id: 53eb95f4-9124-43d0-913c-f27e94320dfa
-        versions: [ v1.0.9 ]
+        versions: [ v1.1.0 ]
     bzip2:
         bd-id: 102488a4-212e-4ab3-8fc6-338f3f5b120e
         versions: [ 1.0.8 ]
@@ -27,13 +27,13 @@ components:
         versions: [ 2023.7.22 ]
     cffi:
         bd-id: 043e4252-a86b-4281-a1a3-a762fe0470de
-        versions: [ 1.15.1 ]
+        versions: [ 1.16.0 ]
     charset-normalizer:
         bd-id: 961db792-aeb0-450b-ba00-4f9b0afa6dda
-        versions: [ 3.2.0 ]
+        versions: [ 3.3.0 ]
     cryptography:
         bd-id: f09c05ab-0954-400d-94e9-4de512ed42fa
-        versions: [ 41.0.3 ]
+        versions: [ 41.0.4 ]
     idna:
         bd-id: 0be5e619-2387-4fe3-915e-8a60146b57dd
         versions: [ 3.4 ]
@@ -48,22 +48,22 @@ components:
         versions: [ 3.4.2 ]
     libgcc-ng:
         bd-id: 7fc4e9e4-a755-42d4-b0e3-ae2f2cc90728
-        versions: [ 13.1.0 ]
+        versions: [ 13.2.0 ]
     libgomp:
         bd-id: 6e2c44eb-e153-4b09-9500-f61fda6353ac
-        versions: [ 13.1.0 ]
+        versions: [ 13.2.0 ]
     libnsl:
         bd-id: 593ed15d-7aaf-4ef3-91bf-691c6dc31ccc
-        versions: [ 2.0.0 ]
+        versions: [ 2.0.1 ]
     libsqlite:
         bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
-        versions: [ 3.42.0 ]
+        versions: [ 3.43.2 ]
     libuuid:
         bd-id: d35f4c89-cd3f-457b-9c48-598bb01b3f0b
         versions: [ 2.38.1 ]
     msgpack-python:
         bd-id: d265c559-74ea-4baa-a993-2089ca47efde
-        versions: [ 1.0.5 ]
+        versions: [ 1.0.6 ]
     natsort:
         bd-id: c935b0a6-c4ad-449b-bea6-e953ad632518
         versions: [ 8.4.0 ]
@@ -72,7 +72,7 @@ components:
         versions: [ "6.4" ]
     openssl:
         bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
-        versions: [ 3.1.2 ]
+        versions: [ 3.1.3 ]
     pem:
         bd-id: e116f5a5-2fda-4341-9ce9-88ae369d0620
         versions: [ 21.2.0 ]
@@ -81,7 +81,7 @@ components:
         versions: [ "2.21" ]
     pycryptodome:
         bd-id: 0262517f-43d2-4243-b451-bb029df9ea11
-        versions: [ 3.18.0 ]
+        versions: [ 3.19.0 ]
     pyopenssl:
         bd-id: 69c65bd6-9d4a-427e-8b35-384c0ce8602e
         versions: [ 23.2.0 ]
@@ -108,13 +108,13 @@ components:
         versions: [ 1.1.10 ]
     tk:
         bd-id: b64ca5f6-9e86-4f1f-932f-c5725affbfa5
-        versions: [ 8.6.12 ]
+        versions: [ 8.6.13 ]
     tzdata:
         bd-id: 1624d2ea-d07f-4fc3-837a-2391e0dfb299
         versions: [ 2023c ]
     urllib3:
         bd-id: d222c710-38b5-4073-8347-63bb6526e77d
-        versions: [ 2.0.4 ]
+        versions: [ 2.0.6 ]
     win_inet_pton:
         bd-id: 196607cc-9260-4b6c-baba-f7cb9dd706b1
         versions: [ 1.1.0 ]

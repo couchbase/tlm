@@ -6,9 +6,10 @@ set MINIFORGE_VERSION=%3
 set PYTHON_VERSION=%4
 set INSTALL_DIR=%5
 
-rem Install and activate Miniforge3
-%CBDEP% install -d . miniforge3 %MINIFORGE_VERSION%
-call .\miniforge3-%MINIFORGE_VERSION%\Scripts\activate || goto error
+rem Install and activate Miniforge3. Must be installed in a directory with
+rem a short path, so use the path we know the build job will use.
+%CBDEP% install -d C:\cb\deps miniforge3 %MINIFORGE_VERSION%
+call C:\cb\deps\miniforge3-%MINIFORGE_VERSION%\Scripts\activate || goto error
 
 rem Create and activate a builder environment, with our desired version of
 rem python and the latest compatible conda-build/conda-pack/conda-verify.
