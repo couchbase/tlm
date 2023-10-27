@@ -15,9 +15,9 @@ cd build
 
 # Work-around for generating generic "linux" deps
 if [ "${DISTRO}" == "linux" ]; then
-    cmake .. -DPACKAGE=${PACKAGE} -DCB_DOWNLOAD_DEPS_PLATFORM="linux;all"
+    cmake .. -DPACKAGE=${PACKAGE} -DCB_DEP_TARGET_PLATFORM="linux"
 elif [ "${DISTRO}" == "all" ]; then
-    cmake .. -DPACKAGE=${PACKAGE} -DCB_DOWNLOAD_DEPS_PLATFORM="all" -DCB_DOWNLOAD_DEPS_ARCH="noarch"
+    cmake .. -DPACKAGE=${PACKAGE} -DCB_DEP_TARGET_PLATFORM="all" -DCB_DOWNLOAD_DEPS_ARCH="noarch"
 else
     cmake .. -DPACKAGE=${PACKAGE}
 fi

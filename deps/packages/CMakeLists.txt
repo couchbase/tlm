@@ -96,6 +96,17 @@ MACRO (_ADD_DEP_PACKAGE package upstream_ver cb_branch cb_release)
       # the compiler version is important for routing builds to the right
       # Jenkins agents, but not for the resulting package name.
       SET (_pkg_plat windows)
+    ELSEIF (CB_DEP_TARGET_PLATFORM)
+      # For certain groups of platforms (currently Linux
+      # distributions) we build a single cbdep package which is used
+      # for multiple different distributions - e.g. centos7 and
+      # ubuntu20.04 can all use a package targetting "linux".
+      # Similary for architecture-neutral packages (say only
+      # containing Java bytecode) we use the platform "all".
+      #
+      # Therefore, allow the platform of the output package to be
+      # overridden by setting CB_DEP_TARGET_PLATFORM.
+      SET (_pkg_plat ${CB_DEP_TARGET_PLATFORM})
     ELSE ()
       SET (_pkg_plat ${PLATFORM})
     ENDIF ()
@@ -168,7 +179,7 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 _ADD_DEP_PACKAGE(snappy 1.1.8 1.1.8 4)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
-_ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 9)
+_ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 12)
 _ADD_DEP_PACKAGE(jemalloc 5.2.1 5.2.1-couchbase 9)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
@@ -206,8 +217,8 @@ _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 1)
 _ADD_DEP_PACKAGE(benchmark v1.6.0 v1.6.0 1)
 _ADD_DEP_PACKAGE(googletest 1.11.0 1.11.0 4)
 
-_ADD_DEP_PACKAGE(folly v2020.09.07.00-couchbase v2020.09.07.00-couchbase 2)
-_ADD_DEP_PACKAGE(grpc 1.28.1 v1.28.1 3)
+_ADD_DEP_PACKAGE(folly v2020.09.07.00-couchbase v2020.09.07.00-couchbase 4)
+_ADD_DEP_PACKAGE(grpc 1.28.1 v1.28.1 4)
 _ADD_DEP_PACKAGE(pcre 8.44 v8.44 1)
 _ADD_DEP_PACKAGE(opentelemetry-cpp v1.0.0-rc4.cb v1.0.0-rc4.cb 1)
 _ADD_DEP_PACKAGE(opentracing-cpp v1.5.1 v1.5.1 4)
