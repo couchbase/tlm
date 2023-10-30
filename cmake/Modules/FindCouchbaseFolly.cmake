@@ -95,7 +95,7 @@ set(folly_dependancies ${DOUBLE_CONVERSION_LIBRARIES}
             Boost::system
             Boost::thread
             ${LIBEVENT_LIBRARIES}
-            ${OPENSSL_LIBRARIES})
+            OpenSSL::SSL)
 
 # Define 'modern' CMake targets for Folly for targets to depend on. These
 # are simpler than the FOLLY_LIBRARIES / FOLLY_INCLUDE_DIR env vars as

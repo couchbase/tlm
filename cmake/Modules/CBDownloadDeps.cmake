@@ -173,8 +173,18 @@ IF (NOT CBDownloadDeps_INCLUDED)
       # for V1, version is conventionally version-bld_num, so split it apart.
       # Occasionally there may be a version with no -, in which case the
       # bld_num is the empty string.
-      STRING (REPLACE "-" ";" _dep_bits "${dep_VERSION}")
-      LIST (POP_FRONT _dep_bits _dep_version _dep_bld_num)
+      # Additionally the version component can include '-', so we only
+      # want to split on the last '-' in it.
+      STRING (FIND ${dep_VERSION} "-" _last_hyphen_pos REVERSE)
+      IF (_last_hyphen_pos GREATER 0)
+        # Build number present, split version at that point.
+        STRING (SUBSTRING ${dep_VERSION} 0 ${_last_hyphen_pos} _dep_version)
+        MATH (EXPR bld_num_start "${_last_hyphen_pos} + 1")
+        STRING (SUBSTRING ${dep_VERSION} ${bld_num_start} -1 _dep_bld_num)
+      ELSE()
+        # No build number, just set version and leave bld_num empty.
+        SET (_dep_bld_num ${dep_VERSION})
+      ENDIF()
     ENDIF (dep_V2)
     SET (_dep_fullver "${_dep_version}-${_dep_bld_num}")
     SET (CBDEP_${name}_VERSION "${_dep_version}" CACHE STRING "Version of cbdep package '${name}'" FORCE)
