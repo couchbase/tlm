@@ -156,6 +156,11 @@ EXECUTE_PROCESS (
     -o "${OUTPUT}"
     "${PACKAGE}")
 
+IF (_failure)
+  MESSAGE ("Error running go build for package ${PACKAGE}!\n${_output}")
+  MESSAGE (FATAL_ERROR "Failed running go modules build for package ${PACKAGE}")
+ENDIF (_failure)
+
 # If necessary, copy to alternate tools-install location.
 FOREACH (_altinstallpath ${ALT_INSTALL_PATHS})
   FILE (
@@ -173,8 +178,3 @@ IF (CB_GO_CODE_COVERAGE)
       ${_go_debug}
       "${PACKAGE}")
 ENDIF ()
-
-IF (_failure)
-  MESSAGE ("Error running go build for package ${PACKAGE}!\n${_output}")
-  MESSAGE (FATAL_ERROR "Failed running go modules build for package ${PACKAGE}")
-ENDIF (_failure)
