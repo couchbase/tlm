@@ -92,7 +92,9 @@ ExternalProject_Add(folly
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
         )
 
-# Only build the TSan/ASAN/UBSAN packages for unix-like platforms
+# We generally only run TSan on linux containers, but on occasion a local build is
+# required. Only build the TSan package on linux and macos platforms to save
+# time.
 if (UNIX)
    # Not designed to be built independently of the normal folly package build. The
    # build will only install the package and not the source.

@@ -342,7 +342,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
   ENDFUNCTION (GET_GO_VERSION)
 
   # Start of CBDeps 2.0 - download and cache the new 'cbdep' tool
-  SET (CBDEP_VERSION 1.1.6)
+  SET (CBDEP_VERSION 1.1.7)
   FUNCTION (GET_CBDEP)
     _DETERMINE_PLATFORM (_platform)
     _DETERMINE_ARCH (_arch)
