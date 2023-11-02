@@ -41,3 +41,13 @@ if (NOT DEFINED ZSTD_CPP_FOUND)
         set(ZSTD_CPP_FOUND false CACHE BOOL "Found zstd-cpp" FORCE)
     endif ()
 endif (NOT DEFINED ZSTD_CPP_FOUND)
+
+IF (ZSTD_CPP_FOUND AND NOT TARGET Zstd::zstd)
+    # Pretend we're using Modern CMake to find this thing.
+    add_library(Zstd::zstd STATIC IMPORTED)
+    set_target_properties(Zstd::zstd
+        PROPERTIES
+        IMPORTED_LOCATION ${ZSTD_CPP_LIBRARIES})
+    target_include_directories(Jemalloc::jemalloc INTERFACE
+        ${ZSTD_CPP_INCLUDE_DIR})
+ENDIF ()

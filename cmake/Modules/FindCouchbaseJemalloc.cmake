@@ -15,9 +15,10 @@
 
 # Locate jemalloc library
 # This module defines
-#  JEMALLOC_FOUND, if false, do not try to link with jemalloc
 #  JEMALLOC_LIBRARIES, path to selected (Debug / Release) library variant
 #  JEMALLOC_INCLUDE_DIR, where to find the jemalloc headers
+
+IF (NOT FindCouchbaseJemalloc_INCLUDED)
 
 INCLUDE(CheckFunctionExists)
 include(CMakePushCheckState)
@@ -87,3 +88,19 @@ if (NOT HAVE_JE_SYMBOLS)
 endif ()
 
 mark_as_advanced(JEMALLOC_INCLUDE_DIR)
+
+# Pretend we're using Modern CMake to find this thing.
+add_library(Jemalloc::jemalloc STATIC IMPORTED)
+set_target_properties(Jemalloc::jemalloc
+    PROPERTIES
+    IMPORTED_LOCATION ${JEMALLOC_LIBRARY_RELEASE})
+if(FOLLY_LIBRARY_DEBUG)
+    set_target_properties(Jemalloc::jemalloc
+        PROPERTIES
+        IMPORTED_LOCATION_DEBUG ${JEMALLOC_LIBRARY_DEBUG})
+endif()
+target_include_directories(Jemalloc::jemalloc INTERFACE
+    ${JEMALLOC_INCLUDE_DIR})
+
+SET (FindCouchbaseJemalloc_INCLUDED 1)
+ENDIF (NOT FindCouchbaseJemalloc_INCLUDED)

@@ -42,6 +42,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # END THINGS YOU MAY NEED TO UPDATE OVER TIME
   ####################################################################
 
+  IF (CB_DEBUG_GO_TARGETS)
+    INCLUDE (ListTargetProperties)
+  ENDIF ()
+
   SET (CB_GO_CODE_COVERAGE 0 CACHE BOOL "Whether to use Go code coverage")
   SET (CB_GO_RACE_DETECTOR 0 CACHE BOOL "Whether to add race detector flag while generating go binaries")
 
@@ -502,6 +506,16 @@ IF (NOT FindCouchbaseGo_INCLUDED)
         SET(Go_GOBUILDMODE "default")
     ENDIF ()
 
+    # Debugging targets
+    IF (CB_DEBUG_GO_TARGETS)
+      MESSAGE (STATUS "Dep target info for GoModBuild(${Go_TARGET})")
+      MESSAGE (STATUS "CGO_CFLAGS: ${Go}")
+      FOREACH (_dep ${Go_DEPENDS})
+        PRINT_TARGET_PROPERTIES (${_dep})
+      ENDFOREACH ()
+      MESSAGE (STATUS "End dep target info for GoModBuild(${Go_TARGET})")
+    ENDIF ()
+
     # Extract the binary name from the package, and tweak for Windows.
     IF (Go_OUTPUT)
       SET (_exe "${Go_OUTPUT}")
@@ -539,6 +553,30 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     # Path to go binary dir for this target
     SET (_gobindir "${GO_BINARY_DIR}/go-${_gover}")
 
+    # This is pretty dumb, but because "Modern CMake" won't let us
+    # specify a custom_target to target_link_libraries() (which is the
+    # key to the magic of transitively unwinding include_directories),
+    # we add a fake interface library target here. We can at least
+    # exclude it from ALL so that it doesn't build anything normally.
+    SET (_stub_tgt "${Go_TARGET}-cgo-stub")
+    ADD_LIBRARY ("${_stub_tgt}" INTERFACE EXCLUDE_FROM_ALL)
+    TARGET_LINK_LIBRARIES ("${_stub_tgt}" INTERFACE ${Go_DEPENDS})
+
+    # Even with that, there doesn't seem to be a way (via generator
+    # expressions or anything similar) to say "list all the library
+    # files this target depends on". I still need to loop. I hope this
+    # list is transitive!
+    SET (_depdirs ${Go_CGO_LIBRARY_DIRS})
+    FOREACH (_dep ${Go_DEPENDS})
+      IF (NOT TARGET ${_dep})
+        CONTINUE ()
+      ENDIF ()
+      GET_TARGET_PROPERTY(_deptype ${_dep} TYPE)
+      IF (_deptype MATCHES ".*_LIBRARY$")
+        LIST (APPEND _depdirs "$<TARGET_FILE_DIR:${_dep}>")
+      ENDIF ()
+    ENDFOREACH ()
+
     # Go mod build target
     ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
       COMMAND "${CMAKE_COMMAND}"
@@ -557,8 +595,8 @@ IF (NOT FindCouchbaseGo_INCLUDED)
         -D "PACKAGE=${Go_PACKAGE}"
         -D "OUTPUT=${_exe}"
         -D "ALT_INSTALL_PATHS=${Go_ALT_INSTALL_PATHS}"
-        -D "CGO_INCLUDE_DIRS=${Go_CGO_INCLUDE_DIRS}"
-        -D "CGO_LIBRARY_DIRS=${Go_CGO_LIBRARY_DIRS}"
+        -D "CGO_INCLUDE_DIRS=${Go_CGO_INCLUDE_DIRS};$<JOIN:$<TARGET_PROPERTY:${_stub_tgt},INTERFACE_INCLUDE_DIRECTORIES>,;>"
+        -D "CGO_LIBRARY_DIRS=${_depdirs}"
         -D "CB_GO_CODE_COVERAGE=${CB_GO_CODE_COVERAGE}"
         -D "CB_GO_RACE_DETECTOR=${CB_GO_RACE_DETECTOR}"
         -D "CB_ADDRESSSANITIZER=${CB_ADDRESSSANITIZER}"
