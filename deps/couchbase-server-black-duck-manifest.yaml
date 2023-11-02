@@ -14,6 +14,9 @@ components:
     #   versions: The version(s) to report in our Black Duck report
     #   cbdeps-versions: (optional) The version(s) listed in deps/manifest.cmake,
     #     in case these are different to what Black Duck calls them
+    #   license-approved: "true" if the component's license has been explicitly
+    #     approved for inclusion in our product (only set this for components
+    #     with otherwise-suspicious licenses such as GPL)
     #
 
     boost:
@@ -78,6 +81,7 @@ components:
     numactl:
         bd-id: fe3e8b96-6c8e-411f-991f-697ecfed5605
         versions: [ 2.0.11 ]
+        license-approved: true
     openssl:
         bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
         versions: [ 3.1.3 ]
@@ -131,6 +135,8 @@ components:
     libgcc:
         bd-id: e12b8d28-cc06-4ffe-9393-21982b677571
         versions: [ 10.2.1 ]
+        license-approved: true
     libstdc++:
         bd-id: 899d93c9-1182-4d34-9349-5bf3e34aaa69
         versions: [ 10.2.1 ]
+        license-approved: true

@@ -25,6 +25,7 @@ components:
     certifi:
         bd-id: f1890115-04dd-4eaf-8ff0-5e2643582990
         versions: [ 2023.7.22 ]
+        license-approved: true
     cffi:
         bd-id: 043e4252-a86b-4281-a1a3-a762fe0470de
         versions: [ 1.16.0 ]
@@ -49,12 +50,15 @@ components:
     libgcc-ng:
         bd-id: 7fc4e9e4-a755-42d4-b0e3-ae2f2cc90728
         versions: [ 13.2.0 ]
+        license-approved: true
     libgomp:
         bd-id: 6e2c44eb-e153-4b09-9500-f61fda6353ac
         versions: [ 13.2.0 ]
+        license-approved: true
     libnsl:
         bd-id: 593ed15d-7aaf-4ef3-91bf-691c6dc31ccc
         versions: [ 2.0.1 ]
+        license-approved: true
     libsqlite:
         bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
         versions: [ 3.43.2 ]
@@ -121,6 +125,7 @@ components:
     xz:
         bd-id: 59191267-61f3-42aa-9247-6b83d8085db5
         versions: [ 5.2.6 ]
+        license-approved: true
     zlib:
         bd-id: b9185555-6e31-401e-b373-bfec7955a8ab
         versions: [ 1.2.13 ]
