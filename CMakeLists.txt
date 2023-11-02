@@ -40,11 +40,10 @@ SET(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
     "Choose the type of build, options are: Debug DebugOptimized Release RelWithDebInfo MinSizeRel."
     FORCE)
 
-#
 # Choose deployment target on macOS.
-# As of Cheshire-Cat, minimum supported is Mojave (10.14).
-#
-SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.14" CACHE STRING
+# As of Neo, minimum supported is Big Sur (11.0), but the CV servers
+# is still at 10.15.
+SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING
     "Minimum supported version of MacOS X")
 
 PROJECT("Couchbase")
