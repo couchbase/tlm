@@ -52,7 +52,7 @@ ENDIF ()
 
 # Always use -x if CB_GO_DEBUG is set
 IF ($ENV{CB_GO_DEBUG})
-  SET (_go_debug -x)
+  SET (_go_debug -x -work)
 ENDIF ($ENV{CB_GO_DEBUG})
 
 # check if race detector flag is set
@@ -91,8 +91,14 @@ get_filename_component(REPOSYNC "${REPOSYNC}" REALPATH)
 SET (GCFLAGS "-trimpath=${REPOSYNC}" ${GCFLAGS})
 SET (ASMFLAGS "-trimpath=${REPOSYNC}")
 
+# For when people run with eg. `make VERBOSE=1`
 IF (DEFINED ENV{VERBOSE})
+  # Output the commands we execute
   SET (CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT)
+
+  # Also display the env vars we've created
+  MESSAGE ("CGO_CPPFLAGS: $ENV{CGO_CPPFLAGS}")
+  MESSAGE ("CGO_LDFLAGS: $ENV{CGO_LDFLAGS}")
 ENDIF ()
 
 # If this git repository has local git changes anyway, allow "go build"

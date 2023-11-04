@@ -44,6 +44,10 @@ DECLARE_DEP (libuv V2 VERSION 1.20.3 BUILD 23 PLATFORMS linux macosx)
 DECLARE_DEP (lz4 VERSION 1.9.2-cb5 PLATFORMS linux macosx)
 DECLARE_DEP (maven VERSION 3.5.2-cb6 PLATFORMS all)
 DECLARE_DEP (pcre VERSION 8.44-cb3 PLATFORMS linux macosx windows)
+# OpenBLAS is not used directly by Server, but it is statically linked into the
+# "faiss" cbdeps package. We include it here primarily to help us remember to
+# keep the BD manifest up-to-date.
+DECLARE_DEP (openblas V2 VERSION 0.3.24 BUILD 1 PLATFORMS linux macos)
 DECLARE_DEP (openssl V2 VERSION 3.1.3 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (numactl VERSION 2.0.11-cb4 PLATFORMS linux)
 DECLARE_DEP (prometheus V2 VERSION 2.45.0 BUILD 1 PLATFORMS linux macosx windows)
