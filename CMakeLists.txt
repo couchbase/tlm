@@ -127,6 +127,15 @@ ENDIF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 
 SET (COUCHBASE_SERVER_BUILD True CACHE BOOL "Indicating this is a server build")
 
+# GNUInstallDirs (a standard CMake module) sets the variable
+# CMAKE_INSTALL_LIBDIR. libcouchbase and faiss (which we will add to the
+# Server build in a moment) call GNUInstallDirs and then uses that
+# variable to determine the installation location. On RHEL-based
+# systems, that ends up putting those shared libraries into lib64/. We
+# don't want that, so we override that variable here - fortunately
+# GNUInstallDirs won't override them if they're already set.
+SET (CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Override libdir to violate FHS" FORCE)
+
 # Try to download the prebuilt 3rd-party dependencies by default
 IF (NOT DEFINED CB_DOWNLOAD_DEPS)
    SET(CB_DOWNLOAD_DEPS True
@@ -439,7 +448,6 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       SET (LCB_INSTALL_PKGCONFIG OFF CACHE BOOL "Don't install libcouchbase.pc" FORCE)
       SET (LCB_SNAPPY_LIB "${SNAPPY_LIBRARIES}" CACHE PATH "Path to Server's snappy library" FORCE)
       SET (LCB_SNAPPY_INCLUDE_DIR "${SNAPPY_INCLUDE_DIR}" CACHE PATH "Path to Server's snappy headers" FORCE)
-      SET (CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Override libdir to violate FHS" FORCE)
 
       ADD_SUBDIRECTORY(libcouchbase)
     ENDIF()

@@ -35,22 +35,21 @@ ELSE ()
       TARGET_COMPILE_OPTIONS (faiss_c PRIVATE -fvisibility=default)
     ENDIF ()
 
-    # Faiss also handles the c_api headers all wrong. It doesn't set
+    # Faiss handles the c_api headers all wrong. It doesn't set
     # target_include_directories(), and worse, the headers don't exist
     # in git in the right place - it's assumed they're in a directory
-    # named "faiss/c_api", which they aren't. However, since our manifest
-    # happens to put the faiss source into a directory named "faiss", we
-    # can hack around it by setting the top of the repo sync itself as the
-    # include_directory.
+    # named "faiss/c_api", which they aren't. However, since our
+    # manifest happens to put the faiss source into a directory named
+    # "faiss", we can hack around it by setting the top of the repo sync
+    # itself as the include_directory.
     TARGET_INCLUDE_DIRECTORIES (faiss_c PUBLIC
       $<BUILD_INTERFACE:${faiss_SOURCE_DIR}/..>)
 
-    # Faiss also neglects to install() libfaiss_c
+    # Faiss also neglects to install() libfaiss_c entirely.
     INSTALL (TARGETS faiss_c
-      RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
-      ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
-      INCLUDES DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+      RUNTIME DESTINATION bin
+      ARCHIVE DESTINATION lib
+      LIBRARY DESTINATION lib
     )
 
     # Restore original CMake options
