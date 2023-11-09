@@ -181,6 +181,7 @@ ENDMACRO (_install_gcc_file)
 
 _install_gcc_file(libstdc++.so)
 _install_gcc_file(libgcc_s.so)
+_install_gcc_file(libgomp.so)
 INCLUDE(CouchbaseDefaultValues)
 
 # If the user has synced any closed-source code, assume building EE
@@ -363,7 +364,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     SET (FORESTDB_TARGET forestdb)
 ENDIF()
 
-INCLUDE (CouchbaseBuildFaiss)
+INCLUDE (CouchbaseFaiss)
 
 IF (NOT BUILD_ONLY_TOOLS)
   ADD_SUBDIRECTORY(sigar)
