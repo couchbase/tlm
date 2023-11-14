@@ -84,7 +84,7 @@ components:
         license-approved: true
     openblas:
         bd-id: 4d295b0d-132b-4b5f-aaaa-0ea2b007e5a8
-        versions: [ 0.3.24 ]
+        versions: [ 0.3.25 ]
     openssl:
         bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
         versions: [ 3.1.3 ]
