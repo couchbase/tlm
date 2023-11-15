@@ -66,6 +66,9 @@ ELSEIF (APPLE)
 ELSEIF (NOT EXISTS "${PROJECT_SOURCE_DIR}/faiss")
   # No Faiss on Linux if the faiss subdirectory is missing
 
+ELSEIF(NOT CMAKE_C_COMPILER_ID STREQUAL "GNU")
+  # Skip faiss unless using GCC
+
 ELSE ()
   #
   # Linux: Add faiss to Server project, and configure Faiss build
