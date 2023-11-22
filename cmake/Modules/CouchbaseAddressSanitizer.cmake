@@ -50,7 +50,6 @@ IF (CB_ADDRESSSANITIZER)
 
         # Configure CTest's MemCheck to AddressSanitizer.
         SET(MEMORYCHECK_TYPE AddressSanitizer)
-
         if(NOT CB_ADDRESSSANITIZER EQUAL 2)
             # Enable globally
             ADD_COMPILE_OPTIONS(${ADDRESS_SANITIZER_FLAG})

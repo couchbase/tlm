@@ -208,7 +208,6 @@ function(remove_sanitizers TARGET)
     remove_sanitize_libfuzzer(${TARGET})
 endfunction()
 
-
 # If at least one sanitizer enabled, Override the normal ADD_TEST
 # macro to set environment variables for each enabled sanitizer. This
 # allows us to specify default behaviour of our sanitizers
