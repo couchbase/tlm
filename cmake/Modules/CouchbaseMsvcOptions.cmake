@@ -89,6 +89,11 @@ list(APPEND _cb_cxx_flags "/wd4316")
 #          'type' : forcing value to bool 'true' or 'false'
 #	   (performance warning) warnings
 list(APPEND _cb_cxx_flags "/wd4800")
+
+# MB-58743 compile with /bigobj due to running out of segments
+# when building unit tests in kv-engine
+list(APPEND _cb_cxx_flags "/bigobj")
+
 # Convert the list to a string
 string(REPLACE ";" " " _cb_cxx_options "${_cb_cxx_flags}")
 
