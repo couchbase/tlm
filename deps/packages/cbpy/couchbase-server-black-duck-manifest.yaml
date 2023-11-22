@@ -21,20 +21,20 @@ components:
         versions: [ 1.0.8 ]
     ca-certificates:
         bd-id: 530bae3a-a2ad-4bd6-810d-854fe6b57b9b
-        versions: [ 2023.7.22 ]
+        versions: [ 2023.11.17 ]
     certifi:
         bd-id: f1890115-04dd-4eaf-8ff0-5e2643582990
-        versions: [ 2023.7.22 ]
+        versions: [ 2023.11.17 ]
         license-approved: true
     cffi:
         bd-id: 043e4252-a86b-4281-a1a3-a762fe0470de
         versions: [ 1.16.0 ]
     charset-normalizer:
         bd-id: 961db792-aeb0-450b-ba00-4f9b0afa6dda
-        versions: [ 3.3.0 ]
+        versions: [ 3.3.2 ]
     cryptography:
         bd-id: f09c05ab-0954-400d-94e9-4de512ed42fa
-        versions: [ 41.0.4 ]
+        versions: [ 41.0.5 ]
     idna:
         bd-id: 0be5e619-2387-4fe3-915e-8a60146b57dd
         versions: [ 3.4 ]
@@ -61,7 +61,7 @@ components:
         license-approved: true
     libsqlite:
         bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
-        versions: [ 3.43.2 ]
+        versions: [ 3.44.0 ]
     libuuid:
         bd-id: d35f4c89-cd3f-457b-9c48-598bb01b3f0b
         versions: [ 2.38.1 ]
@@ -76,7 +76,7 @@ components:
         versions: [ "6.4" ]
     openssl:
         bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
-        versions: [ 3.1.3 ]
+        versions: [ 3.1.4 ]
     pem:
         bd-id: e116f5a5-2fda-4341-9ce9-88ae369d0620
         versions: [ 21.2.0 ]
@@ -88,7 +88,7 @@ components:
         versions: [ 3.19.0 ]
     pyopenssl:
         bd-id: 69c65bd6-9d4a-427e-8b35-384c0ce8602e
-        versions: [ 23.2.0 ]
+        versions: [ 23.3.0 ]
     pysocks:
         bd-id: 5c2e7e08-0eb3-4d78-a6a7-45a36bad400c
         versions: [ 1.7.1 ]
@@ -118,7 +118,7 @@ components:
         versions: [ 2023c ]
     urllib3:
         bd-id: d222c710-38b5-4073-8347-63bb6526e77d
-        versions: [ 2.0.6 ]
+        versions: [ 2.1.0 ]
     win_inet_pton:
         bd-id: 196607cc-9260-4b6c-baba-f7cb9dd706b1
         versions: [ 1.1.0 ]
