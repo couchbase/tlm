@@ -28,7 +28,7 @@ DECLARE_DEP (fmt VERSION 8.1.1-cb4 PLATFORMS linux macosx windows)
 DECLARE_DEP (folly VERSION v2022.05.23.00-couchbase-cb15 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows)
 DECLARE_DEP (googletest VERSION 1.14.0-cb1 PLATFORMS linux macosx windows)
-DECLARE_DEP (grpc VERSION 1.49.2-cb9 PLATFORMS linux macosx windows)
+DECLARE_DEP (grpc VERSION 1.59.3-cb1 PLATFORMS linux macosx windows)
 #
 # IMPORTANT: If you add a new package here or update an existing package
 # version, you must also update couchbase-server-black-duck-manifest.json
