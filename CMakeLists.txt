@@ -61,6 +61,9 @@ endif()
 # install into this directory.
 SET (TOOLS_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/tools-package-install")
 
+# Make sure INSTALL(CODE) blocks know about TOOLS_INSTALL_PREFIX too.
+INSTALL (CODE "SET (TOOLS_INSTALL_PREFIX \"${TOOLS_INSTALL_PREFIX}\")")
+
 # Double-check that "repo sync" (or the user) didn't mess up our copyfiles
 MACRO (CHECK_COPYFILE source_filename target_filename)
   EXECUTE_PROCESS(
@@ -472,45 +475,20 @@ IF (NOT WIN32)
    CONFIGURE_FILE(tlm/memcached-wrapper.in ${CMAKE_BINARY_DIR}/tlm/memcached-wrapper)
 ENDIF (NOT WIN32)
 
-# Tools package cbdeps dependencies - now that we've "Found" everything,
-# copy the bits we know we'll need. We cheat a bit by assuming some
-# things about the filenames we need, because the rules are rather
-# different from platform to platform.
-IF (WIN32)
-  FILE (GLOB _snappylib "${CMAKE_INSTALL_PREFIX}/bin/snappy*.*")
-  FILE (GLOB _jemalloclib "${CMAKE_INSTALL_PREFIX}/bin/jemalloc*.*")
-  SET (_tools_libdir "${TOOLS_INSTALL_PREFIX}/bin")
-ELSE (WIN32)
-  FILE (GLOB _snappylib "${CMAKE_INSTALL_PREFIX}/lib/libsnappy*")
-  FILE (GLOB _jemalloclib "${CMAKE_INSTALL_PREFIX}/lib/libjemalloc*")
-  SET (_tools_libdir "${TOOLS_INSTALL_PREFIX}/lib")
-ENDIF (WIN32)
-FOREACH (_toollib ${_snappylib} ${_jemalloclib})
-  INSTALL (FILES "${_toollib}" DESTINATION "${_tools_libdir}")
-ENDFOREACH ()
-
 # Target for "standalone tools" package.
 #
 # This implementation depends on other parts of the build adding
 # INSTALL() directives to redundantly install their bits into
-# TOOLS_INSTALL_PREFIX. It would likely be cleaner if we specified all
-# the required files here, and copied them from the build tree rather
-# than the install tree. That would also allow us to have proper CMake
-# DEPENDS relationships. Unfortunately, at least one of the included
-# files (libforestdb) depends on RPATH manipulations that are only done
-# by "make install". Also, several other install-time decisions (whether
-# to install into lib/ or bin/, whether an executable has .exe at the
-# end, ...) would have to be redundantly made here, which would
-# potentially be even harder to maintain going forward. At least with
-# this implementation, those projects (backup, forestdb) that contribute
-# to the tools package have a specific notation of that fact in their
-# own CMakeLists.txt.
+# TOOLS_INSTALL_PREFIX. GoModBuild() in particular has some specialized
+# logic to copy requested Go binaries and all dependent shared
+# libraries.
 #
-# Note: This effectively depends on the "install" target, but you can't
-# do that literally in CMake. So it's important that this target only be
-# invoked after "make install" has been run. Since we can't have proper
-# dependency tracking anyway, we just use a straight ADD_CUSTOM_TARGET
-# rather than the more proper ADD_CUSTOM_COMMAND setup.
+# Note: This 'tools-package' target effectively depends on the "install"
+# target, but you can't do that literally in CMake. So it's important
+# that this target only be invoked after "make install" has been run.
+# Since we can't have proper dependency tracking anyway, we just use a
+# straight ADD_CUSTOM_TARGET rather than the more proper
+# ADD_CUSTOM_COMMAND setup.
 _DETERMINE_BASIC_PLATFORM (_platform)
 STRING (CONCAT _archive_base
   "${PROJECT_BINARY_DIR}/couchbase-server-tools"

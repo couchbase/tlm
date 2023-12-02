@@ -48,6 +48,6 @@ IF (ZSTD_CPP_FOUND AND NOT TARGET Zstd::zstd)
     set_target_properties(Zstd::zstd
         PROPERTIES
         IMPORTED_LOCATION ${ZSTD_CPP_LIBRARIES})
-    target_include_directories(Jemalloc::jemalloc INTERFACE
+    target_include_directories(Zstd::zstd INTERFACE
         ${ZSTD_CPP_INCLUDE_DIR})
 ENDIF ()

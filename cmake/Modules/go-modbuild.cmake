@@ -167,14 +167,6 @@ IF (_failure)
   MESSAGE (FATAL_ERROR "Failed running go modules build for package ${PACKAGE}")
 ENDIF (_failure)
 
-# If necessary, copy to alternate tools-install location.
-FOREACH (_altinstallpath ${ALT_INSTALL_PATHS})
-  FILE (
-    INSTALL "${OUTPUT}"
-    DESTINATION "${_altinstallpath}"
-    USE_SOURCE_PERMISSIONS)
-ENDFOREACH ()
-
 IF (CB_GO_CODE_COVERAGE)
   EXECUTE_PROCESS (
     COMMAND "${GOEXE}" test

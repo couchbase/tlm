@@ -90,7 +90,7 @@ endif ()
 mark_as_advanced(JEMALLOC_INCLUDE_DIR)
 
 # Pretend we're using Modern CMake to find this thing.
-add_library(Jemalloc::jemalloc STATIC IMPORTED)
+add_library(Jemalloc::jemalloc SHARED IMPORTED)
 set_target_properties(Jemalloc::jemalloc
     PROPERTIES
     IMPORTED_LOCATION ${JEMALLOC_LIBRARY_RELEASE})

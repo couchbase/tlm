@@ -390,7 +390,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     # once. If we are using Ninja as the CMake Generator then this is
     # already handled by the JOB_POOL property, otherwise we make them
     # all depend on any earlier Go targets.
-    IF (NOT CMAKE_GENERATOR STREQUAL "Ninja")
+    IF (NOT CMAKE_GENERATOR MATCHES "Ninja.*")
       GET_PROPERTY (_go_targets GLOBAL PROPERTY CB_GO_TARGETS)
       IF (_go_targets)
         ADD_DEPENDENCIES(${Go_TARGET} ${_go_targets})
@@ -427,24 +427,23 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     COMMENT "Ensuring all go.mod files are tidied"
     VERBATIM)
 
-  # Adds a target named TARGET which (always) calls "go build
-  # PACKAGE".  This delegates incremental-build responsibilities to
-  # the go compiler, which is generally what you want. This target
-  # presumes that the package in question is using Go modules to
-  # declare itself and its dependencies. One consequence of this
-  # is that there must be go.mod and go.sum files in the source
-  # directory that calls GoModBuild() or some parent directory.
+  # Adds a target named TARGET which (always) calls "go build PACKAGE".
+  # This delegates incremental-build responsibilities to the go
+  # compiler, which is generally what you want. This target presumes
+  # that the package in question is using Go modules to declare itself
+  # and its dependencies. One consequence of this is that there must be
+  # go.mod and go.sum files in the source directory that calls
+  # GoModBuild() or some parent directory.
   #
-  # The first time GoModBuild() is called in a given directory,
-  # an additional target named TARGET-tidy will also be created
-  # that calls "go mod tidy -v" using the appropriate Go version
-  # and modules cache. There is also a global target "go-mod-tidy"
-  # which invokes all such targets. NOTE: this tidy target will
-  # be given the same dependencies as the main build target. If
-  # you need to depend on, say, a target which generates source code
-  # in another project, be sure to include this dependency in the
-  # *first* GoModBuild() call, so that the tidy target will also
-  # know about that dependency.
+  # The first time GoModBuild() is called in a given directory, an
+  # additional target named TARGET-tidy will also be created that calls
+  # "go mod tidy -v" using the appropriate Go version and modules cache.
+  # There is also a global target "go-mod-tidy" which invokes all such
+  # targets. NOTE: this tidy target will be given the same dependencies
+  # as the main build target. If you need to depend on, say, a target
+  # which generates source code in another project, be sure to include
+  # this dependency in the *first* GoModBuild() call, so that the tidy
+  # target will also know about that dependency.
   #
   # Required arguments:
   #
@@ -463,8 +462,8 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # GCFLAGS - flags that will be passed (via -gcflags) to all compile
   # steps; should be a single string value, with spaces if necessary
   #
-  # GOTAGS - tags that will be passed (viga -tags) to all compile
-  # steps; should be a single string value, with spaces as necessary
+  # GOTAGS - tags that will be passed (viga -tags) to all compile steps;
+  # should be a single string value, with spaces as necessary
   #
   # LDFLAGS - flags that will be passed (via -ldflags) to all compile
   # steps; should be a single string value, with spaces if necessary
@@ -472,26 +471,35 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # NOCONSOLE - for targets that should not launch a console at runtime
   # (on Windows - silently ignored on other platforms)
   #
-  # DEPENDS - list of other CMake targets on which TARGET will depend
+  # DEPENDS - list of other CMake targets on which TARGET will depend.
+  # These must be targets, representing either static or shared
+  # libraries. They may be IMPORTED targets for eg. cbdeps, but may not
+  # be specific library filenames.
   #
   # INSTALL_PATH - if specified, a CMake INSTALL() directive will be
-  # created to install the output into the named path
+  # created to install the output into the named path. If this is a
+  # relative path, it will be relative to CMAKE_INSTALL_PREFIX.
   #
-  # ALT_INSTALL_PATHS - if specified, the executable will be copied
-  # to each listed directory when built (not at install time).
+  # ADD_TO_TOOLS - if specified, the executable and all dependent
+  # libraries will be installed as part of the standalone tools package
+  # in addition to the main install directory. Requires INSTALL_PATH to
+  # also be set.
   #
-  # OUTPUT - name of the produced executable. Default value is the basename of
-  # PACKAGE, per the go compiler. On Windows, ".exe" will be appended.
+  # OUTPUT - name of the produced executable. Default value is the
+  # basename of PACKAGE, per the go compiler. On Windows, ".exe" will be
+  # appended.
   #
-  # CGO_INCLUDE_DIRS - path(s) to directories to search for C include files
+  # CGO_INCLUDE_DIRS - path(s) to directories to search for C include
+  # files
   #
-  # CGO_LIBRARY_DIRS - path(s) to libraries to search for C link libraries
+  # CGO_LIBRARY_DIRS - path(s) to libraries to search for C link
+  # libraries
   #
   MACRO (GoModBuild)
 
-    PARSE_ARGUMENTS (Go "DEPENDS;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS;ALT_INSTALL_PATHS"
-        "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GOVERSION;GCFLAGS;GOTAGS;GOBUILDMODE;LDFLAGS"
-      "NOCONSOLE;UNSHIPPED" ${ARGN})
+    PARSE_ARGUMENTS (Go "DEPENDS;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
+      "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GOVERSION;GCFLAGS;GOTAGS;GOBUILDMODE;LDFLAGS"
+      "ADD_TO_TOOLS;NOCONSOLE;UNSHIPPED" ${ARGN})
 
     IF (NOT Go_TARGET)
       MESSAGE (FATAL_ERROR "TARGET is required!")
@@ -506,26 +514,16 @@ IF (NOT FindCouchbaseGo_INCLUDED)
         SET(Go_GOBUILDMODE "default")
     ENDIF ()
 
-    # Debugging targets
-    IF (CB_DEBUG_GO_TARGETS)
-      MESSAGE (STATUS "Dep target info for GoModBuild(${Go_TARGET})")
-      MESSAGE (STATUS "CGO_CFLAGS: ${Go}")
-      FOREACH (_dep ${Go_DEPENDS})
-        PRINT_TARGET_PROPERTIES (${_dep})
-      ENDFOREACH ()
-      MESSAGE (STATUS "End dep target info for GoModBuild(${Go_TARGET})")
-    ENDIF ()
-
     # Extract the binary name from the package, and tweak for Windows.
     IF (Go_OUTPUT)
-      SET (_exe "${Go_OUTPUT}")
+      SET (_exename "${Go_OUTPUT}")
     ELSE ()
-      GET_FILENAME_COMPONENT (_exe "${Go_PACKAGE}" NAME)
+      GET_FILENAME_COMPONENT (_exename "${Go_PACKAGE}" NAME)
     ENDIF ()
-    SET (_exe "${CMAKE_CURRENT_BINARY_DIR}/${_exe}")
     IF (WIN32)
-      SET (_exe "${_exe}.exe")
+      SET (_exename "${_exename}.exe")
     ENDIF ()
+    SET (_exe "${CMAKE_CURRENT_BINARY_DIR}/${_exename}")
 
     # Concatenate NOCONSOLE with LDFLAGS
     IF (WIN32 AND ${Go_NOCONSOLE})
@@ -553,19 +551,38 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     # Path to go binary dir for this target
     SET (_gobindir "${GO_BINARY_DIR}/go-${_gover}")
 
-    # This is pretty dumb, but because "Modern CMake" won't let us
-    # specify a custom_target to target_link_libraries() (which is the
-    # key to the magic of transitively unwinding include_directories),
-    # we add a fake interface library target here. We can at least
-    # exclude it from ALL so that it doesn't build anything normally.
+    # "Modern CMake" finally lets us define custom targets that
+    # more-or-less act like real build targets, including having
+    # link-library dependencies. These are called INTERFACE targets. You
+    # are required to specify a "source" file to unlock this facility.
+    # We use ${_exe} as a "source" file, which in turn sets up the
+    # dependencies on the custom_command below which does all the real
+    # compilation work. Frustratingly, only ADD_LIBRARY() has been
+    # granted these new powers, so we use that, even though we're
+    # creating an executable. This still doesn't allow us to use
+    # INSTALL(TARGETS ...) either. Honestly it doesn't provide much
+    # value over just using ADD_CUSTOM_TARGET() so far, but it does at
+    # least allow us to use the INTERFACE_INCLUDE_DIRECTORIES target
+    # property below to pass the right set of include paths to
+    # go-modbuild.cmake.
     SET (_stub_tgt "${Go_TARGET}-cgo-stub")
     ADD_LIBRARY ("${_stub_tgt}" INTERFACE EXCLUDE_FROM_ALL)
     TARGET_LINK_LIBRARIES ("${_stub_tgt}" INTERFACE ${Go_DEPENDS})
 
-    # Even with that, there doesn't seem to be a way (via generator
-    # expressions or anything similar) to say "list all the library
-    # files this target depends on". I still need to loop. I hope this
-    # list is transitive!
+    # More frustratingly, these INTERFACE targets don't seem to allow
+    # direct access to the transitive set of library dependencies. We
+    # could dig through INTERFACE_LINK_LIBRARIES recursively, except
+    # that any value in any such list could be a $<> generator
+    # expression which by definition we can't evaluate here at configure
+    # time. After putting considerable time into this, I've come to the
+    # conclusion that it's not possible in the most general case to form
+    # the list of "all libraries that this target depends on" using only
+    # CMake, even though CMake clearly has this knowledge. So, at least
+    # for now, we have a requirement that the DEPENDS argument to
+    # GoModBuild() must comprehensively list any targets (and only
+    # targets!) required for building this Go target. With that
+    # requirement, it is fairly straightforward to can compute the set
+    # of -L directories for those direct library dependencies.
     SET (_depdirs ${Go_CGO_LIBRARY_DIRS})
     FOREACH (_dep ${Go_DEPENDS})
       IF (NOT TARGET ${_dep})
@@ -577,8 +594,26 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       ENDIF ()
     ENDFOREACH ()
 
-    # Go mod build target
-    ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
+    # Debugging targets
+    IF (CB_DEBUG_GO_TARGETS)
+      MESSAGE (STATUS "Dep target info for GoModBuild(${Go_TARGET})")
+      MESSAGE (STATUS "CGO_CFLAGS: ${Go_CGO_CFLAGS}")
+      FOREACH (_dep ${Go_TARGET} ${Go_DEPENDS})
+        PRINT_TARGET_PROPERTIES (${_dep})
+      ENDFOREACH ()
+      MESSAGE (STATUS "End dep target info for GoModBuild(${Go_TARGET})")
+    ENDIF ()
+
+    # Go mod build command. It would be more clean if this was an
+    # ADD_CUSTOM_COMMAND(), and the earlier INTERFACE library was named
+    # ${Go_TARGET} rather than ${Go_TARGET}-cgo-stub. That actually
+    # works with Makefile generators. However, it fails with Ninja,
+    # because Ninja needs to create a rule both for the INTERFACE target
+    # and for the output of the custom command, and there's no simple
+    # and clear way to avoid those rules having the same name which
+    # makes Ninja choke.
+    ADD_CUSTOM_TARGET (
+      ${Go_TARGET} ALL
       COMMAND "${CMAKE_COMMAND}"
         -D "GOEXE=${_goexe}"
         -D "GOVERSION=${_gover}"
@@ -594,7 +629,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
         -D "LDFLAGS=${_ldflags}"
         -D "PACKAGE=${Go_PACKAGE}"
         -D "OUTPUT=${_exe}"
-        -D "ALT_INSTALL_PATHS=${Go_ALT_INSTALL_PATHS}"
         -D "CGO_INCLUDE_DIRS=${Go_CGO_INCLUDE_DIRS};$<JOIN:$<TARGET_PROPERTY:${_stub_tgt},INTERFACE_INCLUDE_DIRECTORIES>,;>"
         -D "CGO_LIBRARY_DIRS=${_depdirs}"
         -D "CB_GO_CODE_COVERAGE=${CB_GO_CODE_COVERAGE}"
@@ -615,9 +649,49 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     MESSAGE (STATUS "Added Go Modules build target '${Go_TARGET}' using Go ${_gover}")
 
     # go-modbuild.cmake will produce the output executable in the
-    # current binary dir. Install it from there if requested.
+    # current binary dir. Install it from there if requested. Also
+    # handle installing it and any runtime dependencies to
+    # TOOLS_INSTALL_PREFIX if ADD_TO_TOOLS is specified.
     IF (Go_INSTALL_PATH)
       INSTALL (PROGRAMS "${_exe}" DESTINATION "${Go_INSTALL_PATH}")
+      IF (Go_ADD_TO_TOOLS)
+        INSTALL (PROGRAMS "${_exe}" DESTINATION "${TOOLS_INSTALL_PREFIX}/bin")
+        INSTALL (CODE "SET (_exename \"${_exename}\")")
+        # We look up the runtime dependencies of the binary that was
+        # just installed. Those dependencies will therefore be
+        # discovered from CMAKE_INSTALL_PREFIX/lib, which is good,
+        # because those are the versions that CMake has done wacky RPATH
+        # manipulations to for us. We don't want to copy, eg.,
+        # libmagma_shared.so from the build tree.
+
+        # We exclude GCC libs that we've already copied to the right
+        # place in the top-level CMakeLists.txt, as well as any
+        # libc-like libraries that come from the OS itself.
+        INSTALL (CODE [[
+          FILE (
+            GET_RUNTIME_DEPENDENCIES
+            EXECUTABLES "${CMAKE_INSTALL_PREFIX}/bin/${_exename}"
+            PRE_EXCLUDE_REGEXES "^libgcc_s.*" "^libstdc\\+\\+.*" "^libgomp.*" "^ld-linux.*"
+            POST_EXCLUDE_REGEXES "^/lib.*" "^/usr/lib.*"
+            RESOLVED_DEPENDENCIES_VAR _deplibs
+            UNRESOLVED_DEPENDENCIES_VAR _unresolvedeps
+          )
+
+          IF (WIN32)
+            SET (_libdir bin)
+          ELSE ()
+            SET (_libdir lib)
+          ENDIF ()
+
+          FOREACH (_dep ${_deplibs})
+            FILE (
+              INSTALL "${_dep}"
+              DESTINATION "${TOOLS_INSTALL_PREFIX}/${_libdir}"
+              FOLLOW_SYMLINK_CHAIN USE_SOURCE_PERMISSIONS
+            )
+          ENDFOREACH ()
+        ]])
+      ENDIF ()
     ENDIF ()
 
     # See if we need to create a -tidy target for this directory.
