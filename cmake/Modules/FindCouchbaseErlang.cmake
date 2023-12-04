@@ -55,7 +55,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
           "rebar support will be unavailable")
       ELSE (NOT ESCRIPT_EXECUTABLE)
         MESSAGE(STATUS "Escript interpreter found in ${ESCRIPT_EXECUTABLE}")
-        SET (REBAR_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/rebar"
+        SET (REBAR_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/rebar3"
           CACHE STRING "Path to default rebar script")
       ENDIF (NOT ESCRIPT_EXECUTABLE)
 
@@ -163,7 +163,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
         LIBSODIUM_LIB_DIR=${LIBSODIUM_LIB_DIR}
         LIBSODIUM_LIBRARIES=${LIBSODIUM_LIBRARIES}
         "${ESCRIPT_EXECUTABLE}" "${rebar_script}"
-        compile_only=true ${Rebar_EUNIT_OPTS} eunit
+        as test compile ${Rebar_EUNIT_OPTS}
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
 
       # There's a bug in "rebar eunit" implementation: it doesn't generate
@@ -187,7 +187,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
         "${CMAKE_COMMAND}" -E env
         CC=${REBAR_CC} CXX=${REBAR_CXX}
         "${ESCRIPT_EXECUTABLE}" "${rebar_script}" clean
-        COMMAND "${CMAKE_COMMAND}" -E remove_directory ebin
+        COMMAND "${CMAKE_COMMAND}" -E remove_directory _build
         COMMAND "${CMAKE_COMMAND}" -E remove_directory .eunit
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
 
