@@ -671,8 +671,8 @@ IF (NOT FindCouchbaseGo_INCLUDED)
           FILE (
             GET_RUNTIME_DEPENDENCIES
             EXECUTABLES "${CMAKE_INSTALL_PREFIX}/bin/${_exename}"
-            PRE_EXCLUDE_REGEXES "^libgcc_s.*" "^libstdc\\+\\+.*" "^libgomp.*" "^ld-linux.*"
-            POST_EXCLUDE_REGEXES "^/lib.*" "^/usr/lib.*"
+            PRE_EXCLUDE_REGEXES "^ld-linux.*"
+            POST_EXCLUDE_REGEXES "^/lib.*" "^/usr/lib.*" "^/opt/gcc.*"
             RESOLVED_DEPENDENCIES_VAR _deplibs
             UNRESOLVED_DEPENDENCIES_VAR _unresolvedeps
           )
