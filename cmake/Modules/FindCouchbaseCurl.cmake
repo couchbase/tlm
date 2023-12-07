@@ -19,7 +19,7 @@
 #  CURL_LIBRARIES, Library path and libs
 #  CURL_INCLUDE_DIR, where to find the cURL headers
 #
-if (NOT DEFINED CURL_FOUND)
+if (NOT DEFINED FindCouchbaseCurl_INCLUDED)
     include(PlatformIntrospection)
     # Use include files directly from cbdeps exploded download
     set(_curl_exploded "${CMAKE_BINARY_DIR}/tlm/deps/curl.exploded")
@@ -53,7 +53,17 @@ if (NOT DEFINED CURL_FOUND)
 
     message(STATUS "Found cURL headers in: ${CURL_INCLUDE_DIR}")
     message(STATUS "            libraries: ${CURL_LIBRARIES}")
-
     set(CURL_FOUND true CACHE BOOL "Found cURL" FORCE)
     mark_as_advanced(CURL_FOUND CURL_INCLUDE_DIR CURL_LIBRARIES)
-endif (NOT DEFINED CURL_FOUND)
+
+    # Pretend we're using Modern CMake to find this thing.
+    add_library(Curl::libcurl SHARED IMPORTED)
+    set_target_properties(Curl::libcurl
+        PROPERTIES
+        IMPORTED_LOCATION ${CURL_LIBRARIES})
+    target_include_directories(Curl::libcurl INTERFACE
+        ${CURL_INCLUDE_DIR})
+
+    set(FindCouchbaseCurl_INCLUDED 1)
+
+endif (NOT DEFINED FindCouchbaseCurl_INCLUDED)
