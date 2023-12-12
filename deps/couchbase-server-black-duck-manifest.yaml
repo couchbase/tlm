@@ -50,7 +50,7 @@ components:
         versions: [ v1.10.0 ]
     fmt:
         bd-id: eae20828-18b8-478f-83b3-4a058748a28b
-        versions: [ 8.1.1 ]
+        versions: [ 10.1.1 ]
     folly:
         bd-id: 7f50be63-e94c-48d6-ac73-c12965b5c9b5
         versions: [ v2022.05.23.00 ]
@@ -114,7 +114,7 @@ components:
         versions: [ 1.1.10 ]
     spdlog:
         bd-id: 7785114c-5b78-4aad-8771-72a739a1f06e
-        versions: [ v1.10.0 ]
+        versions: [ v1.12.0 ]
     v8:
         bd-id: 3eec43ae-12a3-4035-bceb-9b5bd8eefe79
         versions: [ 11.6.189.8 ]

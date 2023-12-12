@@ -9,7 +9,7 @@ set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 
 DECLARE_DEP (boost VERSION 1.82.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb6 PLATFORMS linux macosx windows)
-DECLARE_DEP (fmt VERSION 8.1.1-cb4 PLATFORMS linux macosx windows)
+DECLARE_DEP (fmt VERSION 10.1.1-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows_msvc2015 windows)
 DECLARE_DEP (jemalloc VERSION 5.3.0-cb3 PLATFORMS linux macosx windows)
 DECLARE_DEP (libevent VERSION 2.1.11-cb11 PLATFORMS linux macosx windows)
