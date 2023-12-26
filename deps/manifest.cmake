@@ -50,12 +50,6 @@ DECLARE_DEP (numactl VERSION 2.0.11-cb4 PLATFORMS linux)
 DECLARE_DEP (prometheus V2 VERSION 2.45.0 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (prometheus-cpp VERSION v1.1.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 7 PLATFORMS linux macosx windows)
-# We don't want RocksDB to end up in shipped production builds.
-# NB: I don't indent this IF() block just in case, because I know that some
-# scripts (such as escrow) parse this file manually.
-IF (NOT CB_PRODUCTION_BUILD)
-DECLARE_DEP (rocksdb VERSION 5.18.3-cb9 PLATFORMS linux macosx)
-ENDIF (NOT CB_PRODUCTION_BUILD)
 DECLARE_DEP (simdutf VERSION 3.2.14-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (snappy VERSION 1.1.10-cb2 PLATFORMS linux macosx windows)
 DECLARE_DEP (spdlog VERSION v1.10.0-cb6 PLATFORMS linux macosx windows)

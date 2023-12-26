@@ -22,14 +22,12 @@ if (NOT DEFINED ZSTD_CPP_FOUND)
               NAMES zstd.h
               PATHS
               ${_zstd_cpp_include_dir}
-              ${_zstd_cpp_rocksdb_include_dir}
               ${_zstd_cpp_no_default_path})
 
     find_library(ZSTD_CPP_LIBRARIES
                  NAMES zstd
                  PATHS
                  ${_zstd_cpp_library_dir}
-                 ${_zstd_cpp_rocksdb_library_dir}
                  ${_zstd_cpp_no_default_path})
 
     if (ZSTD_CPP_INCLUDE_DIR AND ZSTD_CPP_LIBRARIES)

@@ -140,9 +140,6 @@ components:
     protoc-gen-go: []
     googletest: []
     benchmark: []
-    # We also don't include RocksDB as it is only used by internal testing
-    # builds, not shipped
-    rocksdb: []
     # cbpy's component packages are listed in deps/packages/cbpy
     cbpy: []
 
