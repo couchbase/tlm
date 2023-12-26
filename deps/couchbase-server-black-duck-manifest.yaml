@@ -103,9 +103,6 @@ components:
     protoc-gen-go: []
     googletest: []
     benchmark: []
-    # We also don't include RocksDB as it is only used by internal testing
-    # builds, not shipped
-    rocksdb: []
 
     # These files are copied from the build agent in the top-level
     # CMakeLists.txt (using the _install_gcc_file macro)
