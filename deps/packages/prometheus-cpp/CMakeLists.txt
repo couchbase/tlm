@@ -23,9 +23,13 @@ ExternalProject_Add(${_dep_package}
         CMAKE_ARGS -DCMAKE_BUILD_TYPE=RelWithDebInfo
             -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
             -DBUILD_SHARED_LIBS=OFF
+            -DGENERATE_PKGCONFIG=OFF
             -DENABLE_PUSH=OFF
-            -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/zlib.exploded
+            -DTHIRDPARTY_CIVETWEB_WITH_SSL=OFF
+            -DRUN_IWYU=OFF
+            -DENABLE_TESTING=OFF
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
+            -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/zlib.exploded
 
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
         )
