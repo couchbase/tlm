@@ -19,4 +19,4 @@ if (NOT DEFINED prometheus-cpp_ROOT AND EXISTS ${_prometheus_exploded})
     set(prometheus-cpp_ROOT ${_prometheus_exploded})
 endif ()
 
-find_package(prometheus-cpp REQUIRED)
+find_package(prometheus-cpp REQUIRED PATH_SUFFIXES lib64/cmake/prometheus-cpp)
