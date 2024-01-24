@@ -8,7 +8,7 @@
 
 package:
   name: pip
-  version: 21.0.1.9
+  version: 23.3.2.9
 
 build:
   noarch: generic
