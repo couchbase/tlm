@@ -9,4 +9,4 @@ licenses/APL2.txt.
 """
 
 __title__ = 'gmp'
-__version__ = '6.2.1.9'
+__version__ = '6.3.0.9'

@@ -12,6 +12,6 @@ from distutils.core import setup
 
 setup(
     name="gmp",
-    version="6.2.1.9",
+    version="6.3.0.9",
     packages=["gmp"]
 )

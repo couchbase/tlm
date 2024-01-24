@@ -61,7 +61,7 @@ components:
         license-approved: true
     libsqlite:
         bd-id: 302ca56c-2cf6-4cfd-9173-94c1ee2a44f7
-        versions: [ 3.44.0 ]
+        versions: [ 3.44.2 ]
     libuuid:
         bd-id: d35f4c89-cd3f-457b-9c48-598bb01b3f0b
         versions: [ 2.38.1 ]
@@ -76,7 +76,7 @@ components:
         versions: [ "6.4" ]
     openssl:
         bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
-        versions: [ 3.1.4 ]
+        versions: [ 3.2.0 ]
     pem:
         bd-id: e116f5a5-2fda-4341-9ce9-88ae369d0620
         versions: [ 21.2.0 ]
@@ -94,7 +94,7 @@ components:
         versions: [ 1.7.1 ]
     python:
         bd-id: ee4d67e0-63f9-409d-a9be-1c30de64873d
-        versions: [ 3.11.4 ]
+        versions: [ 3.11.7 ]
     python_abi:
         bd-id: ba4cb840-4316-4d85-ac00-5e39a2ff567e
         versions: [ 3.11 ]
@@ -115,7 +115,7 @@ components:
         versions: [ 8.6.13 ]
     tzdata:
         bd-id: 1624d2ea-d07f-4fc3-837a-2391e0dfb299
-        versions: [ 2023c ]
+        versions: [ 2023d ]
     urllib3:
         bd-id: d222c710-38b5-4073-8347-63bb6526e77d
         versions: [ 2.1.0 ]
