@@ -16,7 +16,7 @@
 # version, you must also update couchbase-server-black-duck-manifest.json
 # in this same directory!
 #
-DECLARE_DEP (benchmark VERSION v1.6.2-cb2 PLATFORMS linux macosx windows)
+DECLARE_DEP (benchmark VERSION v1.8.3-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (breakpad V2 VERSION 20200430 BUILD 4 PLATFORMS linux windows)
 DECLARE_DEP (boost VERSION 1.82.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (cbpy VERSION 7.6.0-cb5 PLATFORMS linux macosx windows DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python/interp")
