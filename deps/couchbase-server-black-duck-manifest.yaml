@@ -114,7 +114,7 @@ components:
         versions: [ 1.1.10 ]
     spdlog:
         bd-id: 7785114c-5b78-4aad-8771-72a739a1f06e
-        versions: [ v1.12.0 ]
+        versions: [ v1.13.0 ]
     v8:
         bd-id: 3eec43ae-12a3-4035-bceb-9b5bd8eefe79
         versions: [ 11.6.189.8 ]
