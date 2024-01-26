@@ -191,7 +191,6 @@ _ADD_DEP_PACKAGE(flatbuffers v1.10.0 v1.10.0 7)
 _ADD_DEP_PACKAGE(json 3.11.3 v3.11.3 1)
 _ADD_DEP_PACKAGE(boost 1.82.0 boost-1.82.0 1)
 
-_ADD_DEP_PACKAGE(libcouchbase 2.10.0 2.10.0 1)
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
   IF (PLATFORM STREQUAL "fedora26" OR PLATFORM STREQUAL "fedora27")
     _ADD_DEP_PACKAGE(libcxx 4.0.0 release_40 1)
