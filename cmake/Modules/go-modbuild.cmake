@@ -30,7 +30,7 @@ IF (CGO_LDFLAGS)
 ENDIF ()
 
 IF (NOT WIN32 AND NOT APPLE)
-    # Only use the CMAKE C compiler for cgo on non-Windows platforms;
+    # Only use the CMAKE C/CXX compiler for cgo on non-Windows platforms;
     # on Windows we use a different compiler (gcc) for cgo than for
     # the main build MSVC).
     # On macOS, Golang fails with "_cgo_export.c:3:10: fatal error:
@@ -38,6 +38,7 @@ IF (NOT WIN32 AND NOT APPLE)
     # CMAKE_C_COMPILER (which is 'cc' by default), using Golang's
     # default of 'clang' is fine hence also skip the override here.
     SET (ENV{CC} "${CMAKE_C_COMPILER}")
+    SET (ENV{CXX} "${CMAKE_CXX_COMPILER}")
 ENDIF()
 
 # Our globally-desired RPATH for all Go executables (so far anyway)

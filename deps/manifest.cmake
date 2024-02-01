@@ -53,7 +53,7 @@ DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 7 PLATFORMS linux macosx windo
 DECLARE_DEP (simdutf VERSION 3.2.14-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (snappy VERSION 1.1.10-cb2 PLATFORMS linux macosx windows)
 DECLARE_DEP (spdlog VERSION v1.13.0-cb2 PLATFORMS linux macosx windows)
-DECLARE_DEP (v8 V2 VERSION 11.6.189.8 BUILD 1 PLATFORMS linux macosx windows)
+DECLARE_DEP (v8 V2 VERSION 12.1.285.26 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (zlib V2 VERSION 1.2.13 BUILD 2 PLATFORMS linux macosx windows)
 DECLARE_DEP (zstd-cpp V2 VERSION 1.5.0 BUILD 4 PLATFORMS linux macosx windows)
 
