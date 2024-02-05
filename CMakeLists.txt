@@ -95,7 +95,7 @@ OPTION(COUCHBASE_KV_COMMIT_VALIDATION
 # customer environment.
 OPTION(CB_DEVELOPMENT_ASSERTS
        "Enable additional asserts which abort execution if they fail."
-       OFF)
+       ON)
 
 # Always run with assertions for CV
 IF(COUCHBASE_KV_COMMIT_VALIDATION)
