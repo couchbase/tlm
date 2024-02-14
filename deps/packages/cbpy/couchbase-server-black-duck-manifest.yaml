@@ -34,10 +34,10 @@ components:
         versions: [ 3.3.2 ]
     cryptography:
         bd-id: f09c05ab-0954-400d-94e9-4de512ed42fa
-        versions: [ 41.0.5 ]
+        versions: [ 41.0.7 ]
     idna:
         bd-id: 0be5e619-2387-4fe3-915e-8a60146b57dd
-        versions: [ 3.4 ]
+        versions: [ 3.6 ]
     libcxx:
         bd-id: 587d3e15-ea76-449b-94b1-ef12538584e4
         versions: [ 16.0.6 ]
@@ -67,7 +67,7 @@ components:
         versions: [ 2.38.1 ]
     msgpack-python:
         bd-id: d265c559-74ea-4baa-a993-2089ca47efde
-        versions: [ 1.0.6 ]
+        versions: [ 1.0.7 ]
     natsort:
         bd-id: c935b0a6-c4ad-449b-bea6-e953ad632518
         versions: [ 8.4.0 ]
