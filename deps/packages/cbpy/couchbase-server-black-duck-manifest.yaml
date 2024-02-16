@@ -85,7 +85,7 @@ components:
         versions: [ "2.21" ]
     pycryptodome:
         bd-id: 0262517f-43d2-4243-b451-bb029df9ea11
-        versions: [ 3.19.0 ]
+        versions: [ 3.20.0 ]
     pyopenssl:
         bd-id: 69c65bd6-9d4a-427e-8b35-384c0ce8602e
         versions: [ 23.3.0 ]
