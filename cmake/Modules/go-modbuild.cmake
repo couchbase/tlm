@@ -150,12 +150,17 @@ IF (NOT _localchanges)
   SET (_go_modfile "-modfile=${_modfile}")
 ENDIF ()
 
+set(_go_asan_option)
+if (CB_ADDRESSSANITIZER)
+  set(_go_asan_option "-asan")
+endif()
+
 # Execute "go build".
 EXECUTE_PROCESS (
   RESULT_VARIABLE _failure
   OUTPUT_VARIABLE _output
   ERROR_VARIABLE _output
-  COMMAND "${GOEXE}" build
+  COMMAND "${GOEXE}" build ${_go_asan_option}
     "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}"
     "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}"
     ${_go_debug} ${_go_race} ${_go_modfile}
