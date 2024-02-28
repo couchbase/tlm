@@ -158,6 +158,10 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
       ADD_CUSTOM_TARGET ("${_eunit_target}"
         "${CMAKE_COMMAND}" -E env
         CC=${REBAR_CC} CXX=${REBAR_CXX}
+        ${_sysroot_arg}
+        LIBSODIUM_INCLUDE_DIR=${LIBSODIUM_INCLUDE_DIR}
+        LIBSODIUM_LIB_DIR=${LIBSODIUM_LIB_DIR}
+        LIBSODIUM_LIBRARIES=${LIBSODIUM_LIBRARIES}
         "${ESCRIPT_EXECUTABLE}" "${rebar_script}"
         compile_only=true ${Rebar_EUNIT_OPTS} eunit
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
