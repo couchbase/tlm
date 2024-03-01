@@ -5,20 +5,59 @@ Couchbase Server. The main interesting part is the top-level CMakeLists.txt,
 which is the entry point for a complete Server build. There are also a number
 of utility CMake libraries in cmake/Modules.
 
+## Build via docker images (Linux)
+
+There are two handy scripts located in `scripts` I would strongly recommend:
+
+    create-builder - Create a docker image named builder
+    enter-builder  - Start a shell in the current directory inside the builder
+
+I would recommend copying these scripts somewhere in your path, and update
+them to match your preference (like limit the amount of CPU or memory
+the container may user). `create-builder` will forward the ports used
+by the Couchbase server to the docker container (so that you may run
+the server from within the container). If you plan to run it outside
+the container you should remove the port mapping.
+
+With these scripts installed (in path) building the system is as simple as:
+
+    trond@ok:~$ mkdir -p Couchbase
+    trond@ok:~$ cd Couchbase
+    trond@ok:~/Couchbase$ repo init -u ssh://git@github.com/couchbase/manifest -m branch-master.xml -g all --quiet
+    trond@ok:~/Couchbase$ repo sync -j 8 --quiet
+    trond@couchbase:~/Couchbase$ create-builder
+    38da6dbbb80d0d5daba59678f6909facf505912697085d1abdd40b598b64277e
+    trond@couchbase:~/Couchbase$ enter-builder
+    bash-4.2$ pwd
+    /home/trond/Couchbase
+    bash-4.2$ ./Build.sh
+    -- The C compiler identification is GNU 13.2.0
+    -- The CXX compiler identification is GNU 13.2.0
+    [... cut ...]
+    -- Installing: /home/trond/Couchbase/install/bin/cbsummary
+    -- Installing: /home/trond/Couchbase/install/lib/python/cbupgrade
+    -- Installing: /home/trond/Couchbase/install/bin/cbupgrade
+    bash-4.2$ cd install/bin/
+    bash-4.2$ ./couchbase-server
+    Erlang/OTP 25 [erts-13.2.2.3] [source-15104f9619] [64-bit] [smp:8:8] [ds:8:8:10] [async-threads:16] [jit:ns]
+
+    Eshell V13.2.2.3  (abort with ^G)
+    (babysitter_of_ns_1@cb.local)1>
+
+And you should be able to connect your web browser to port 8091 on the
+machine and start configuring the node.
+
 ## Software requirements
 
 * C/C++ compiler; one of:
-  * gcc 10.2 or newer
+  * gcc 13.2 or newer
   * Visual Studio 2017 or newer
   * Xcode
   * clang
 * CMake 3.19 or newer
-* Google repo (in order to fetch all of the source code)
+* Google repo (in order to fetch the source code)
 * [Ninja](https://ninja-build.org) build
 * ccache may speed up the development cycle when clang / gcc is used
-
-Our production builds currently use gcc-10.2.0 on Linux platforms;
-Visual Studio 2017 on Windows; and Xcode 11.3.1 on MacOS.
 
 ### Requirements on Windows
 

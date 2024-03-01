@@ -1,0 +1,13 @@
+#!/bin/bash
+
+cat <<EOF > ~/.docker-bashentry
+export HOME=${HOME}
+cd $(pwd)
+stty rows $(stty size | sed -e 's/ / columns /')
+
+if [ -e ~/.docker-bashrc ]; then
+  . ~/.docker-bashrc
+fi
+EOF
+
+docker exec -it -e TERM=${TERM} -u couchbase builder bash --init-file ${HOME}/.docker-bashentry

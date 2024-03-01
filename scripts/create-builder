@@ -1,0 +1,26 @@
+#!/bin/bash
+
+_old=`docker ps -a --filter name=builder --format "{{.ID}}"`
+if [ x"$_old" != "x" ]
+then
+    echo "Deleting old builder"
+    docker rm -f $_old > /dev/zero
+fi
+
+# You might want to limit the resources in your docker container.
+# ex:
+#   --cpus 6 \
+#  --memory 12g \
+
+docker run -d \
+  -v ~/:${HOME} \
+  -v /var/run/docker.sock:/var/run/docker.sock \
+  -p 8091-8095:8091-8095 \
+  -p 11200-11220:11200-11220 \
+  --dns 8.8.8.8 \
+  --dns 4.4.4.4 \
+  --name builder \
+  --restart unless-stopped \
+  --entrypoint '' \
+  couchbasebuild/server-linux-cv:latest \
+  tail -f /dev/null
