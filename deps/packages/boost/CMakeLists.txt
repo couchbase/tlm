@@ -19,7 +19,7 @@ ExternalProject_Add(boost
   GIT_TAG ${_git_rev}
   BUILD_IN_SOURCE 1
   CONFIGURE_COMMAND <SOURCE_DIR>/${boost_bootstrap} --prefix=<INSTALL_DIR>
-      --with-libraries=context,chrono,date_time,filesystem,program_options,regex,system,thread
+      --with-libraries=container,context,chrono,date_time,filesystem,program_options,regex,system,thread
   BUILD_COMMAND <SOURCE_DIR>/b2
       -j 4
       --prefix=<INSTALL_DIR>
