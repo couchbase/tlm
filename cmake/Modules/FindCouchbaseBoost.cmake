@@ -43,7 +43,7 @@ if (NOT DEFINED Boost_FOUND)
 
     find_package(Boost
             REQUIRED
-            COMPONENTS container context filesystem program_options regex system thread)
+            COMPONENTS context filesystem program_options regex system thread)
 
     if(Boost_INCLUDE_DIR)
         message(STATUS "Found Boost in ${Boost_INCLUDE_DIR}")
