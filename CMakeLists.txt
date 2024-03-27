@@ -35,18 +35,18 @@ PROJECT("Couchbase")
 
 #
 # Choose deployment target on macOS.
-# We only support x86-64 currently (for development), and as of Neo the
-# minimum supported OS is Catalina (10.15).
-# However there is experimental support for arm64, whose cbdeps are built with
-# Monterey (12) and hence also need to set CMAKE_OSX_DEPLOYMENT_TARGET to 12.0
-# to avoid linker warnings every time a cbdep is linked.
+# As of Morpheus the minimum supported platform is Ventura (13.0).
+# Unfortunately the current CV is stuck on Catalina, but luckily we've
+# got Ventura builders on the way. Given our new builders is arm and
+# the old ones is x86 we may set the macos target to 13 while introducing
+# the new builders.
 if(APPLE)
     if (CB_OVERRIDE_OSX_DEPLOYMENT_TARGET)
         set(target ${CB_OVERRIDE_OSX_DEPLOYMENT_TARGET})
     elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
         set(target "10.15")
     elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
-        set(target "12.0")
+        set(target "13.0")
     else()
         message(FATAL_ERROR "Unknown macOS CMAKE_HOST_SYSTEM_PROCESSOR "
                 "'${CMAKE_HOST_SYSTEM_PROCESSOR}'. "
