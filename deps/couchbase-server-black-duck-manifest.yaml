@@ -135,13 +135,12 @@ components:
         versions: [ 1.7.4 ]
 
     # The following cbdeps packages are build-only requirements and hence
-    # aren't captured for the Black Duck report
+    # aren't captured for the Black Duck report; we include empty entries
+    # for them here to keep the manifest-drift job happy.
     maven: []
     protoc-gen-go: []
     googletest: []
     benchmark: []
-    # cbpy's component packages are listed in deps/packages/cbpy
-    cbpy: []
 
     # Include these here even though they're actually included in the builds
     # by server-linux-build.sh. We actually build gcc 10.2.0, but that
@@ -154,3 +153,10 @@ components:
         bd-id: 899d93c9-1182-4d34-9349-5bf3e34aaa69
         versions: [ 13.2.0 ]
         license-approved: true
+
+# newer cbdeps packages that have embedded
+# ${PRODUCT}-black-duck-manifest.yaml files can be "included" here.
+# This will also keep the manifest-drift job happy.
+include-projects: [
+    cbpy
+]

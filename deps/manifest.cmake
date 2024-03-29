@@ -19,7 +19,7 @@
 DECLARE_DEP (benchmark VERSION v1.6.2-cb2 PLATFORMS linux macosx windows)
 DECLARE_DEP (breakpad V2 VERSION 20200430 BUILD 4 PLATFORMS linux windows)
 DECLARE_DEP (boost VERSION 1.82.0-cb1 PLATFORMS linux macosx windows)
-DECLARE_DEP (cbpy VERSION 7.6.0-cb5 PLATFORMS linux macosx windows DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python/interp")
+DECLARE_DEP (cbpy V2 VERSION 3.11.8 BUILD 2 PLATFORMS linux macosx windows DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python/interp")
 DECLARE_DEP (curl V2 VERSION 8.6.0 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb6 PLATFORMS linux macosx windows)
 DECLARE_DEP (erlang V2 VERSION 25.3 BUILD 11 PLATFORMS linux macosx windows)
