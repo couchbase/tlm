@@ -25,13 +25,15 @@ SET (CBPY_PATH lib/python/interp)
 SET (CBPY_INSTALL "${CMAKE_INSTALL_PREFIX}/${CBPY_PATH}" CACHE INTERNAL "")
 
 # Path to python interpreter in the install directory. Any build steps
-# that want to run python scripts should use ${PYTHON_EXE}.
+# that want to run python scripts should use ${PYTHON_EXE}. We also set
+# PYTHON_EXECUTABLE for a few places that expect that older variable.
 IF (WIN32)
   SET (_localpy "${CBPY_INSTALL}/python.exe")
 ELSE ()
   SET (_localpy "${CBPY_INSTALL}/bin/python3")
 ENDIF ()
 SET (PYTHON_EXE "${_localpy}" CACHE INTERNAL "Path to python interpreter")
+SET (PYTHON_EXECUTABLE "${_localpy}" CACHE INTERNAL "Path to python interpreter")
 
 # Add the PyWrapper-related CMake functions.
 INCLUDE (PyWrapperFunctions.cmake)
