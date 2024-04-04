@@ -149,6 +149,9 @@ ENDIF (NOT DEFINED CB_DOWNLOAD_DEPS)
 # FIND anything
 ADD_SUBDIRECTORY(tlm/deps)
 
+# Also set up python first, since cbpy is installed in the previous step
+ADD_SUBDIRECTORY(tlm/python)
+
 # Also install the necessary GCC libraries.
 # Note this is done regardless of if the compiler is GCC or Clang,
 # as either way we use GCC's standard libraries.
@@ -235,7 +238,6 @@ INCLUDE(FindCouchbaseOpenSSL)
 INCLUDE(FindCouchbaseLibevent)
 INCLUDE(FindCouchbaseCurl)
 INCLUDE(FindCouchbaseLua)
-INCLUDE(FindCouchbasePythonInterp)
 INCLUDE(FindCouchbaseErlang)
 INCLUDE(FindCouchbaseGo)
 INCLUDE(FindCouchbaseBreakpad)
@@ -266,42 +268,74 @@ endif()
 # 1. If PRODUCT_VERSION is already defined, that means it's either cached
 #    or was explicitly specified with -D on the command-line. In either
 #    case, force it into the cache so it will be remembered in future runs.
-# 2. Otherwise, we do NOT want to cache PRODUCT_VERSION, which will force
-#    CMake to re-discover it every time. In that case:
-#    2a. If Python can be found, extract VERSION from the manifest and
-#        stick the fake build number -0000 on the end, using get_version.py.
-#    2b. If Python cannot be found, or if get_version.py fails to return a
-#        version, use the fallback default 0.0.0-0000.
+# 2. Otherwise, we do NOT want to cache PRODUCT_VERSION, which will
+#    force CMake to re-discover it every time. In that case, extract
+#    VERSION from the manifest and stick the fake build number -0000
+#    on the end.
 IF (DEFINED PRODUCT_VERSION)
   SET (PRODUCT_VERSION "${PRODUCT_VERSION}" CACHE STRING "Product version with build number" FORCE)
 ELSE ()
   SET (_product_version)
-  IF (PYTHON_EXECUTABLE)
-    # Try to determine product version from manifest
-    EXECUTE_PROCESS(
-      COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_version.py
-      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-      OUTPUT_VARIABLE _product_version
-      ERROR_VARIABLE _err_output
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-    IF (_err_output)
-      MESSAGE (WARNING "${_err_output}")
-      # Just in case
-      SET (_product_version)
-    ENDIF ()
-  ENDIF (PYTHON_EXECUTABLE)
+  # Try to determine product version from manifest. Allow SERVER_VERSION
+  # to override VERSION.
+  EXECUTE_PROCESS(
+    COMMAND ${PYTHON_EXE}
+      tlm/scripts/get_manifest_annot.py SERVER_VERSION VERSION
+    WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+    OUTPUT_VARIABLE _product_version
+    ERROR_VARIABLE _err_output
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  IF (_err_output)
+    MESSAGE (WARNING "${_err_output}")
+    # Just in case
+    SET (_product_version)
+  ENDIF ()
   IF (_product_version)
-    SET (PRODUCT_VERSION ${_product_version})
+    SET (PRODUCT_VERSION "${_product_version}-0000")
   ELSE ()
     SET (PRODUCT_VERSION "0.0.0-0000")
   ENDIF ()
 ENDIF ()
 
+# BUILD_COLUMNAR logic: Similar to above.
+# 1. If BUILD_COLUMNAR is already defined, the means it's either cached
+#    or was explicitly specified with -D on the command-line. In either
+#    case, force it into the cache so it will be remembered for future runs.
+# 2. Otherwise, we do NOT want to cache BUILD_COLUMNAR, which will force
+#    CMake to re-discover it every time. In that case, extract it from the
+#    manifest. Assume 'false' if not found in manifest.
+IF (DEFINED BUILD_COLUMNAR)
+  SET (BUILD_COLUMNAR "${BUILD_COLUMNAR}" CACHE BOOL "Building Couchbase Columnar" FORCE)
+ELSE ()
+  SET (_build_columnar)
+  EXECUTE_PROCESS(
+      COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_manifest_annot.py COLUMNAR
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+      OUTPUT_VARIABLE _build_columnar
+      ERROR_VARIABLE _err_output
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+  IF (_err_output)
+    MESSAGE (WARNING "${_err_output}")
+    # Just in case
+    SET (_build_columnar)
+  ENDIF ()
+  IF (_build_columnar)
+    SET (BUILD_COLUMNAR ${_build_columnar})
+  ELSE ()
+    SET (BUILD_COLUMNAR 0)
+  ENDIF ()
+ENDIF ()
+
+
 # Toplevel target for generated source files from different projects
 ADD_CUSTOM_TARGET(generated_source_files)
 
 IF (BUILD_ENTERPRISE)
-  MESSAGE (STATUS "Building Couchbase Server ${PRODUCT_VERSION} Enterprise Edition")
+  IF (BUILD_COLUMNAR)
+    MESSAGE (STATUS "Building Couchbase Columnar ${PRODUCT_VERSION}")
+  ELSE ()
+    MESSAGE (STATUS "Building Couchbase Server ${PRODUCT_VERSION} Enterprise Edition")
+  ENDIF ()
   ADD_DEFINITIONS(-DCOUCHBASE_ENTERPRISE_EDITION=1)
 ELSE ()
   MESSAGE (STATUS "Building Couchbase Server ${PRODUCT_VERSION} Community Edition")
@@ -342,7 +376,6 @@ ADD_CUSTOM_TARGET(reset
 ADD_SUBDIRECTORY(third_party EXCLUDE_FROM_ALL)
 
 IF (NOT BUILD_ONLY_TOOLS)
-  ADD_SUBDIRECTORY(tlm/python)
   ADD_SUBDIRECTORY(phosphor)
 ENDIF()
 
