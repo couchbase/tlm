@@ -326,13 +326,42 @@ ELSE ()
   ENDIF ()
 ENDIF ()
 
+# COLUMNAR_PRODUCT_VERSION logic: Similar to above.
+# 1. If COLUMNAR_PRODUCT_VERSION is already defined, the means it's either
+#    cached or was explicitly specified with -D on the command-line. In either
+#    case, force it into the cache so it will be remembered for future runs.
+# 2. Otherwise, we do NOT want to cache COLUMNAR_PRODUCT_VERSION, which will
+#    force CMake to re-discover it every time. In that case, extract it from
+#    the manifest. Default to '0.0.0-0000' if not found in manifest.
+IF (BUILD_COLUMNAR AND DEFINED COLUMNAR_PRODUCT_VERSION)
+  SET (COLUMNAR_PRODUCT_VERSION "${COLUMNAR_PRODUCT_VERSION}" CACHE BOOL
+      "Couchbase Columnar product version with build number" FORCE)
+ELSEIF (BUILD_COLUMNAR AND NOT DEFINED COLUMNAR_PRODUCT_VERSION)
+  SET (_columnar_version)
+  EXECUTE_PROCESS(
+      COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_manifest_annot.py VERSION
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+      OUTPUT_VARIABLE _columnar_version
+      ERROR_VARIABLE _err_output
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+  IF (_err_output)
+    MESSAGE (WARNING "${_err_output}")
+    # Just in case
+    SET (_columnar_version)
+  ENDIF ()
+  IF (_columnar_version)
+    SET (COLUMNAR_PRODUCT_VERSION "${_columnar_version}-0000")
+  ELSE ()
+    SET (COLUMNAR_PRODUCT_VERSION "0.0.0-0000")
+  ENDIF ()
+ENDIF ()
 
 # Toplevel target for generated source files from different projects
 ADD_CUSTOM_TARGET(generated_source_files)
 
 IF (BUILD_ENTERPRISE)
   IF (BUILD_COLUMNAR)
-    MESSAGE (STATUS "Building Couchbase Columnar ${PRODUCT_VERSION}")
+    MESSAGE (STATUS "Building Couchbase Columnar ${COLUMNAR_PRODUCT_VERSION} (server version ${PRODUCT_VERSION})")
   ELSE ()
     MESSAGE (STATUS "Building Couchbase Server ${PRODUCT_VERSION} Enterprise Edition")
   ENDIF ()
