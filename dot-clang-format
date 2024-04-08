@@ -96,3 +96,8 @@ UseTab:          Never
 
 Language: Proto
 BasedOnStyle: Google
+
+---
+
+Language: Json
+DisableFormat: true
