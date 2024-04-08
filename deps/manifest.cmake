@@ -34,7 +34,7 @@ DECLARE_DEP (grpc VERSION 1.59.3-cb1 PLATFORMS linux macosx windows)
 # version, you must also update couchbase-server-black-duck-manifest.json
 # in this same directory!
 #
-DECLARE_DEP (jemalloc VERSION 5.3.0-cb3 PLATFORMS linux macosx windows)
+DECLARE_DEP (jemalloc V2 VERSION 5.3.0 BUILD 10 PLATFORMS linux macosx windows)
 DECLARE_DEP (json VERSION 3.11.2-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (libevent VERSION 2.1.11-cb12 PLATFORMS linux macosx windows)
 DECLARE_DEP (libsodium V2 VERSION 1.0.18 BUILD 5 PLATFORMS linux macosx windows)

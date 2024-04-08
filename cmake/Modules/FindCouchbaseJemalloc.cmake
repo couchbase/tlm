@@ -16,64 +16,38 @@
 # Locate jemalloc library
 # This module defines
 #  JEMALLOC_LIBRARIES, path to selected (Debug / Release) library variant
-#  JEMALLOC_INCLUDE_DIR, where to find the jemalloc headers
+#  JEMALLOC_NOPREFIX_LIBRARIES, path to select (Debug / Release) library
+#     without je_ symbol prefix
+#  JEMALLOC_INCLUDE_DIR, where to find the jemalloc headers (may be a list!)
+#  JEMALLOC_NOPREFIX_INCLUDE_DIR, where to find the jemalloc headers (may be a list!)
+#
+# It also defines well-formed "Modern CMake" imported targets
+# Jemalloc::jemalloc and Jemalloc::noprefix.
 
 IF (NOT FindCouchbaseJemalloc_INCLUDED)
 
 INCLUDE(CheckFunctionExists)
 include(CMakePushCheckState)
 include(CheckSymbolExists)
-include(FindPackageHandleStandardArgs)
-include(PlatformIntrospection)
-include(SelectLibraryConfigurations)
 
-cb_get_supported_platform(_is_supported_platform)
-if (_is_supported_platform)
-    # Supported platforms should only use the provided hints and pick it up
-    # from cbdeps
-    set(_jemalloc_no_default_path NO_DEFAULT_PATH)
-endif ()
+set(Jemalloc_ROOT ${CMAKE_BINARY_DIR}/tlm/deps/jemalloc.exploded)
+find_package(Jemalloc REQUIRED)
 
-set(_jemalloc_exploded ${CMAKE_BINARY_DIR}/tlm/deps/jemalloc.exploded)
+# "Translate" variables to the old-school all-upper-case form we use.
+set(JEMALLOC_FOUND 1)
+set(JEMALLOC_INCLUDE_DIR ${Jemalloc_INCLUDE_DIRS})
+set(JEMALLOC_NOPREFIX_INCLUDE_DIR ${Jemalloc_NOPREFIX_INCLUDE_DIRS})
+set(JEMALLOC_LIBRARIES ${Jemalloc_LIBRARIES})
+set(JEMALLOC_NOPREFIX_LIBRARIES ${Jemalloc_NOPREFIX_LIBRARIES})
 
-find_path(JEMALLOC_INCLUDE_DIR jemalloc/jemalloc.h
-          HINTS ${_jemalloc_exploded}/include
-          ${_jemalloc_no_default_path})
+# plasma and nitro also use this - they probably shouldn't
+set(JEMALLOC_LIBRARY_RELEASE ${Jemalloc_LIBRARY_RELEASE})
 
-if (NOT JEMALLOC_INCLUDE_DIR)
-    message(FATAL_ERROR "Failed to locate jemalloc/jemalloc.h")
-endif ()
-
-# On Windows also need to add the 'msvc_compat' subdir to include path to
-# provide an implementation of <strings.h>.
-if (WIN32)
-    list(APPEND JEMALLOC_INCLUDE_DIR ${JEMALLOC_INCLUDE_DIR}/msvc_compat)
-endif ()
-
-# find the Release library and Debug library (if it exists).
-#
-# We need to put _jemalloc_exploded/lib/* as hints as we don't
-# install the .lib file to ${CMAKE_INSTALL_PREFIX} on Windows-
-# they are left in the exploded directory.
-find_library(JEMALLOC_LIBRARY_RELEASE
-             NAMES jemalloc
-             HINTS ${CMAKE_INSTALL_PREFIX}/lib
-                   ${_jemalloc_exploded}/lib/Release
-                   ${_jemalloc_exploded}/lib
-             ${_jemalloc_no_default_path})
-
-find_library(JEMALLOC_LIBRARY_DEBUG
-             NAMES jemallocd
-             HINTS ${CMAKE_INSTALL_PREFIX}/lib
-                   ${_jemalloc_exploded}/lib/Debug
-             ${_jemalloc_no_default_path})
-
-# Set JEMALLOC_LIBRARIES to the correct Debug / Release lib based on the
-# current BUILD_TYPE
-select_library_configurations(JEMALLOC)
+mark_as_advanced(JEMALLOC_INCLUDE_DIR)
 
 MESSAGE(STATUS "Found jemalloc headers: ${JEMALLOC_INCLUDE_DIR}")
 MESSAGE(STATUS "             libraries: ${JEMALLOC_LIBRARIES}")
+MESSAGE(STATUS "    noprefix libraries: ${JEMALLOC_NOPREFIX_LIBRARIES}")
 
 # Check that the found jemalloc library has it's symbols prefixed with 'je_'
 cmake_push_check_state(RESET)
@@ -84,23 +58,8 @@ check_symbol_exists(je_sdallocx "stdbool.h;jemalloc/jemalloc.h" HAVE_JEMALLOC_SD
 cmake_pop_check_state()
 
 if (NOT HAVE_JE_SYMBOLS)
-    message(FATAL_ERROR "Found jemalloc in ${JEMALLOC_LIBRARIES}, but was built without 'je_' prefix on symbols so cannot be used.")
+    message(FATAL_ERROR "Found jemalloc in ${JEMALLOC_INCLUDE_DIR}, but was built without 'je_' prefix on symbols so cannot be used.")
 endif ()
-
-mark_as_advanced(JEMALLOC_INCLUDE_DIR)
-
-# Pretend we're using Modern CMake to find this thing.
-add_library(Jemalloc::jemalloc SHARED IMPORTED)
-set_target_properties(Jemalloc::jemalloc
-    PROPERTIES
-    IMPORTED_LOCATION ${JEMALLOC_LIBRARY_RELEASE})
-if(FOLLY_LIBRARY_DEBUG)
-    set_target_properties(Jemalloc::jemalloc
-        PROPERTIES
-        IMPORTED_LOCATION_DEBUG ${JEMALLOC_LIBRARY_DEBUG})
-endif()
-target_include_directories(Jemalloc::jemalloc INTERFACE
-    ${JEMALLOC_INCLUDE_DIR})
 
 SET (FindCouchbaseJemalloc_INCLUDED 1)
 ENDIF (NOT FindCouchbaseJemalloc_INCLUDED)

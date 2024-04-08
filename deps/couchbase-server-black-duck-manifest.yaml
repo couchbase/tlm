@@ -60,9 +60,6 @@ components:
     grpc:
         bd-id: a38e1dc0-f53d-4dc1-adb4-6328fc424fb5
         versions: [ 1.59.3 ]
-    jemalloc:
-        bd-id: 2504dce9-b1c9-4037-9b03-8a222d9a1570
-        versions: [ 5.3.0 ]
     json:
         bd-id: 7355d1e8-3e81-447c-a726-fa23a3541ac2
         versions: [ v3.11.2 ]
@@ -158,5 +155,6 @@ components:
 # ${PRODUCT}-black-duck-manifest.yaml files can be "included" here.
 # This will also keep the manifest-drift job happy.
 include-projects: [
-    cbpy
+    cbpy,
+    jemalloc
 ]
