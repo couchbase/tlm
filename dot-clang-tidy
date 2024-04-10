@@ -1,4 +1,4 @@
-Checks:          '-*,modernize-*,-modernize-use-default-member-init,-modernize-use-nodiscard,-modernize-use-trailing-return-type,bugprone-use-after-move,bugprone-unhandled-self-assignment,-google-explicit-constructor'
+Checks:          '-*,modernize-*,-modernize-use-nodiscard,-modernize-use-trailing-return-type,bugprone-use-after-move,bugprone-unhandled-self-assignment,-google-explicit-constructor'
 WarningsAsErrors: ''
 HeaderFilterRegex: ''
 AnalyzeTemporaryDtors: false
