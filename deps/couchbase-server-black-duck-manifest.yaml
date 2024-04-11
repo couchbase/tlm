@@ -85,18 +85,12 @@ components:
         bd-id: fe3e8b96-6c8e-411f-991f-697ecfed5605
         versions: [ 2.0.11 ]
         license-approved: true
-    openblas:
-        bd-id: 4d295b0d-132b-4b5f-aaaa-0ea2b007e5a8
-        versions: [ 0.3.25 ]
     openssl:
         bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
         versions: [ 3.1.4 ]
     pcre:
         bd-id: 8c9723be-a23f-4974-9645-54c471aed433
         versions: [ 8.44 ]
-    prometheus:
-        bd-id: 04b82d3f-8119-4a41-bfb6-e71168773767
-        versions: [ v2.45.0 ]
     prometheus-cpp:
         bd-id: 61784658-b7fb-4df4-aeb4-b572a5db0de0
         versions: [ v1.2.1 ]
@@ -126,11 +120,6 @@ components:
     # End classic cbdeps.
     #
 
-    # Packages that we build as part of Server build.
-    faiss:
-        bd-id: 9c5b89a8-e3a1-4f7a-af8e-ebac244b7791
-        versions: [ 1.7.4 ]
-
     # The following cbdeps packages are build-only requirements and hence
     # aren't captured for the Black Duck report; we include empty entries
     # for them here to keep the manifest-drift job happy.
@@ -154,7 +143,8 @@ components:
 # newer cbdeps packages that have embedded
 # ${PRODUCT}-black-duck-manifest.yaml files can be "included" here.
 # This will also keep the manifest-drift job happy.
-include-projects: [
-    cbpy,
-    jemalloc
-]
+include-projects:
+  - cbpy
+  - faiss
+  - jemalloc
+  - prometheus
