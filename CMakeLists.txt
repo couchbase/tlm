@@ -1,7 +1,7 @@
 #
 # This is the toplevel CMakeLists.txt that is used to build Couchbase
 #
-CMAKE_MINIMUM_REQUIRED(VERSION 3.19)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.23)
 
 STRING(REGEX REPLACE "[ ]" "a" modified_source_dir "${CMAKE_SOURCE_DIR}")
 IF (NOT modified_source_dir STREQUAL CMAKE_SOURCE_DIR)
@@ -131,12 +131,12 @@ ENDIF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 SET (COUCHBASE_SERVER_BUILD True CACHE BOOL "Indicating this is a server build")
 
 # GNUInstallDirs (a standard CMake module) sets the variable
-# CMAKE_INSTALL_LIBDIR. libcouchbase and faiss (which we will add to the
-# Server build in a moment) call GNUInstallDirs and then uses that
-# variable to determine the installation location. On RHEL-based
-# systems, that ends up putting those shared libraries into lib64/. We
-# don't want that, so we override that variable here - fortunately
-# GNUInstallDirs won't override them if they're already set.
+# CMAKE_INSTALL_LIBDIR. libcouchbase (which we will add to the Server
+# build in a moment) call GNUInstallDirs and then uses that variable to
+# determine the installation location. On RHEL-based systems, that ends
+# up putting those shared libraries into lib64/. We don't want that, so
+# we override that variable here - fortunately GNUInstallDirs won't
+# override them if they're already set.
 SET (CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Override libdir to violate FHS" FORCE)
 
 # Try to download the prebuilt 3rd-party dependencies by default
@@ -233,6 +233,7 @@ INCLUDE(CouchbasePlugInUI)
 INCLUDE(MetricsMetadata)
 
 INCLUDE(FindCouchbaseBoost)
+INCLUDE(FindCouchbaseFaiss)
 INCLUDE(FindCouchbaseFolly)
 INCLUDE(FindCouchbaseOpenSSL)
 INCLUDE(FindCouchbaseLibevent)
@@ -430,8 +431,6 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     SET(FORESTDB_LIBRARY_DIR "${ForestDB_BINARY_DIR}")
     SET (FORESTDB_TARGET forestdb)
 ENDIF()
-
-INCLUDE (CouchbaseFaiss)
 
 IF (NOT BUILD_ONLY_TOOLS)
   ADD_SUBDIRECTORY(sigar)
