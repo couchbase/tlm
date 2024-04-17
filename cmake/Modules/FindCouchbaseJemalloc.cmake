@@ -15,18 +15,16 @@
 
 # Locate jemalloc library
 # This module defines
+#  JEMALLOC_FOUND and JEMALLOC_NOPREFIX_FOUND
 #  JEMALLOC_LIBRARIES, path to selected (Debug / Release) library variant
-#  JEMALLOC_NOPREFIX_LIBRARIES, path to select (Debug / Release) library
-#     without je_ symbol prefix
 #  JEMALLOC_INCLUDE_DIR, where to find the jemalloc headers (may be a list!)
-#  JEMALLOC_NOPREFIX_INCLUDE_DIR, where to find the jemalloc headers (may be a list!)
 #
 # It also defines well-formed "Modern CMake" imported targets
 # Jemalloc::jemalloc and Jemalloc::noprefix.
 
-IF (NOT FindCouchbaseJemalloc_INCLUDED)
+if (NOT FindCouchbaseJemalloc_INCLUDED)
 
-INCLUDE(CheckFunctionExists)
+include(CheckFunctionExists)
 include(CMakePushCheckState)
 include(CheckSymbolExists)
 
@@ -36,18 +34,15 @@ find_package(Jemalloc REQUIRED)
 # "Translate" variables to the old-school all-upper-case form we use.
 set(JEMALLOC_FOUND 1)
 set(JEMALLOC_INCLUDE_DIR ${Jemalloc_INCLUDE_DIRS})
-set(JEMALLOC_NOPREFIX_INCLUDE_DIR ${Jemalloc_NOPREFIX_INCLUDE_DIRS})
 set(JEMALLOC_LIBRARIES ${Jemalloc_LIBRARIES})
-set(JEMALLOC_NOPREFIX_LIBRARIES ${Jemalloc_NOPREFIX_LIBRARIES})
 
 # plasma and nitro also use this - they probably shouldn't
 set(JEMALLOC_LIBRARY_RELEASE ${Jemalloc_LIBRARY_RELEASE})
 
 mark_as_advanced(JEMALLOC_INCLUDE_DIR)
 
-MESSAGE(STATUS "Found jemalloc headers: ${JEMALLOC_INCLUDE_DIR}")
-MESSAGE(STATUS "             libraries: ${JEMALLOC_LIBRARIES}")
-MESSAGE(STATUS "    noprefix libraries: ${JEMALLOC_NOPREFIX_LIBRARIES}")
+message(STATUS "Found jemalloc headers: ${JEMALLOC_INCLUDE_DIR}")
+message(STATUS "             libraries: ${JEMALLOC_LIBRARIES}")
 
 # Check that the found jemalloc library has it's symbols prefixed with 'je_'
 cmake_push_check_state(RESET)
@@ -61,5 +56,11 @@ if (NOT HAVE_JE_SYMBOLS)
     message(FATAL_ERROR "Found jemalloc in ${JEMALLOC_INCLUDE_DIR}, but was built without 'je_' prefix on symbols so cannot be used.")
 endif ()
 
-SET (FindCouchbaseJemalloc_INCLUDED 1)
-ENDIF (NOT FindCouchbaseJemalloc_INCLUDED)
+set (Jemalloc_Noprefix_ROOT ${CMAKE_BINARY_DIR}/tlm/deps/jemalloc_noprefix.exploded)
+find_package(Jemalloc_Noprefix REQUIRED)
+set(JEMALLOC_NOPREFIX_FOUND 1)
+get_target_property(_noprefix_inc Jemalloc::noprefix INTERFACE_INCLUDE_DIRECTORIES)
+message(STATUS "      noprefix headers: ${_noprefix_inc}")
+
+set (FindCouchbaseJemalloc_INCLUDED 1)
+endif (NOT FindCouchbaseJemalloc_INCLUDED)
