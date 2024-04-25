@@ -126,8 +126,11 @@ target_link_libraries(Folly::folly INTERFACE
     Folly::headers
     ${folly_dependancies})
 
+target_compile_definitions(Folly::folly INTERFACE -DFOLLY_CFG_NO_COROUTINES=1)
+
 if(FOLLY_LIBRARIES_UNSANITIZED)
     add_library(Folly::folly_unsanitized STATIC IMPORTED)
+    target_compile_definitions(Folly::folly_unsanitized INTERFACE -DFOLLY_CFG_NO_COROUTINES=1)
     set_target_properties(Folly::folly_unsanitized
         PROPERTIES
         IMPORTED_LOCATION ${FOLLY_LIBRARIES_UNSANITIZED})
@@ -148,6 +151,7 @@ target_include_directories(Folly::headers INTERFACE
         ${Boost_INCLUDE_DIR}
         ${DOUBLE_CONVERSION_INCLUDE_DIR}
         ${GLOG_INCLUDE_DIR})
+target_compile_definitions(Folly::headers INTERFACE -DFOLLY_CFG_NO_COROUTINES=1)
 
 # Append Folly's depenancies to the include / lib variables so users
 # of Folly pickup the dependancies automatically.
