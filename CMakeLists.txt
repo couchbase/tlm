@@ -36,25 +36,15 @@ PROJECT("Couchbase")
 #
 # Choose deployment target on macOS.
 # As of Morpheus the minimum supported platform is Ventura (13.0).
-# Unfortunately the current CV is stuck on Catalina, but luckily we've
-# got Ventura builders on the way. Given our new builders is arm and
-# the old ones is x86 we may set the macos target to 13 while introducing
-# the new builders.
-if(APPLE)
+if (APPLE)
     if (CB_OVERRIDE_OSX_DEPLOYMENT_TARGET)
         set(target ${CB_OVERRIDE_OSX_DEPLOYMENT_TARGET})
-    elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "x86_64")
-        set(target "10.15")
-    elseif(CMAKE_HOST_SYSTEM_PROCESSOR STREQUAL "arm64")
+    else ()
         set(target "13.0")
-    else()
-        message(FATAL_ERROR "Unknown macOS CMAKE_HOST_SYSTEM_PROCESSOR "
-                "'${CMAKE_HOST_SYSTEM_PROCESSOR}'. "
-                "Supported values: x86_64 or arm64.")
-    endif()
+    endif ()
     set(CMAKE_OSX_DEPLOYMENT_TARGET ${target} CACHE STRING
-            "Minimum supported version of macOS" FORCE)
-endif()
+        "Minimum supported version of macOS" FORCE)
+endif ()
 
 # We also have a "sub-project", the tools project, which requires a few
 # additional INSTALL() and other directives. Those targets should
