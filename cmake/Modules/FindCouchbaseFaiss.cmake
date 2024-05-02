@@ -28,10 +28,7 @@ IF (NOT BUILD_ENTERPRISE)
 ELSEIF (BUILD_ONLY_TOOLS)
   # No Faiss for tools-only builds
 
-ELSEIF (WIN32)
-  # No Faiss for Windows builds
-
-ELSEIF (UNIX)
+ELSE ()
   SET (_use_faiss ON)
   FIND_PACKAGE (faiss CONFIG REQUIRED)
   MESSAGE (STATUS "Found faiss")
