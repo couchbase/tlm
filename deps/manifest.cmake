@@ -23,7 +23,7 @@ DECLARE_DEP (cbpy V2 VERSION 3.11.8 BUILD 2 PLATFORMS linux macosx windows DESTI
 DECLARE_DEP (curl V2 VERSION 8.6.0 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb6 PLATFORMS linux macosx windows)
 DECLARE_DEP (erlang V2 VERSION 26.2 BUILD 2 PLATFORMS linux macosx windows)
-DECLARE_DEP (faiss V2 VERSION 1.7.4 BUILD 2 PLATFORMS linux macosx)
+DECLARE_DEP (faiss V2 VERSION 1.7.4 BUILD 7 PLATFORMS linux macosx windows)
 DECLARE_DEP (flatbuffers VERSION v1.10.0-cb7 PLATFORMS linux macosx windows)
 DECLARE_DEP (fmt VERSION 10.1.1-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (folly VERSION v2022.05.23.00-couchbase-cb16 PLATFORMS linux macosx windows)
@@ -36,7 +36,7 @@ DECLARE_DEP (grpc VERSION 1.59.3-cb1 PLATFORMS linux macosx windows)
 # in this same directory!
 #
 DECLARE_DEP (jemalloc V2 VERSION 5.3.0 BUILD 13 PLATFORMS linux macosx windows)
-DECLARE_DEP (jemalloc_noprefix V2 VERSION 5.2.1 BUILD 10 PLATFORMS linux windows)
+DECLARE_DEP (jemalloc_noprefix V2 VERSION 5.2.1 BUILD 11 PLATFORMS linux windows)
 DECLARE_DEP (jemalloc_noprefix V2 VERSION 5.3.0 BUILD 10 PLATFORMS macosx)
 DECLARE_DEP (json VERSION 3.11.3-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (libevent VERSION 2.1.11-cb12 PLATFORMS linux macosx windows)
