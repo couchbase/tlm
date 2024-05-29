@@ -54,7 +54,7 @@ machine and start configuring the node.
   * Visual Studio 2017 or newer
   * Xcode
   * clang
-* CMake 3.19 or newer
+* CMake 3.23 or newer
 * Google repo (in order to fetch the source code)
 * [Ninja](https://ninja-build.org) build
 * ccache may speed up the development cycle when clang / gcc is used
