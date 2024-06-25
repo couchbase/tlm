@@ -11,6 +11,7 @@ ExternalProject_Add(json
     CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
                       -D CMAKE_BUILD_TYPE=RelWithDebInfo
                       -D JSON_BuildTests=OFF
+                      -D JSON_DisableEnumSerialization=ON
                       -D JSON_Install=ON
                       -D JSON_MultipleHeaders=ON
                       -D JSON_SystemInclude=ON
