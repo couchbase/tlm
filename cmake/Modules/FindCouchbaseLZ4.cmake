@@ -16,39 +16,21 @@
 # Locate lz4 library
 # This module defines
 #  LZ4_FOUND, if false, do not try to link with lz4
-#  LZ4_LIBRARIES, Library path and libs
-#  LZ4_INCLUDE_DIR, where to find the ICU headers
 
-if (NOT DEFINED LZ4_FOUND)
-    set(_lz4_exploded ${CMAKE_BINARY_DIR}/tlm/deps/lz4.exploded)
-    set(_lz4_library_dir ${CMAKE_INSTALL_PREFIX})
-
-    include(PlatformIntrospection)
-
-    cb_get_supported_platform(_is_supported_platform)
-    if (_is_supported_platform)
-        # Supported platforms should only use the provided hints and pick up
-        # LZ4 from cbdeps
-        set(_lz4_no_default_path NO_DEFAULT_PATH)
-    endif ()
-
-    find_path(LZ4_INCLUDE_DIR lz4.h
-              HINTS ${_lz4_exploded}/include
-              ${_lz4_no_default_path})
-
-    find_library(LZ4_LIBRARIES
-                 NAMES lz4
-                 HINTS ${_lz4_library_dir}/lib
-                 ${_lz4_no_default_path})
-
-    if (LZ4_INCLUDE_DIR AND LZ4_LIBRARIES)
-        set(LZ4_FOUND True CACHE BOOL "Whether LZ4 has been found" FORCE)
-        message(STATUS "Found LZ4 headers in: ${LZ4_INCLUDE_DIR}")
-        message(STATUS "           libraries: ${LZ4_LIBRARIES}")
-    else ()
-        message(WARNING "LZ4 not found")
-        set(LZ4_FOUND False CACHE BOOL "Whether LZ4 has been found" FORCE)
-    endif ()
-
-    mark_as_advanced(LZ4_FOUND LZ4_INCLUDE_DIR LZ4_LIBRARIES)
-endif (NOT DEFINED LZ4_FOUND)
+# We want to only find our cbdeps package
+SET (lz4_ROOT "${CMAKE_BINARY_DIR}/tlm/deps/lz4.exploded")
+FIND_PACKAGE (lz4 CONFIG
+    NO_CMAKE_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_INSTALL_PREFIX)
+if (TARGET LZ4::lz4_shared)
+    set(LZ4_FOUND True CACHE BOOL "Whether LZ4 has been found" FORCE)
+    get_target_property(_lz4_location LZ4::lz4_shared LOCATION)
+    # Annoyingly, the exported targets for LZ4 don't have INCLUDE_DIRECTORIES
+    # even though it looks like they should, so force it in
+    set_target_properties(LZ4::lz4_shared PROPERTIES
+        INTERFACE_INCLUDE_DIRECTORIES "${lz4_ROOT}/include")
+    message(STATUS "Found LZ4: ${_lz4_location}")
+    message(STATUS "         : ${lz4_ROOT}/include")
+else ()
+    message(WARNING "LZ4 not found")
+    set(LZ4_FOUND False CACHE BOOL "Whether LZ4 has been found" FORCE)
+endif ()
