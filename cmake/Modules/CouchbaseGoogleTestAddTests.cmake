@@ -10,6 +10,12 @@ set(script)
 set(suite)
 set(tests)
 
+if(TEST_FILTER)
+    set(filter "--gtest_filter=${TEST_FILTER}")
+else()
+    set(filter)
+endif()
+
 function(add_command NAME)
   set(_args "")
   foreach(_arg ${ARGN})
@@ -37,7 +43,7 @@ if(NOT EXISTS "${TEST_EXECUTABLE}")
   )
 endif()
 execute_process(
-  COMMAND ${TEST_EXECUTOR} "${TEST_EXECUTABLE}" --gtest_list_tests
+  COMMAND ${TEST_EXECUTOR} "${TEST_EXECUTABLE}" --gtest_list_tests ${filter}
   TIMEOUT ${TEST_DISCOVERY_TIMEOUT}
   WORKING_DIRECTORY ${TEST_WORKING_DIR}
   OUTPUT_VARIABLE output
