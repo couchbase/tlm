@@ -28,6 +28,9 @@ IF (NOT BUILD_ENTERPRISE)
 ELSEIF (BUILD_ONLY_TOOLS)
   # No Faiss for tools-only builds
 
+ELSEIF (WIN32)
+  # Disabling vector search on Windows for 7.6.2
+
 ELSE ()
   SET (_use_faiss ON)
   FIND_PACKAGE (faiss CONFIG REQUIRED)
