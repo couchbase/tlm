@@ -199,7 +199,6 @@ IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
 ENDIF ()
 _ADD_DEP_PACKAGE(numactl 2.0.11 v2.0.11 4)
 
-_ADD_DEP_PACKAGE(lz4 1.9.2 v1.9.2 5)
 # maven 3.5.2-cb3 and 3.5.2-cb4 exist as attempts to make Windows work,
 # but are not correct.
 _ADD_DEP_PACKAGE(maven 3.5.2 master 7)

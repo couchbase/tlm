@@ -148,4 +148,5 @@ include-projects:
   - faiss
   - jemalloc
   - jemalloc_noprefix
+  - lz4
   - prometheus
