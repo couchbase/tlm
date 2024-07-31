@@ -150,7 +150,14 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
   # Declare a dependency
   FUNCTION (DECLARE_DEP name)
-    PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION;BUILD;DESTINATION" "V2;SKIP;NOINSTALL" ${ARGN})
+    PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION;BUILD;DESTINATION" "V2;SKIP;NOINSTALL;ALLOW_MULTIPLE" ${ARGN})
+
+    # Error check: ALLOW_MULTIPLE requires DESTINATION, since otherwise
+    # the multiple downloaded versions will be unpacked into the same
+    # .exploded directory.
+    IF (dep_ALLOW_MULTIPLE AND "${dep_DESTINATION}" STREQUAL "")
+      MESSAGE (FATAL_ERROR "Cannot use ALLOW_MULTIPLE without DESTINATION")
+    ENDIF ()
 
     # If this dependency has already been declared, skip it.
     # Exception: if we are building the cbdeps packages themselves then
@@ -158,10 +165,12 @@ IF (NOT CBDownloadDeps_INCLUDED)
     # own build.
     SET (_prop_name "CB_DOWNLOADED_DEP_${name}")
     GET_PROPERTY (_declared GLOBAL PROPERTY ${_prop_name} SET)
-    IF (_declared AND NOT "${PROJECT_NAME}" STREQUAL "cbdeps_packages")
+    IF (_declared
+        AND NOT dep_ALLOW_MULTIPLE
+        AND NOT "${PROJECT_NAME}" STREQUAL "cbdeps_packages")
       MESSAGE (STATUS "Dependency ${name} already declared, skipping...")
       RETURN ()
-    ENDIF (_declared AND NOT "${PROJECT_NAME}" STREQUAL "cbdeps_packages")
+    ENDIF ()
 
     # Set a variable to use for the version. Also cache the version and build
     # number for use by other parts of the build.
