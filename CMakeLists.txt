@@ -523,10 +523,6 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     ENDIF ()
 ENDIF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
 
-IF (NOT WIN32)
-   CONFIGURE_FILE(tlm/memcached-wrapper.in ${CMAKE_BINARY_DIR}/tlm/memcached-wrapper)
-ENDIF (NOT WIN32)
-
 # Target for "standalone tools" package.
 #
 # This implementation depends on other parts of the build adding
