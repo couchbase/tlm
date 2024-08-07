@@ -1,5 +1,0 @@
-file (COPY lib DESTINATION ${CMAKE_INSTALL_PREFIX})
-if (WIN32)
-  # We want the DLL to be located in the bin diretory on Windows
-  file (COPY dll/opentracing.dll DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
-endif()
