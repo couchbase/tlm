@@ -51,7 +51,7 @@ machine and start configuring the node.
 
 * C/C++ compiler; one of:
   * gcc 13.2 or newer
-  * Visual Studio 2017 or newer
+  * Visual Studio 2022 or newer
   * Xcode
   * clang
 * CMake 3.23 or newer
