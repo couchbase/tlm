@@ -829,19 +829,28 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   #
   # DEPENDS - list of other CMake targets on which TARGET will depend
   #
-  # GOVERSION - the version of the Go compiler required for this target.
-  # See file header comment.
-  #
   MACRO (GoYacc)
 
     PARSE_ARGUMENTS (goyacc "DEPENDS" "TARGET;YFILE;GOVERSION" "" ${ARGN})
 
     # Only build this target if somebody uses this macro
+    SET (_goyacc_exe "${CMAKE_BINARY_DIR}/tlm/goyacc")
     IF (NOT TARGET goyacc)
-      GoInstall (TARGET goyacc UNSHIPPED
-      PACKAGE golang.org/x/tools/cmd/goyacc
-      GOVERSION ${goyacc_GOVERSION}
-      GOPATH "${CMAKE_SOURCE_DIR}/godeps")
+      GET_GOROOT (SUPPORTED_NEWER _goroot _gover goyacc goyacc-build 1)
+      SET (_goexe "${_goroot}/bin/go")
+      IF (WIN32)
+        SET (_goexe "${_goexe}.exe")
+      ENDIF ()
+      ADD_CUSTOM_COMMAND(OUTPUT "${_goyacc_exe}"
+        COMMAND "${CMAKE_COMMAND}"
+        -D "GOYACC_EXE=${_goyacc_exe}"
+        -D "GOROOT=${_goroot}"
+        -P "${TLM_MODULES_DIR}/go-buildyacc.cmake"
+        COMMENT "Building goyacc using Go ${_gover}"
+        JOB_POOL golang_build_pool
+        VERBATIM
+      )
+      ADD_CUSTOM_TARGET(goyacc ALL DEPENDS "${_goyacc_exe}")
     ENDIF ()
 
     IF (NOT goyacc_TARGET)
@@ -855,21 +864,16 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     GET_FILENAME_COMPONENT (_yfile "${goyacc_YFILE}" NAME)
 
     SET(goyacc_OUTPUT "${_ypath}/y.go")
-
-    # Compute path to Go compiler
-    GET_GOROOT ("${goyacc_GOVERSION}" _goroot _gover ${goyacc_TARGET} yacc 1)
-
     ADD_CUSTOM_COMMAND(OUTPUT "${goyacc_OUTPUT}"
                        COMMAND "${CMAKE_COMMAND}"
                        -D "GOROOT=${_goroot}"
-                       -D "GOYACC_EXECUTABLE=${CMAKE_SOURCE_DIR}/godeps/bin/goyacc"
+                       -D "GOYACC_EXECUTABLE=${_goyacc_exe}"
                        -D "YFILE=${_yfile}"
                        -P "${TLM_MODULES_DIR}/go-yacc.cmake"
                        DEPENDS ${goyacc_YFILE} goyacc
                        WORKING_DIRECTORY "${_ypath}"
-                       COMMENT "Build Go yacc target ${goyacc_TARGET} using Go ${_gover}"
+                       COMMENT "Build Go yacc target ${goyacc_TARGET}"
                        VERBATIM)
-
     ADD_CUSTOM_TARGET ("${goyacc_TARGET}"
                        DEPENDS "${goyacc_OUTPUT}")
     MESSAGE (STATUS "Added Go yacc target '${goyacc_TARGET}' using Go ${_gover}")
