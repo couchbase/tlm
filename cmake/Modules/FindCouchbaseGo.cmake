@@ -1,20 +1,20 @@
 # This module provides facilities for building Go code.
 #
 # The Couchbase build utilizes several different versions of the Go
-# compiler in the production builds. The GoInstall() and GoYacc() macros
-# have an GOVERSION argument which allows individual targets to specify
-# the version of Go they request / require. This argument should take
-# one of these forms:
-#
-#   X.Y, eg. 1.19 - major Go version to use (specific minor version used
-#      will be determined by the centralized Go version management from
-#      the "golang" repository)
+# compiler in the production builds. The GoModBuild() and GoTest()
+# macros have a GOVERSION argument which allows individual targets to
+# specify the version of Go they request / require. This argument should
+# take one of these forms:
 #
 #   SUPPORTED_OLDER, SUPPORTED_NEWER - at any point in time only two
 #      major versions of Go are supported by Google. By specifying one
 #      of these two constants, the code will be built using the older or
 #      newer of these versions. Again the specific minor version used
 #      will be determined by the centralized Go version management.
+#
+#   X.Y, eg. 1.19 (deprecated) - major Go version to use (specific minor
+#      version used will be determined by the centralized Go version
+#      management from the "golang" repository)
 #
 #   X.Y.Z, eg. 1.19.4 (deprecated) - this will be translated to X.Y with
 #      a warning to update.
@@ -114,7 +114,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   ENDFUNCTION (WRITE_GO_VERSIONS_REPORT)
   SET_PROPERTY (GLOBAL APPEND PROPERTY CB_CMAKE_END_HOOKS WRITE_GO_VERSIONS_REPORT)
 
-  # This macro is called by GoInstall() / GoYacc() / etc. to find the
+  # This macro is called by GoModBuild() / GoYacc() / etc. to find the
   # appropriate Go compiler to use. This is also responsible for
   # creating the go-versions.csv artifact.
   # Parameters:
@@ -208,13 +208,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # Master target for "all go binaries"
   ADD_CUSTOM_TARGET(all-go)
 
-  # Set up clean targets. Note: the hardcoded godeps and goproj is kind of
-  # a hack; it should build that up from the GOPATHs passed to GoInstall.
+  # Set up clean targets.
   SET (GO_BINARY_DIR "${CMAKE_BINARY_DIR}/gopkg")
   ADD_CUSTOM_TARGET (go_realclean
-    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${GO_BINARY_DIR}"
-    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_SOURCE_DIR}/godeps/bin"
-    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${CMAKE_SOURCE_DIR}/goproj/bin")
+    COMMAND "${CMAKE_COMMAND}" -E remove_directory "${GO_BINARY_DIR}")
   ADD_DEPENDENCIES (realclean go_realclean)
 
   # Go build/install already performs it's own parallelism internally, so
@@ -224,197 +221,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # perhaps not as large RAM) then we can end up exhausing the RAM of the
   # machine.
   # Define a CMake JOB_POOL which has concurrency 1, which is used by the
-  # 'go build' and 'go install' custom targets below.
+  # 'go build' custom targets below.
   # Note: At time of writing this is only supported by the Ninja generators,
   # is it ignored by other generators.
   SET_PROPERTY (GLOBAL APPEND PROPERTY JOB_POOLS golang_build_pool=1)
-
-  # Adds a target named TARGET which (always) calls "go install
-  # PACKAGE".  This delegates incremental-build responsibilities to
-  # the go compiler, which is generally what you want.
-  #
-  # Required arguments:
-  #
-  # TARGET - name of CMake target to create
-  #
-  # PACKAGE - A single Go package to build. When this is specified,
-  # the package and all dependencies on GOPATH will be built, using
-  # the Go compiler's normal dependency-handling system.
-  #
-  # GOPATH - Every entry on this list will be placed onto the GOPATH
-  # environment variable before invoking the compiler.
-  #
-  # GOVERSION - the version of the Go compiler required for this target.
-  # See file header comment.
-  #
-  # Optional arguments:
-  #
-  # UNSHIPPED - for targets that are NOT part of the Server deliverable
-  #
-  # GCFLAGS - flags that will be passed (via -gcflags) to all compile
-  # steps; should be a single string value, with spaces if necessary
-  #
-  # GOTAGS - tags that will be passed (viga -tags) to all compile
-  # steps; should be a single string value, with spaces as necessary
-  #
-  # LDFLAGS - flags that will be passed (via -ldflags) to all compile
-  # steps; should be a single string value, with spaces if necessary
-  #
-  # NOCONSOLE - for targets that should not launch a console at runtime
-  # (on Windows - silently ignored on other platforms)
-  #
-  # DEPENDS - list of other CMake targets on which TARGET will depend
-  #
-  # INSTALL_PATH - if specified, a CMake INSTALL() directive will be
-  # created to install the output into the named path
-  #
-  # OUTPUT - name of the installed executable (only applicable if
-  # INSTALL_PATH is specified). Default value is the basename of
-  # PACKAGE, per the go compiler. On Windows, ".exe" will be
-  # appended.
-  #
-  # CGO_INCLUDE_DIRS - path(s) to directories to search for C include files
-  #
-  # CGO_LIBRARY_DIRS - path(s) to libraries to search for C link libraries
-  #
-  MACRO (GoInstall)
-
-    PARSE_ARGUMENTS (Go "DEPENDS;GOPATH;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
-        "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GOVERSION;GCFLAGS;GOTAGS;GOBUILDMODE;LDFLAGS"
-      "NOCONSOLE;UNSHIPPED" ${ARGN})
-
-    IF (NOT Go_TARGET)
-      MESSAGE (FATAL_ERROR "TARGET is required!")
-    ENDIF (NOT Go_TARGET)
-    IF (NOT Go_PACKAGE)
-      MESSAGE (FATAL_ERROR "PACKAGE is required!")
-    ENDIF (NOT Go_PACKAGE)
-    IF (NOT Go_GOVERSION)
-      MESSAGE (FATAL_ERROR "GOVERSION is required!")
-    ENDIF (NOT Go_GOVERSION)
-    IF (NOT Go_GOBUILDMODE)
-      SET(Go_GOBUILDMODE "default")
-    ENDIF (NOT Go_GOBUILDMODE)
-
-    # Special short-term transition
-    IF (Go_TARGET STREQUAL "convertschema")
-      SET (Go_UNSHIPPED 1)
-    ENDIF ()
-
-    # Hunt for the requested package on GOPATH (used for installing)
-    SET (_found)
-    FOREACH (_dir ${Go_GOPATH})
-      FILE (TO_NATIVE_PATH "${_dir}/src/${Go_PACKAGE}" _pkgdir)
-      IF (IS_DIRECTORY "${_pkgdir}")
-        SET (_found 1)
-        SET (_workspace "${_dir}")
-        BREAK ()
-      ENDIF (IS_DIRECTORY "${_pkgdir}")
-    ENDFOREACH (_dir)
-    IF (NOT _found)
-      MESSAGE (FATAL_ERROR "Package ${Go_PACKAGE} not found in any workspace on GOPATH!")
-    ENDIF (NOT _found)
-
-    # Extract the binary name from the package, and tweak for Windows.
-    GET_FILENAME_COMPONENT (_pkgexe "${Go_PACKAGE}" NAME)
-    IF (WIN32)
-      SET (_pkgexe "${_pkgexe}.exe")
-    ENDIF (WIN32)
-    IF (Go_OUTPUT)
-      IF (WIN32)
-        SET (Go_OUTPUT "${Go_OUTPUT}.exe")
-      ENDIF (WIN32)
-    ENDIF (Go_OUTPUT)
-
-    # Concatenate NOCONSOLE with LDFLAGS
-    IF (WIN32 AND ${Go_NOCONSOLE})
-      SET (_ldflags "-H windowsgui ${Go_LDFLAGS}")
-    ELSE (WIN32 AND ${Go_NOCONSOLE})
-      SET (_ldflags "${Go_LDFLAGS}")
-    ENDIF (WIN32  AND ${Go_NOCONSOLE})
-
-    # If Sanitizers are enabled then add a runtime linker path to
-    # locate libasan.so / libubsan.so etc.
-    # This isn't usually needed if we are running on the same machine
-    # as we built (as the sanitizer libraries are typically in
-    # /usr/lib/ or similar), however when creating a packaged build
-    # which will be installed and run on a different machine we need
-    # to ensure that the runtime linker knows how to find our copies
-    # of libasan.so etc in $PREFIX/lib.
-    IF (CB_ADDRESSSANITIZER OR CB_UNDEFINED_SANITIZER)
-      SET (_ldflags "${_ldflags} -r \$ORIGIN/../lib")
-    ENDIF()
-
-    # Compute path to Go compiler
-    GET_GOROOT ("${Go_GOVERSION}" _goroot _gover ${Go_TARGET} non-modules-build ${Go_UNSHIPPED})
-
-    # Go install target
-    ADD_CUSTOM_TARGET ("${Go_TARGET}" ALL
-      COMMAND "${CMAKE_COMMAND}"
-      -D "GOROOT=${_goroot}"
-      -D "GOVERSION=${_gover}"
-      -D "GO_BINARY_DIR=${GO_BINARY_DIR}/go-${_gover}"
-      -D "CMAKE_C_COMPILER=${CMAKE_C_COMPILER}"
-      -D "CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}"
-      -D "GOPATH=${Go_GOPATH}"
-      -D "WORKSPACE=${_workspace}"
-      -D "REPOSYNC=${TLM_MODULES_DIR}/../../.."
-      -D "CGO_CFLAGS=$<TARGET_PROPERTY:${Go_TARGET},COMPILE_OPTIONS>"
-      -D "CGO_LDFLAGS=$<TARGET_PROPERTY:${Go_TARGET},LINK_OPTIONS>"
-      -D "GCFLAGS=${Go_GCFLAGS}"
-      -D "GOTAGS=${Go_GOTAGS}"
-      -D "GOBUILDMODE=${Go_GOBUILDMODE}"
-      -D "LDFLAGS=${_ldflags}"
-      -D "PKGEXE=${_pkgexe}"
-      -D "PACKAGE=${Go_PACKAGE}"
-      -D "OUTPUT=${Go_OUTPUT}"
-      -D "CGO_INCLUDE_DIRS=${Go_CGO_INCLUDE_DIRS}"
-      -D "CGO_LIBRARY_DIRS=${Go_CGO_LIBRARY_DIRS}"
-      -D "CB_GO_CODE_COVERAGE=${CB_GO_CODE_COVERAGE}"
-      -D "CB_GO_RACE_DETECTOR=${CB_GO_RACE_DETECTOR}"
-      -D "CB_ADDRESSSANITIZER=${CB_ADDRESSSANITIZER}"
-      -D "CB_UNDEFINEDSANITIZER=${CB_UNDEFINEDSANITIZER}"
-      -D "CB_THREADSANITIZER=${CB_THREADSANITIZER}"
-      -D "CB_GO_UNSHIPPED=${Go_UNSHIPPED}"
-      -P "${TLM_MODULES_DIR}/go-install.cmake"
-      COMMENT "Building Go target ${Go_TARGET} using Go ${_gover}"
-      JOB_POOL golang_build_pool
-      VERBATIM)
-    IF (Go_DEPENDS)
-      ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
-    ENDIF (Go_DEPENDS)
-    ADD_DEPENDENCIES (all-go ${Go_TARGET})
-    MESSAGE (STATUS "Added Go build target '${Go_TARGET}' using Go ${_gover}")
-
-    # The go compiler itself does parallel building, so to avoid
-    # overloading the machine we want to only build on Go target at
-    # once. If we are using Ninja as the CMake Generator then this is
-    # already handled by the JOB_POOL property, otherwise we make them
-    # all depend on any earlier Go targets.
-    IF (NOT CMAKE_GENERATOR MATCHES "Ninja.*")
-      GET_PROPERTY (_go_targets GLOBAL PROPERTY CB_GO_TARGETS)
-      IF (_go_targets)
-        ADD_DEPENDENCIES(${Go_TARGET} ${_go_targets})
-      ENDIF (_go_targets)
-      SET_PROPERTY (GLOBAL APPEND PROPERTY CB_GO_TARGETS ${Go_TARGET})
-    ENDIF ()
-
-    # Tweaks for installing and output renaming. go-install.cmake will
-    # arrange for the workspace's bin directory to contain a file with
-    # the right name (either OUTPUT, or the Go package name if OUTPUT
-    # is not specified). We need to know what that name is so we can
-    # INSTALL() it.
-    IF (Go_OUTPUT)
-      SET (_finalexe "${Go_OUTPUT}")
-    ELSE (Go_OUTPUT)
-      SET (_finalexe "${_pkgexe}")
-    ENDIF (Go_OUTPUT)
-    IF (Go_INSTALL_PATH)
-      INSTALL (PROGRAMS "${_workspace}/bin/${_finalexe}"
-        DESTINATION "${Go_INSTALL_PATH}")
-    ENDIF (Go_INSTALL_PATH)
-
-  ENDMACRO (GoInstall)
 
   # Top-level target which depends on all individual -tidy targets.
   ADD_CUSTOM_TARGET (go-mod-tidy)
@@ -831,7 +641,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   #
   MACRO (GoYacc)
 
-    PARSE_ARGUMENTS (goyacc "DEPENDS" "TARGET;YFILE;GOVERSION" "" ${ARGN})
+    PARSE_ARGUMENTS (goyacc "DEPENDS" "TARGET;YFILE" "" ${ARGN})
 
     # Only build this target if somebody uses this macro
     SET (_goyacc_exe "${CMAKE_BINARY_DIR}/tlm/goyacc")
