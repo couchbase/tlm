@@ -325,6 +325,16 @@ IF (NOT FindCouchbaseGo_INCLUDED)
         SET(Go_GOBUILDMODE "default")
     ENDIF ()
 
+    # Debugging targets
+    IF (CB_DEBUG_GO_TARGETS)
+      MESSAGE (STATUS "Dep target info for GoModBuild(${Go_TARGET})")
+      MESSAGE (STATUS "CGO_CFLAGS: ${Go}")
+      FOREACH (_dep ${Go_DEPENDS})
+        PRINT_TARGET_PROPERTIES (${_dep})
+      ENDFOREACH ()
+      MESSAGE (STATUS "End dep target info for GoModBuild(${Go_TARGET})")
+    ENDIF ()
+
     # Extract the binary name from the package, and tweak for Windows.
     IF (Go_OUTPUT)
       SET (_exename "${Go_OUTPUT}")
