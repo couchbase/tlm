@@ -188,7 +188,7 @@ _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 _ADD_DEP_PACKAGE(flatbuffers v1.10.0 v1.10.0 7)
 
 _ADD_DEP_PACKAGE(json 3.11.3 v3.11.3 2)
-_ADD_DEP_PACKAGE(boost 1.82.0 boost-1.82.0 4)
+_ADD_DEP_PACKAGE(boost 1.82.0 boost-1.82.0 6)
 
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
   IF (PLATFORM STREQUAL "fedora26" OR PLATFORM STREQUAL "fedora27")
@@ -210,7 +210,7 @@ _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 3)
 _ADD_DEP_PACKAGE(benchmark v1.8.3 v1.8.3 1)
 _ADD_DEP_PACKAGE(googletest 1.14.0 1.14.0 1)
 
-_ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 16)
+_ADD_DEP_PACKAGE(folly v2024.01.08.00-couchbase v2024.01.08.00-couchbase 2)
 _ADD_DEP_PACKAGE(grpc 1.59.3 v1.59.3 1)
 _ADD_DEP_PACKAGE(pcre 8.44 v8.44 3)
 _ADD_DEP_PACKAGE(prometheus-cpp v1.2.1-couchbase v1.2.1-couchbase 1)

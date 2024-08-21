@@ -1,0 +1,14 @@
+if (CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    # Folly checks for a gcc-specfic set of random number functions
+    # (<ext/random> at folly configure-time and if present defines
+    #  FOLLY_HAVE_EXTRANDOM_SFMT19937. This is used by folly/Random.h to
+    # select the default random number generator to use, preferring
+    # __gnu_cxx::sfmt19937 from <ext/random> if available.  When using
+    # Clang however, <ext/random> refers to GCC-specific typedefs
+    # (__Uint32x4_t) which Clang doens't recognise and fails to
+    # compile.
+    # As such, modify folly-config.h under clang to not report
+    # FOLLY_HAVE_EXTRANDOM_SFMT19937, so Random.h doesn't attempt to
+    # use the problematic header.
+    execute_process(COMMAND sed -i /FOLLY_HAVE_EXTRANDOM_SFMT19937/d ${CMAKE_CURRENT_SOURCE_DIR}/include/folly/folly-config.h)
+endif ()

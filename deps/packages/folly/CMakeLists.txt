@@ -7,13 +7,13 @@ set(_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 set(_folly_deps_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
 set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 
-DECLARE_DEP (boost VERSION 1.82.0-cb4 PLATFORMS linux macosx windows)
+DECLARE_DEP (boost VERSION 1.82.0-cb6 PLATFORMS linux macosx windows)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb6 PLATFORMS linux macosx windows)
 DECLARE_DEP (fmt VERSION 10.1.1-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows_msvc2015 windows)
 DECLARE_DEP (jemalloc V2 VERSION 5.3.0 BUILD 10 PLATFORMS linux macosx windows)
-DECLARE_DEP (libevent VERSION 2.1.11-cb11 PLATFORMS linux macosx windows)
-DECLARE_DEP (openssl V2 VERSION 3.1.1 BUILD 1 PLATFORMS linux macosx windows)
+DECLARE_DEP (libevent VERSION 2.1.11-cb12 PLATFORMS linux macosx windows)
+DECLARE_DEP (openssl V2 VERSION 3.1.4 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (snappy VERSION 1.1.10-cb2 PLATFORMS linux macosx windows)
 
 # Restore the INSTALL_PREFIX
@@ -56,6 +56,12 @@ if(APPLE)
    # Folly makes use of std::filesystem functionality which is introduced in
    # 10.15 (Catalina).
    list(APPEND cache_args -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.15)
+
+   # Folly attempts to use preadv/pwritev if available on the build platform,
+   # regardless of the of the specified deployment target. We need to
+   # deactivate these by hand to prevent their use on macos<11
+   list(APPEND cache_args -DFOLLY_HAVE_PREADV:STRING=0)
+   list(APPEND cache_args -DFOLLY_HAVE_PWRITEV:STRING=0)
 endif()
 
 if(WIN32)
@@ -90,6 +96,8 @@ ExternalProject_Add(folly
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
+        INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
+        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/CMakeLists_package.txt <INSTALL_DIR>/CMakeLists.txt
         )
 
 # We generally only run TSan on linux containers, but on occasion a local build is
