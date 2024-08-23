@@ -13,7 +13,7 @@
 # check if this is a supported platform.
 #
 # IMPORTANT: If you add a new package here or update an existing package
-# version, you must also update couchbase-server-black-duck-manifest.json
+# version, you must also update couchbase-server-black-duck-manifest.yaml
 # in this same directory!
 #
 DECLARE_DEP (benchmark VERSION v1.8.3-cb1 PLATFORMS linux macosx windows)
@@ -26,14 +26,13 @@ DECLARE_DEP (erlang V2 VERSION 26.2 BUILD 2 PLATFORMS linux macosx windows)
 DECLARE_DEP (faiss V2 VERSION 1.8.0 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (flatbuffers VERSION v1.10.0-cb7 PLATFORMS linux macosx windows)
 DECLARE_DEP (fmt VERSION 10.1.1-cb1 PLATFORMS linux macosx windows)
-DECLARE_DEP (folly VERSION v2022.05.23.00-couchbase-cb16 PLATFORMS linux macosx)
-DECLARE_DEP (folly VERSION v2024.01.08.00-couchbase-cb2 PLATFORMS windows)
+DECLARE_DEP (folly VERSION v2024.01.08.00-couchbase-cb2 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows)
 DECLARE_DEP (googletest VERSION 1.14.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (grpc VERSION 1.59.3-cb1 PLATFORMS linux macosx windows)
 #
 # IMPORTANT: If you add a new package here or update an existing package
-# version, you must also update couchbase-server-black-duck-manifest.json
+# version, you must also update couchbase-server-black-duck-manifest.yaml
 # in this same directory!
 #
 DECLARE_DEP (jemalloc V2 VERSION 5.3.0 BUILD 13 PLATFORMS linux macosx windows)
@@ -62,6 +61,6 @@ DECLARE_DEP (zstd-cpp V2 VERSION 1.5.0 BUILD 4 PLATFORMS linux macosx windows)
 
 #
 # IMPORTANT: If you add a new package here or update an existing package
-# version, you must also update couchbase-server-black-duck-manifest.json
+# version, you must also update couchbase-server-black-duck-manifest.yaml
 # in this same directory!
 #
