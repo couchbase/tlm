@@ -33,6 +33,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   SET (GO_PRIVATE_MODULE_PATHS
     cbftx
     hebrew
+    goproj/src/github.com/couchbase/bhive
     goproj/src/github.com/couchbase/eventing-ee
     goproj/src/github.com/couchbase/plasma
     goproj/src/github.com/couchbase/query-ee
