@@ -23,7 +23,7 @@ DECLARE_DEP (cbpy V2 VERSION 3.11.8 BUILD 4 PLATFORMS linux macosx windows DESTI
 DECLARE_DEP (curl V2 VERSION 8.9.1 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (double-conversion VERSION 3.0.0-cb6 PLATFORMS linux macosx windows)
 DECLARE_DEP (erlang V2 VERSION 25.3 BUILD 11 PLATFORMS linux macosx windows)
-DECLARE_DEP (faiss V2 VERSION 1.8.0 BUILD 1 PLATFORMS linux macosx windows)
+DECLARE_DEP (faiss V2 VERSION 1.8.0 BUILD 2_avx2 PLATFORMS linux macosx windows)
 DECLARE_DEP (flatbuffers VERSION v1.10.0-cb7 PLATFORMS linux macosx windows)
 DECLARE_DEP (fmt VERSION 8.1.1-cb4 PLATFORMS linux macosx windows)
 DECLARE_DEP (folly VERSION v2022.05.23.00-couchbase-cb15 PLATFORMS linux macosx windows)
