@@ -269,15 +269,19 @@ IF (NOT CBDownloadDeps_INCLUDED)
       FILE (WRITE "${_explode_dir}/VERSION.txt" ${_dep_fullver})
     ENDIF ()
 
-    # Always add the dep subdir; this will "re-install" the dep every time you
-    # run CMake, which might be wasteful, but at least should be safe.
     IF (EXISTS ${_explode_dir}/CMakeLists.txt)
       IF (dep_NOINSTALL)
         MESSAGE(STATUS "Skip running CMakeLists from the package")
       ELSE (dep_NOINSTALL)
+        # Add the dep subdir; this will "re-install" the dep every time you
+        # run CMake, which might be wasteful, but at least should be safe.
         FILE (MAKE_DIRECTORY "${_binary_dir}")
         ADD_SUBDIRECTORY ("${_explode_dir}" "${_binary_dir}" EXCLUDE_FROM_ALL)
       ENDIF (dep_NOINSTALL)
+    ELSE ()
+      # If the package doesn't include a CMakeLists.txt itself, for convenience,
+      # set the "modern CMake" variable `dep_ROOT` to this directory.
+      SET (${name}_ROOT "${_explode_dir}" CACHE PATH "Root of ${name}" FORCE)
     ENDIF (EXISTS ${_explode_dir}/CMakeLists.txt)
   ENDFUNCTION (DECLARE_DEP)
 

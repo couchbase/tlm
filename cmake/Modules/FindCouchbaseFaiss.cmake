@@ -13,13 +13,13 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-# Locate the Faiss library This module utilizes the Faiss cbdeps
+# Locate the Faiss library. This module utilizes the Faiss cbdeps
 # package's CMake config, and so it defines "Modern CMake" imported
-# targets named "faiss" and "faiss_c". As such, there is no need for
-#  things like FAISS_LIBRARIES etc.
+# targets named eg. "faiss" and "faiss_c". As such, there is no need for
+# things like FAISS_LIBRARIES etc.
 #
-# For now we still have a CB_USE_FAISS flag, which will be OFF on
-# Windows as well as for non-Enterprise builds.
+# We set the flag CB_USE_FAISS, which will be OFF on for non-Enterprise
+# builds.
 
 SET (_use_faiss OFF)
 IF (NOT BUILD_ENTERPRISE)
@@ -34,7 +34,23 @@ ELSE ()
   MESSAGE (STATUS "Found faiss")
 
   # Add faiss's transitive dependencies to the install set
-  INSTALL (IMPORTED_RUNTIME_ARTIFACTS faiss faiss_c)
+  IF (TARGET faiss_avx2)
+    SET (_faisslib faiss_avx2)
+  ELSEIF (TARGET faiss)
+    SET (_faisslib faiss)
+  ELSE ()
+    MESSAGE (FATAL_ERROR "faiss package doesn't declare `faiss` or `faiss_avx2` target!")
+  ENDIF ()
+  INSTALL (IMPORTED_RUNTIME_ARTIFACTS faiss_c ${_faisslib})
+
+  # On Mac and Windows, our Faiss package also includes the OpenMP runtime.
+  # I couldn't find a useful way for Faiss's CMake config to include this,
+  # so just manually install it here.
+  IF (WIN32)
+    INSTALL (FILES "${faiss_ROOT}/bin/libomp140.x86_64.dll" DESTINATION bin)
+  ELSEIF (APPLE)
+    INSTALL (FILES "${faiss_ROOT}/lib/libomp.dylib" DESTINATION lib)
+  ENDIF ()
 ENDIF ()
 
 SET (CB_USE_FAISS ${_use_faiss} CACHE BOOL "Whether Faiss is available in the build" FORCE)
