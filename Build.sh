@@ -27,8 +27,10 @@ macos_cross_compilation_flags=
 tsan_cmake_option=
 asan_cmake_option=
 ubsan_cmake_option=
+threads_ninja_option=
+loadavg_ninja_option=
 
-while getopts "s:b:i:hXTAUR" OPTION; do
+while getopts "s:b:i:j:l:hXTAUR" OPTION; do
   case $OPTION in
   s)
     source_root=${OPTARG}
@@ -38,6 +40,12 @@ while getopts "s:b:i:hXTAUR" OPTION; do
     ;;
   i)
     install_root=${OPTARG}
+    ;;
+  j)
+    threads_ninja_option="-j ${OPTARG}"
+    ;;
+  l)
+    loadavg_ninja_option="-l ${OPTARG}"
     ;;
   X)
     macos_cross_compilation_flags="-D CMAKE_APPLE_SILICON_PROCESSOR=x86_64 -D CMAKE_OSX_ARCHITECTURES=x86_64"
@@ -131,4 +139,4 @@ then
           ||  errexit "Failed to generate build configuration"
 fi
 
-ninja install "$@" || errexit "Build failed"
+ninja ${threads_ninja_option} ${loadavg_ninja_option} install "$@" || errexit "Build failed"

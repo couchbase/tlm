@@ -482,11 +482,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # created to install the output into the named path. If this is a
   # relative path, it will be relative to CMAKE_INSTALL_PREFIX.
   #
-  # ADD_TO_TOOLS - if specified, the executable and all dependent
-  # libraries will be installed as part of the standalone tools package
-  # in addition to the main install directory. Requires INSTALL_PATH to
-  # also be set.
-  #
   # OUTPUT - name of the produced executable. Default value is the
   # basename of PACKAGE, per the go compiler. On Windows, ".exe" will be
   # appended.
@@ -501,7 +496,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
     PARSE_ARGUMENTS (Go "DEPENDS;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
       "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GOVERSION;GCFLAGS;GOTAGS;GOBUILDMODE;LDFLAGS"
-      "ADD_TO_TOOLS;NOCONSOLE;UNSHIPPED" ${ARGN})
+      "NOCONSOLE;UNSHIPPED" ${ARGN})
 
     IF (NOT Go_TARGET)
       MESSAGE (FATAL_ERROR "TARGET is required!")
@@ -513,17 +508,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       MESSAGE (FATAL_ERROR "GOVERSION is required!")
     ENDIF ()
     IF (NOT Go_GOBUILDMODE)
-        SET(Go_GOBUILDMODE "default")
-    ENDIF ()
-
-    # Debugging targets
-    IF (CB_DEBUG_GO_TARGETS)
-      MESSAGE (STATUS "Dep target info for GoModBuild(${Go_TARGET})")
-      MESSAGE (STATUS "CGO_CFLAGS: ${Go}")
-      FOREACH (_dep ${Go_DEPENDS})
-        PRINT_TARGET_PROPERTIES (${_dep})
-      ENDFOREACH ()
-      MESSAGE (STATUS "End dep target info for GoModBuild(${Go_TARGET})")
+      SET(Go_GOBUILDMODE "default")
     ENDIF ()
 
     # Extract the binary name from the package, and tweak for Windows.
@@ -606,16 +591,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       ENDIF ()
     ENDFOREACH ()
 
-    # Debugging targets
-    IF (CB_DEBUG_GO_TARGETS)
-      MESSAGE (STATUS "Dep target info for GoModBuild(${Go_TARGET})")
-      MESSAGE (STATUS "CGO_CFLAGS: ${Go_CGO_CFLAGS}")
-      FOREACH (_dep ${Go_TARGET} ${Go_DEPENDS})
-        PRINT_TARGET_PROPERTIES (${_dep})
-      ENDFOREACH ()
-      MESSAGE (STATUS "End dep target info for GoModBuild(${Go_TARGET})")
-    ENDIF ()
-
     # Go mod build command. It would be more clean if this was an
     # ADD_CUSTOM_COMMAND(), and the earlier INTERFACE library was named
     # ${Go_TARGET} rather than ${Go_TARGET}-cgo-stub. That actually
@@ -655,6 +630,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       COMMENT "Building Go Modules target ${Go_TARGET} using Go ${_gover}"
       JOB_POOL golang_build_pool
       VERBATIM)
+    SET_PROPERTY (TARGET ${Go_TARGET} PROPERTY GO_BINARY "${_exe}")
     IF (Go_DEPENDS)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
     ENDIF ()
@@ -662,49 +638,21 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     MESSAGE (STATUS "Added Go Modules build target '${Go_TARGET}' using Go ${_gover}")
 
     # go-modbuild.cmake will produce the output executable in the
-    # current binary dir. Install it from there if requested. Also
-    # handle installing it and any runtime dependencies to
-    # TOOLS_INSTALL_PREFIX if ADD_TO_TOOLS is specified.
+    # current binary dir. Install it from there if requested.
     IF (Go_INSTALL_PATH)
       INSTALL (PROGRAMS "${_exe}" DESTINATION "${Go_INSTALL_PATH}")
-      IF (Go_ADD_TO_TOOLS)
-        INSTALL (PROGRAMS "${_exe}" DESTINATION "${TOOLS_INSTALL_PREFIX}/bin")
-        INSTALL (CODE "SET (_exename \"${_exename}\")")
-        # We look up the runtime dependencies of the binary that was
-        # just installed. Those dependencies will therefore be
-        # discovered from CMAKE_INSTALL_PREFIX/lib, which is good,
-        # because those are the versions that CMake has done wacky RPATH
-        # manipulations to for us. We don't want to copy, eg.,
-        # libmagma_shared.so from the build tree.
+    ENDIF ()
 
-        # We exclude GCC libs that we've already copied to the right
-        # place in the top-level CMakeLists.txt, as well as any
-        # libc-like libraries that come from the OS itself.
-        INSTALL (CODE [[
-          FILE (
-            GET_RUNTIME_DEPENDENCIES
-            EXECUTABLES "${CMAKE_INSTALL_PREFIX}/bin/${_exename}"
-            PRE_EXCLUDE_REGEXES "^ld-linux.*"
-            POST_EXCLUDE_REGEXES "^/lib.*" "^/usr/lib.*" "^/opt/gcc.*"
-            RESOLVED_DEPENDENCIES_VAR _deplibs
-            UNRESOLVED_DEPENDENCIES_VAR _unresolvedeps
-          )
-
-          IF (WIN32)
-            SET (_libdir bin)
-          ELSE ()
-            SET (_libdir lib)
-          ENDIF ()
-
-          FOREACH (_dep ${_deplibs})
-            FILE (
-              INSTALL "${_dep}"
-              DESTINATION "${TOOLS_INSTALL_PREFIX}/${_libdir}"
-              FOLLOW_SYMLINK_CHAIN USE_SOURCE_PERMISSIONS
-            )
-          ENDFOREACH ()
-        ]])
-      ENDIF ()
+    # Debugging targets
+    IF (CB_DEBUG_GO_TARGETS)
+      FILE(GENERATE OUTPUT /tmp/whoa-${Go_TARGET}.txt CONTENT "${_stub_tgt}: $<LIST:TRANSFORM,$<TARGET_PROPERTY:${_stub_tgt},INTERFACE_LINK_LIBRARIES>,REPLACE,cb,hello>
+      ")
+      MESSAGE (STATUS "Dep target info for GoModBuild(${Go_TARGET})")
+      MESSAGE (STATUS "CGO_CFLAGS: ${Go_CGO_CFLAGS}")
+      FOREACH (_dep ${Go_TARGET} ${Go_DEPENDS})
+        PRINT_TARGET_PROPERTIES (${_dep})
+      ENDFOREACH ()
+      MESSAGE (STATUS "End dep target info for GoModBuild(${Go_TARGET})")
     ENDIF ()
 
     # See if we need to create a -tidy target for this directory.

@@ -109,28 +109,33 @@ INCLUDE (ParseArguments)
 #
 # Required arguments:
 #
-# SCRIPTS - name(s) of python script(s)
+# SCRIPTS - name(s) of python script(s). This is assumed to be a bare
+#   filename, eg. "myscript", not "myscript.py".
 #
 # Optional arguments:
 #
+# EXTRA_SCRIPTS - list of additional python scripts to add to
+#   lib/python.
+#
+# ADD_TO_STANDALONE_PACKAGE - list of extra standalone packages (eg.
+#   admin_tools) to add this script to. This will also arrange for
+#   Python to be copied into the corresponding package.
+#
 # BUILD_DIR - absolute path to directory in build tree to also create a
-#   wrapper script in. If specified, a custom wrapper will be created for
-#   each named script. This script will launch Python 3 using the locally-
-#   installed cbpy installation in $BUILD_DIR/tlm/python/cbpy, created
-#   by targets in tlm/python/CMakeLists.txt.
-
+#   wrapper script in. If specified, a custom wrapper will be created
+#   for each named script.
 FUNCTION (PyWrapper)
-  PARSE_ARGUMENTS (Py "SCRIPTS" "BUILD_DIR" "" ${ARGN})
+  PARSE_ARGUMENTS (
+    Py "SCRIPTS;ADD_TO_STANDALONE_PACKAGE;EXTRA_SCRIPTS"
+    "BUILD_DIR" "" ${ARGN}
+  )
 
   IF (NOT Py_SCRIPTS)
     MESSAGE (FATAL_ERROR "SCRIPTS is required!")
   ENDIF ()
 
-  # Install the scripts themselves into lib/python
-  INSTALL (PROGRAMS ${Py_SCRIPTS} DESTINATION lib/python)
-
-  # Create and install wrapper script for each program
   FOREACH (_script ${Py_SCRIPTS})
+    # Determine wrapper script name
     GET_FILENAME_COMPONENT (_scriptname "${_script}" NAME)
     IF (WIN32)
       SET (_installname "${_scriptname}.exe")
@@ -138,9 +143,51 @@ FUNCTION (PyWrapper)
       SET (_installname "${_scriptname}")
     ENDIF ()
 
-    INSTALL (PROGRAMS "${MASTER_PY_WRAPPER}"
-      DESTINATION bin
-      RENAME "${_installname}")
+    # Install the script, wrapper script, and extra scripts into each
+    # requested root
+    FOREACH (pkg "" ${Py_ADD_TO_STANDALONE_PACKAGE})
+      # Slightly different args for primary component and extra packages
+      IF (pkg STREQUAL "")
+        SET (_root "")
+        SET (_component_args)
+      ELSE ()
+        MESSAGE (STATUS "Adding ${_script} to ${pkg} package")
+        # The trailing / is important for forming correct paths later
+        SET (_root "${${pkg}_INSTALL_PREFIX}/")
+        SET (_component_args EXCLUDE_FROM_ALL COMPONENT ${pkg})
+
+        # Also install python into pkg root at lib/python/
+        INSTALL (
+          DIRECTORY "${CBPY_INSTALL}"
+          DESTINATION "${_root}lib/python"
+          USE_SOURCE_PERMISSIONS
+          ${_component_args}
+        )
+      ENDIF ()
+
+      # Install the script itself into lib/python
+      INSTALL (
+        PROGRAMS ${Py_SCRIPTS}
+        DESTINATION "${_root}lib/python"
+        ${_component_args}
+      )
+
+      # Install extra scripts into lib/python
+      IF (Py_EXTRA_SCRIPTS)
+        INSTALL (
+          FILES ${Py_EXTRA_SCRIPTS}
+          DESTINATION "${_root}lib/python"
+          ${_component_args})
+      ENDIF ()
+
+      # Install a copy of the master wrapper script into bin
+      INSTALL (
+        PROGRAMS "${MASTER_PY_WRAPPER}"
+        DESTINATION "${_root}bin"
+        RENAME "${_installname}"
+        ${_component_args}
+      )
+    ENDFOREACH (pkg)
 
     IF (Py_BUILD_DIR)
       GET_FILENAME_COMPONENT (_scriptdir "${_script}/.." ABSOLUTE)
