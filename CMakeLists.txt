@@ -1,7 +1,7 @@
 #
 # This is the toplevel CMakeLists.txt that is used to build Couchbase
 #
-CMAKE_MINIMUM_REQUIRED(VERSION 3.23)
+CMAKE_MINIMUM_REQUIRED(VERSION 3.27)
 
 STRING(REGEX REPLACE "[ ]" "a" modified_source_dir "${CMAKE_SOURCE_DIR}")
 IF (NOT modified_source_dir STREQUAL CMAKE_SOURCE_DIR)
@@ -45,14 +45,6 @@ if (APPLE)
     set(CMAKE_OSX_DEPLOYMENT_TARGET ${target} CACHE STRING
         "Minimum supported version of macOS" FORCE)
 endif ()
-
-# We also have a "sub-project", the tools project, which requires a few
-# additional INSTALL() and other directives. Those targets should
-# install into this directory.
-SET (TOOLS_INSTALL_PREFIX "${PROJECT_BINARY_DIR}/tools-package-install")
-
-# Make sure INSTALL(CODE) blocks know about TOOLS_INSTALL_PREFIX too.
-INSTALL (CODE "SET (TOOLS_INSTALL_PREFIX \"${TOOLS_INSTALL_PREFIX}\")")
 
 # Double-check that "repo sync" (or the user) didn't mess up our copyfiles
 MACRO (CHECK_COPYFILE source_filename target_filename)
@@ -349,6 +341,9 @@ ENDIF ()
 # Toplevel target for generated source files from different projects
 ADD_CUSTOM_TARGET(generated_source_files)
 
+# Prepare extra Standalone Packages
+INCLUDE (CouchbaseStandalonePackages)
+
 IF (BUILD_ENTERPRISE)
   IF (BUILD_COLUMNAR)
     MESSAGE (STATUS "Building Couchbase Columnar ${COLUMNAR_PRODUCT_VERSION} (server version ${PRODUCT_VERSION})")
@@ -427,16 +422,23 @@ IF (NOT BUILD_ONLY_TOOLS)
 ENDIF()
 
 IF (NOT BUILD_ONLY_TOOLS AND NOT COUCHBASE_KV_COMMIT_VALIDATION)
+  # Add appropriate license files to main build
   ADD_SUBDIRECTORY(product-texts/couchbase-server)
-  INSTALL (FILES "product-texts/capella/tools/README.txt" DESTINATION ${TOOLS_INSTALL_PREFIX})
-  INSTALL (FILES "product-texts/couchbase-server/license/ee-license.txt" RENAME "LICENSE.txt" DESTINATION ${TOOLS_INSTALL_PREFIX})
+
   STRING (REGEX MATCH "^[^-]+" _version "${PRODUCT_VERSION}")
   SET (NOTICES_FILE "product-metadata/couchbase-server/blackduck/${_version}/notices.txt")
   IF (EXISTS "${CMAKE_SOURCE_DIR}/${NOTICES_FILE}")
     INSTALL (FILES "${NOTICES_FILE}" RENAME "NOTICES.txt" DESTINATION .)
-    INSTALL (FILES "${NOTICES_FILE}" RENAME "NOTICES.txt" DESTINATION ${TOOLS_INSTALL_PREFIX})
+    FOREACH (pkg ${CB_EXTRA_PACKAGES})
+      INSTALL (
+        FILES "${NOTICES_FILE}"
+        RENAME "NOTICES.txt"
+        DESTINATION ${${pkg}_INSTALL_PREFIX}
+        EXCLUDE_FROM_ALL COMPONENT ${pkg}
+      )
+    ENDFOREACH ()
   ELSE ()
-    MESSAGE (WARNING "Could not find ${NOTICES_FILE} - will not be included in installation package")
+    MESSAGE (WARNING "Could not find ${NOTICES_FILE} - will not be included in installation packages")
   ENDIF ()
 ENDIF()
 
@@ -506,6 +508,9 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       SET (LCB_SNAPPY_INCLUDE_DIR "${SNAPPY_INCLUDE_DIR}" CACHE PATH "Path to Server's snappy headers" FORCE)
 
       ADD_SUBDIRECTORY(libcouchbase)
+
+      # Also add cbc to admin_tools package
+      AddToStandalonePackage (TARGETS cbc PACKAGES admin_tools)
     ENDIF()
 
     IF (NOT BUILD_ONLY_TOOLS)
@@ -522,43 +527,6 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ADD_SUBDIRECTORY(voltron)
     ENDIF ()
 ENDIF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
-
-# Target for "standalone tools" package.
-#
-# This implementation depends on other parts of the build adding
-# INSTALL() directives to redundantly install their bits into
-# TOOLS_INSTALL_PREFIX. GoModBuild() in particular has some specialized
-# logic to copy requested Go binaries and all dependent shared
-# libraries.
-#
-# Note: This 'tools-package' target effectively depends on the "install"
-# target, but you can't do that literally in CMake. So it's important
-# that this target only be invoked after "make install" has been run.
-# Since we can't have proper dependency tracking anyway, we just use a
-# straight ADD_CUSTOM_TARGET rather than the more proper
-# ADD_CUSTOM_COMMAND setup.
-_DETERMINE_BASIC_PLATFORM (_platform)
-STRING (CONCAT _archive_base
-  "${PROJECT_BINARY_DIR}/couchbase-server-tools"
-  "_${PRODUCT_VERSION}"
-  "-${_platform}"
-  "_${CB_DOWNLOAD_DEPS_ARCH}"
-)
-IF (WIN32 OR APPLE)
-  ADD_CUSTOM_TARGET (tools-package
-    COMMAND "${CMAKE_COMMAND}" -E
-      tar cf "${_archive_base}.zip" --format=zip "."
-    WORKING_DIRECTORY "${TOOLS_INSTALL_PREFIX}"
-    COMMENT "Creating Standalone Tools package at ${_archive_base}.zip"
-  )
-ELSE (WIN32 OR APPLE)
-  ADD_CUSTOM_TARGET (tools-package
-    COMMAND "${CMAKE_COMMAND}" -E
-      tar czf "${_archive_base}.tar.gz" "*"
-    WORKING_DIRECTORY "${TOOLS_INSTALL_PREFIX}"
-    COMMENT "Creating Standalone Tools package at ${_archive_base}.tar.gz"
-  )
-ENDIF (WIN32 OR APPLE)
 
 # End of top-level CMakeLists.txt - call any end-processing hooks.
 # You may add your own hooks with:

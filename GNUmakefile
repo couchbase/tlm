@@ -10,7 +10,7 @@ MAKEFLAGS=--no-print-directory
 
 PASSTHRU_TARGETS=all all-go analytics-install analyze clean clean-all clean-xfd clean-xfd-hard \
   e2etest e2eviewtests everything geocouch-build-for-testing go-mod-tidy install reset run-mats \
-  test unset-version build/Makefile tools-package
+  test unset-version build/Makefile
 
 $(PASSTHRU_TARGETS):
 	@$(MAKE) -f Makefile \
