@@ -31,7 +31,7 @@ if os.path.isdir(".repo"):
     with open(os.devnull, "w") as devnull:
         try:
             proc = subprocess.Popen(
-                ['repo', 'manifest'],
+                'repo manifest',
                 stdout=subprocess.PIPE,
                 stderr=devnull,
                 shell=True
