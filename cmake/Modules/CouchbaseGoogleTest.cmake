@@ -399,7 +399,7 @@ function(gtest_discover_tests TARGET)
     set(_TEST_LIST ${TARGET}_TESTS)
   endif()
   if(NOT _DISCOVERY_TIMEOUT)
-    set(_DISCOVERY_TIMEOUT 15)
+    set(_DISCOVERY_TIMEOUT 60)
   endif()
 
   get_property(
