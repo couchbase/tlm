@@ -213,7 +213,7 @@ INCLUDE(CouchbasePrecompiledHeaders)
 INCLUDE(CouchbaseFunctions)
 INCLUDE(CouchbasePlugInUI)
 INCLUDE(MetricsMetadata)
-
+INCLUDE(CouchbaseInstall)
 INCLUDE(FindCouchbaseBoost)
 INCLUDE(FindCouchbaseFaiss)
 INCLUDE(FindCouchbaseFolly)

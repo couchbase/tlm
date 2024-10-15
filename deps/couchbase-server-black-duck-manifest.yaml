@@ -144,6 +144,7 @@ components:
 # ${PRODUCT}-black-duck-manifest.yaml files can be "included" here.
 # This will also keep the manifest-drift job happy.
 include-projects:
+  - AWSSDK
   - cbpy
   - faiss
   - jemalloc
