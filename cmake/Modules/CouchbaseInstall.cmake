@@ -31,7 +31,28 @@ if (NOT CouchbaseInstall_INCLUDED)
     endif ()
     set (_binary "$<TARGET_FILE:${Ins_TARGET}>")
 
-    INSTALL (CODE "InstallDependencies(${_binary} ${_install_type})")
+    # MB-63898: Hack! Until we have proper "Modern CMake" IMPORTED
+    # targets for each of these, we need to manually pass in the paths
+    # to the DLLs for each of the depenedencies of the `magma_shared`
+    # target (the only one using InstallWithDeps() so far). This is only
+    # needed on Windows. Once they can all be removed, we can also drop
+    # ${_deps_dirs} from the install(CODE) below.
+    if (WIN32)
+      set(TLM_DEPS_DIR "${CMAKE_BINARY_DIR}/tlm/deps")
+      if (CMAKE_BUILD_TYPE STREQUAL Debug)
+        set (_deps_dirs "${TLM_DEPS_DIR}/jemalloc.exploded/Debug/bin")
+      else ()
+        set (_deps_dirs "${TLM_DEPS_DIR}/jemalloc.exploded/Release/bin")
+      endif ()
+      list (APPEND _deps_dirs
+        "${TLM_DEPS_DIR}/openssl.exploded/bin"
+        "${TLM_DEPS_DIR}/snappy.exploded/bin"
+        "${TLM_DEPS_DIR}/zstd-cpp.exploded/bin"
+      )
+    endif ()
+
+    # Pass the paths to DLLs that CMake knows about from imported targets
+    install (CODE "InstallDependencies(${_binary} ${_install_type} $<TARGET_RUNTIME_DLL_DIRS:${Ins_TARGET}> ${_deps_dirs})")
 
   endfunction(InstallDeps)
 

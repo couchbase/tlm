@@ -11,6 +11,10 @@
 #
 # binary - The path to the binary to install dependencies for.
 # type - The type of the binary; must be EXECUTABLES or LIBRARIES.
+#
+# Any additional arguments will be treated as directories to search for
+# dependencies at install time. This should generally only be used on
+# Windows, where the runtime search paths are not embedded in the binary.
 FUNCTION (InstallDependencies binary type)
   MESSAGE (STATUS "Installing ${binary} dependencies")
   # We exclude GCC libs that we've already copied to the right place in
@@ -20,8 +24,11 @@ FUNCTION (InstallDependencies binary type)
   # tree.
   FILE (
     GET_RUNTIME_DEPENDENCIES
-    ${type} "${binary}"
-    PRE_EXCLUDE_REGEXES "^ld-linux.*"
+      ${type} "${binary}"
+    DIRECTORIES ${ARGN}
+    PRE_EXCLUDE_REGEXES
+      "^ld-linux.*"
+      "^api-ms-win.*" "^ext-ms-win.*" "^ext-ms-onecore.*"
     POST_EXCLUDE_REGEXES
       "^/lib.*" "^/usr/lib.*" "^/opt/gcc.*" "${CMAKE_INSTALL_PREFIX}/.*"
     RESOLVED_DEPENDENCIES_VAR _deplibs
