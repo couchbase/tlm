@@ -1,7 +1,18 @@
 #
 # This is the toplevel CMakeLists.txt that is used to build Couchbase
 #
-CMAKE_MINIMUM_REQUIRED(VERSION 3.27)
+IF (APPLE)
+  # CBD-6052: CMake 3.30 is required on MacOS to get correct
+  # file(GET_RUNTIME_DEPENDENCIES) behaviour
+  # https://gitlab.kitware.com/cmake/cmake/-/issues/24400
+  CMAKE_MINIMUM_REQUIRED(VERSION 3.30)
+
+  # However, CMake 3.29 removed FindBoost(), which we still use. For
+  # now, enable old behaviour.
+  CMAKE_POLICY(SET CMP0167 OLD)
+ELSE ()
+  CMAKE_MINIMUM_REQUIRED(VERSION 3.27)
+ENDIF ()
 
 STRING(REGEX REPLACE "[ ]" "a" modified_source_dir "${CMAKE_SOURCE_DIR}")
 IF (NOT modified_source_dir STREQUAL CMAKE_SOURCE_DIR)
