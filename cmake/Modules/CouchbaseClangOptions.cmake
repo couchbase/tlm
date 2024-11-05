@@ -67,6 +67,9 @@ list(APPEND _cb_c_flags
      -Qunused-arguments
      -Wall
      -pedantic
+     -Werror=shadow-uncaptured-local
+     -Werror=shadow-field-in-constructor
+     -Werror=shadow-ivar
      -Werror=missing-prototypes
      -Werror=missing-declarations
      -Werror=redundant-decls
@@ -89,6 +92,9 @@ list(APPEND _cb_cxx_flags
      -Qunused-arguments
      -Wall
      -Wextra
+     -Werror=shadow-uncaptured-local
+     -Werror=shadow-field-in-constructor
+     -Werror=shadow-ivar
      -Wno-unused-parameter # Enabled via -Wextra, but too noisy as we
                            # have many unused params
      -pedantic
