@@ -16,7 +16,7 @@
 # version, you must also update couchbase-server-black-duck-manifest.yaml
 # in this same directory!
 #
-DECLARE_DEP (AWSSDK V2 VERSION 1.11.450 BUILD 1 PLATFORMS linux macosx)
+DECLARE_DEP (AWSSDK V2 VERSION 1.11.450 BUILD 2 PLATFORMS linux macosx)
 DECLARE_DEP (benchmark VERSION v1.8.3-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (breakpad V2 VERSION 20200430 BUILD 4 PLATFORMS linux windows)
 DECLARE_DEP (boost VERSION 1.82.0-cb6 PLATFORMS linux macosx windows)
