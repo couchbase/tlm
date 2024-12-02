@@ -55,6 +55,20 @@ IF (NOT CouchbaseExtraPackages_INCLUDED)
       EXCLUDE_FROM_ALL COMPONENT ${pkg}
     )
 
+    # Package-specific README
+    INSTALL (
+      FILES "${CMAKE_SOURCE_DIR}/product-texts/couchbase-server/${pkg_dash}/README.txt"
+      DESTINATION ${${pkg}_INSTALL_PREFIX}
+      EXCLUDE_FROM_ALL COMPONENT ${pkg}
+    )
+    # General EE license for all packages
+    INSTALL (
+      FILES "${CMAKE_SOURCE_DIR}/product-texts/couchbase-server/license/ee-license.txt"
+      RENAME "LICENSE.txt"
+      DESTINATION ${${pkg}_INSTALL_PREFIX}
+      EXCLUDE_FROM_ALL COMPONENT ${pkg}
+    )
+
     STRING (CONCAT _archive_base
       "${CMAKE_BINARY_DIR}/${pkg_dir}"
       "-${_platform}"
@@ -85,23 +99,6 @@ IF (NOT CouchbaseExtraPackages_INCLUDED)
     ADD_DEPENDENCIES(standalone-packages ${pkg_dash}-package)
   ENDFOREACH ()
   FOREACH (pkg ${CB_EXTRA_PACKAGES})
-  ENDFOREACH ()
-
-  # This one is just for the Developer Tools
-  INSTALL (
-    FILES "${CMAKE_SOURCE_DIR}/product-texts/capella/tools/README.txt"
-    DESTINATION ${dev_tools_INSTALL_PREFIX}
-    EXCLUDE_FROM_ALL COMPONENT dev_tools
-  )
-
-  # This one is for all tools
-  FOREACH (pkg ${CB_EXTRA_PACKAGES})
-    INSTALL (
-      FILES "${CMAKE_SOURCE_DIR}/product-texts/couchbase-server/license/ee-license.txt"
-      RENAME "LICENSE.txt"
-      DESTINATION ${${pkg}_INSTALL_PREFIX}
-      EXCLUDE_FROM_ALL COMPONENT ${pkg}
-    )
   ENDFOREACH ()
 
   INCLUDE (ParseArguments)
