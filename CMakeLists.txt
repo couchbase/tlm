@@ -120,14 +120,23 @@ ENDIF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 LIST (APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
 SET (COUCHBASE_SERVER_BUILD True CACHE BOOL "Indicating this is a server build")
 
+# Add the "realclean" top-level target that other things can hang
+# off of.
+ADD_CUSTOM_TARGET (realclean
+  COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target clean)
+
+# Set up stuff for finding Go - needs to be earlier than any DECLARE_DEP()
+# calls in case they use the GO_DEP option
+INCLUDE(FindCouchbaseGo)
+
 # Try to download the prebuilt 3rd-party dependencies by default
 IF (NOT DEFINED CB_DOWNLOAD_DEPS)
    SET(CB_DOWNLOAD_DEPS True
        CACHE BOOL "Download prebuilt dependencies by default")
 ENDIF (NOT DEFINED CB_DOWNLOAD_DEPS)
 
-# Have to add deps first, before any other part of the build tries to
-# FIND anything
+# Have to add deps before any other part of the build tries to FIND
+# anything (other than FindCouchbaseGo, which is its own thing)
 ADD_SUBDIRECTORY(tlm/deps)
 
 # Also install the necessary GCC libraries.
@@ -220,7 +229,6 @@ INCLUDE(FindCouchbaseLua)
 INCLUDE(FindCouchbasePythonInterp)
 INCLUDE(FindCouchbaseErlang)
 INCLUDE(FindCouchbaseDtrace)
-INCLUDE(FindCouchbaseGo)
 INCLUDE(FindCouchbaseBreakpad)
 INCLUDE(FindCouchbaseFlatbuffers)
 INCLUDE(FindCouchbaseValgrind)

@@ -150,7 +150,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
   # Declare a dependency
   FUNCTION (DECLARE_DEP name)
-    PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION;BUILD;DESTINATION" "V2;SKIP;NOINSTALL" ${ARGN})
+    PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION;BUILD;DESTINATION" "V2;SKIP;NOINSTALL;GO_DEP" ${ARGN})
 
     # If this dependency has already been declared, skip it.
     # Exception: if we are building the cbdeps packages themselves then
@@ -258,6 +258,16 @@ IF (NOT CBDownloadDeps_INCLUDED)
       MESSAGE (STATUS "Installing dependency: ${name}-${_dep_fullver}...")
       EXPLODE_ARCHIVE ("${_cachedep}" "${_explode_dir}")
       FILE (WRITE "${_explode_dir}/VERSION.txt" ${_dep_fullver})
+    ENDIF ()
+
+    # If this is a Go-built cbdeps package, extract the Go version to save
+    # in the go-versions.yaml report
+    IF (${dep_GO_DEP})
+      FILE (STRINGS "${_explode_dir}/META/go-version.txt" _gover LIMIT_COUNT 1)
+      # We don't keep track of the "requested Go version", as it's not very
+      # interesting after the cbdeps build. We use the cbdeps name as the
+      # TARGET; "cbdeps-build" as the USAGE; and assume UNSHIPPED is false.
+      SAVE_GO_TARGET (${_gover} ${_gover} ${name} "cbdeps-build" 0)
     ENDIF ()
 
     # Always add the dep subdir; this will "re-install" the dep every time you

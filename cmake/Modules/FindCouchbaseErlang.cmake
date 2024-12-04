@@ -74,13 +74,6 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
     MARK_AS_ADVANCED(ERLANG_FOUND ERL_EXECUTABLE ERLC_EXECUTABLE ESCRIPT_EXECUTABLE ERLANG_INCLUDE_PATH)
   ENDIF (NOT ERLANG_FOUND)
 
-  # Add the "realclean" top-level target that other things can hang
-  # off of.
-  IF (NOT TARGET)
-    ADD_CUSTOM_TARGET (realclean
-      COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target clean)
-  ENDIF (NOT TARGET)
-
   # Adds a target named <target> which runs "rebar compile" in the
   # current source directory, and a target named <target>-clean to run
   # "rebar clean". <target>-clean will be added as a dependency to
