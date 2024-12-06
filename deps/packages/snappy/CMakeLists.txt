@@ -25,6 +25,7 @@ ExternalProject_Add(snappy
              -D TEST_BEFORE_INSTALL=OFF
              -D SNAPPY_BUILD_BENCHMARKS=OFF
              -D SNAPPY_BUILD_TESTS=OFF
+             -D CMAKE_INSTALL_RPATH='\$ORIGIN'
 
   BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install

@@ -339,6 +339,14 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       SET (_ldflags "${Go_LDFLAGS}")
     ENDIF ()
 
+    # Prevent compressing dwarf headers
+    SET (_ldflags "${_ldflags} -compressdwarf=false")
+
+    if (UNIX AND NOT APPLE)
+      # Ensure GNU build-id is present
+      SET (_ldflags "${_ldflags} -B gobuildid")
+    endif ()
+
     # If Sanitizers are enabled then add a runtime linker path to
     # locate libasan.so / libubsan.so etc.
     # This isn't usually needed if we are running on the same machine

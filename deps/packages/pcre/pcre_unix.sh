@@ -12,6 +12,8 @@ INSTALL_DIR=$1
 PLATFORM=$2
 VERSION=$3
 
+export LDFLAGS="-Wl,-rpath,'\$\$ORIGIN/../lib'"
+
 ./autogen.sh || exit 1
 ./configure --prefix=${INSTALL_DIR} || exit 1
 make && make install

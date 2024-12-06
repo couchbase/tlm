@@ -178,7 +178,7 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 #
 # And here is the set of "latest" dependencies.
 #
-_ADD_DEP_PACKAGE(snappy 1.1.10 1.1.10 2)
+_ADD_DEP_PACKAGE(snappy 1.1.10 1.1.10 3)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
 _ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 12)
@@ -212,7 +212,7 @@ _ADD_DEP_PACKAGE(googletest 1.14.0 1.14.0 1)
 
 _ADD_DEP_PACKAGE(folly v2024.01.08.00-couchbase v2024.01.08.00-couchbase 2)
 _ADD_DEP_PACKAGE(grpc 1.59.3 v1.59.3 1)
-_ADD_DEP_PACKAGE(pcre 8.44 v8.44 3)
+_ADD_DEP_PACKAGE(pcre 8.44 v8.44 4)
 _ADD_DEP_PACKAGE(prometheus-cpp v1.2.1-couchbase v1.2.1-couchbase 1)
 _ADD_DEP_PACKAGE(simdutf 3.2.14 3.2.14 1)
 _ADD_DEP_PACKAGE(spdlog v1.13.0 v1.13.0 2)
