@@ -40,7 +40,7 @@ components:
         versions: [ 8.9.1 ]
     double-conversion:
         bd-id: 7f59c14e-52c9-440b-bee8-2427850c3e90
-        versions: [ v3.0.0 ]
+        versions: [ v3.3.0 ]
     erlang:
         bd-id: 2c804760-a3e3-4ba1-abfb-77525633b966
         cbdeps-versions: [ 26.2 ]
@@ -51,9 +51,12 @@ components:
     flatbuffers:
         bd-id: ae906881-37fd-4af4-8fe7-e435fd2056af
         versions: [ v1.10.0 ]
+    fast_float:
+        bd-id: 1aad74aa-0d4c-446f-b3ed-75c64eee34de
+        versions: [ 7.0.0 ]
     fmt:
         bd-id: eae20828-18b8-478f-83b3-4a058748a28b
-        versions: [ 10.1.1 ]
+        versions: [ 11.0.2 ]
     folly:
         bd-id: 7f50be63-e94c-48d6-ac73-c12965b5c9b5
         versions: [ v2024.01.08.00 ]
@@ -111,7 +114,7 @@ components:
         versions: [ 1.1.10 ]
     spdlog:
         bd-id: 7785114c-5b78-4aad-8771-72a739a1f06e
-        versions: [ v1.13.0 ]
+        versions: [ v1.15.0 ]
     v8:
         bd-id: 3eec43ae-12a3-4035-bceb-9b5bd8eefe79
         versions: [ 12.1.285.26 ]

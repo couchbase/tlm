@@ -15,11 +15,7 @@ cd build
 
 # Set macos deployment target
 if [ "$(uname -s)" == "Darwin" ]; then
-    if [ "$(uname -m)" == "x86_64" ]; then
-        export MACOSX_DEPLOYMENT_TARGET=10.15
-    else
-        export MACOSX_DEPLOYMENT_TARGET=12.0
-    fi
+    export MACOSX_DEPLOYMENT_TARGET=13
 fi
 
 # Work-around for generating generic "linux" deps
