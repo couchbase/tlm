@@ -119,6 +119,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # appropriate Go compiler to use. This is also responsible for
   # creating the go-versions.csv artifact.
   # Parameters:
+  #   VERSION - version of Go to use; may be eg. SUPPORTED_NEWER
   #   var - variable to set to the full path of GOROOT
   #   ver - variable to set to the final used Go version
   #   TARGET - name of target this root is being used for
@@ -193,18 +194,27 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
     GET_GO_VERSION ("${_ver_final}" ${var})
     SET (${ver} ${_ver_final})
+    SAVE_GO_TARGET (${_ver_final} ${_request_version} ${TARGET} ${USAGE} ${UNSHIPPED})
+  ENDMACRO (GET_GOROOT)
 
-    # Save this request keyed by final Go version, as well as updating the
-    # list of used Go versions.
+  # Save a Go version usage, keyed by final Go version, as well as updating the
+  # list of used Go versions.
+  # Parameters:
+  #   GOVER - fully-qualified Go version used to build the target
+  #   REQUEST_GOVER - the initially-requested Go version, eg. SUPPORTED_NEWER
+  #   TARGET - build target name
+  #   USAGE - description of how the target is used in the build
+  #   UNSHIPPED - true if TARGET is not a shipped deliverable
+  MACRO (SAVE_GO_TARGET GOVER REQUEST_GOVER TARGET USAGE UNSHIPPED)
     FILE (RELATIVE_PATH _repodir "${CMAKE_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
-    SET_PROPERTY (GLOBAL APPEND PROPERTY "CB_GO_VERSION_${_ver_final}"
-        "${TARGET},${_repodir},${VERSION},${USAGE},${UNSHIPPED}")
+    SET_PROPERTY (GLOBAL APPEND PROPERTY "CB_GO_VERSION_${GOVER}"
+        "${TARGET},${_repodir},${REQUEST_GOVER},${USAGE},${UNSHIPPED}")
     GET_PROPERTY (_go_versions GLOBAL PROPERTY CB_GO_VERSIONS)
-    LIST (APPEND _go_versions "${_ver_final}")
+    LIST (APPEND _go_versions "${GOVER}")
     LIST (REMOVE_DUPLICATES _go_versions)
     LIST (SORT _go_versions COMPARE NATURAL)
     SET_PROPERTY (GLOBAL PROPERTY CB_GO_VERSIONS "${_go_versions}")
-  ENDMACRO (GET_GOROOT)
+  ENDMACRO (SAVE_GO_TARGET)
 
   # Master target for "all go binaries"
   ADD_CUSTOM_TARGET(all-go)

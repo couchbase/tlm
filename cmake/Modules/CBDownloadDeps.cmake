@@ -150,7 +150,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
   # Declare a dependency
   FUNCTION (DECLARE_DEP name)
-    PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION;BUILD;DESTINATION" "V2;SKIP;NOINSTALL;ALLOW_MULTIPLE" ${ARGN})
+    PARSE_ARGUMENTS (dep "PLATFORMS" "VERSION;BUILD;DESTINATION" "V2;SKIP;NOINSTALL;GO_DEP;ALLOW_MULTIPLE" ${ARGN})
 
     # Error check: ALLOW_MULTIPLE requires DESTINATION, since otherwise
     # the multiple downloaded versions will be unpacked into the same
@@ -269,6 +269,18 @@ IF (NOT CBDownloadDeps_INCLUDED)
       FILE (WRITE "${_explode_dir}/VERSION.txt" ${_dep_fullver})
     ENDIF ()
 
+    # If this is a Go-built cbdeps package, extract the Go version to save
+    # in the go-versions.yaml report
+    IF (${dep_GO_DEP})
+      FILE (STRINGS "${_explode_dir}/META/go-version.txt" _gover LIMIT_COUNT 1)
+      # We don't keep track of the "requested Go version", as it's not very
+      # interesting after the cbdeps build. We use the cbdeps name as the
+      # TARGET; "cbdeps-build" as the USAGE; and assume UNSHIPPED is false.
+      SAVE_GO_TARGET (${_gover} ${_gover} ${name} "cbdeps-build" 0)
+    ENDIF ()
+
+    # Always add the dep subdir; this will "re-install" the dep every time you
+    # run CMake, which might be wasteful, but at least should be safe.
     IF (EXISTS ${_explode_dir}/CMakeLists.txt)
       IF (dep_NOINSTALL)
         MESSAGE(STATUS "Skip running CMakeLists from the package")

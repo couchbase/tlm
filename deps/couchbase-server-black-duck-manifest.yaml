@@ -134,15 +134,19 @@ components:
     googletest: []
     benchmark: []
 
-    # Include these here even though they're actually included in the builds
-    # by server-linux-build.sh. We actually build gcc 10.2.0, but that
-    # version doesn't exist in Black Duck, so call it 10.2.1.
+    # These files are copied from the build agent in the top-level
+    # CMakeLists.txt (using the _install_gcc_file macro)
+    #
+    # Although we use gcc 10.2.0 to build Neo, the libgcc/libstdc++ libraries
+    # are from 13.2.0. This is to prevent RPATHs in our dependencies which are
+    # pointed at the gcc-10.2.0 libraries from causing issues in gcc13 builds
+    # of Couchbase Server
     libgcc:
         bd-id: e12b8d28-cc06-4ffe-9393-21982b677571
         versions: [ 13.2.0 ]
         license-approved: true
-    libstdc++:
-        bd-id: 899d93c9-1182-4d34-9349-5bf3e34aaa69
+    libstdc++6:
+        bd-id: 00b4e8b2-e862-45eb-a30a-41f2e65dcdcf
         versions: [ 13.2.0 ]
         license-approved: true
 
