@@ -131,14 +131,23 @@ SET (COUCHBASE_SERVER_BUILD True CACHE BOOL "Indicating this is a server build")
 # override them if they're already set.
 SET (CMAKE_INSTALL_LIBDIR "lib" CACHE STRING "Override libdir to violate FHS" FORCE)
 
+# Add the "realclean" top-level target that other things can hang
+# off of.
+ADD_CUSTOM_TARGET (realclean
+  COMMAND "${CMAKE_COMMAND}" --build "${CMAKE_BINARY_DIR}" --target clean)
+
+# Set up stuff for finding Go - needs to be earlier than any DECLARE_DEP()
+# calls in case they use the GO_DEP option
+INCLUDE(FindCouchbaseGo)
+
 # Try to download the prebuilt 3rd-party dependencies by default
 IF (NOT DEFINED CB_DOWNLOAD_DEPS)
    SET(CB_DOWNLOAD_DEPS True
        CACHE BOOL "Download prebuilt dependencies by default")
 ENDIF (NOT DEFINED CB_DOWNLOAD_DEPS)
 
-# Have to add deps first, before any other part of the build tries to
-# FIND anything
+# Have to add deps before any other part of the build tries to FIND
+# anything (other than FindCouchbaseGo, which is its own thing)
 ADD_SUBDIRECTORY(tlm/deps)
 
 # Also set up python first, since cbpy is installed in the previous step
@@ -232,7 +241,6 @@ INCLUDE(FindCouchbaseLibevent)
 INCLUDE(FindCouchbaseCurl)
 INCLUDE(FindCouchbaseLua)
 INCLUDE(FindCouchbaseErlang)
-INCLUDE(FindCouchbaseGo)
 INCLUDE(FindCouchbaseBreakpad)
 INCLUDE(FindCouchbaseFlatbuffers)
 INCLUDE(FindCouchbaseValgrind)
