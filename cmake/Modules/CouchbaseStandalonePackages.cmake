@@ -183,7 +183,7 @@ IF (NOT CouchbaseExtraPackages_INCLUDED)
             GET_RUNTIME_DEPENDENCIES
             EXECUTABLES "${CMAKE_INSTALL_PREFIX}/bin/@@EXE_NAME@@"
             PRE_EXCLUDE_REGEXES "^ld-linux.*"
-            POST_EXCLUDE_REGEXES "^/lib.*" "^/usr/lib.*" "^/opt/gcc.*"
+            POST_EXCLUDE_REGEXES "^/lib.*" "^/usr/lib.*" "^/opt/gcc.*" "C:/Windows/system32/.*"
             RESOLVED_DEPENDENCIES_VAR _deplibs
             UNRESOLVED_DEPENDENCIES_VAR _unresolvedeps
           )
