@@ -49,7 +49,9 @@ endif ()
 # Listing a library twice is benign - the linker will just include it once
 # in the order of the first instance, so disable this warning to avoid the
 # noise
-list(APPEND _cb_c_flags -Wl,-no_warn_duplicate_libraries)
+if (APPLE)
+    list(APPEND _cb_c_flags -Wl,-no_warn_duplicate_libraries)
+endif()
 
 # Clang-15 emits DWARF v5 debugging information by default, however
 # most of our build images lack a version of GDB which supports
