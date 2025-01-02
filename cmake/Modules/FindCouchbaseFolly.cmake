@@ -6,7 +6,6 @@
 
 # Folly required dependancies:
 INCLUDE(FindCouchbaseDoubleConversion)
-INCLUDE(FindCouchbaseGflags)
 INCLUDE(FindCouchbaseGlog)
 INCLUDE(FindCouchbaseLibevent)
 INCLUDE(FindCouchbaseOpenSSL)
@@ -94,7 +93,6 @@ if(NOT DOUBLE_CONVERSION_INCLUDE_DIR OR NOT DOUBLE_CONVERSION_LIBRARIES)
 endif()
 
 set(folly_dependancies ${DOUBLE_CONVERSION_LIBRARIES}
-            ${GFLAGS_LIBRARIES}
             ${GLOG_LIBRARIES}
             ${CMAKE_DL_LIBS}
             Boost::context

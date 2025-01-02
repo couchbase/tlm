@@ -16,10 +16,6 @@
 # Set the compiler flags for Clang C and C++ compilator
 include(CheckCXXCompilerFlag)
 
-if (APPLE AND ${CMAKE_C_COMPILER_VERSION} VERSION_LESS 15.0)
-    message(FATAL_ERROR "You need at least version 15 of Apple clang to build Couchbase")
-endif()
-
 # Add common flags for C and C++
 if (CB_CODE_COVERAGE)
     list(APPEND _cb_c_flags
@@ -49,7 +45,7 @@ endif ()
 # Listing a library twice is benign - the linker will just include it once
 # in the order of the first instance, so disable this warning to avoid the
 # noise
-if (APPLE)
+if (APPLE AND ${CMAKE_C_COMPILER_VERSION} VERSION_GREATER_EQUAL 15.0)
     list(APPEND _cb_c_flags -Wl,-no_warn_duplicate_libraries)
 endif()
 

@@ -8,15 +8,13 @@ set(_folly_deps_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
 set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 
 DECLARE_DEP (boost VERSION 1.82.0-cb6 PLATFORMS linux macosx windows)
-DECLARE_DEP (double-conversion VERSION 3.3.0-cb1 PLATFORMS linux macosx windows)
-DECLARE_DEP (fast_float V2 VERSION 7.0.0 BUILD 1 PLATFORMS linux macosx windows)
-DECLARE_DEP (fmt VERSION 11.0.2-cb1 PLATFORMS linux macosx windows)
-DECLARE_DEP (gflags V2 VERSION 2.2.2 BUILD 1 PLATFORMS linux macosx windows)
+DECLARE_DEP (double-conversion VERSION 3.0.0-cb6 PLATFORMS linux macosx windows)
+DECLARE_DEP (fmt VERSION 10.1.1-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows_msvc2015 windows)
 DECLARE_DEP (jemalloc V2 VERSION 5.3.0 BUILD 10 PLATFORMS linux macosx windows)
 DECLARE_DEP (libevent VERSION 2.1.11-cb12 PLATFORMS linux macosx windows)
 DECLARE_DEP (openssl V2 VERSION 3.1.4 BUILD 1 PLATFORMS linux macosx windows)
-DECLARE_DEP (zlib V2 VERSION 1.2.13 BUILD 2 PLATFORMS linux macosx windows)
+DECLARE_DEP (snappy VERSION 1.1.10-cb2 PLATFORMS linux macosx windows)
 
 # Restore the INSTALL_PREFIX
 set(CMAKE_INSTALL_PREFIX ${_orig_install_prefix})
@@ -42,8 +40,8 @@ endif()
 list(APPEND cache_args -DCMAKE_INCLUDE_PATH:STRING=${folly_include_paths})
 list(APPEND cache_args -DCMAKE_CXX_FLAGS:STRING=${cxx_flags})
 list(APPEND cache_args -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo)
-list(APPEND cache_args "-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/install")
-list(APPEND cache_args -DCMAKE_CXX_STANDARD=17)
+list(APPEND cache_args "-DCMAKE_INSTALL_PREFIX:PATH=\
+${CMAKE_CURRENT_BINARY_DIR}/install")
 list(APPEND cache_args -DBUILD_SHARED_LIBS:STRING=OFF)
 list(APPEND cache_args -DBoost_ADDITIONAL_VERSIONS:STRING=1.82)
 list(APPEND cache_args -DBoost_DETAILED_FAILURE_MSG:STRING=ON)
@@ -51,21 +49,13 @@ list(APPEND cache_args -DBoost_USE_STATIC_LIBS:STRING=ON)
 list(APPEND cache_args -DBoost_NO_SYSTEM_PATHS:BOOL=ON)
 list(APPEND cache_args -DBoost_NO_BOOST_CMAKE:BOOL=ON)
 list(APPEND cache_args -DBOOST_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/boost.exploded)
-list(APPEND cache_args -DFmt_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
-list(APPEND cache_args -Dfmt_DIR:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded/lib/cmake/fmt)
-list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:BOOL=TRUE)
-list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibLZMA:BOOL=TRUE)
-list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Zstd:BOOL=TRUE)
-list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LZ4:BOOL=TRUE)
-list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Snappy:BOOL=TRUE)
-list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibDwarf:BOOL=TRUE)
-list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Libiberty:BOOL=TRUE)
-list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibAIO:BOOL=TRUE)
-list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibUring:BOOL=TRUE)
-list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Libsodium:BOOL=TRUE)
+list(APPEND cache_args -DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
+list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:BOOL=TRUE)
 
 if(APPLE)
-   list(APPEND cache_args -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13)
+   # Folly makes use of std::filesystem functionality which is introduced in
+   # 10.15 (Catalina).
+   list(APPEND cache_args -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.15)
 
    # Folly attempts to use preadv/pwritev if available on the build platform,
    # regardless of the of the specified deployment target. We need to
@@ -79,7 +69,7 @@ if(WIN32)
    # to defining all public symbols as dllimport which results in linker
    # errors - the compiler is expecting dll(shared) symbols and not static.
    # Explicitly define GOOGLE_GLOG_DLL_DECL as empty to avoid this.
-   list(APPEND cache_args "-DCMAKE_CXX_FLAGS:STRING= -DGOOGLE_GLOG_DLL_DECL= -DGFLAGS_DLL_DECLARE_FLAG=")
+   list(APPEND cache_args "-DCMAKE_CXX_FLAGS:STRING= -DGOOGLE_GLOG_DLL_DECL=")
 
    # Folly code generation (GenerateFingerprintTables.exe) needs to run
    # at build-time; and to do so it needs the runtime dependancies of folly
@@ -114,13 +104,6 @@ ExternalProject_Add(folly
 # required. Only build the TSan package on linux and macos platforms to save
 # time.
 if (UNIX)
-   if (APPLE)
-      set(folly_clang_compiler "clang")
-      set(folly_clangxx_compiler "clang++")
-   else ()
-      set(folly_clang_compiler "/opt/clang-15.0.7/bin/clang-15")
-      set(folly_clangxx_compiler "/opt/clang-15.0.7/bin/clang++-15")
-   endif ()
    # Not designed to be built independently of the normal folly package build. The
    # build will only install the package and not the source.
    ExternalProject_Add(follytsan
@@ -128,8 +111,8 @@ if (UNIX)
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
         CMAKE_CACHE_ARGS ${cache_args}
-            "-DCMAKE_C_COMPILER:STRING=${folly_clang_compiler}"
-            "-DCMAKE_CXX_COMPILER:STRING=${folly_clangxx_compiler}"
+            "-DCMAKE_C_COMPILER:STRING=clang"
+            "-DCMAKE_CXX_COMPILER:STRING=clang++"
             "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags} -fsanitize=thread"
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
@@ -147,8 +130,8 @@ if (UNIX)
             PATCH_COMMAND ${folly_patch_command}
             CMAKE_CACHE_ARGS ${cache_args}
                 -DCMAKE_BUILD_TYPE:STRING=DebugOptimized
-                "-DCMAKE_C_COMPILER:STRING=${folly_clang_compiler}"
-                "-DCMAKE_CXX_COMPILER:STRING=${folly_clangxx_compiler}"
+                -DCMAKE_C_COMPILER:STRING=clang
+                -DCMAKE_CXX_COMPILER:STRING=clang++
                 "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags} -fsanitize=address -fsanitize=undefined"
             BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
             BUILD_IN_SOURCE 1
@@ -164,12 +147,7 @@ endif()
 # dependencies _also_ linked against Debug CRT.
 # We also build it for macOS / Linux as it can be useful to have a build of
 # folly with Debug checks enabled.
-if (NOT WIN32)
-    # There is currently a problem building the windows package with Debug info
-    # enabled as it tries to search for debug variants of gflags. AFAIK we don't
-    # currently use the windows debug variant anywhere, so just ignore it for
-    # now
-   ExternalProject_Add(folly.debug
+ExternalProject_Add(folly.debug
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
@@ -180,8 +158,7 @@ if (NOT WIN32)
         BUILD_IN_SOURCE 1
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
         )
-   ExternalProject_Add_StepDependencies(folly download folly.debug)
-endif()
+ExternalProject_Add_StepDependencies(folly download folly.debug)
 
 # cbdeps boilerplate
 _ADD_PACKAGE_STEP()

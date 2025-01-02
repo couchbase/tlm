@@ -21,6 +21,7 @@ ExternalProject_Add(fmt
   TEST_BEFORE_INSTALL 1
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
+  INSTALL_COMMAND $(MAKE) install
 )
 
 # Additionally build a Debug variant on Windows, as for a debug build of
@@ -40,6 +41,7 @@ if (WIN32)
      TEST_BEFORE_INSTALL 1
 
      INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
+     INSTALL_COMMAND $(MAKE) install
    )
    ExternalProject_Add_StepDependencies(fmt download fmt_WinDebugCRT)
 endif()
