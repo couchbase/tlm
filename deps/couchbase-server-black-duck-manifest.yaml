@@ -84,9 +84,6 @@ components:
     libuv:
         bd-id: ecefe33e-be8d-47b7-b02a-ee0cfe7ab2f2
         versions: [ 1.20.3 ]
-    lz4:
-        bd-id: 5ca46883-74f4-4b26-8864-fc1801deb37c
-        versions: [ 1.9.4 ]
     numactl:
         bd-id: fe3e8b96-6c8e-411f-991f-697ecfed5605
         versions: [ 2.0.11 ]
