@@ -43,6 +43,8 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # END THINGS YOU MAY NEED TO UPDATE OVER TIME
   ####################################################################
 
+  OPTION (CB_DWARF_HEADER_COMPRESSION "Enable DWARF header compression" ON)
+
   IF (CB_DEBUG_GO_TARGETS)
     INCLUDE (ListTargetProperties)
   ENDIF ()
@@ -349,11 +351,13 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       SET (_ldflags "${Go_LDFLAGS}")
     ENDIF ()
 
-    # Prevent compressing dwarf headers
-    SET (_ldflags "${_ldflags} -compressdwarf=false")
+    # DWARF header compression
+    if (NOT CB_DWARF_HEADER_COMPRESSION)
+      SET (_ldflags "${_ldflags} -compressdwarf=false")
+    endif ()
 
+    # Ensure GNU build-id is present
     if (UNIX AND NOT APPLE)
-      # Ensure GNU build-id is present
       SET (_ldflags "${_ldflags} -B gobuildid")
     endif ()
 
