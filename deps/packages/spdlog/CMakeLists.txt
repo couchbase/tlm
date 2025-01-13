@@ -9,6 +9,12 @@ DECLARE_DEP (fmt VERSION 10.1.1-cb1 PLATFORMS linux macosx windows)
 list(APPEND cache_args -DCMAKE_CXX_VISIBILITY_PRESET:STRING=hidden)
 list(APPEND cache_args -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON)
 list(APPEND cache_args -DSPDLOG_BUILD_EXAMPLE:BOOL=OFF)
+if (CMAKE_C_COMPILER)
+    list(APPEND cache_args -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER})
+endif()
+if (CMAKE_CXX_COMPILER)
+    list(APPEND cache_args -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER})
+endif()
 
 # Use the same (external) fmtlib library as the rest of the server build.
 list(APPEND cache_args -DSPDLOG_FMT_EXTERNAL:BOOL=ON)
@@ -62,8 +68,6 @@ if (${PLATFORM} STREQUAL "linux" OR ${PLATFORM} MATCHES "macos")
 
             PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/custom_level_names.patch
             CMAKE_CACHE_ARGS ${cache_args}
-                "-DCMAKE_C_COMPILER:STRING=clang"
-                "-DCMAKE_CXX_COMPILER:STRING=clang++"
                 "-DCMAKE_CXX_FLAGS:STRING=-fsanitize=thread"
             CMAKE_ARGS -D CMAKE_BUILD_TYPE=RelWithDebInfo -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
 
