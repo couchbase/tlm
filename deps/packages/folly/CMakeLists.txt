@@ -1,14 +1,6 @@
 # Downloads the declared version of Folly builds it.
 include(ExternalProject)
 
-if (APPLE)
-    set(folly_clang_compiler "clang")
-    set(folly_clangxx_compiler "clang++")
-elseif(UNIX)
-    set(folly_clang_compiler "/opt/clang-18.1.8/bin/clang-18")
-    set(folly_clangxx_compiler "/opt/clang-18.1.8/bin/clang++-18")
-endif()
-
 # Expand folly's deps to a separate install directory so we don't end up
 # packaging them up in the folly cbdep itself.
 set(_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
@@ -119,6 +111,8 @@ if (UNIX)
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
         CMAKE_CACHE_ARGS ${cache_args}
+            "-DCMAKE_C_COMPILER:STRING=clang"
+            "-DCMAKE_CXX_COMPILER:STRING=clang++"
             "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags} -fsanitize=thread"
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
@@ -136,8 +130,8 @@ if (UNIX)
             PATCH_COMMAND ${folly_patch_command}
             CMAKE_CACHE_ARGS ${cache_args}
                 -DCMAKE_BUILD_TYPE:STRING=DebugOptimized
-                "-DCMAKE_C_COMPILER:STRING=${folly_clang_compiler}"
-                "-DCMAKE_CXX_COMPILER:STRING=${folly_clangxx_compiler}"
+                -DCMAKE_C_COMPILER:STRING=clang
+                -DCMAKE_CXX_COMPILER:STRING=clang++
                 "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags} -fsanitize=address -fsanitize=undefined"
             BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
             BUILD_IN_SOURCE 1

@@ -210,7 +210,7 @@ _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 3)
 _ADD_DEP_PACKAGE(benchmark v1.8.3 v1.8.3 1)
 _ADD_DEP_PACKAGE(googletest 1.14.0 1.14.0 1)
 
-_ADD_DEP_PACKAGE(folly v2024.01.08.00-couchbase v2024.01.08.00-couchbase 3)
+_ADD_DEP_PACKAGE(folly v2024.01.08.00-couchbase v2024.01.08.00-couchbase 2)
 _ADD_DEP_PACKAGE(grpc 1.59.3 v1.59.3 1)
 _ADD_DEP_PACKAGE(pcre 8.44 v8.44 4)
 _ADD_DEP_PACKAGE(prometheus-cpp v1.2.1-couchbase v1.2.1-couchbase 1)
