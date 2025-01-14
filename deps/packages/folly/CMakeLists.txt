@@ -14,7 +14,6 @@ DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows_msvc2015 win
 DECLARE_DEP (jemalloc V2 VERSION 5.3.0 BUILD 10 PLATFORMS linux macosx windows)
 DECLARE_DEP (libevent VERSION 2.1.11-cb12 PLATFORMS linux macosx windows)
 DECLARE_DEP (openssl V2 VERSION 3.1.4 BUILD 1 PLATFORMS linux macosx windows)
-DECLARE_DEP (snappy VERSION 1.1.10-cb2 PLATFORMS linux macosx windows)
 
 # Restore the INSTALL_PREFIX
 set(CMAKE_INSTALL_PREFIX ${_orig_install_prefix})
@@ -40,8 +39,8 @@ endif()
 list(APPEND cache_args -DCMAKE_INCLUDE_PATH:STRING=${folly_include_paths})
 list(APPEND cache_args -DCMAKE_CXX_FLAGS:STRING=${cxx_flags})
 list(APPEND cache_args -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo)
-list(APPEND cache_args "-DCMAKE_INSTALL_PREFIX:PATH=\
-${CMAKE_CURRENT_BINARY_DIR}/install")
+list(APPEND cache_args -DCMAKE_CXX_STANDARD=17)
+list(APPEND cache_args "-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/install")
 list(APPEND cache_args -DBUILD_SHARED_LIBS:STRING=OFF)
 list(APPEND cache_args -DBoost_ADDITIONAL_VERSIONS:STRING=1.82)
 list(APPEND cache_args -DBoost_DETAILED_FAILURE_MSG:STRING=ON)
@@ -50,12 +49,20 @@ list(APPEND cache_args -DBoost_NO_SYSTEM_PATHS:BOOL=ON)
 list(APPEND cache_args -DBoost_NO_BOOST_CMAKE:BOOL=ON)
 list(APPEND cache_args -DBOOST_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/boost.exploded)
 list(APPEND cache_args -DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
-list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_ZLIB:BOOL=TRUE)
+list(APPEND cache_args -Dfmt_DIR:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded/lib/cmake/fmt)
+list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:BOOL=TRUE)
+list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibLZMA:BOOL=TRUE)
+list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Zstd:BOOL=TRUE)
+list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LZ4:BOOL=TRUE)
+list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Snappy:BOOL=TRUE)
+list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibDwarf:BOOL=TRUE)
+list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Libiberty:BOOL=TRUE)
+list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibAIO:BOOL=TRUE)
+list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibUring:BOOL=TRUE)
+list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Libsodium:BOOL=TRUE)
 
 if(APPLE)
-   # Folly makes use of std::filesystem functionality which is introduced in
-   # 10.15 (Catalina).
-   list(APPEND cache_args -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=10.15)
+   list(APPEND cache_args -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13)
 
    # Folly attempts to use preadv/pwritev if available on the build platform,
    # regardless of the of the specified deployment target. We need to
@@ -111,8 +118,6 @@ if (UNIX)
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
         CMAKE_CACHE_ARGS ${cache_args}
-            "-DCMAKE_C_COMPILER:STRING=clang"
-            "-DCMAKE_CXX_COMPILER:STRING=clang++"
             "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags} -fsanitize=thread"
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
@@ -130,8 +135,6 @@ if (UNIX)
             PATCH_COMMAND ${folly_patch_command}
             CMAKE_CACHE_ARGS ${cache_args}
                 -DCMAKE_BUILD_TYPE:STRING=DebugOptimized
-                -DCMAKE_C_COMPILER:STRING=clang
-                -DCMAKE_CXX_COMPILER:STRING=clang++
                 "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags} -fsanitize=address -fsanitize=undefined"
             BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
             BUILD_IN_SOURCE 1
