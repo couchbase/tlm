@@ -173,6 +173,17 @@ if (WIN32)
   endif(HOST_ARCH STREQUAL "amd64")
 endif(WIN32)
 
+# Common CMake cache arguments for all packages to set compiler and C++ standard version
+# to avoid duplicating this in each of the individual package CMakeLists.txt files.
+list(APPEND common_cmake_cache_args -DCMAKE_CXX_STANDARD:STRING=17)
+list(APPEND common_cmake_cache_args -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER})
+list(APPEND common_cmake_cache_args -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER})
+
+if (APPLE)
+    # As of Morpheus the oldest supported target is 13
+    list(APPEND common_cmake_cache_args -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13)
+endif ()
+
 ADD_CUSTOM_TARGET(build-and-cache-all)
 
 #
@@ -208,7 +219,7 @@ _ADD_DEP_PACKAGE(double-conversion 3.0.0 v3.0.0 6)
 _ADD_DEP_PACKAGE(fmt 10.1.1 10.1.1 1)
 _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 3)
 _ADD_DEP_PACKAGE(benchmark v1.8.3 v1.8.3 1)
-_ADD_DEP_PACKAGE(googletest 1.14.0 1.14.0 1)
+_ADD_DEP_PACKAGE(googletest 1.15.2 1.15.2 1)
 
 _ADD_DEP_PACKAGE(folly v2024.01.08.00-couchbase v2024.01.08.00-couchbase 4)
 _ADD_DEP_PACKAGE(grpc 1.59.3 v1.59.3 1)
