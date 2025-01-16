@@ -218,7 +218,7 @@ _ADD_DEP_PACKAGE(openjdk-rt 1.8.0.171 UNUSED 2)
 _ADD_DEP_PACKAGE(double-conversion 3.0.0 v3.0.0 6)
 _ADD_DEP_PACKAGE(fmt 10.1.1 10.1.1 1)
 _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 3)
-_ADD_DEP_PACKAGE(benchmark v1.8.3 v1.8.3 1)
+_ADD_DEP_PACKAGE(benchmark v1.9.1 v1.9.1 1)
 _ADD_DEP_PACKAGE(googletest 1.15.2 1.15.2 1)
 
 _ADD_DEP_PACKAGE(folly v2024.01.08.00-couchbase v2024.01.08.00-couchbase 4)
