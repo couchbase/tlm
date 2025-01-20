@@ -6,6 +6,7 @@
 
 # Folly required dependancies:
 INCLUDE(FindCouchbaseDoubleConversion)
+INCLUDE(FindCouchbaseGflags)
 INCLUDE(FindCouchbaseGlog)
 INCLUDE(FindCouchbaseLibevent)
 INCLUDE(FindCouchbaseOpenSSL)
@@ -41,10 +42,10 @@ endif ()
 if(CB_THREADSANITIZER)
     set(folly_lib follytsan)
 elseif(CB_ADDRESSSANITIZER)
-    # We also have a separate ASan+UBsan build of the library as otherwise
-    # ASan/UBSan build flags spurious errors when linking to Folly (as we
+    # We also have a separate ASan build of the library as otherwise
+    # ASan build flags spurious errors when linking to Folly (as we
     # end up with a mix of sanitized & unsanitized code).
-    set(folly_lib follyasan_ubsan)
+    set(folly_lib follyasan)
 else(CB_THREADSANITIZER)
     set(folly_lib folly)
 endif(CB_THREADSANITIZER)
@@ -54,18 +55,18 @@ find_library(FOLLY_LIBRARY_RELEASE
              HINTS ${_folly_exploded}/lib
              ${_folly_no_default_path})
 
-if (CB_THREADSANITIZER OR CB_ADDRESSSANITIZER OR CB_UNDEFINEDSANITIZER)
+if (CB_THREADSANITIZER OR CB_ADDRESSSANITIZER)
     # MB-57715 Use TSAN version for debug builds as well
     set(FOLLY_LIBRARY_DEBUG ${FOLLY_LIBRARY_RELEASE})
     find_library(FOLLY_LIBRARIES_UNSANITIZED
                  NAMES folly
                  HINTS ${_folly_exploded}/lib
-                 ${_jemalloc_no_default_path})
+                 ${_folly_no_default_path})
 else ()
     find_library(FOLLY_LIBRARY_DEBUG
             NAMES follyd
             HINTS ${_folly_exploded}/lib
-            ${_jemalloc_no_default_path})
+            ${_folly_no_default_path})
 endif()
 
 # Defines FOLLY_LIBRARY / LIBRARIES to the correct Debug / Release
@@ -93,6 +94,7 @@ if(NOT DOUBLE_CONVERSION_INCLUDE_DIR OR NOT DOUBLE_CONVERSION_LIBRARIES)
 endif()
 
 set(folly_dependancies ${DOUBLE_CONVERSION_LIBRARIES}
+            ${GFLAGS_LIBRARIES}
             ${GLOG_LIBRARIES}
             ${CMAKE_DL_LIBS}
             Boost::context

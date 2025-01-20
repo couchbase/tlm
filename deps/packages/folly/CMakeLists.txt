@@ -8,12 +8,15 @@ set(_folly_deps_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
 set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 
 DECLARE_DEP (boost VERSION 1.82.0-cb6 PLATFORMS linux macosx windows)
-DECLARE_DEP (double-conversion VERSION 3.0.0-cb6 PLATFORMS linux macosx windows)
+DECLARE_DEP (double-conversion VERSION 3.3.0-cb1 PLATFORMS linux macosx windows)
+DECLARE_DEP (fast_float V2 VERSION 7.0.0 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (fmt VERSION 10.1.1-cb1 PLATFORMS linux macosx windows)
+DECLARE_DEP (gflags V2 VERSION 2.2.2 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows_msvc2015 windows)
 DECLARE_DEP (jemalloc V2 VERSION 5.3.0 BUILD 10 PLATFORMS linux macosx windows)
 DECLARE_DEP (libevent VERSION 2.1.11-cb12 PLATFORMS linux macosx windows)
 DECLARE_DEP (openssl V2 VERSION 3.1.4 BUILD 1 PLATFORMS linux macosx windows)
+DECLARE_DEP (zlib V2 VERSION 1.2.13 BUILD 2 PLATFORMS linux macosx windows)
 
 # Restore the INSTALL_PREFIX
 set(CMAKE_INSTALL_PREFIX ${_orig_install_prefix})
@@ -29,26 +32,24 @@ list(APPEND folly_library_paths ${_folly_deps_install}/lib)
 
 # Create a list of args that we want to pass to any folly build.
 set(cxx_flags "-fPIC -fvisibility=hidden")
-set(cache_args -DCMAKE_LIBRARY_PATH:STRING=${folly_library_paths})
-if (CMAKE_C_COMPILER)
-    list(APPEND cache_args -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER})
+
+if (UNIX)
+   list(APPEND cache_args ${common_cmake_cache_args})
 endif()
-if (CMAKE_CXX_COMPILER)
-    list(APPEND cache_args -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER})
-endif()
+LIST(APPEND cache_args -DCMAKE_LIBRARY_PATH:STRING=${folly_library_paths})
 list(APPEND cache_args -DCMAKE_INCLUDE_PATH:STRING=${folly_include_paths})
 list(APPEND cache_args -DCMAKE_CXX_FLAGS:STRING=${cxx_flags})
 list(APPEND cache_args -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo)
-list(APPEND cache_args -DCMAKE_CXX_STANDARD=17)
 list(APPEND cache_args "-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/install")
 list(APPEND cache_args -DBUILD_SHARED_LIBS:STRING=OFF)
+list(APPEND cache_args -DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
 list(APPEND cache_args -DBoost_ADDITIONAL_VERSIONS:STRING=1.82)
 list(APPEND cache_args -DBoost_DETAILED_FAILURE_MSG:STRING=ON)
 list(APPEND cache_args -DBoost_USE_STATIC_LIBS:STRING=ON)
 list(APPEND cache_args -DBoost_NO_SYSTEM_PATHS:BOOL=ON)
 list(APPEND cache_args -DBoost_NO_BOOST_CMAKE:BOOL=ON)
 list(APPEND cache_args -DBOOST_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/boost.exploded)
-list(APPEND cache_args -DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
+list(APPEND cache_args -Dfmt_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
 list(APPEND cache_args -Dfmt_DIR:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded/lib/cmake/fmt)
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:BOOL=TRUE)
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibLZMA:BOOL=TRUE)
@@ -61,22 +62,12 @@ list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibAIO:BOOL=TRUE)
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibUring:BOOL=TRUE)
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Libsodium:BOOL=TRUE)
 
-if(APPLE)
-   list(APPEND cache_args -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13)
-
-   # Folly attempts to use preadv/pwritev if available on the build platform,
-   # regardless of the of the specified deployment target. We need to
-   # deactivate these by hand to prevent their use on macos<11
-   list(APPEND cache_args -DFOLLY_HAVE_PREADV:STRING=0)
-   list(APPEND cache_args -DFOLLY_HAVE_PWRITEV:STRING=0)
-endif()
-
 if(WIN32)
-   # Glog: we build it statically, but glog headers default
+   # Glog/Gflags: we build it statically, but headers default
    # to defining all public symbols as dllimport which results in linker
    # errors - the compiler is expecting dll(shared) symbols and not static.
-   # Explicitly define GOOGLE_GLOG_DLL_DECL as empty to avoid this.
-   list(APPEND cache_args "-DCMAKE_CXX_FLAGS:STRING= -DGOOGLE_GLOG_DLL_DECL=")
+   # Explicitly define flags as empty to avoid this.
+   list(APPEND cache_args "-DCMAKE_CXX_FLAGS:STRING= -DGOOGLE_GLOG_DLL_DECL= -DGFLAGS_DLL_DECLARE_FLAG=")
 
    # Folly code generation (GenerateFingerprintTables.exe) needs to run
    # at build-time; and to do so it needs the runtime dependancies of folly
@@ -129,27 +120,26 @@ if (UNIX)
 
    # Not designed to be built independently of the normal folly package build. The
    # build will only install the package and not the source.
-   ExternalProject_Add(folly.asan_ubsan
+   ExternalProject_Add(folly.asan
             GIT_REPOSITORY ${_git_repo}
             GIT_TAG ${_git_rev}
             PATCH_COMMAND ${folly_patch_command}
             CMAKE_CACHE_ARGS ${cache_args}
                 -DCMAKE_BUILD_TYPE:STRING=DebugOptimized
-                "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags} -fsanitize=address -fsanitize=undefined"
+                "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags} -fsanitize=address"
             BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
             BUILD_IN_SOURCE 1
             INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
             INSTALL_COMMAND mkdir -p ${CMAKE_CURRENT_BINARY_DIR}/install/lib &&
-            cp libfolly.a ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libfollyasan_ubsan.a
+            cp libfolly.a ${CMAKE_CURRENT_BINARY_DIR}/install/lib/libfollyasan.a
             )
-   ExternalProject_Add_StepDependencies(folly download folly.asan_ubsan)
+   ExternalProject_Add_StepDependencies(folly download folly.asan)
 endif()
 
 # Additionally build a Debug variant.
-# This is required on Windows, as for a debug build of CB Server we need all
-# dependencies _also_ linked against Debug CRT.
-# We also build it for macOS / Linux as it can be useful to have a build of
+# Build it for macOS / Linux as it can be useful to have a build of
 # folly with Debug checks enabled.
+if (NOT WIN32)
 ExternalProject_Add(folly.debug
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
@@ -162,6 +152,7 @@ ExternalProject_Add(folly.debug
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
         )
 ExternalProject_Add_StepDependencies(folly download folly.debug)
+endif()
 
 # cbdeps boilerplate
 _ADD_PACKAGE_STEP()

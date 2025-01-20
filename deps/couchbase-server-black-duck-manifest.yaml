@@ -40,7 +40,7 @@ components:
         versions: [ 8.9.1 ]
     double-conversion:
         bd-id: 7f59c14e-52c9-440b-bee8-2427850c3e90
-        versions: [ v3.0.0 ]
+        versions: [ v3.3.0 ]
     erlang:
         bd-id: 2c804760-a3e3-4ba1-abfb-77525633b966
         cbdeps-versions: [ 26.2 ]
@@ -56,7 +56,7 @@ components:
         versions: [ 10.1.1 ]
     folly:
         bd-id: 7f50be63-e94c-48d6-ac73-c12965b5c9b5
-        versions: [ v2024.01.08.00 ]
+        versions: [ v2024.06.17.00 ]
     gflags:
         bd-id: 7cb7cce8-ddc3-4e98-8471-bfec9c2b2735
         versions: [ 2.2.2 ]
