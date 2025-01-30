@@ -10,10 +10,10 @@ set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 DECLARE_DEP (boost VERSION 1.82.0-cb6 PLATFORMS linux macosx windows)
 DECLARE_DEP (double-conversion VERSION 3.3.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (fast_float V2 VERSION 7.0.0 BUILD 1 PLATFORMS linux macosx windows)
-DECLARE_DEP (fmt VERSION 10.1.1-cb1 PLATFORMS linux macosx windows)
+DECLARE_DEP (fmt VERSION 11.0.0-cb2 PLATFORMS linux macosx windows)
 DECLARE_DEP (gflags V2 VERSION 2.2.2 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows_msvc2015 windows)
-DECLARE_DEP (jemalloc V2 VERSION 5.3.0 BUILD 10 PLATFORMS linux macosx windows)
+DECLARE_DEP (jemalloc V2 VERSION 5.3.0 BUILD 14 PLATFORMS linux macosx windows)
 DECLARE_DEP (libevent VERSION 2.1.11-cb12 PLATFORMS linux macosx windows)
 DECLARE_DEP (openssl V2 VERSION 3.1.4 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (zlib V2 VERSION 1.2.13 BUILD 2 PLATFORMS linux macosx windows)
@@ -140,7 +140,7 @@ endif()
 # Build it for macOS / Linux as it can be useful to have a build of
 # folly with Debug checks enabled.
 if (NOT WIN32)
-ExternalProject_Add(folly.debug
+  ExternalProject_Add(folly.debug
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
@@ -151,7 +151,7 @@ ExternalProject_Add(folly.debug
         BUILD_IN_SOURCE 1
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
         )
-ExternalProject_Add_StepDependencies(folly download folly.debug)
+  ExternalProject_Add_StepDependencies(folly download folly.debug)
 endif()
 
 # cbdeps boilerplate

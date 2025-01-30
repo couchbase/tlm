@@ -53,10 +53,10 @@ components:
         versions: [ v1.10.0 ]
     fmt:
         bd-id: eae20828-18b8-478f-83b3-4a058748a28b
-        versions: [ 10.1.1 ]
+        versions: [ 11.0.0 ]
     folly:
         bd-id: 7f50be63-e94c-48d6-ac73-c12965b5c9b5
-        versions: [ v2024.06.17.00 ]
+        versions: [ v2024.11.25.00 ]
     gflags:
         bd-id: 7cb7cce8-ddc3-4e98-8471-bfec9c2b2735
         versions: [ 2.2.2 ]

@@ -2,19 +2,17 @@ include(ExternalProject)
 
 _DETERMINE_CPU_COUNT(_parallelism)
 
-DECLARE_DEP (fmt VERSION 10.1.1-cb1 PLATFORMS linux macosx windows)
+DECLARE_DEP (fmt VERSION 11.0.0-cb2 PLATFORMS linux macosx windows)
+list(APPEND cache_args ${common_cmake_cache_args})
+
+# spdlog won't build with C++ 17
+LIST(REMOVE_AT cache_args 0)
 
 # Given we build spdlog twice on Windows, define the common cmake
 # arguments once.
 list(APPEND cache_args -DCMAKE_CXX_VISIBILITY_PRESET:STRING=hidden)
 list(APPEND cache_args -DCMAKE_POSITION_INDEPENDENT_CODE:BOOL=ON)
 list(APPEND cache_args -DSPDLOG_BUILD_EXAMPLE:BOOL=OFF)
-if (CMAKE_C_COMPILER)
-    list(APPEND cache_args -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER})
-endif()
-if (CMAKE_CXX_COMPILER)
-    list(APPEND cache_args -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER})
-endif()
 
 # Use the same (external) fmtlib library as the rest of the server build.
 list(APPEND cache_args -DSPDLOG_FMT_EXTERNAL:BOOL=ON)
@@ -60,7 +58,7 @@ ExternalProject_Add(spdlog
 
 # Only build the TSan package on linux and macos platforms to save
 # time.
-if (${PLATFORM} STREQUAL "linux" OR ${PLATFORM} MATCHES "macos")
+if (NOT WIN32)
     ExternalProject_Add(spdlog_tsan
             GIT_REPOSITORY ${_git_repo}
             GIT_TAG ${_git_rev}
@@ -74,22 +72,6 @@ if (${PLATFORM} STREQUAL "linux" OR ${PLATFORM} MATCHES "macos")
             BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism})
 
     ExternalProject_Add_StepDependencies(spdlog download spdlog_tsan)
-endif()
-
-# Additionally build a Debug variant on Windows, as for a debug build of
-# CB Server we need all dependancies _also_ linked against Debug CRT.
-if (WIN32)
-    ExternalProject_Add(spdlog_WinDebugCRT
-            GIT_REPOSITORY ${_git_repo}
-            GIT_TAG ${_git_rev}
-            PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/custom_level_names.patch
-            CMAKE_CACHE_ARGS ${cache_args}
-            CMAKE_ARGS -D CMAKE_BUILD_TYPE=Debug
-
-            BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
-
-            INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install)
-    ExternalProject_Add_StepDependencies(spdlog download spdlog_WinDebugCRT)
 endif()
 
 # cbdeps boilerplate
