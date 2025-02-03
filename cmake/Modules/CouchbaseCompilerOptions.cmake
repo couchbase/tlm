@@ -1,19 +1,6 @@
 include(CheckIncludeFileCXX)
 
-# Set C++ standard to 20 on Windows, 17 on other platforms while we're
-# solving the problems with C++20 on clang-15.0.7 used by our commit
-# validation jobs. We need C++20 on windows in order to build the
-# system due to some problems with Folly and our version of the
-# MSVC compiler. We could have enabled C++20 on all platforms
-# except for clang on linux (not used in production, but that
-# would make things fail to compile just on the CV jobs if people
-# started to use C++20 features in the code).
-if (WIN32)
-    set(CMAKE_CXX_STANDARD 20)
-else()
-    set(CMAKE_CXX_STANDARD 17)
-endif ()
-
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
