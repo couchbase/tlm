@@ -35,9 +35,6 @@ components:
     c-ares:
         bd-id: 3c284f73-2808-4837-845b-b6725cf7e840
         versions: [ 1.19.1 ]
-    curl:
-        bd-id: 5495fd92-f4e5-4099-aa40-bd0f22b2f602
-        versions: [ 8.9.1 ]
     double-conversion:
         bd-id: 7f59c14e-52c9-440b-bee8-2427850c3e90
         versions: [ v3.3.0 ]
@@ -153,6 +150,7 @@ components:
 include-projects:
   - AWSSDK
   - cbpy
+  - curl
   - faiss
   - jemalloc
   - jemalloc_noprefix
