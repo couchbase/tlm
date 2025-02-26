@@ -203,9 +203,15 @@ IF (NOT CouchbaseExtraPackages_INCLUDED)
             SET (_installdep "${_installlibdir}/${_depname}")
             IF (CMAKE_INSTALL_DO_STRIP)
               MESSAGE (STATUS "Stripping: ${CMAKE_STRIP} ${_installdep}")
-              EXECUTE_PROCESS (
-                COMMAND "${CMAKE_STRIP}" --strip-all "${_installdep}"
-              )
+              IF (APPLE)
+                EXECUTE_PROCESS (
+                  COMMAND "${CMAKE_STRIP}" -x "${_installdep}"
+                )
+              ELSE ()
+                EXECUTE_PROCESS (
+                  COMMAND "${CMAKE_STRIP}" --strip-all "${_installdep}"
+                )
+              ENDIF ()
             ENDIF ()
           ENDFOREACH ()
         ]])
