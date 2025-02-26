@@ -67,7 +67,8 @@ if(WIN32)
    # to defining all public symbols as dllimport which results in linker
    # errors - the compiler is expecting dll(shared) symbols and not static.
    # Explicitly define flags as empty to avoid this.
-   list(APPEND cache_args "-DCMAKE_CXX_FLAGS:STRING= -DGOOGLE_GLOG_DLL_DECL= -DGFLAGS_DLL_DECLARE_FLAG=")
+   # MSVC2022 wants '/utf-8'
+   list(APPEND cache_args "-DCMAKE_CXX_FLAGS:STRING=/utf-8 -DGOOGLE_GLOG_DLL_DECL= -DGFLAGS_DLL_DECLARE_FLAG=")
 
    # Folly code generation (GenerateFingerprintTables.exe) needs to run
    # at build-time; and to do so it needs the runtime dependancies of folly
