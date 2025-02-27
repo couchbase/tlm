@@ -189,8 +189,37 @@ _install_gcc_file(libgcc_s.so)
 _install_gcc_file(libgomp.so)
 INCLUDE(CouchbaseDefaultValues)
 
-# If the user has synced any closed-source code, assume building EE
-IF (EXISTS "${PROJECT_SOURCE_DIR}/cbbs")
+# BUILD_COLUMNAR logic: Similar to PRODUCT_VERSION logic.
+# 1. If BUILD_COLUMNAR is already defined, the means it's either cached
+#    or was explicitly specified with -D on the command-line. In either
+#    case, force it into the cache so it will be remembered for future runs.
+# 2. Otherwise, we do NOT want to cache BUILD_COLUMNAR, which will force
+#    CMake to re-discover it every time. In that case, extract it from the
+#    manifest. Assume 'false' if not found in manifest.
+IF (DEFINED BUILD_COLUMNAR)
+  SET (BUILD_COLUMNAR "${BUILD_COLUMNAR}" CACHE BOOL "Building Couchbase Columnar" FORCE)
+ELSE ()
+  SET (_build_columnar)
+  EXECUTE_PROCESS(
+      COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_manifest_annot.py COLUMNAR
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+      OUTPUT_VARIABLE _build_columnar
+      ERROR_VARIABLE _err_output
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+  IF (_err_output)
+    MESSAGE (WARNING "${_err_output}")
+    # Just in case
+    SET (_build_columnar)
+  ENDIF ()
+  IF (_build_columnar)
+    SET (BUILD_COLUMNAR ${_build_columnar})
+  ELSE ()
+    SET (BUILD_COLUMNAR 0)
+  ENDIF ()
+ENDIF ()
+
+# If the user has synced any closed-source code or if we are BUILD_COLUMNAR, assume building EE
+IF (EXISTS "${PROJECT_SOURCE_DIR}/cbbs" OR BUILD_COLUMNAR)
   SET (_ee_found ON)
 ELSE ()
   SET (_ee_found OFF)
@@ -298,35 +327,6 @@ ELSE ()
   ENDIF ()
 ENDIF ()
 
-# BUILD_COLUMNAR logic: Similar to above.
-# 1. If BUILD_COLUMNAR is already defined, the means it's either cached
-#    or was explicitly specified with -D on the command-line. In either
-#    case, force it into the cache so it will be remembered for future runs.
-# 2. Otherwise, we do NOT want to cache BUILD_COLUMNAR, which will force
-#    CMake to re-discover it every time. In that case, extract it from the
-#    manifest. Assume 'false' if not found in manifest.
-IF (DEFINED BUILD_COLUMNAR)
-  SET (BUILD_COLUMNAR "${BUILD_COLUMNAR}" CACHE BOOL "Building Couchbase Columnar" FORCE)
-ELSE ()
-  SET (_build_columnar)
-  EXECUTE_PROCESS(
-      COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_manifest_annot.py COLUMNAR
-      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-      OUTPUT_VARIABLE _build_columnar
-      ERROR_VARIABLE _err_output
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-  IF (_err_output)
-    MESSAGE (WARNING "${_err_output}")
-    # Just in case
-    SET (_build_columnar)
-  ENDIF ()
-  IF (_build_columnar)
-    SET (BUILD_COLUMNAR ${_build_columnar})
-  ELSE ()
-    SET (BUILD_COLUMNAR 0)
-  ENDIF ()
-ENDIF ()
-
 # COLUMNAR_PRODUCT_VERSION logic: Similar to above.
 # 1. If COLUMNAR_PRODUCT_VERSION is already defined, the means it's either
 #    cached or was explicitly specified with -D on the command-line. In either
@@ -422,7 +422,7 @@ IF (NOT BUILD_ONLY_TOOLS)
     ADD_SUBDIRECTORY(fusion)
   ENDIF()
 
-  IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/magma")
+  IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/magma" AND (NOT BUILD_COLUMNAR OR CB_DEVELOPER_BUILD))
     ADD_SUBDIRECTORY(magma)
   ENDIF()
 
@@ -474,18 +474,19 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ADD_SUBDIRECTORY(query-ui)
       ADD_SUBDIRECTORY(vbmap)
 
-      IF (BUILD_ENTERPRISE)
+      IF (NOT BUILD_COLUMNAR)
+        IF (BUILD_ENTERPRISE)
           ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing-ee)
+        ENDIF()
+        ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/query)
+        ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/indexing)
+        ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/goxdcr)
+        ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/xdcrDiffer)
+        ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/gometa)
+        ADD_SUBDIRECTORY(cbft)
       ENDIF()
-
-      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/query)
-      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/indexing)
-      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/goxdcr)
-      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/xdcrDiffer)
-      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/gometa)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbauth)
 
-      ADD_SUBDIRECTORY(cbft)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
 
       # Analytics CBGT connector
@@ -504,7 +505,8 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ENDIF ()
     ENDIF()
 
-    IF (EXISTS "${PROJECT_SOURCE_DIR}/backup")
+    # many of the columnar dev tests depend on samples, which depends on backup
+    IF (EXISTS "${PROJECT_SOURCE_DIR}/backup" AND (NOT BUILD_COLUMNAR OR CB_DEVELOPER_BUILD))
       ADD_SUBDIRECTORY(backup)
     ENDIF()
 
@@ -512,7 +514,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
         ADD_SUBDIRECTORY(cbbs)
     ENDIF()
 
-    IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/plasma" AND NOT BUILD_ONLY_TOOLS)
+    IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/plasma/CMakeLists.txt" AND NOT BUILD_ONLY_TOOLS)
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/plasma)
     ENDIF()
 
@@ -533,7 +535,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     ENDIF()
 
     IF (NOT BUILD_ONLY_TOOLS)
-      IF (BUILD_ENTERPRISE)
+      IF (BUILD_ENTERPRISE AND NOT BUILD_COLUMNAR)
         ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/eventing)
       ENDIF()
 
