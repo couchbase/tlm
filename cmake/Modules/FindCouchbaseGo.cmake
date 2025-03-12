@@ -263,11 +263,8 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # additional target named TARGET-tidy will also be created that calls
   # "go mod tidy -v" using the appropriate Go version and modules cache.
   # There is also a global target "go-mod-tidy" which invokes all such
-  # targets. NOTE: this tidy target will be given the same dependencies
-  # as the main build target. If you need to depend on, say, a target
-  # which generates source code in another project, be sure to include
-  # this dependency in the *first* GoModBuild() call, so that the tidy
-  # target will also know about that dependency.
+  # targets. If your module has generated source code, ensure you pass
+  # the target which generates those to the GEN_DEPENDS argument.
   #
   # Required arguments:
   #
@@ -300,6 +297,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # libraries. They may be IMPORTED targets for eg. cbdeps, but may not
   # be specific library filenames.
   #
+  # GEN_DEPENDS - list of other CMake targets which generate source code
+  # in this module. These will be added as dependencies of this target,
+  # and also of the -tidy target for this directory.
+  #
   # INSTALL_PATH - if specified, a CMake INSTALL() directive will be
   # created to install the output into the named path. If this is a
   # relative path, it will be relative to CMAKE_INSTALL_PREFIX.
@@ -316,7 +317,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   #
   MACRO (GoModBuild)
 
-    PARSE_ARGUMENTS (Go "DEPENDS;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
+    PARSE_ARGUMENTS (Go "DEPENDS;GEN_DEPENDS;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
       "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GOVERSION;GCFLAGS;GOTAGS;GOBUILDMODE;LDFLAGS"
       "NOCONSOLE;UNSHIPPED" ${ARGN})
 
@@ -463,6 +464,9 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       JOB_POOL golang_build_pool
       VERBATIM)
     SET_PROPERTY (TARGET ${Go_TARGET} PROPERTY GO_BINARY "${_exe}")
+    IF (Go_GEN_DEPENDS)
+      ADD_DEPENDENCIES (${Go_TARGET} ${Go_GEN_DEPENDS})
+    ENDIF ()
     IF (Go_DEPENDS)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
     ENDIF ()
@@ -481,7 +485,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       ")
       MESSAGE (STATUS "Dep target info for GoModBuild(${Go_TARGET})")
       MESSAGE (STATUS "CGO_CFLAGS: ${Go_CGO_CFLAGS}")
-      FOREACH (_dep ${Go_TARGET} ${Go_DEPENDS})
+      FOREACH (_dep ${Go_TARGET} ${Go_DEPENDS} ${Go_GEN_DEPENDS})
         PRINT_TARGET_PROPERTIES (${_dep})
       ENDFOREACH ()
       MESSAGE (STATUS "End dep target info for GoModBuild(${Go_TARGET})")
@@ -503,8 +507,8 @@ IF (NOT FindCouchbaseGo_INCLUDED)
         VERBATIM)
       MESSAGE (STATUS "Added Go mod tidy target ${_tidy_target}")
       ADD_DEPENDENCIES (go-mod-tidy "${_tidy_target}")
-      IF (Go_DEPENDS)
-        ADD_DEPENDENCIES ("${_tidy_target}" ${Go_DEPENDS})
+      IF (Go_GEN_DEPENDS)
+        ADD_DEPENDENCIES ("${_tidy_target}" ${Go_GEN_DEPENDS})
       ENDIF ()
       SET_PROPERTY (GLOBAL APPEND PROPERTY CB_GO_TIDY_DIRS
         "${CMAKE_CURRENT_SOURCE_DIR}")
