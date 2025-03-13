@@ -2,12 +2,13 @@
 MACRO (_DETERMINE_REPO_CHECKSUM var)
   EXECUTE_PROCESS (
     COMMAND repo diff -u
+    WORKING_DIRECTORY ${REPO_SYNC_DIR}
     OUTPUT_VARIABLE _diff_output
     RESULT_VARIABLE _failed
     ERROR_VARIABLE _stderr
   )
   IF (_failed)
-    MESSAGE (FATAL_ERROR "Error running 'repo diff': ${_stderr}")
+    MESSAGE (FATAL_ERROR "Error running 'repo diff' (${_failed}): ${_diff_output}")
   ENDIF ()
 
   STRING (SHA256 ${var} "${_diff_output}")
@@ -18,7 +19,7 @@ _DETERMINE_REPO_CHECKSUM (_init_checksum)
 
 # Loop forever (will break out manually)
 WHILE (1)
-  # Execute 'go mod tidy' for all projects
+  MESSAGE (STATUS "Running 'go mod tidy' for all projects")
   EXECUTE_PROCESS (
     COMMAND "${CMAKE_COMMAND}" --build . --target go-mod-tidy
     RESULT_VARIABLE _failed

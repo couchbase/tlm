@@ -246,7 +246,9 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # module changes are detected. This is necessary due to our use of
   # "replace" directives in go.mod files and circular dependencies.
   ADD_CUSTOM_TARGET (go-mod-tidy-all
-    COMMAND "${CMAKE_COMMAND}" -P "${TLM_MODULES_DIR}/go-modtidyall.cmake"
+    COMMAND "${CMAKE_COMMAND}"
+      -D "REPO_SYNC_DIR=${PROJECT_SOURCE_DIR}"
+      -P "${TLM_MODULES_DIR}/go-modtidyall.cmake"
     WORKING_DIRECTORY "${CMAKE_BINARY_DIR}"
     COMMENT "Ensuring all go.mod files are tidied"
     VERBATIM)

@@ -30,7 +30,8 @@ ubsan_cmake_option=
 threads_ninja_option=
 loadavg_ninja_option=
 
-while getopts "s:b:i:j:l:hXTAUR" OPTION; do
+DO_BUILD=true
+while getopts "s:b:i:j:l:hXTAURn" OPTION; do
   case $OPTION in
   s)
     source_root=${OPTARG}
@@ -72,6 +73,9 @@ while getopts "s:b:i:j:l:hXTAUR" OPTION; do
   R)
     CMAKE_BUILD_TYPE=RelWithDebInfo
     ;;
+  n)
+    DO_BUILD=false
+    ;;
   h)
     cat <<EOF
 Usage:
@@ -84,6 +88,7 @@ Usage:
    -A              Enable address sanitizer
    -U              Enable undefined behavior sanitizer
    -R              Set build type to RelWithDebInfo
+   -n              No build - run CMake only
 
 EOF
       exit 0
@@ -128,15 +133,18 @@ fi
 
 if [ ! -f build.ninja ] || [ ${source_root}/CMakeLists.txt -nt build.ninja ]
 then
-   cmake -G Ninja \
-         ${macos_cross_compilation_flags} \
-         -D CMAKE_INSTALL_PREFIX=${install_root} \
-         -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE-DebugOptimized} \
-         -D CB_PARALLEL_LINK_JOBS=${cb_parallel_link_jobs} \
-         ${EXTRA_CMAKE_OPTIONS} \
-         ${tsan_cmake_option} ${asan_cmake_option} ${ubsan_cmake_option} \
-         ${source_root} \
-          ||  errexit "Failed to generate build configuration"
+  cmake -G Ninja \
+    ${macos_cross_compilation_flags} \
+    -D CMAKE_INSTALL_PREFIX=${install_root} \
+    -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE-DebugOptimized} \
+    -D CB_PARALLEL_LINK_JOBS=${cb_parallel_link_jobs} \
+    ${EXTRA_CMAKE_OPTIONS} \
+    ${tsan_cmake_option} ${asan_cmake_option} ${ubsan_cmake_option} \
+    ${source_root} \
+    || errexit "Failed to generate build configuration"
 fi
 
-ninja ${threads_ninja_option} ${loadavg_ninja_option} install "$@" || errexit "Build failed"
+if ${DO_BUILD}
+then
+  ninja ${threads_ninja_option} ${loadavg_ninja_option} install "$@" || errexit "Build failed"
+fi
