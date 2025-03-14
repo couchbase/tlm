@@ -40,6 +40,29 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     goproj/src/github.com/couchbase/regulator
   )
 
+  # List of directories (relative to repo sync root) containing Go
+  # modules that are only libraries - eg., don't have a CMakeLists.txt
+  # of their own. This is used to create 'tidy' rules. The directories
+  # in this list will be skipped if they don't exist, so it is safe to
+  # include eg. private repositories.
+  SET (GO_LIBRARY_MODULE_PATHS
+    cbftx
+    cbgt
+    hebrew
+    goproj/src/github.com/couchbase/bhive
+    goproj/src/github.com/couchbase/go-couchbase
+    goproj/src/github.com/couchbase/go_json
+    goproj/src/github.com/couchbase/gocbcrypto
+    goproj/src/github.com/couchbase/godbc
+    goproj/src/github.com/couchbase/gomemcached
+    goproj/src/github.com/couchbase/goutils
+    goproj/src/github.com/couchbase/n1fty
+    goproj/src/github.com/couchbase/nitro
+    goproj/src/github.com/couchbase/query-ee
+    goproj/src/github.com/couchbase/regulator
+    magma/tools/kvloader
+  )
+
   # END THINGS YOU MAY NEED TO UPDATE OVER TIME
   ####################################################################
 
@@ -58,6 +81,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   ENDIF (DEFINED ENV{GOBIN})
 
   INCLUDE (ParseArguments)
+  INCLUDE (CBDownloadDeps)
 
   # Have to remember cwd when this file is INCLUDE()d
   SET (TLM_MODULES_DIR "${CMAKE_CURRENT_LIST_DIR}")
@@ -261,13 +285,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # go.mod and go.sum files in the source directory that calls
   # GoModBuild() or some parent directory.
   #
-  # The first time GoModBuild() is called in a given directory, an
-  # additional target named TARGET-tidy will also be created that calls
-  # "go mod tidy -v" using the appropriate Go version and modules cache.
-  # There is also a global target "go-mod-tidy" which invokes all such
-  # targets. If your module has generated source code, ensure you pass
-  # the target which generates those to the GEN_DEPENDS argument.
-  #
   # Required arguments:
   #
   # TARGET - name of CMake target to create
@@ -299,9 +316,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # libraries. They may be IMPORTED targets for eg. cbdeps, but may not
   # be specific library filenames.
   #
-  # GEN_DEPENDS - list of other CMake targets which generate source code
-  # in this module. These will be added as dependencies of this target,
-  # and also of the -tidy target for this directory.
+  # GEN_DEPENDS - DEPRECATED; will be removed
   #
   # INSTALL_PATH - if specified, a CMake INSTALL() directive will be
   # created to install the output into the named path. If this is a
@@ -493,37 +508,62 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       MESSAGE (STATUS "End dep target info for GoModBuild(${Go_TARGET})")
     ENDIF ()
 
-    # See if we need to create a -tidy target for this directory.
-    GET_PROPERTY (_tidy_dirs GLOBAL PROPERTY CB_GO_TIDY_DIRS)
-    LIST (FIND _tidy_dirs "${CMAKE_CURRENT_SOURCE_DIR}" _found)
-    IF (_found EQUAL -1)
-      SET (_tidy_target "${Go_TARGET}-tidy")
-      ADD_CUSTOM_TARGET ("${_tidy_target}"
-        COMMAND "${CMAKE_COMMAND}"
-          -D "GOEXE=${_goexe}"
-          -D "GO_BINARY_DIR=${_gobindir}"
-          -D "CB_PRODUCTION_BUILD=${CB_PRODUCTION_BUILD}"
-          -P "${TLM_MODULES_DIR}/go-modtidy.cmake"
-        WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
-        COMMENT "Tidying go.mod for ${Go_TARGET} using Go ${_gover}"
-        VERBATIM)
-      MESSAGE (STATUS "Added Go mod tidy target ${_tidy_target}")
-      ADD_DEPENDENCIES (go-mod-tidy "${_tidy_target}")
-      IF (Go_GEN_DEPENDS)
-        ADD_DEPENDENCIES ("${_tidy_target}" ${Go_GEN_DEPENDS})
-      ENDIF ()
-      SET_PROPERTY (GLOBAL APPEND PROPERTY CB_GO_TIDY_DIRS
-        "${CMAKE_CURRENT_SOURCE_DIR}")
-    ENDIF ()
-
   ENDMACRO (GoModBuild)
 
-  # NO LONGER NEEEDED - remove this when query and cbft remove their usage
-  MACRO (GoPrivateMod)
+  # Creates the target for tidying a Go module. All projects with a
+  # `go.mod` file should call this, even if they don't have any built
+  # artifacts.
+  #
+  # Optional arguments:
+  #
+  # DEPENDS - any targest that must be called before `go mod tidy`, such
+  # as code generation.
+  #
+  # DIRECTORY - the directory containing the `go.mod` file. Defaults to
+  # the current source dir.
+  #
+  # MODNAME - short name of the module. If not specified, the name of
+  # the directory will be used. The generated target will be named
+  # MODNAME-tidy.
+  #
+  # GOVERSION - the version of the Go compiler required for this target.
+  # Defaults to SUPPORTED_NEWER.
+  MACRO (GoModTidySetup)
+    PARSE_ARGUMENTS (Tidy "DEPENDS;DIRECTORY;MODNAME;GOVERSION" "" "" ${ARGN})
 
-    MESSAGE (WARNING "GoPrivateMod() no longer used - please delete")
+    IF (NOT Tidy_DIRECTORY)
+      SET (Tidy_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}")
+    ENDIF ()
+    IF (NOT Tidy_MODNAME)
+      GET_FILENAME_COMPONENT (Tidy_MODNAME "${Tidy_DIRECTORY}" NAME)
+    ENDIF ()
+    IF (NOT Tidy_GOVERSION)
+      SET (Tidy_GOVERSION SUPPORTED_NEWER)
+    ENDIF ()
 
-  ENDMACRO (GoPrivateMod)
+    SET (_tidy_target "${Tidy_MODNAME}-tidy")
+    GET_GOROOT ("${Tidy_GOVERSION}" _goroot _gover ${_tidy_target} tidy 1)
+    SET (_goexe "${_goroot}/bin/go")
+
+    ADD_CUSTOM_TARGET ("${_tidy_target}"
+      COMMAND "${CMAKE_COMMAND}"
+        -D "GOEXE=${_goexe}"
+        -D "GO_BINARY_DIR=${GO_BINARY_DIR}/go-${_gover}"
+        -D "CB_PRODUCTION_BUILD=${CB_PRODUCTION_BUILD}"
+        -P "${TLM_MODULES_DIR}/go-modtidy.cmake"
+      WORKING_DIRECTORY "${Tidy_DIRECTORY}"
+      COMMENT "Tidying go.mod for ${Tidy_MODNAME} using Go ${_gover}"
+      VERBATIM)
+    MESSAGE (STATUS "Added Go mod tidy target ${_tidy_target}")
+    ADD_DEPENDENCIES (go-mod-tidy "${_tidy_target}")
+    IF (Tidy_DEPENDS)
+      ADD_DEPENDENCIES ("${_tidy_target}" ${Tidy_DEPENDS})
+    ENDIF ()
+
+    # Save this directory in global list
+    SET_PROPERTY (GLOBAL APPEND PROPERTY CB_GO_MOD_TIDY_DIRS "${Tidy_DIRECTORY}")
+
+  ENDMACRO (GoModTidySetup)
 
   # Adds a test named NAME which calls go test in the DIR
   # Required arguments:
@@ -680,6 +720,14 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF (Go_DEPENDS)
 
   ENDMACRO (GoYacc)
+
+  # Create 'tidy' rules for all library modules. Skip those that don't
+  # exist (could be private repositories).
+  FOREACH (_modpath ${GO_LIBRARY_MODULE_PATHS})
+    IF (IS_DIRECTORY "${PROJECT_SOURCE_DIR}/${_modpath}")
+      GoModTidySetup (DIRECTORY "${PROJECT_SOURCE_DIR}/${_modpath}")
+    ENDIF ()
+  ENDFOREACH ()
 
   SET (FindCouchbaseGo_INCLUDED 1)
 
