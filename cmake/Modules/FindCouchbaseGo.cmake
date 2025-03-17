@@ -50,17 +50,29 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     cbgt
     hebrew
     goproj/src/github.com/couchbase/bhive
-    goproj/src/github.com/couchbase/go-couchbase
-    goproj/src/github.com/couchbase/go_json
-    goproj/src/github.com/couchbase/gocbcrypto
     goproj/src/github.com/couchbase/godbc
     goproj/src/github.com/couchbase/gomemcached
-    goproj/src/github.com/couchbase/goutils
     goproj/src/github.com/couchbase/n1fty
     goproj/src/github.com/couchbase/nitro
     goproj/src/github.com/couchbase/query-ee
     goproj/src/github.com/couchbase/regulator
     magma/tools/kvloader
+  )
+
+  # QQQ These should be removed as the corresponding projects are
+  # updated to call GoModTidySetup() themselves
+  SET (GO_LIBRARY_MODULE_PATHS_SOON
+    backup
+    goproj/src/github.com/couchbase/cbas
+    goproj/src/github.com/couchbase/cbauth
+    goproj/src/github.com/couchbase/eventing
+    goproj/src/github.com/couchbase/eventing-ee
+    goproj/src/github.com/couchbase/gometa
+    goproj/src/github.com/couchbase/indexing
+    goproj/src/github.com/couchbase/plasma
+    goproj/src/github.com/couchbase/query
+    goproj/src/github.com/couchbase/xdcrDiffer
+    ns_server/deps/gocode
   )
 
   # END THINGS YOU MAY NEED TO UPDATE OVER TIME
@@ -85,7 +97,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
 
   # Have to remember cwd when this file is INCLUDE()d
   SET (TLM_MODULES_DIR "${CMAKE_CURRENT_LIST_DIR}")
-
   # Create any 'private' module paths
   IF (NOT BUILD_ENTERPRISE)
     FOREACH (PRIV_PATH ${GO_PRIVATE_MODULE_PATHS})
@@ -726,6 +737,15 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   FOREACH (_modpath ${GO_LIBRARY_MODULE_PATHS})
     IF (IS_DIRECTORY "${PROJECT_SOURCE_DIR}/${_modpath}")
       GoModTidySetup (DIRECTORY "${PROJECT_SOURCE_DIR}/${_modpath}")
+    ENDIF ()
+  ENDFOREACH ()
+
+  # QQQ Also create 'tidy' rules for projects that haven't submitted
+  # their own changes yet.
+  FOREACH (_modpath ${GO_LIBRARY_MODULE_PATHS_SOON})
+    IF (IS_DIRECTORY "${PROJECT_SOURCE_DIR}/${_modpath}")
+      GET_FILENAME_COMPONENT (_modname "${PROJECT_SOURCE_DIR}/${_modpath}" NAME)
+      GoModTidySetup (DIRECTORY "${PROJECT_SOURCE_DIR}/${_modpath}" MODNAME temp-${_modname})
     ENDIF ()
   ENDFOREACH ()
 
