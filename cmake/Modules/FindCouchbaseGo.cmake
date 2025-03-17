@@ -62,15 +62,12 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # QQQ These should be removed as the corresponding projects are
   # updated to call GoModTidySetup() themselves
   SET (GO_LIBRARY_MODULE_PATHS_SOON
-    backup
     goproj/src/github.com/couchbase/cbas
+    goproj/src/github.com/couchbase/cbbs
     goproj/src/github.com/couchbase/cbauth
-    goproj/src/github.com/couchbase/eventing
-    goproj/src/github.com/couchbase/eventing-ee
-    goproj/src/github.com/couchbase/gometa
+    goproj/src/github.com/couchbase/cbsummary
     goproj/src/github.com/couchbase/indexing
     goproj/src/github.com/couchbase/plasma
-    goproj/src/github.com/couchbase/query
     goproj/src/github.com/couchbase/xdcrDiffer
     ns_server/deps/gocode
   )
