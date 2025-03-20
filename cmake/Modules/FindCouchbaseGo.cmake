@@ -29,16 +29,19 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   SET (GO_MAC_MINIMUM_VERSION 1.17)
 
   # List of private Go module paths that are missing when syncing
-  # strictly the source-available projects.
-  SET (GO_PRIVATE_MODULE_PATHS
-    cbftx
-    hebrew
-    goproj/src/github.com/couchbase/bhive
-    goproj/src/github.com/couchbase/eventing-ee
-    goproj/src/github.com/couchbase/plasma
-    goproj/src/github.com/couchbase/query-ee
-    goproj/src/github.com/couchbase/regulator
-  )
+  # strictly the source-available projects. Columnar is never built
+  # source-available, so no need for this step.
+  IF (NOT BUILD_COLUMNAR)
+    SET (GO_PRIVATE_MODULE_PATHS
+      cbftx
+      hebrew
+      goproj/src/github.com/couchbase/bhive
+      goproj/src/github.com/couchbase/eventing-ee
+      goproj/src/github.com/couchbase/plasma
+      goproj/src/github.com/couchbase/query-ee
+      goproj/src/github.com/couchbase/regulator
+    )
+  ENDIF ()
 
   # List of directories (relative to repo sync root) containing Go
   # modules that are only libraries - eg., don't have a CMakeLists.txt
@@ -62,14 +65,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # QQQ These should be removed as the corresponding projects are
   # updated to call GoModTidySetup() themselves
   SET (GO_LIBRARY_MODULE_PATHS_SOON
-    goproj/src/github.com/couchbase/cbas
-    goproj/src/github.com/couchbase/cbbs
-    goproj/src/github.com/couchbase/cbauth
-    goproj/src/github.com/couchbase/cbsummary
     goproj/src/github.com/couchbase/indexing
-    goproj/src/github.com/couchbase/plasma
-    goproj/src/github.com/couchbase/xdcrDiffer
-    ns_server/deps/gocode
   )
 
   # END THINGS YOU MAY NEED TO UPDATE OVER TIME
