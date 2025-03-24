@@ -62,12 +62,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     magma/tools/kvloader
   )
 
-  # QQQ These should be removed as the corresponding projects are
-  # updated to call GoModTidySetup() themselves
-  SET (GO_LIBRARY_MODULE_PATHS_SOON
-    goproj/src/github.com/couchbase/indexing
-  )
-
   # END THINGS YOU MAY NEED TO UPDATE OVER TIME
   ####################################################################
 
@@ -320,8 +314,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # libraries. They may be IMPORTED targets for eg. cbdeps, but may not
   # be specific library filenames.
   #
-  # GEN_DEPENDS - DEPRECATED; will be removed
-  #
   # INSTALL_PATH - if specified, a CMake INSTALL() directive will be
   # created to install the output into the named path. If this is a
   # relative path, it will be relative to CMAKE_INSTALL_PREFIX.
@@ -338,7 +330,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   #
   MACRO (GoModBuild)
 
-    PARSE_ARGUMENTS (Go "DEPENDS;GEN_DEPENDS;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
+    PARSE_ARGUMENTS (Go "DEPENDS;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
       "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GOVERSION;GCFLAGS;GOTAGS;GOBUILDMODE;LDFLAGS"
       "NOCONSOLE;UNSHIPPED" ${ARGN})
 
@@ -485,9 +477,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       JOB_POOL golang_build_pool
       VERBATIM)
     SET_PROPERTY (TARGET ${Go_TARGET} PROPERTY GO_BINARY "${_exe}")
-    IF (Go_GEN_DEPENDS)
-      ADD_DEPENDENCIES (${Go_TARGET} ${Go_GEN_DEPENDS})
-    ENDIF ()
     IF (Go_DEPENDS)
       ADD_DEPENDENCIES (${Go_TARGET} ${Go_DEPENDS})
     ENDIF ()
@@ -506,7 +495,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
       ")
       MESSAGE (STATUS "Dep target info for GoModBuild(${Go_TARGET})")
       MESSAGE (STATUS "CGO_CFLAGS: ${Go_CGO_CFLAGS}")
-      FOREACH (_dep ${Go_TARGET} ${Go_DEPENDS} ${Go_GEN_DEPENDS})
+      FOREACH (_dep ${Go_TARGET} ${Go_DEPENDS})
         PRINT_TARGET_PROPERTIES (${_dep})
       ENDFOREACH ()
       MESSAGE (STATUS "End dep target info for GoModBuild(${Go_TARGET})")
@@ -730,15 +719,6 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   FOREACH (_modpath ${GO_LIBRARY_MODULE_PATHS})
     IF (IS_DIRECTORY "${PROJECT_SOURCE_DIR}/${_modpath}")
       GoModTidySetup (DIRECTORY "${PROJECT_SOURCE_DIR}/${_modpath}")
-    ENDIF ()
-  ENDFOREACH ()
-
-  # QQQ Also create 'tidy' rules for projects that haven't submitted
-  # their own changes yet.
-  FOREACH (_modpath ${GO_LIBRARY_MODULE_PATHS_SOON})
-    IF (IS_DIRECTORY "${PROJECT_SOURCE_DIR}/${_modpath}")
-      GET_FILENAME_COMPONENT (_modname "${PROJECT_SOURCE_DIR}/${_modpath}" NAME)
-      GoModTidySetup (DIRECTORY "${PROJECT_SOURCE_DIR}/${_modpath}" MODNAME temp-${_modname})
     ENDIF ()
   ENDFOREACH ()
 
