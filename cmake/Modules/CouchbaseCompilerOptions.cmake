@@ -1,6 +1,8 @@
 include(CheckIncludeFileCXX)
 
-set(CMAKE_CXX_STANDARD 20)
+# None of our compilers support everything of C++23, but allow
+# use of the goodness they all support
+set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
