@@ -99,7 +99,7 @@ components:
         versions: [ 3.24.3 ]
     simdutf:
         bd-id: 29063689-35a8-423f-bb71-9778509582be
-        versions: [ v3.2.14 ]
+        versions: [ v7.0.0 ]
     snappy:
         bd-id: fd5e5c60-2c67-4d20-8be9-b7648156cef3
         versions: [ 1.1.10 ]
