@@ -19,9 +19,6 @@ components:
     #     with otherwise-suspicious licenses such as GPL)
     #
 
-    abseil-cpp:
-        bd-id: 99ea2532-8ecf-4c21-ac5b-1b00740c80f5
-        versions: [ 20230802.0 ]
     boost:
         bd-id: 4eac8f37-d9e5-4344-83d0-be0e9fd42a6a
         # Black Duck doesn't know "1.74.0", so this one seem closest
@@ -34,9 +31,6 @@ components:
         bd-id: db80c33d-d4c4-47e7-a3a4-a749eb3b5d74
         versions: [ r835 ]
         cbdeps-versions: [ 20200430 ]
-    c-ares:
-        bd-id: 3c284f73-2808-4837-845b-b6725cf7e840
-        versions: [ 1.19.1 ]
     double-conversion:
         bd-id: 7f59c14e-52c9-440b-bee8-2427850c3e90
         versions: [ v3.0.0 ]
@@ -56,9 +50,6 @@ components:
     glog:
         bd-id: 8a812196-830f-4c27-afad-e02244876887
         versions: [ 0.4.0 ]
-    grpc:
-        bd-id: a38e1dc0-f53d-4dc1-adb4-6328fc424fb5
-        versions: [ 1.59.3 ]
     jemalloc:
         bd-id: 2504dce9-b1c9-4037-9b03-8a222d9a1570
         versions: [ 5.2.1 ]
@@ -96,9 +87,6 @@ components:
     prometheus-cpp:
         bd-id: 61784658-b7fb-4df4-aeb4-b572a5db0de0
         versions: [ v1.2.1 ]
-    protobuf:
-        bd-id: 1ac59252-efa9-4847-adda-55c704035f0c
-        versions: [ 3.24.3 ]
     snappy:
         bd-id: fd5e5c60-2c67-4d20-8be9-b7648156cef3
         versions: [ 1.1.1, 1.1.8 ]
@@ -151,4 +139,5 @@ components:
 # This will also keep the manifest-drift job happy.
 include-projects:
   - cbpy
+  - grpc
   - curl
