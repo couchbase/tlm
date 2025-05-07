@@ -7,21 +7,28 @@
 
 
 # Install the runtime dependencies of an executable.
+#
 # Required arguments:
 #
 # binary - The path to the binary to install dependencies for.
+#
 # type - The type of the binary; must be EXECUTABLES or LIBRARIES.
+#
+# install_prefix - the prefix to install everything into (must be an
+# absolute path).
 #
 # Any additional arguments will be treated as directories to search for
 # dependencies at install time. This should generally only be used on
-# Windows, where the runtime search paths are not embedded in the binary.
-FUNCTION (InstallDependencies binary type)
+# Windows, where the runtime search paths are not embedded in the
+# binary.
+FUNCTION (InstallDependencies binary type install_prefix)
   MESSAGE (STATUS "Installing ${binary} dependencies")
+  # Find dependencies we need to install.
+  #
   # We exclude GCC libs that we've already copied to the right place in
   # the top-level CMakeLists.txt, as well as any libc-like libraries
   # that come from the OS itself. We also exclude deps found under
-  # CMAKE_INSTALL_PREFIX; we prefer to install them from the binary
-  # tree.
+  # install_prefix, since they're already installed.
   FILE (
     GET_RUNTIME_DEPENDENCIES
       ${type} "${binary}"
@@ -30,7 +37,7 @@ FUNCTION (InstallDependencies binary type)
       "^ld-linux.*"
       "^api-ms-win.*" "^ext-ms-win.*" "^ext-ms-onecore.*"
     POST_EXCLUDE_REGEXES
-      "^/lib.*" "^/usr/lib.*" "^/opt/gcc.*" "${CMAKE_INSTALL_PREFIX}/.*"
+      "^/lib.*" "^/usr/lib.*" "^/opt/gcc.*" "${install_prefix}/.*"
     RESOLVED_DEPENDENCIES_VAR _deplibs
     UNRESOLVED_DEPENDENCIES_VAR _unresolvedeps
     CONFLICTING_DEPENDENCIES_PREFIX _conflicts
@@ -59,7 +66,7 @@ FUNCTION (InstallDependencies binary type)
   ELSE ()
     SET (_libdir lib)
   ENDIF ()
-  SET (_installlibdir "${CMAKE_INSTALL_PREFIX}/${_libdir}")
+  SET (_installlibdir "${install_prefix}/${_libdir}")
 
   # Copy the dependencies to the install lib directory.
   FOREACH (_dep ${_deplibs})
@@ -84,5 +91,10 @@ FUNCTION (InstallDependencies binary type)
         )
       ENDIF ()
     ENDIF ()
+
+    # Also call StripGccRpath() to remove the rpath added by the
+    # toolchain. This will safely do nothing on non-Linux systems.
+    StripGccRpath("${_installdep}")
+
   ENDFOREACH ()
 ENDFUNCTION (InstallDependencies)

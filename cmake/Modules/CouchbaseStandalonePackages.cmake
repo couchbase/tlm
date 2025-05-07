@@ -113,8 +113,7 @@ IF (NOT CouchbaseExtraPackages_INCLUDED)
   #
   # TARGETS - names of existing executable TARGETs. Each target must be
   # either a standard ADD_EXECUTABLE() target or one created by
-  # GoModBuild(). Additionally, the output executable of the target must
-  # be installed to ${CMAKE_INSTALL_PREFIX}/bin.
+  # GoModBuild().
   MACRO (AddToStandalonePackage)
 
     PARSE_ARGUMENTS (Pkg "PACKAGES;TARGETS" "" "" ${ARGN})
@@ -156,21 +155,19 @@ IF (NOT CouchbaseExtraPackages_INCLUDED)
           )
         ENDIF ()
 
-        # Create a code block to be used with INSTALL(CODE). We need to do
-        # a bit of variable substitution into this block, so start with it
-        # in a simple string.
+        # Create a code block to be used with INSTALL(CODE). We need to
+        # do a bit of variable substitution into this block, so start
+        # with it in a simple string.
         #
-        # The install code looks up the runtime dependencies of the binary
-        # that was installed into CMAKE_INSTALL_PREFIX (assumed to be
-        # installed into bin/). Those dependencies will therefore be
-        # discovered from CMAKE_INSTALL_PREFIX/lib, which is good, because
-        # those are the versions that CMake has done wacky RPATH
-        # manipulations to for us. We don't want to copy, eg.,
-        # libmagma_shared.so from the build tree.
-        #
-        # We exclude GCC libs that we've already copied to the right place
-        # in the top-level CMakeLists.txt, as well as any libc-like
-        # libraries that come from the OS itself.
+        # The install code looks up the runtime dependencies of the
+        # binary that was installed above. We add the main
+        # ${CMAKE_INSTALL_PREFIX} lib directory to the set of
+        # directories it will look in, to find any built dependencies
+        # such as libmagma_shared.so. We want to copy those dependencies
+        # from CMAKE_INSTALL_PREFIX because CMake will have done all of
+        # the RPATH-manipulation steps to those versions. This is why
+        # the `standalone-packages` build targets can only be run
+        # *after* the full normal `install` target is invoked.
         SET (_code [[
           IF (CMAKE_INSTALL_DO_STRIP)
             MESSAGE (STATUS "Stripping: ${@@PKG@@_INSTALL_PREFIX}/bin/@@EXE_NAME@@")
@@ -178,42 +175,19 @@ IF (NOT CouchbaseExtraPackages_INCLUDED)
               COMMAND "${CMAKE_STRIP}" "${@@PKG@@_INSTALL_PREFIX}/bin/@@EXE_NAME@@"
             )
           ENDIF ()
-          MESSAGE (STATUS "Adding @@EXE_NAME@@ dependencies to @@PKG@@ package")
-          FILE (
-            GET_RUNTIME_DEPENDENCIES
-            EXECUTABLES "${CMAKE_INSTALL_PREFIX}/bin/@@EXE_NAME@@"
-            PRE_EXCLUDE_REGEXES "^ld-linux.*"
-            POST_EXCLUDE_REGEXES "^/lib.*" "^/usr/lib.*" "^/opt/gcc.*" "C:/Windows/system32/.*"
-            RESOLVED_DEPENDENCIES_VAR _deplibs
-            UNRESOLVED_DEPENDENCIES_VAR _unresolvedeps
-          )
+          StripGccRpath("${@@PKG@@_INSTALL_PREFIX}/bin/@@EXE_NAME@@")
           IF (WIN32)
             SET (_libdir bin)
           ELSE ()
             SET (_libdir lib)
           ENDIF ()
-          SET (_installlibdir "${@@PKG@@_INSTALL_PREFIX}/${_libdir}")
-          FOREACH (_dep ${_deplibs})
-            FILE (
-              INSTALL "${_dep}"
-              DESTINATION "${_installlibdir}"
-              FOLLOW_SYMLINK_CHAIN USE_SOURCE_PERMISSIONS
-            )
-            CMAKE_PATH (GET _dep FILENAME _depname)
-            SET (_installdep "${_installlibdir}/${_depname}")
-            IF (CMAKE_INSTALL_DO_STRIP)
-              MESSAGE (STATUS "Stripping: ${CMAKE_STRIP} ${_installdep}")
-              IF (APPLE)
-                EXECUTE_PROCESS (
-                  COMMAND "${CMAKE_STRIP}" -x "${_installdep}"
-                )
-              ELSE ()
-                EXECUTE_PROCESS (
-                  COMMAND "${CMAKE_STRIP}" --strip-all "${_installdep}"
-                )
-              ENDIF ()
-            ENDIF ()
-          ENDFOREACH ()
+          MESSAGE (STATUS "Adding @@EXE_NAME@@ dependencies to @@PKG@@ package")
+          InstallDependencies (
+            "${@@PKG@@_INSTALL_PREFIX}/bin/@@EXE_NAME@@"
+            EXECUTABLES
+            "${@@PKG@@_INSTALL_PREFIX}"
+            "${CMAKE_INSTALL_PREFIX}/${_libdir}"
+          )
         ]])
 
         STRING (REPLACE @@EXE_NAME@@ "${_exename}" _code "${_code}")
