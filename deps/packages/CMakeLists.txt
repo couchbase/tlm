@@ -220,6 +220,7 @@ _ADD_DEP_PACKAGE(fmt 11.0.0 11.0.0 2)
 _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 3)
 _ADD_DEP_PACKAGE(benchmark v1.9.1 v1.9.1 1)
 _ADD_DEP_PACKAGE(googletest 1.15.2 1.15.2 1)
+_ADD_DEP_PACKAGE(fuzztest v2025-02-14 v2025-02-14-couchbase 1)
 
 _ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 1_morpheus)
 _ADD_DEP_PACKAGE(grpc 1.59.3 v1.59.3 1)

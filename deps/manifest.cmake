@@ -33,6 +33,8 @@ DECLARE_DEP (folly VERSION v2022.05.23.00-couchbase-cb1_morpheus PLATFORMS linux
 DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows)
 DECLARE_DEP (googletest VERSION 1.15.2-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (grpc V2 VERSION 1.72.0 BUILD 2 PLATFORMS linux macosx windows)
+DECLARE_DEP (fuzztest VERSION v2025-02-14-cb1 PLATFORMS linux macosx)
+
 #
 # IMPORTANT: If you add a new package here or update an existing package
 # version, you must also update couchbase-server-black-duck-manifest.yaml

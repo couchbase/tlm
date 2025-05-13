@@ -102,8 +102,7 @@ list(APPEND _cb_cxx_flags
      -Werror=switch
      -Werror=redundant-decls
      -Werror=missing-braces
-     -ftemplate-depth=900
-     -Werror=c99-extensions)
+     -ftemplate-depth=900)
 
 # Required from clang 3.9 if sized deletion is desired and still required in at
 # least version 7.0.1 (current latest release version).
