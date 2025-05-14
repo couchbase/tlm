@@ -26,7 +26,3 @@ SET(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 # time. At install time we locate libstdc++ via the above
 # origin-relative path.
 SET(CMAKE_INSTALL_REMOVE_ENVIRONMENT_RPATH TRUE)
-
-# Make the `StripGccRpath` function available for other `INSTALL(CODE)`
-# calls.
-INSTALL(SCRIPT "${CMAKE_CURRENT_LIST_DIR}/cb_strip_gcc_rpath.cmake" ALL_COMPONENTS)

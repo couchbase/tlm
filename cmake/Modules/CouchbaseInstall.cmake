@@ -33,7 +33,7 @@ if (NOT CouchbaseInstall_INCLUDED)
 
     # MB-63898: Hack! Until we have proper "Modern CMake" IMPORTED
     # targets for each of these, we need to manually pass in the paths
-    # to the DLLs for each of the dependencies of the `magma_shared`
+    # to the DLLs for each of the depenedencies of the `magma_shared`
     # target (the only one using InstallWithDeps() so far). This is only
     # needed on Windows. Once they can all be removed, we can also drop
     # ${_deps_dirs} from the install(CODE) below.
@@ -52,7 +52,7 @@ if (NOT CouchbaseInstall_INCLUDED)
     endif ()
 
     # Pass the paths to DLLs that CMake knows about from imported targets
-    install (CODE "InstallDependencies(${_binary} ${_install_type} ${CMAKE_INSTALL_PREFIX} $<TARGET_RUNTIME_DLL_DIRS:${Ins_TARGET}> ${_deps_dirs})")
+    install (CODE "InstallDependencies(${_binary} ${_install_type} $<TARGET_RUNTIME_DLL_DIRS:${Ins_TARGET}> ${_deps_dirs})")
 
   endfunction(InstallDeps)
 
