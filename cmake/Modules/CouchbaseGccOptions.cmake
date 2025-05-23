@@ -14,9 +14,6 @@
 #   limitations under the License.
 
 # Set the compiler flags for gcc and g++ compilator
-include(PlatformIntrospection)
-include(CheckCCompilerFlag)
-check_c_compiler_flag(-march=x86-64-v3 HAVE_MARCH_X86_64_V3)
 
 # Add common flags for C and C++
 if (CB_CODE_COVERAGE)
@@ -45,26 +42,6 @@ list(APPEND cb_c_flags
      -Wno-overlength-strings
      -Wshadow=compatible-local)
 
-# Configure the C++ compiler
-list(APPEND _cb_cxx_flags
-        -pedantic
-        -Wall
-        -Wredundant-decls
-        -fno-strict-aliasing
-        -Werror=switch
-        -Wshadow=compatible-local)
-
-if (HAVE_MARCH_X86_64_V3)
-   message(STATUS "Building with -march=x86-64-v3")
-   list(APPEND cb_c_flags -march=x86-64-v3)
-   list(APPEND _cb_cxx_flags -march=x86-64-v3)
-else()
-   _DETERMINE_ARCH(HOST_ARCH)
-   if (${HOST_ARCH} STREQUAL x86_64)
-      message(FATAL_ERROR "Can't build with g++ on x86_64 without support for -march=x86-64-v3")
-   endif()
-endif()
-
 # Convert the list to a string
 string(REPLACE ";" " " _cb_c_options "${_cb_c_flags}")
 
@@ -76,6 +53,15 @@ set(CMAKE_C_FLAGS_DEBUG          "-Og -g")
 set(CB_C_FLAGS_NO_OPTIMIZE       "-O0")
 set(CB_FLAGS_OPTIMIZE_FOR_DEBUG  ${CMAKE_C_FLAGS_DEBUG})
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${_cb_c_options}")
+
+# Configure the C++ compiler
+list(APPEND _cb_cxx_flags
+     -pedantic
+     -Wall
+     -Wredundant-decls
+     -fno-strict-aliasing
+     -Werror=switch
+     -Wshadow=compatible-local)
 
 SET(CB_GNU_CXX11_OPTION "-std=gnu++17")
 
