@@ -40,7 +40,7 @@ DECLARE_DEP (fuzztest VERSION v2025-02-14-cb1 PLATFORMS linux macosx)
 # version, you must also update couchbase-server-black-duck-manifest.yaml
 # in this same directory!
 #
-DECLARE_DEP (jemalloc V2 VERSION 5.3.0 BUILD 16 PLATFORMS linux macosx windows)
+DECLARE_DEP (jemalloc V2 VERSION 5.3.0 BUILD 17 PLATFORMS linux macosx windows)
 DECLARE_DEP (jemalloc_noprefix V2 VERSION 5.2.1 BUILD 12 PLATFORMS linux windows)
 DECLARE_DEP (jemalloc_noprefix V2 VERSION 5.3.0 BUILD 11 PLATFORMS macosx)
 DECLARE_DEP (json VERSION 3.11.3-cb2 PLATFORMS linux macosx windows)
