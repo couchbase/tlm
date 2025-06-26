@@ -4,8 +4,9 @@ if (NOT CouchbaseInstall_INCLUDED)
 
   include (ParseArguments)
 
-  # Load the helper functions into the install scripts.
-  install(SCRIPT "${CMAKE_CURRENT_LIST_DIR}/cb_install_helper.cmake" ALL_COMPONENTS)
+  # Load the install-time function `cb_install_deps()` into the install
+  # scripts.
+  install(SCRIPT "${CMAKE_CURRENT_LIST_DIR}/cb_install_deps.cmake" ALL_COMPONENTS)
 
   # Installs the runtime dependencies of a target.
   #
@@ -13,7 +14,7 @@ if (NOT CouchbaseInstall_INCLUDED)
   #
   #   TARGET - name of an existing target. The target must be either a
   #   standard ADD_EXECUTABLE() or ADD_LIBRARY(SHARED) target.
-  function (InstallDeps)
+  function (_install_target_deps)
 
     parse_arguments(Ins "TARGET" "" "" ${ARGN})
     if (NOT Ins_TARGET)
@@ -33,7 +34,7 @@ if (NOT CouchbaseInstall_INCLUDED)
 
     # MB-63898: Hack! Until we have proper "Modern CMake" IMPORTED
     # targets for each of these, we need to manually pass in the paths
-    # to the DLLs for each of the depenedencies of the `magma_shared`
+    # to the DLLs for each of the dependencies of the `magma_shared`
     # target (the only one using InstallWithDeps() so far). This is only
     # needed on Windows. Once they can all be removed, we can also drop
     # ${_deps_dirs} from the install(CODE) below.
@@ -52,9 +53,9 @@ if (NOT CouchbaseInstall_INCLUDED)
     endif ()
 
     # Pass the paths to DLLs that CMake knows about from imported targets
-    install (CODE "InstallDependencies(${_binary} ${_install_type} $<TARGET_RUNTIME_DLL_DIRS:${Ins_TARGET}> ${_deps_dirs})")
+    install (CODE "cb_install_deps(${_binary} ${_install_type} ${CMAKE_INSTALL_PREFIX} $<TARGET_RUNTIME_DLL_DIRS:${Ins_TARGET}> ${_deps_dirs})")
 
-  endfunction(InstallDeps)
+  endfunction(_install_target_deps)
 
   # Installs targets with all their runtime dependencies.
   #
@@ -80,7 +81,7 @@ if (NOT CouchbaseInstall_INCLUDED)
       install (TARGETS ${_target})
 
       # Install the target's runtime dependencies
-      InstallDeps(TARGET ${_target})
+      _install_target_deps(TARGET ${_target})
     endforeach (_target)
 
   endfunction(InstallWithDeps)

@@ -111,66 +111,57 @@ IF (NOT CouchbaseExtraPackages_INCLUDED)
   #
   # PACKAGES - list of extra packages to add this program to.
   #
-  # TARGETS - names of existing executable TARGETs. Each target must be
-  # either a standard ADD_EXECUTABLE() target or one created by
-  # GoModBuild(). Additionally, the output executable of the target must
-  # be installed to ${CMAKE_INSTALL_PREFIX}/bin.
+  # EXES - list of binaries to add to the package. Assumed to be already
+  # installed in ${CMAKE_INSTALL_PREFIX}/bin. (Omit the `.exe` extension
+  # on Windows.)
+  #
+  # (Temporarily, TARGETS is a synonym for EXES)
   MACRO (AddToStandalonePackage)
 
-    PARSE_ARGUMENTS (Pkg "PACKAGES;TARGETS" "" "" ${ARGN})
+    PARSE_ARGUMENTS (Pkg "PACKAGES;TARGETS;EXES" "" "" ${ARGN})
 
+    # Use TARGETS if set - this should be removed
+    IF (Pkg_TARGETS)
+      SET (Pkg_EXES ${Pkg_TARGETS})
+    ENDIF ()
     IF (NOT Pkg_PACKAGES)
       MESSAGE (FATAL_ERROR "PACKAGES is required!")
     ENDIF ()
-    IF (NOT Pkg_TARGETS)
-      MESSAGE (FATAL_ERROR "TARGETS is required!")
+    IF (NOT Pkg_EXES)
+      MESSAGE (FATAL_ERROR "EXES is required!")
     ENDIF ()
 
-    FOREACH (target ${Pkg_TARGETS})
-      # Full path to the original compiled program
-      GET_TARGET_PROPERTY (_exe ${target} GO_BINARY)
-      IF (_exe)
-        SET (_gotarget TRUE)
-        # Extract the filename
-        CMAKE_PATH (GET _exe FILENAME _exename)
-      ELSE ()
-        # Not a GoModBuild() target; get it from the generated build system
-        SET (_gotarget FALSE)
-        SET (_exe "$<TARGET_FILE:${target}>")
-        SET (_exename "$<TARGET_FILE_NAME:${target}>")
+    FOREACH (_exename ${Pkg_EXES})
+      IF (WIN32)
+        SET (_exename "${_exename}.exe")
       ENDIF ()
+      SET (_exe "${CMAKE_INSTALL_PREFIX}/bin/${_exename}")
 
       FOREACH (pkg ${Pkg_PACKAGES})
         # Install the binary itself
-        IF (_gotarget)
-          INSTALL (
-            PROGRAMS ${_exe}
-            DESTINATION "${${pkg}_INSTALL_PREFIX}/bin"
-            EXCLUDE_FROM_ALL COMPONENT ${pkg}
-          )
-        ELSE ()
-          INSTALL (
-            TARGETS ${target}
-            DESTINATION "${${pkg}_INSTALL_PREFIX}/bin"
-            EXCLUDE_FROM_ALL COMPONENT ${pkg}
-          )
-        ENDIF ()
+        INSTALL (
+          PROGRAMS ${_exe}
+          DESTINATION "${${pkg}_INSTALL_PREFIX}/bin"
+          EXCLUDE_FROM_ALL COMPONENT ${pkg}
+        )
 
-        # Create a code block to be used with INSTALL(CODE). We need to do
-        # a bit of variable substitution into this block, so start with it
-        # in a simple string.
+        # Create a code block to be used with INSTALL(CODE). We need to
+        # do a bit of variable substitution into this block, so start
+        # with it in a simple string.
         #
-        # The install code looks up the runtime dependencies of the binary
-        # that was installed into CMAKE_INSTALL_PREFIX (assumed to be
-        # installed into bin/). Those dependencies will therefore be
-        # discovered from CMAKE_INSTALL_PREFIX/lib, which is good, because
-        # those are the versions that CMake has done wacky RPATH
-        # manipulations to for us. We don't want to copy, eg.,
-        # libmagma_shared.so from the build tree.
+        # The install code first strips the already-installed binary,
+        # since we want the standalone packages to be fully stripped. It
+        # also strips any GCC RPATHs from the binary.
         #
-        # We exclude GCC libs that we've already copied to the right place
-        # in the top-level CMakeLists.txt, as well as any libc-like
-        # libraries that come from the OS itself.
+        # It then calls cb_install_deps() to install the runtime
+        # dependencies of this binary. It specifies the binary *in
+        # CMAKE_INSTALL_PREFIX/bin*, because it wants to resolve all
+        # built dependencies (such as libmagma_prefix.so) from
+        # CMAKE_INSTALL_PREFIX/lib. We want to copy those dependencies
+        # from CMAKE_INSTALL_PREFIX because CMake will have done all of
+        # the RPATH-manipulation steps to those versions. This is why
+        # the `standalone-packages` build targets can only be run
+        # *after* the full normal `install` target is invoked.
         SET (_code [[
           IF (CMAKE_INSTALL_DO_STRIP)
             MESSAGE (STATUS "Stripping: ${@@PKG@@_INSTALL_PREFIX}/bin/@@EXE_NAME@@")
@@ -178,50 +169,26 @@ IF (NOT CouchbaseExtraPackages_INCLUDED)
               COMMAND "${CMAKE_STRIP}" "${@@PKG@@_INSTALL_PREFIX}/bin/@@EXE_NAME@@"
             )
           ENDIF ()
-          MESSAGE (STATUS "Adding @@EXE_NAME@@ dependencies to @@PKG@@ package")
-          FILE (
-            GET_RUNTIME_DEPENDENCIES
-            EXECUTABLES "${CMAKE_INSTALL_PREFIX}/bin/@@EXE_NAME@@"
-            PRE_EXCLUDE_REGEXES "^ld-linux.*"
-            POST_EXCLUDE_REGEXES "^/lib.*" "^/usr/lib.*" "^/opt/gcc.*" "C:/Windows/system32/.*"
-            RESOLVED_DEPENDENCIES_VAR _deplibs
-            UNRESOLVED_DEPENDENCIES_VAR _unresolvedeps
-          )
+          cb_strip_gcc_rpath("${@@PKG@@_INSTALL_PREFIX}/bin/@@EXE_NAME@@")
           IF (WIN32)
             SET (_libdir bin)
           ELSE ()
             SET (_libdir lib)
           ENDIF ()
-          SET (_installlibdir "${@@PKG@@_INSTALL_PREFIX}/${_libdir}")
-          FOREACH (_dep ${_deplibs})
-            FILE (
-              INSTALL "${_dep}"
-              DESTINATION "${_installlibdir}"
-              FOLLOW_SYMLINK_CHAIN USE_SOURCE_PERMISSIONS
-            )
-            CMAKE_PATH (GET _dep FILENAME _depname)
-            SET (_installdep "${_installlibdir}/${_depname}")
-            IF (CMAKE_INSTALL_DO_STRIP)
-              MESSAGE (STATUS "Stripping: ${CMAKE_STRIP} ${_installdep}")
-              IF (APPLE)
-                EXECUTE_PROCESS (
-                  COMMAND "${CMAKE_STRIP}" -x "${_installdep}"
-                )
-              ELSE ()
-                EXECUTE_PROCESS (
-                  COMMAND "${CMAKE_STRIP}" --strip-all "${_installdep}"
-                )
-              ENDIF ()
-            ENDIF ()
-          ENDFOREACH ()
+          cb_install_deps (
+            "@@EXE@@"
+            EXECUTABLES
+            "${@@PKG@@_INSTALL_PREFIX}"
+          )
         ]])
 
+        STRING (REPLACE @@EXE@@ "${_exe}" _code "${_code}")
         STRING (REPLACE @@EXE_NAME@@ "${_exename}" _code "${_code}")
         STRING (REPLACE @@PKG@@ "${pkg}" _code "${_code}")
         INSTALL (CODE "${_code}" EXCLUDE_FROM_ALL COMPONENT ${pkg})
 
       ENDFOREACH (pkg)
-    ENDFOREACH (target)
+    ENDFOREACH (_exename)
   ENDMACRO (AddToStandalonePackage)
 
   SET (CouchbaseExtraPackages_INCLUDED 1)

@@ -487,6 +487,9 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     # current binary dir. Install it from there if requested.
     IF (Go_INSTALL_PATH)
       INSTALL (PROGRAMS "${_exe}" DESTINATION "${Go_INSTALL_PATH}")
+      # Also call cb_strip_gcc_rpath() to remove the rpath added by the
+      # toolchain. This will safely do nothing on non-Linux systems.
+      INSTALL (CODE "cb_strip_gcc_rpath(\"${CMAKE_INSTALL_PREFIX}/${Go_INSTALL_PATH}/${_exename}\")")
     ENDIF ()
 
     # Debugging targets
