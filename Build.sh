@@ -27,11 +27,12 @@ macos_cross_compilation_flags=
 tsan_cmake_option=
 asan_cmake_option=
 ubsan_cmake_option=
+fuzz_cmake_option=
 threads_ninja_option=
 loadavg_ninja_option=
 
 DO_BUILD=true
-while getopts "s:b:i:j:l:hXTAURn" OPTION; do
+while getopts "s:b:i:j:l:hXTAUFRn" OPTION; do
   case $OPTION in
   s)
     source_root=${OPTARG}
@@ -70,6 +71,13 @@ while getopts "s:b:i:j:l:hXTAURn" OPTION; do
       errexit "Address sanitizer cannot be used together with Thread sanitizer"
     fi
     ;;
+  F)
+    # The fuzzer requires Address sanitizer to be enabled. Due to a
+    # conflict with a target name in couchdb we currently set it to
+    # kv-commit-validation build which builds just a subset
+    # of the Couchbase Server codebase.
+    fuzz_cmake_option="-D CB_ADDRESSSANITIZER=1 -D FUZZTEST_FUZZING_MODE=ON -D COUCHBASE_KV_COMMIT_VALIDATION=1"
+    ;;
   R)
     CMAKE_BUILD_TYPE=RelWithDebInfo
     ;;
@@ -87,6 +95,7 @@ Usage:
    -T              Enable thread sanitizer
    -A              Enable address sanitizer
    -U              Enable undefined behavior sanitizer
+   -F              Enable fuzzing
    -R              Set build type to RelWithDebInfo
    -n              No build - run CMake only
 
@@ -139,7 +148,7 @@ then
     -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE-DebugOptimized} \
     -D CB_PARALLEL_LINK_JOBS=${cb_parallel_link_jobs} \
     ${EXTRA_CMAKE_OPTIONS} \
-    ${tsan_cmake_option} ${asan_cmake_option} ${ubsan_cmake_option} \
+    ${tsan_cmake_option} ${asan_cmake_option} ${ubsan_cmake_option} ${fuzz_cmake_option} \
     ${source_root} \
     || errexit "Failed to generate build configuration"
 fi
