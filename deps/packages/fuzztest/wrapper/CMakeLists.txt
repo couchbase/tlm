@@ -15,8 +15,16 @@ get_property(common_targets DIRECTORY "${fuzztest_subbuild_SOURCE_DIR}/common" P
 set(install_targets ${main_targets} ${common_targets})
 
 foreach(target IN LISTS install_targets)
-    string(REGEX REPLACE "^fuzztest_" "" exported_name ${target})
-    set_target_properties(${target} PROPERTIES EXPORT_NAME ${exported_name})
+    # Check if target name starts with "fuzztest_" and skip it.
+    # Once on CMake 4.1, we can use REGEX REPLACE with "^fuzztest_" to remove
+    # the prefix. We need to use CMP0186, to avoid replacing
+    # "fuzztest_fuzztest_abc" to "abc".
+    string(FIND ${target} "fuzztest_" prefix_pos)
+    if(prefix_pos EQUAL 0)
+        string(LENGTH "fuzztest_" prefix_length)
+        string(SUBSTRING ${target} ${prefix_length} -1 exported_name)
+        set_target_properties(${target} PROPERTIES EXPORT_NAME ${exported_name})
+    endif()
 endforeach()
 
 install(TARGETS ${install_targets}
