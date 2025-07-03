@@ -162,7 +162,11 @@ IF (NOT CouchbaseExtraPackages_INCLUDED)
         # the RPATH-manipulation steps to those versions. This is why
         # the `standalone-packages` build targets can only be run
         # *after* the full normal `install` target is invoked.
+        #
+        # Note: the blank line after the [[ makes the code inserted into
+        # `cmake_install.cmake` more readable.
         SET (_code [[
+
           IF (CMAKE_INSTALL_DO_STRIP)
             MESSAGE (STATUS "Stripping: ${@@PKG@@_INSTALL_PREFIX}/bin/@@EXE_NAME@@")
             EXECUTE_PROCESS (
@@ -185,7 +189,10 @@ IF (NOT CouchbaseExtraPackages_INCLUDED)
         STRING (REPLACE @@EXE@@ "${_exe}" _code "${_code}")
         STRING (REPLACE @@EXE_NAME@@ "${_exename}" _code "${_code}")
         STRING (REPLACE @@PKG@@ "${pkg}" _code "${_code}")
-        INSTALL (CODE "${_code}" EXCLUDE_FROM_ALL COMPONENT ${pkg})
+        cb_install_code (
+          CODE "${_code}"
+          COMPONENTS ${pkg}
+        )
 
       ENDFOREACH (pkg)
     ENDFOREACH (_exename)

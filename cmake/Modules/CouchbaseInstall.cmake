@@ -2,11 +2,53 @@
 
 if (NOT CouchbaseInstall_INCLUDED)
 
+  # Read list of files in install_funclib directory.
+  file (
+    GLOB funclib_files CONFIGURE_DEPENDS
+    "${CMAKE_CURRENT_LIST_DIR}/install_funclib/*.cmake"
+  )
+
   include (ParseArguments)
 
-  # Load the install-time function `cb_install_deps()` into the install
-  # scripts.
-  install(SCRIPT "${CMAKE_CURRENT_LIST_DIR}/cb_install_deps.cmake" ALL_COMPONENTS)
+  # Helper function to call function(s) in a .cmake script at install
+  # time. This arranges for all the install_funclib `.cmake` scripts to
+  # be include()d from any subdirectory level, so that eg. `make
+  # install` from a subdirectory can still work.
+  #
+  # Required arguments:
+  #
+  #  CODE - cmake code to run at install time
+  #
+  # Optional arguments:
+  #
+  #  COMPONENTS - a list of install components. If specified, the CODE
+  #  will be marked EXCLUDE_FROM_ALL and only run for the given
+  #  component.
+  function (cb_install_code)
+    parse_arguments(Code "CODE" "FUNCTIONS;COMPONENTS" "" ${ARGN})
+    if (NOT Code_CODE)
+      message(FATAL_ERROR "CODE is required!")
+    endif ()
+
+    # See if we've already included the funclib code for this directory.
+    get_property (_funclib_included DIRECTORY . PROPERTY cb_funclib_included)
+    if (NOT _funclib_included)
+      # If not, include all the funclib files in this directory.
+      foreach (_file ${funclib_files})
+        install (SCRIPT "${_file}" ALL_COMPONENTS)
+      endforeach (_file)
+    endif ()
+    set_property (DIRECTORY . PROPERTY cb_funclib_included 1)
+
+    # If COMPONENTS is specified, mark the code as EXCLUDE_FROM_ALL and
+    # only run it for the given components.
+    if (Code_COMPONENTS)
+      install(CODE "${Code_CODE}" EXCLUDE_FROM_ALL COMPONENT ${Code_COMPONENTS})
+    else ()
+      install(CODE "${Code_CODE}" ALL_COMPONENTS)
+    endif ()
+
+  endfunction (cb_install_code)
 
   # Installs the runtime dependencies of a target.
   #
@@ -53,7 +95,9 @@ if (NOT CouchbaseInstall_INCLUDED)
     endif ()
 
     # Pass the paths to DLLs that CMake knows about from imported targets
-    install (CODE "cb_install_deps(${_binary} ${_install_type} ${CMAKE_INSTALL_PREFIX} $<TARGET_RUNTIME_DLL_DIRS:${Ins_TARGET}> ${_deps_dirs})")
+    cb_install_code (
+      CODE "cb_install_deps(${_binary} ${_install_type} ${CMAKE_INSTALL_PREFIX} $<TARGET_RUNTIME_DLL_DIRS:${Ins_TARGET}> ${_deps_dirs})"
+    )
 
   endfunction(_install_target_deps)
 
