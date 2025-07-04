@@ -22,13 +22,23 @@ IF (CB_CODE_COVERAGE)
     FIND_PROGRAM(GCOV_PATH gcov)
     FIND_PROGRAM(GCOVR_PATH gcovr)
 
-    IF (NOT GCOV_PATH)
+    IF (GCOV_PATH)
+        EXECUTE_PROCESS(COMMAND ${GCOV_PATH} --version
+                        OUTPUT_VARIABLE GCOV_VERSION
+                        OUTPUT_STRIP_TRAILING_WHITESPACE)
+        MESSAGE(STATUS "gcov found: ${GCOV_PATH} version: ${GCOV_VERSION}")
+    ELSE (GCOV_PATH)
         MESSAGE(STATUS "gcov not found.")
-    ENDIF (NOT GCOV_PATH)
+    ENDIF (GCOV_PATH)
 
-    IF (NOT GCOVR_PATH)
+    IF (GCOVR_PATH)
+        EXECUTE_PROCESS(COMMAND ${GCOVR_PATH} --version
+                        OUTPUT_VARIABLE GCOVR_VERSION
+                        OUTPUT_STRIP_TRAILING_WHITESPACE)
+        MESSAGE(STATUS "gcovr found: ${GCOVR_PATH} version: ${GCOVR_VERSION}")
+    ELSE (GCOVR_PATH)
         MESSAGE(STATUS "gcovr [www.gcovr.com] not found. HTML / XML coverage report rules will not be available")
-    ENDIF ()
+    ENDIF (GCOVR_PATH)
 
     IF (NOT GCOV_PATH)
        MESSAGE(FATAL_ERROR "CB_CODE_COVERAGE enabled but a required tool (gcov) was not found - cannot continue.")
