@@ -149,9 +149,9 @@ IF (NOT CouchbaseExtraPackages_INCLUDED)
         # do a bit of variable substitution into this block, so start
         # with it in a simple string.
         #
-        # The install code first strips the already-installed binary,
-        # since we want the standalone packages to be fully stripped. It
-        # also strips any GCC RPATHs from the binary.
+        # The install code first strips the just-installed binary, since
+        # we want the standalone packages to be fully stripped. It also
+        # strips any GCC RPATHs from the binary.
         #
         # It then calls cb_install_deps() to install the runtime
         # dependencies of this binary. It specifies the binary *in

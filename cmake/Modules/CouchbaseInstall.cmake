@@ -10,10 +10,11 @@ if (NOT CouchbaseInstall_INCLUDED)
 
   include (ParseArguments)
 
-  # Helper function to call function(s) in a .cmake script at install
-  # time. This arranges for all the install_funclib `.cmake` scripts to
-  # be include()d from any subdirectory level, so that eg. `make
-  # install` from a subdirectory can still work.
+  # Helper function to add install-time CMake code, which may make use
+  # of CMake functions defined in `install_funclib` cmake scripts. This
+  # arranges for all the install_funclib `.cmake` scripts to be
+  # include()d from any subdirectory level, so that eg. `make install`
+  # from a subdirectory can still work.
   #
   # Required arguments:
   #
@@ -33,19 +34,22 @@ if (NOT CouchbaseInstall_INCLUDED)
     # See if we've already included the funclib code for this directory.
     get_property (_funclib_included DIRECTORY . PROPERTY cb_funclib_included)
     if (NOT _funclib_included)
-      # If not, include all the funclib files in this directory.
+      # If not, include all the funclib files in this directory. Use
+      # ALL_COMPONENTS so the functions are available regardless of the
+      # component being installed.
       foreach (_file ${funclib_files})
         install (SCRIPT "${_file}" ALL_COMPONENTS)
       endforeach (_file)
     endif ()
     set_property (DIRECTORY . PROPERTY cb_funclib_included 1)
 
-    # If COMPONENTS is specified, mark the code as EXCLUDE_FROM_ALL and
-    # only run it for the given components.
     if (Code_COMPONENTS)
+      # If COMPONENTS is specified, mark the code as EXCLUDE_FROM_ALL
+      # and only run it for the given components.
       install(CODE "${Code_CODE}" EXCLUDE_FROM_ALL COMPONENT ${Code_COMPONENTS})
     else ()
-      install(CODE "${Code_CODE}" ALL_COMPONENTS)
+      # Add the code to the default component (ie, no COMPONENT argument).
+      install(CODE "${Code_CODE}")
     endif ()
 
   endfunction (cb_install_code)
