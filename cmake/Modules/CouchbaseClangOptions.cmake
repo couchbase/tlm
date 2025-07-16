@@ -58,6 +58,9 @@ if(HAVE_DEBUG_DEFAULT_VERSION)
     list(APPEND _cb_c_flags -fdebug-default-version=4)
 endif()
 
+list(APPEND _cb_c_flags -mavx2)
+list(APPEND _cb_c_flags -msse4.2)
+
 # Copy the flags over to C++
 set(_cb_cxx_flags ${_cb_c_flags})
 

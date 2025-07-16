@@ -1,5 +1,7 @@
 # Downloads the declared version of Folly builds it.
+include(PlatformIntrospection)
 include(ExternalProject)
+include(CheckCXXCompilerFlag)
 
 # Expand folly's deps to a separate install directory so we don't end up
 # packaging them up in the folly cbdep itself.
@@ -34,6 +36,16 @@ list(APPEND folly_library_paths ${_folly_deps_install}/lib)
 set(cxx_flags "-fPIC -fvisibility=hidden")
 
 if (UNIX)
+   check_cxx_compiler_flag(-march=x86-64-v3 HAVE_MARCH_X86_64_V3)
+   if (HAVE_MARCH_X86_64_V3)
+       message(STATUS "Building with -march=x86-64-v3")
+       set(cxx_flags "${cxx_flags} -march=x86-64-v3")
+   else()
+       _DETERMINE_ARCH(HOST_ARCH)
+       if (${HOST_ARCH} STREQUAL x86_64)
+         message(FATAL_ERROR "Can't build with g++ on x86_64 without support for -march=x86-64-v3")
+       endif()
+   endif()
    list(APPEND cache_args ${common_cmake_cache_args})
 endif()
 LIST(APPEND cache_args -DCMAKE_LIBRARY_PATH:STRING=${folly_library_paths})
@@ -91,6 +103,7 @@ ExternalProject_Add(folly
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
+        CMAKE_ARGS  -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         CMAKE_CACHE_ARGS ${cache_args}
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
         BUILD_IN_SOURCE 1
@@ -109,6 +122,7 @@ if (UNIX)
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
+        CMAKE_ARGS  -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         CMAKE_CACHE_ARGS ${cache_args}
             "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags} -fsanitize=thread"
         BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
@@ -125,6 +139,7 @@ if (UNIX)
             GIT_REPOSITORY ${_git_repo}
             GIT_TAG ${_git_rev}
             PATCH_COMMAND ${folly_patch_command}
+            CMAKE_ARGS  -DCMAKE_POLICY_VERSION_MINIMUM=3.5
             CMAKE_CACHE_ARGS ${cache_args}
                 -DCMAKE_BUILD_TYPE:STRING=DebugOptimized
                 "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags} -fsanitize=address"
@@ -145,6 +160,7 @@ if (NOT WIN32)
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
         PATCH_COMMAND ${folly_patch_command}
+        CMAKE_ARGS  -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         CMAKE_CACHE_ARGS ${cache_args}
             -DCMAKE_BUILD_TYPE:STRING=Debug
             -DCMAKE_DEBUG_POSTFIX:STRING=d
