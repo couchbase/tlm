@@ -73,6 +73,15 @@ ELSE ()
   SET (ENV{GOPATH} "$ENV{HOME}/.cbdepscache/gomodcache")
 ENDIF ()
 
+# Enable x86-64-v3 when building on Intel CPUs.
+IF (CB_SYSTEM_PROCESSOR MATCHES "x86_64")
+  MESSAGE (WARNING "Enabling x86-64-v3 optimizations for Intel CPUs")
+  SET (ENV{GOAMD64} "v3")
+  SET (ENV{CGO_CFLAGS} "$ENV{CGO_CFLAGS} -march=x86-64-v3")
+  SET (ENV{CGO_CPPFLAGS} "$ENV{CGO_CPPFLAGS} -march=x86-64-v3")
+  SET (ENV{CGO_CXXFLAGS} "$ENV{CGO_CXXFLAGS} -march=x86-64-v3")
+ENDIF ()
+
 # Set GO111MODULE since we're by definition building with modules (just in
 # case it's set to a bad value in the environment)
 SET (ENV{GO111MODULE} "on")
@@ -98,6 +107,7 @@ IF (DEFINED ENV{VERBOSE})
   SET (CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT)
 
   # Also display the env vars we've created
+  MESSAGE ("CGO_CFLAGS: $ENV{CGO_CFLAGS}")
   MESSAGE ("CGO_CPPFLAGS: $ENV{CGO_CPPFLAGS}")
   MESSAGE ("CGO_LDFLAGS: $ENV{CGO_LDFLAGS}")
 ENDIF ()
