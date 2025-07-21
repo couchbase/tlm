@@ -472,7 +472,11 @@ ENDIF()
 
 IF (NOT BUILD_ONLY_TOOLS AND NOT COUCHBASE_KV_COMMIT_VALIDATION)
   # Add appropriate license files to main build
-  ADD_SUBDIRECTORY(product-texts/couchbase-server)
+  IF (BUILD_COLUMNAR)
+    ADD_SUBDIRECTORY(product-texts/enterprise-analytics)
+  ELSE ()
+    ADD_SUBDIRECTORY(product-texts/couchbase-server)
+  ENDIF ()
 
   STRING (REGEX MATCH "^[^-]+" _version "${PRODUCT_VERSION}")
   SET (NOTICES_FILE "product-metadata/couchbase-server/blackduck/${_version}/notices.txt")
