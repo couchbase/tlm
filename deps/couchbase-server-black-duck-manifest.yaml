@@ -32,10 +32,6 @@ components:
     double-conversion:
         bd-id: 7f59c14e-52c9-440b-bee8-2427850c3e90
         versions: [ v3.3.0 ]
-    erlang:
-        bd-id: 2c804760-a3e3-4ba1-abfb-77525633b966
-        cbdeps-versions: [ 26.2 ]
-        versions: [ 26.2 ]
     fast_float:
         bd-id: 1aad74aa-0d4c-446f-b3ed-75c64eee34de
         versions: [ 7.0.0 ]
@@ -76,9 +72,6 @@ components:
         bd-id: fe3e8b96-6c8e-411f-991f-697ecfed5605
         versions: [ 2.0.11 ]
         license-approved: true
-    openssl:
-        bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
-        versions: [ 3.1.4 ]
     pcre:
         bd-id: 8c9723be-a23f-4974-9645-54c471aed433
         versions: [ 8.44 ]
@@ -137,10 +130,12 @@ include-projects:
   - AWSSDK
   - cbpy
   - curl
+  - erlang
   - faiss
   - grpc
   - jemalloc
   - jemalloc_noprefix
   - lz4
+  - openssl
   - prometheus
   - simdutf
