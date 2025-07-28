@@ -34,10 +34,6 @@ components:
     double-conversion:
         bd-id: 7f59c14e-52c9-440b-bee8-2427850c3e90
         versions: [ v3.0.0 ]
-    erlang:
-        bd-id: 2c804760-a3e3-4ba1-abfb-77525633b966
-        cbdeps-versions: [ 25.3 ]
-        versions: [ 25.3.2.1 ]
     flatbuffers:
         bd-id: ae906881-37fd-4af4-8fe7-e435fd2056af
         versions: [ v1.10.0 ]
@@ -75,9 +71,6 @@ components:
         bd-id: fe3e8b96-6c8e-411f-991f-697ecfed5605
         versions: [ 2.0.11 ]
         license-approved: true
-    openssl:
-        bd-id: cc8d0e2b-f88f-49c8-b42f-42626640f589
-        versions: [ 3.1.4 ]
     pcre:
         bd-id: 8c9723be-a23f-4974-9645-54c471aed433
         versions: [ 8.44 ]
@@ -139,5 +132,7 @@ components:
 # This will also keep the manifest-drift job happy.
 include-projects:
   - cbpy
-  - grpc
   - curl
+  - erlang
+  - grpc
+  - openssl
