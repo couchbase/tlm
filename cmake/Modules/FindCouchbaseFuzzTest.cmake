@@ -78,6 +78,7 @@ if (NOT fuzztest_FOUND AND UNIX)
         -Wno-sign-compare
         -Wno-c99-extensions
         -Wno-deprecated-declarations
+        -Wno-shorten-64-to-32
     )
 
     FetchContent_Declare(
