@@ -584,8 +584,10 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # GCFLAGS - flags that will be passed (via -gcflags) to all compile
   # steps; should be a single string value, with spaces if necessary
   #
-  # GOTAGS - tags that will be passed (viga -tags) to all compile
+  # GOTAGS - tags that will be passed (via -tags) to all compile
   # steps; should be a single string value, with spaces as necessary
+  #
+  # GOARGS - extra arguments that will be passed to "go test" as-is
   #
   # LDFLAGS - flags that will be passed (via -ldflags) to all compile
   # steps; should be a single string value, with spaces if necessary
@@ -603,7 +605,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   MACRO (GoTest)
 
   PARSE_ARGUMENTS (Go "DEPENDS;GOPATH;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
-      "TARGET;PACKAGE;GOVERSION;GCFLAGS;GOTAGS;GOBUILDMODE;LDFLAGS"
+      "TARGET;PACKAGE;GOVERSION;GCFLAGS;GOTAGS;GOARGS;GOBUILDMODE;LDFLAGS"
         "NOCONSOLE" ${ARGN})
 
   IF (NOT Go_TARGET)
@@ -641,6 +643,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
              -D "CGO_LDFLAGS=${CMAKE_CGO_LDFLAGS}"
              -D "GCFLAGS=${Go_GCFLAGS}"
              -D "GOTAGS=${Go_GOTAGS}"
+             -D "GOARGS=${Go_GOARGS}"
              -D "GOBUILDMODE=${Go_GOBUILDMODE}"
              -D "LDFLAGS=${_ldflags}"
              -D "PACKAGE=${Go_PACKAGE}"

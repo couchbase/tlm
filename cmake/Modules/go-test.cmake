@@ -75,14 +75,18 @@ ENDIF ()
 # build. So add them to LD_LIBRARY_PATH here and give them priority.
 SET(ENV{LD_LIBRARY_PATH} "${CGO_LIBRARY_DIRS}:$ENV{LD_LIBRARY_PATH}")
 
+# For when people run with eg. `make VERBOSE=1`
+IF (DEFINED ENV{VERBOSE})
+  # Output the commands we execute
+  SET (CMAKE_EXECUTE_PROCESS_COMMAND_ECHO STDOUT)
+ENDIF ()
+
 # Execute "go test".
-MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} test ${_bits_str} -tags=\"${GOTAGS}\" -gcflags=\"${GCFLAGS}\" -ldflags=\"${LDFLAGS}\" ${_go_debug} ${_go_race} ${PACKAGE}")
 EXECUTE_PROCESS (RESULT_VARIABLE _failure
-  COMMAND "${GO_EXECUTABLE}" test ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} ${_go_race} "${PACKAGE}")
-  IF (CB_GO_CODE_COVERAGE)
-    MESSAGE (STATUS "Executing: ${GO_EXECUTABLE} test -c -cover -covermode=count -coverpkg ${PACKAGE} -tags=${GOTAGS} -gcflags=${GCFLAGS} -ldflags=${LDFLAGS} ${_go_debug} ${PACKAGE}")
-    EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" test -c -cover -covermode=count -coverpkg ${PACKAGE} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} "${PACKAGE}")
-  ENDIF ()
+  COMMAND "${GO_EXECUTABLE}" test ${GOARGS} ${_bits} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} ${_go_race} "${PACKAGE}")
+IF (CB_GO_CODE_COVERAGE)
+  EXECUTE_PROCESS (COMMAND "${GO_EXECUTABLE}" test -c -cover -covermode=count -coverpkg ${PACKAGE} "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}" "-ldflags=${LDFLAGS}" ${_go_debug} "${PACKAGE}")
+ENDIF ()
 IF (_failure)
   MESSAGE (FATAL_ERROR "Failed running go test")
 ENDIF (_failure)
