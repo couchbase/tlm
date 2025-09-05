@@ -57,7 +57,7 @@ IF (CB_THREADSANITIZER)
             # (for example for RPM sanitized packages).
             # library).
             install_sanitizer_library(TSan
-                                      libtsan.so.0
+                                      "libtsan.so.2;libtsan.so.0"
                                       "${THREAD_SANITIZER_FLAG};${THREAD_SANITIZER_LDFLAGS}"
                                       ${CMAKE_INSTALL_PREFIX}/lib)
         endif()
