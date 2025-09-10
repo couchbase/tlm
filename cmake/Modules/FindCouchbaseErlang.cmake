@@ -181,6 +181,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
       ADD_CUSTOM_TARGET ("${Rebar_TARGET}-clean"
         "${CMAKE_COMMAND}" -E env
         CC=${REBAR_CC} CXX=${REBAR_CXX}
+        ${Rebar_EXTRA_ENV}
         "${ESCRIPT_EXECUTABLE}" "${rebar_script}" clean
         COMMAND "${CMAKE_COMMAND}" -E remove_directory _build
         COMMAND "${CMAKE_COMMAND}" -E remove_directory .eunit
