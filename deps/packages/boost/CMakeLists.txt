@@ -6,7 +6,7 @@ include(ExternalProject)
 
 if (WIN32)
    set(boost_bootstrap bootstrap.bat)
-   set(boost_extra_flags "")
+   set(boost_extra_flags "toolset=msvc-14.3")
    set(boost_variant "debug,release")
 else (WIN32)
    set(boost_bootstrap bootstrap.sh)

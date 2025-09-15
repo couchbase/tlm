@@ -3,13 +3,18 @@ include(PlatformIntrospection)
 include(ExternalProject)
 include(CheckCXXCompilerFlag)
 
+# Set policy CMP0074 to NEW to allow use of <PackageName>_ROOT variables
+if(POLICY CMP0074)
+    cmake_policy(SET CMP0074 NEW)
+endif()
+
 # Expand folly's deps to a separate install directory so we don't end up
 # packaging them up in the folly cbdep itself.
 set(_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 set(_folly_deps_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
 set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 
-DECLARE_DEP (boost VERSION 1.82.0-cb6 PLATFORMS linux macosx windows)
+DECLARE_DEP (boost VERSION 1.86.0-cb3 PLATFORMS linux macosx windows)
 DECLARE_DEP (double-conversion VERSION 3.3.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (fast_float V2 VERSION 7.0.0 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (fmt VERSION 11.0.0-cb2 PLATFORMS linux macosx windows)
@@ -55,7 +60,7 @@ list(APPEND cache_args -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo)
 list(APPEND cache_args "-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/install")
 list(APPEND cache_args -DBUILD_SHARED_LIBS:STRING=OFF)
 list(APPEND cache_args -DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
-list(APPEND cache_args -DBoost_ADDITIONAL_VERSIONS:STRING=1.82)
+list(APPEND cache_args -DBoost_ADDITIONAL_VERSIONS:STRING=1.86)
 list(APPEND cache_args -DBoost_DETAILED_FAILURE_MSG:STRING=ON)
 list(APPEND cache_args -DBoost_USE_STATIC_LIBS:STRING=ON)
 list(APPEND cache_args -DBoost_NO_SYSTEM_PATHS:BOOL=ON)
@@ -73,6 +78,7 @@ list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Libiberty:BOOL=TRUE)
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibAIO:BOOL=TRUE)
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibUring:BOOL=TRUE)
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Libsodium:BOOL=TRUE)
+list(APPEND cache_args -DCMAKE_POLICY_VERSION_MINIMUM:STRING=3.5)
 
 if(WIN32)
    # Glog/Gflags: we build it statically, but headers default
