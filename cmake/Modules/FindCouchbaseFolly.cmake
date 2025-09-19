@@ -41,10 +41,10 @@ endif ()
 if(CB_THREADSANITIZER)
     set(folly_lib follytsan)
 elseif(CB_ADDRESSSANITIZER)
-    # We also have a separate ASan+UBsan build of the library as otherwise
-    # ASan/UBSan build flags spurious errors when linking to Folly (as we
+    # We also have a separate ASan build of the library as otherwise
+    # ASan build flags spurious errors when linking to Folly (as we
     # end up with a mix of sanitized & unsanitized code).
-    set(folly_lib follyasan_ubsan)
+    set(folly_lib follyasan)
 else(CB_THREADSANITIZER)
     set(folly_lib folly)
 endif(CB_THREADSANITIZER)

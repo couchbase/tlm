@@ -11,6 +11,10 @@ set TMP=C:\Windows\Temp
 rem Default value for source_root (ignored but must be set)
 set source_root=%CD%
 
+if "%DISTRO%" == "windows_msvc2022" (
+  set tools_version=17.0
+  goto do_build
+)
 if "%DISTRO%" == "windows_msvc2017" (
   set tools_version=15.0
   goto do_build
@@ -42,6 +46,14 @@ cmake .. -G "NMake Makefiles" -DPACKAGE=%PACKAGE% || goto error
 cmake --build . --target %PACKAGE% || goto error
 cd ..
 xcopy winbuild\deps build\deps /s /e /y
+
+if "%~1" == "install" (
+  pushd winbuild\deps\%PACKAGE%
+  for /d %%d in (*) do (
+    copy "%%d\*" "%USERPROFILE%\cbdepscache"
+  )
+  popd
+)
 
 goto eof
 

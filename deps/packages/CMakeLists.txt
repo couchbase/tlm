@@ -173,6 +173,18 @@ if (WIN32)
   endif(HOST_ARCH STREQUAL "amd64")
 endif(WIN32)
 
+
+# Common CMake cache arguments for all packages to set compiler and C++ standard version
+# to avoid duplicating this in each of the individual package CMakeLists.txt files.
+list(APPEND common_cmake_cache_args -DCMAKE_CXX_STANDARD:STRING=20)
+list(APPEND common_cmake_cache_args -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER})
+list(APPEND common_cmake_cache_args -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER})
+
+if (APPLE)
+    # Oldest supported target on trinity is 12
+    list(APPEND common_cmake_cache_args -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=12)
+endif ()
+
 ADD_CUSTOM_TARGET(build-and-cache-all)
 
 #
@@ -188,7 +200,7 @@ _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 _ADD_DEP_PACKAGE(flatbuffers v1.10.0 v1.10.0 7)
 
 _ADD_DEP_PACKAGE(json 3.11.2 v3.11.2 1)
-_ADD_DEP_PACKAGE(boost 1.82.0 boost-1.82.0 1)
+_ADD_DEP_PACKAGE(boost 1.86.0 boost-1.86.0 2)
 
 _ADD_DEP_PACKAGE(libcouchbase 2.10.0 2.10.0 1)
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -206,16 +218,16 @@ _ADD_DEP_PACKAGE(maven 3.5.2 master 7)
 _ADD_DEP_PACKAGE(openjdk-rt 1.8.0.171 UNUSED 2)
 
 _ADD_DEP_PACKAGE(double-conversion 3.0.0 v3.0.0 6)
-_ADD_DEP_PACKAGE(fmt 8.1.1 8.1.1 4)
+_ADD_DEP_PACKAGE(fmt 11.0.0 11.0.0 3_trinity)
 _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 3)
 _ADD_DEP_PACKAGE(benchmark v1.6.2 v1.6.2 2)
 _ADD_DEP_PACKAGE(googletest 1.14.0 1.14.0 1)
 
-_ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 15)
+_ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 19)
 _ADD_DEP_PACKAGE(grpc 1.59.3 v1.59.3 1)
 _ADD_DEP_PACKAGE(pcre 8.44 v8.44 3)
 _ADD_DEP_PACKAGE(opentelemetry-cpp v1.0.0-rc4.cb v1.0.0-rc4.cb 1)
 _ADD_DEP_PACKAGE(opentracing-cpp v1.5.1 v1.5.1 4)
 _ADD_DEP_PACKAGE(prometheus-cpp v1.2.1-couchbase v1.2.1-couchbase 1)
 _ADD_DEP_PACKAGE(simdutf 3.2.14 3.2.14 1)
-_ADD_DEP_PACKAGE(spdlog v1.10.0 v1.10.0 6)
+_ADD_DEP_PACKAGE(spdlog v1.15.0 v1.15.0 5_trinity)

@@ -21,14 +21,13 @@ components:
 
     boost:
         bd-id: 4eac8f37-d9e5-4344-83d0-be0e9fd42a6a
-        versions: [ 1.82.0 ]
+        versions: [ 1.86.0 ]
     # Note: breakpad doesn't really have "releases". I picked this version from
     # Black Duck's history as being moderately close to the date of the code we
     # use.
     breakpad:
         bd-id: db80c33d-d4c4-47e7-a3a4-a749eb3b5d74
-        versions: [ r835 ]
-        cbdeps-versions: [ 20200430 ]
+        versions: [ 2022.07.12 ]
     double-conversion:
         bd-id: 7f59c14e-52c9-440b-bee8-2427850c3e90
         versions: [ v3.0.0 ]
@@ -37,7 +36,7 @@ components:
         versions: [ v1.10.0 ]
     fmt:
         bd-id: eae20828-18b8-478f-83b3-4a058748a28b
-        versions: [ 8.1.1 ]
+        versions: [ 11.0.0 ]
     folly:
         bd-id: 7f50be63-e94c-48d6-ac73-c12965b5c9b5
         versions: [ v2022.05.23.00 ]
@@ -83,10 +82,10 @@ components:
         versions: [ 1.1.10 ]
     spdlog:
         bd-id: 7785114c-5b78-4aad-8771-72a739a1f06e
-        versions: [ v1.10.0 ]
+        versions: [ v1.15.0 ]
     v8:
         bd-id: 3eec43ae-12a3-4035-bceb-9b5bd8eefe79
-        versions: [ 12.1.285.26 ]
+        versions: [ 13.4.115 ]
     zlib:
         bd-id: b9185555-6e31-401e-b373-bfec7955a8ab
         versions: [ 1.2.13 ]
@@ -109,10 +108,6 @@ components:
     # These files are copied from the build agent in the top-level
     # CMakeLists.txt (using the _install_gcc_file macro)
     #
-    # Although we use gcc 10.2.0 to build Neo, the libgcc/libstdc++ libraries
-    # are from 13.2.0. This is to prevent RPATHs in our dependencies which are
-    # pointed at the gcc-10.2.0 libraries from causing issues in gcc13 builds
-    # of Couchbase Server
     libgcc:
         bd-id: e12b8d28-cc06-4ffe-9393-21982b677571
         versions: [ 13.2.0 ]

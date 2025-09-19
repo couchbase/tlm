@@ -8,8 +8,8 @@ of utility CMake libraries in cmake/Modules.
 ## Software requirements
 
 * C/C++ compiler; one of:
-  * gcc 10.2 or newer
-  * Visual Studio 2017 or newer
+  * gcc 13.2 or newer
+  * Visual Studio 2022 or newer
   * Xcode
   * clang
 * CMake 3.23 or newer
@@ -17,8 +17,8 @@ of utility CMake libraries in cmake/Modules.
 * [Ninja](https://ninja-build.org) build
 * ccache may speed up the development cycle when clang / gcc is used
 
-Our production builds currently use gcc-10.2.0 on Linux platforms;
-Visual Studio 2017 on Windows; and Xcode 11.3.1 on MacOS.
+Our production builds currently use gcc-13.2.0 on Linux platforms;
+Visual Studio 2022 on Windows; and Xcode 15.2.0 on MacOS.
 
 ### Requirements on Windows
 
