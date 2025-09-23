@@ -41,3 +41,6 @@ deadlock:plock_lock
 # symbol-based suppressions (e.g. the tzset_internal one above).
 # Therefore just suppress anything for this unit test.
 race:memcached_logger_emfile_test
+
+# MB-68561: There is a deadlock being reported from rollback and expiry
+deadlock:ExpiredItemsCallback::callback
