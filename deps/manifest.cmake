@@ -35,7 +35,7 @@ DECLARE_DEP (grpc V2 VERSION 1.72.0 BUILD 3 PLATFORMS linux macosx windows)
 # in this same directory!
 #
 DECLARE_DEP (jemalloc VERSION 5.2.1-cb9 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows)
-DECLARE_DEP (json VERSION 3.9.0-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
+DECLARE_DEP (json VERSION 3.11.2-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (libevent VERSION 2.1.11-cb12 PLATFORMS linux macosx windows)
 DECLARE_DEP (liburing V2 VERSION 0.6 BUILD 2 PLATFORMS amzn2 centos7 debian9 debian10 suse12 suse15 ubuntu18.04 ubuntu20.04)
 DECLARE_DEP (libuv V2 VERSION 1.20.3 BUILD 17 PLATFORMS windows_msvc2017)

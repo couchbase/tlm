@@ -50,7 +50,7 @@ components:
         versions: [ 5.2.1 ]
     json:
         bd-id: 7355d1e8-3e81-447c-a726-fa23a3541ac2
-        versions: [ v3.9.0 ]
+        versions: [ v3.11.2 ]
     libevent:
         bd-id: 3164e153-3508-415c-af53-443dea356811
         versions: [ 2.1.11 ]
