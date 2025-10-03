@@ -16,7 +16,7 @@ ENDIF (NOT modified_binary_dir STREQUAL CMAKE_BINARY_DIR)
 # Use gcc from an alternate location if available (and the user didn't
 # ask for something else using the standard CMAKE_C/CXX_COMPILER
 # variables or CC / CXX env vars).
-SET (CB_GCC_PATH /opt/gcc-13.2.0 CACHE PATH "Preferred location for GCC, if available")
+SET (CB_GCC_PATH /opt/gcc-10.2.0 CACHE PATH "Preferred location for GCC, if available")
 IF (NOT DEFINED CMAKE_C_COMPILER AND
     NOT DEFINED CMAKE_CXX_COMPILER AND
     NOT DEFINED ENV{CC} AND
