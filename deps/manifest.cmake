@@ -16,8 +16,8 @@
 # version, you must also update couchbase-server-black-duck-manifest.json
 # in this same directory!
 #
-DECLARE_DEP (benchmark VERSION v1.6.0-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
-DECLARE_DEP (breakpad V2 VERSION 20200430 BUILD 4 PLATFORMS linux windows)
+DECLARE_DEP (benchmark VERSION v1.6.2-cb2 PLATFORMS linux macosx windows)
+DECLARE_DEP (breakpad V2 VERSION 2022.07.12 BUILD 1 PLATFORMS linux windows)
 DECLARE_DEP (boost VERSION 1.74.0-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (cbpy V2 VERSION 3.11.10 BUILD 3 PLATFORMS linux macosx windows DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python/interp")
 DECLARE_DEP (curl V2 VERSION 8.14.1 BUILD 2 PLATFORMS linux macosx windows)
@@ -27,7 +27,7 @@ DECLARE_DEP (flatbuffers VERSION 1.10.0-cb5 PLATFORMS amzn2 centos7 debian9 debi
 DECLARE_DEP (fmt VERSION 7.1.3-cb2 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (folly VERSION v2020.09.07.00-couchbase-cb4 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb1 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
-DECLARE_DEP (googletest VERSION 1.11.0-cb4 PLATFORMS linux macosx windows_msvc2017)
+DECLARE_DEP (googletest VERSION 1.14.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (grpc V2 VERSION 1.72.0 BUILD 3 PLATFORMS linux macosx windows)
 #
 # IMPORTANT: If you add a new package here or update an existing package
@@ -55,7 +55,7 @@ DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 4 PLATFORMS amzn2 centos7 debi
 IF (NOT CB_PRODUCTION_BUILD)
 DECLARE_DEP (rocksdb VERSION 5.18.3-cb6 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04)
 ENDIF (NOT CB_PRODUCTION_BUILD)
-DECLARE_DEP (snappy VERSION 1.1.8-cb4 PLATFORMS linux macosx windows_msvc2017)
+DECLARE_DEP (snappy VERSION 1.1.10-cb2 PLATFORMS linux macosx windows)
 DECLARE_DEP (spdlog VERSION v1.8.5-cb3 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (v8 V2 VERSION 12.1.285.26 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (zlib V2 VERSION 1.2.13 BUILD 1 PLATFORMS linux macosx windows_msvc2017)
