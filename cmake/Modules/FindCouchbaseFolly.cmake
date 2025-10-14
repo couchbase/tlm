@@ -148,6 +148,7 @@ endif()
 # This is useful as some targets (e.g. tests) only make use of the
 # portability headers such as portability/GTest.h
 add_library(Folly::headers INTERFACE IMPORTED)
+target_link_libraries(Folly::headers INTERFACE fmt::fmt)
 target_include_directories(Folly::headers INTERFACE
         ${FOLLY_CONFIG_INCLUDE_DIR}
         ${Boost_INCLUDE_DIR}
