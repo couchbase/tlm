@@ -125,7 +125,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
         SET (_sysroot_arg "OSX_SYSROOT=${CMAKE_OSX_SYSROOT}")
     ENDIF (APPLE)
 
-    # This is a hach to work around the problem with rebar CC invocation
+    # This is a hack to work around the problem with rebar CC invocation
     # when CC path contains a space
     IF (WIN32)
         SET (REBAR_CC cl.exe)
@@ -135,9 +135,17 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
         SET (REBAR_CXX "${CMAKE_CXX_COMPILER}")
     ENDIF(WIN32)
 
+    # This is a hack to work around problems with rebar3 dependency
+    # management - it won't download the requested version of a
+    # dependency's plugins if an older version of those plugins are
+    # already cached, so we force it to use a cache directory in the
+    # build dir so it's always clean.
+    SET (REBAR3_CACHE_DIR "${CMAKE_BINARY_DIR}/tlm/rebar3_cache")
+    FILE (MAKE_DIRECTORY "${REBAR3_CACHE_DIR}")
+
     ADD_CUSTOM_TARGET (${Rebar_TARGET} ${_all}
       "${CMAKE_COMMAND}" -E env
-      CC=${REBAR_CC} CXX=${REBAR_CXX}
+      CC=${REBAR_CC} CXX=${REBAR_CXX} REBAR_CACHE_DIR=${REBAR3_CACHE_DIR}
       ${_sysroot_arg}
       LIBSODIUM_INCLUDE_DIR=${LIBSODIUM_INCLUDE_DIR}
       LIBSODIUM_LIB_DIR=${LIBSODIUM_LIB_DIR}
