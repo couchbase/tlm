@@ -13,6 +13,16 @@ rm -rf build
 mkdir build
 cd build
 
+# Set macOS deployment target based on architecture
+if [ "$(uname -s)" == "Darwin" ]; then
+    arch=$(uname -m)
+    if [ "$arch" = "x86_64" ]; then
+        export MACOSX_DEPLOYMENT_TARGET=11.0
+    elif [ "$arch" = "arm64" ]; then
+        export MACOSX_DEPLOYMENT_TARGET=12.0
+    fi
+fi
+
 # Work-around for generating generic "linux" deps
 if [ "${DISTRO}" == "linux" ]; then
     cmake .. -DPACKAGE=${PACKAGE} -DCB_DEP_TARGET_PLATFORM="linux"

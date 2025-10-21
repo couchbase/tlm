@@ -25,9 +25,10 @@ manifest = ''
 with open(os.devnull, "w") as devnull:
     try:
         proc = subprocess.Popen(
-            ['repo', 'manifest'],
+            'repo manifest',
             stdout=subprocess.PIPE,
-            stderr=devnull
+            stderr=devnull,
+            shell=True
         )
         manifest, _ = proc.communicate()
     except:

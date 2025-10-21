@@ -50,7 +50,6 @@ IF (CB_ADDRESSSANITIZER)
 
         # Configure CTest's MemCheck to AddressSanitizer.
         SET(MEMORYCHECK_TYPE AddressSanitizer)
-	
         if(NOT CB_ADDRESSSANITIZER EQUAL 2)
             # Enable globally
             ADD_COMPILE_OPTIONS(${ADDRESS_SANITIZER_FLAG})
@@ -70,8 +69,8 @@ IF (CB_ADDRESSSANITIZER)
                 # for Clang.
                 # GCC 7.3 CV currently uses libasan.so.4, but out of the box
                 # Ubuntu 20.04 wants to use GCC 9.3 and wants libasan.so.5.
-                # GCC 10.2 uses libasan.so.6
-                install_sanitizer_library(ASan "libasan.so.6;libasan.so.5;libasan.so.4" "${ADDRESS_SANITIZER_FLAG}" ${CMAKE_INSTALL_PREFIX}/lib)
+                # GCC 10.2 uses libasan.so.6, GCC 13.2 uses libasan.so.8
+                install_sanitizer_library(ASan "libasan.so.8;libasan.so.6;libasan.so.5;libasan.so.4" "${ADDRESS_SANITIZER_FLAG}" ${CMAKE_INSTALL_PREFIX}/lib)
             endif ()
         endif ()
 
@@ -127,4 +126,3 @@ function(add_sanitizer_env_vars_memory TARGET)
     set_property(TEST ${TARGET} APPEND PROPERTY ENVIRONMENT
                  "${ADDRESS_SANITIZER_TEST_ENV}")
 endfunction()
-

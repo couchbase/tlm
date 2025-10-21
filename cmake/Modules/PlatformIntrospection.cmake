@@ -99,6 +99,9 @@ FUNCTION (_DETERMINE_PLATFORMS var)
         SET (_plat "windows_msvc2015")
       elseif (${MSVC_VERSION} LESS 1920)
         SET (_plat "windows_msvc2017")
+      elseif (${MSVC_VERSION} LESS 1950)
+        SET (_plat "windows_msvc2022")
+        LIST (APPEND _plat "windows_msvc2017")
       ELSE()
         MESSAGE(FATAL_ERROR "Unsupported MSVC version: ${MSVC_VERSION}")
       ENDIF ()
@@ -249,7 +252,7 @@ MACRO (CB_GET_SUPPORTED_PLATFORM _is_supported_platform)
        "rhel8"
        "suse12" "suse15"
        "ubuntu16.04" "ubuntu18.04" "ubuntu20.04"
-       "windows_msvc2017")
+       "windows_msvc2017" "windows_msvc2022")
   LIST (FIND _supported_platforms ${_platform} _index)
   IF (_index GREATER "-1")
     SET(${_is_supported_platform} 1)

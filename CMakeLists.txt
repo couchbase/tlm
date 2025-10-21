@@ -40,13 +40,17 @@ SET(CMAKE_BUILD_TYPE "${CMAKE_BUILD_TYPE}" CACHE STRING
     "Choose the type of build, options are: Debug DebugOptimized Release RelWithDebInfo MinSizeRel."
     FORCE)
 
-# Choose deployment target on macOS.
-# As of Neo, minimum supported is Big Sur (11.0), but the CV servers
-# is still at 10.15.
-SET(CMAKE_OSX_DEPLOYMENT_TARGET "10.15" CACHE STRING
-    "Minimum supported version of MacOS X")
-
 PROJECT("Couchbase")
+
+IF(APPLE)
+  IF(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+    SET(CMAKE_OSX_DEPLOYMENT_TARGET "12.0" CACHE STRING
+        "Minimum supported version of MacOS X (arm64)" FORCE)
+  ELSE()
+    SET(CMAKE_OSX_DEPLOYMENT_TARGET "11.0" CACHE STRING
+        "Minimum supported version of MacOS X (x86_64)" FORCE)
+  ENDIF()
+ENDIF()
 
 # We also have a "sub-project", the tools project, which requires a few
 # additional INSTALL() and other directives. Those targets should

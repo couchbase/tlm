@@ -20,24 +20,20 @@ set(CB_FLAGS_OPTIMIZE_FOR_DEBUG "/MD /Ob1 /Zi")
 # provided on Linux/Unix to avoid having to deal with #ifdef's
 include_directories(AFTER ${CMAKE_SOURCE_DIR}/platform/include/win32)
 
+# Disable warnings for any external (aka system) headers.
+list(APPEND _cb_cxx_flags "/external:W0")
+set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "/external:I ")
 
-if (${CMAKE_CXX_COMPILER_VERSION} VERSION_GREATER 19.10)
-    # Disable warnings for any external (aka system) headers.
-    # /external: flags are not enabled by default; must pass /experimental:external
-    # to turn them on.
-    list(APPEND _cb_cxx_flags "/experimental:external /external:W0")
-    foreach (dir ${CB_SYSTEM_HEADER_DIRS})
-        list(APPEND _cb_cxx_flags "/external:I ${dir}")
-    endforeach (dir ${CB_SYSTEM_HEADER_DIRS})
-    set(CMAKE_INCLUDE_SYSTEM_FLAG_CXX "/external:I ")
-
-    # forestdb hash needs this in MSVC 2017 (should be fixed there eventually)
-    list(APPEND _cb_cxx_flags "/Zc:offsetof-")
-endif()
+# force the compiler to use the UTF-8 codepage
+list(APPEND _cb_cxx_flags "/utf-8")
 
 # Don't include most of Windows.h - speeds up build by avoiding preprocessing
 # a bunch of unused code.
 list(APPEND _cb_cxx_flags "/D WIN32_LEAN_AND_MEAN")
+
+# Force MSVC to correctly define the __cplusplus macro for C++20 compatibility
+# This is needed for V8 which checks __cplusplus to verify C++20 support
+list(APPEND _cb_cxx_flags "/Zc:__cplusplus")
 
 #  folly.exploded\include\folly/container/detail/F14Policy.h(951):
 # warning C4996: warning STL4015: The std::iterator class template (used as
@@ -105,11 +101,9 @@ set(CMAKE_CXX_FLAGS_DEBUG          "/MDd /Od /Ob0 /Zi")
 set(CB_CXX_FLAGS_NO_OPTIMIZE       "/Od /Ob0")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${_cb_cxx_options} -D_ENABLE_EXTENDED_ALIGNED_STORAGE")
 
-if (COUCHBASE_KV_COMMIT_VALIDATION)
-    message(STATUS "Ignore MSVC linker warning 4099")
-    # Mute the Link warning 4099 as it floods our output:
-    # "linking object as if no debug info"
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /IGNORE:4099")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /IGNORE:4099")
-    set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /IGNORE:4099")
-endif()
+message(STATUS "Ignore MSVC linker warning 4099")
+# Mute the Link warning 4099 as it floods our output:
+# "linking object as if no debug info"
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /IGNORE:4099")
+set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /IGNORE:4099")
+set(CMAKE_MODULE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /IGNORE:4099")

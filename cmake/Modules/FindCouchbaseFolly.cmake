@@ -97,6 +97,12 @@ set(folly_dependancies ${DOUBLE_CONVERSION_LIBRARIES}
             ${LIBEVENT_LIBRARIES}
             OpenSSL::SSL)
 
+if (APPLE)
+    # on macOS we require c++abi for ___cxa_increment_exception_refcount
+    # as used by lang/Exception.cpp
+    list (APPEND folly_dependancies c++abi)
+endif ()
+
 # Define 'modern' CMake targets for Folly for targets to depend on. These
 # are simpler than the FOLLY_LIBRARIES / FOLLY_INCLUDE_DIR env vars as
 # targets don't have to explicitly add each one.

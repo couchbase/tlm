@@ -4,7 +4,9 @@ if not defined tools_version (
     set tools_version=14.0
 )
 
-if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build" (
+if exist "C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build" (
+  set "tools_dir=C:\Program Files\Microsoft Visual Studio\2022\Professional\VC\Auxiliary\Build"
+) else if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build" (
   set "tools_dir=C:\Program Files (x86)\Microsoft Visual Studio\2017\Enterprise\VC\Auxiliary\Build"
 ) else if exist "C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build" (
   set "tools_dir=C:\Program Files (x86)\Microsoft Visual Studio\2017\Professional\VC\Auxiliary\Build"
@@ -63,7 +65,7 @@ set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\phosphor
 set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\memcached
 set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\couchstore
 set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\magma
-set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\sigar\build-src
+set MODULEPATH=%MODULEPATH%;%SOURCE_ROOT%%OBJDIR%\sigar\src
 set PATH=%MODULEPATH%;%PATH%;%SOURCE_ROOT%\install\bin
 set OBJDIR=
 SET MODULEPATH=
