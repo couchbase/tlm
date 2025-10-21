@@ -51,7 +51,7 @@ DECLARE_DEP (prometheus-cpp VERSION v1.2.1-couchbase-cb1 PLATFORMS linux macosx 
 DECLARE_DEP (protoc-gen-go V2 VERSION 1.2.5 BUILD 4 PLATFORMS amzn2 centos7 debian9 debian10 macosx suse12 suse15 ubuntu18.04 ubuntu20.04 windows_msvc2017)
 DECLARE_DEP (snappy VERSION 1.1.10-cb2 PLATFORMS linux macosx windows)
 DECLARE_DEP (spdlog VERSION v1.15.0-cb6 PLATFORMS linux macosx windows)
-DECLARE_DEP (v8 V2 VERSION 12.1.285.26 BUILD 1 PLATFORMS linux macosx windows)
+DECLARE_DEP (v8 V2 VERSION 13.4.115 BUILD 3 PLATFORMS linux macosx windows)
 DECLARE_DEP (zlib V2 VERSION 1.2.13 BUILD 1 PLATFORMS linux macosx windows_msvc2017)
 DECLARE_DEP (zstd-cpp V2 VERSION 1.5.0 BUILD 2 PLATFORMS linux macosx windows)
 
