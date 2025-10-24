@@ -297,9 +297,9 @@ IF (NOT CBDownloadDeps_INCLUDED)
     ENDIF (EXISTS ${_explode_dir}/CMakeLists.txt)
   ENDFUNCTION (DECLARE_DEP)
 
-  # Download and cache a specific version of Go, and explode it into the
-  # *cache* directory. Sets the variable named by "var" to point to
-  # the GOROOT in the exploded directory.
+  # Install a specific version of Go into the *cache* directory, using
+  # `cbdep`. Sets the variable named by "var" to point to the GOROOT in
+  # the exploded directory.
   FUNCTION (GET_GO_VERSION GOVERSION var)
     # Unlike DOWNLOAD_DEP(), we explode Go downloads into the cache directory,
     # not the binary directory. This means we don't need to re-explode it
@@ -308,8 +308,8 @@ IF (NOT CBDownloadDeps_INCLUDED)
     # other whether any parts of the build do naughty things like modify the
     # exploded dep contents.
     _DETERMINE_ARCH (_arch)
-    SET (_explode_dir "${CB_DOWNLOAD_DEPS_CACHE}/exploded/${_arch}/go-${GOVERSION}")
-    SET (_goroot "${_explode_dir}/go")
+    SET (_installdir "${CB_DOWNLOAD_DEPS_CACHE}/exploded/${_arch}")
+    SET (_goroot "${_installdir}/go${GOVERSION}")
     IF (WIN32)
       SET (_goexe "${_goroot}/bin/go.exe")
     ELSE ()
@@ -324,76 +324,39 @@ IF (NOT CBDownloadDeps_INCLUDED)
     ENDIF ()
 
     # Otherwise, download the correct version for the current platform.
-    _DETERMINE_PLATFORM (_platform)
-    STRING (SUBSTRING "${_platform}" 0 6 _platform_head)
-    IF (_platform STREQUAL "macosx")
-      IF (_arch STREQUAL "arm64")
-        SET (GO_MAC_MINIMUM_VERSION 1.16.3)
-        SET (_gofile "go${GOVERSION}.darwin-${_arch}.tar.gz")
-      ELSE ()
-        SET (_gofile "go${GOVERSION}.darwin-amd64.tar.gz")
-      ENDIF ()
-    ELSEIF (_platform_head STREQUAL "window")
-      IF (_arch STREQUAL "x86")
-        SET (_arch "386")
-      ENDIF ()
-      SET (_gofile "go${GOVERSION}.windows-${_arch}.zip")
-    ELSEIF (_platform STREQUAL "freebsd")
-      SET (_gofile "go${GOVERSION}.freebsd-amd64.tar.gz")
-    ELSE ()
-      # Presumed Linux
-      IF (_arch STREQUAL "aarch64")
-        SET (_gofile "go${GOVERSION}.linux-arm64.tar.gz")
-      ELSE ()
-        SET (_gofile "go${GOVERSION}.linux-amd64.tar.gz")
-      ENDIF ()
-    ENDIF ()
-    SET (_cachefile "${CB_DOWNLOAD_DEPS_CACHE}/${_gofile}")
-    IF (NOT EXISTS "${_cachefile}")
-      MESSAGE (STATUS "Golang version ${GOVERSION} not found in cache, "
-        "downloading...")
-      _DOWNLOAD_FILE ("${GO_DOWNLOAD_REPO}/${_gofile}" "${_cachefile}")
-    ENDIF ()
-    MESSAGE (STATUS "Installing Golang version ${GOVERSION} in cache...")
-    EXPLODE_ARCHIVE ("${_cachefile}" "${_explode_dir}")
+    CBDEP_INSTALL(PACKAGE golang VERSION ${GOVERSION} INSTALL_DIR "${_installdir}")
 
+    # Error check - ensure go binary exists.
     IF (NOT EXISTS "${_goexe}")
-      FILE (REMOVE "${_cachefile}")
-      FILE (REMOVE_RECURSE "${_explode_dir}")
-      MESSAGE (FATAL_ERROR "Downloaded go archive ${_gofile}"
-        " failed to unpack correctly - ${_goexe} does not exist!"
+      FILE (REMOVE_RECURSE "${_goroot}")
+      MESSAGE (FATAL_ERROR "Failed to install Go version ${GOVERSION} - "
+        " ${_goexe} does not exist!"
         " (archive removed from download cache)")
     ENDIF ()
   ENDFUNCTION (GET_GO_VERSION)
 
-  # Start of CBDeps 2.0 - download and cache the new 'cbdep' tool
-  SET (CBDEP_VERSION 1.1.7)
+  # Download and cache the new 'cbdep' tool
   FUNCTION (GET_CBDEP)
     _DETERMINE_PLATFORM (_platform)
     _DETERMINE_ARCH (_arch)
     STRING (SUBSTRING "${_platform}" 0 6 _platform_head)
     IF (_platform STREQUAL "macosx")
-      SET (_cbdepfile "cbdep-${CBDEP_VERSION}-darwin-${_arch}")
+      SET (_cbdepfile "cbdep-darwin-${_arch}")
     ELSEIF (_platform_head STREQUAL "window")
-      SET (_cbdepfile "cbdep-${CBDEP_VERSION}-windows.exe")
+      SET (_cbdepfile "cbdep-windows.exe")
     ELSE ()
       # Presumed Linux
-      SET (_cbdepfile "cbdep-${CBDEP_VERSION}-linux-${_arch}")
+      SET (_cbdepfile "cbdep-linux-${_arch}")
     ENDIF ()
-    SET (CBDEP_CACHE "${CB_DOWNLOAD_DEPS_CACHE}/cbdep/${CBDEP_VERSION}/${_cbdepfile}"
-      CACHE INTERNAL "Path to cbdep cached download")
-    SET (CBDEP "${PROJECT_BINARY_DIR}/tlm/${_cbdepfile}"
+    SET (CBDEP "${CB_DOWNLOAD_DEPS_CACHE}/cbdep/${_cbdepfile}"
       CACHE INTERNAL "Path to cbdep executable")
-    IF (NOT EXISTS "${CBDEP_CACHE}")
-      MESSAGE (STATUS "Downloading cbdep ${CBDEP_VERSION}")
-      _DOWNLOAD_FILE (
-        "https://packages.couchbase.com/cbdep/${CBDEP_VERSION}/${_cbdepfile}"
-        "${CBDEP_CACHE}")
-    ENDIF ()
     IF (NOT EXISTS "${CBDEP}")
-      FILE (COPY "${CBDEP_CACHE}" DESTINATION "${PROJECT_BINARY_DIR}/tlm"
+      MESSAGE (STATUS "Downloading cbdep wrapper")
+      _DOWNLOAD_FILE (
+        "https://packages.couchbase.com/cbdep/${_cbdepfile}"
+        "${CBDEP}")
+      FILE (CHMOD "${CBDEP}"
         FILE_PERMISSIONS OWNER_EXECUTE OWNER_READ OWNER_WRITE)
-      MESSAGE (STATUS "Using cbdep at ${CBDEP}")
     ENDIF ()
   ENDFUNCTION (GET_CBDEP)
 
@@ -411,21 +374,19 @@ IF (NOT CBDownloadDeps_INCLUDED)
     IF (NOT cbdep_INSTALL_DIR)
       SET (cbdep_INSTALL_DIR "${CMAKE_CURRENT_BINARY_DIR}")
     ENDIF ()
-    IF(NOT IS_DIRECTORY "${cbdep_INSTALL_DIR}/${cbdep_PACKAGE}-${cbdep_VERSION}")
-      MESSAGE (STATUS "Downloading and caching ${cbdep_PACKAGE}-${cbdep_VERSION}")
-      EXECUTE_PROCESS (
-        COMMAND "${CBDEP}" install
-          -d "${cbdep_INSTALL_DIR}"
-          ${cbdep_PACKAGE} ${cbdep_VERSION}
-        RESULT_VARIABLE _cbdep_result
-        OUTPUT_VARIABLE _cbdep_out
-        ERROR_VARIABLE _cbdep_out
-      )
-      IF (_cbdep_result)
-        FILE (REMOVE_RECURSE "${cbdep_INSTALL_DIR}")
-        MESSAGE (FATAL_ERROR "Failed installing cbdep ${cbdep_PACKAGE} ${cbdep_VERSION}: ${_cbdep_out}")
-      ENDIF ()
-    ENDIF()
+    MESSAGE (STATUS "Installing ${cbdep_PACKAGE}-${cbdep_VERSION} with cbdep")
+    EXECUTE_PROCESS (
+      COMMAND "${CBDEP}" install
+        -d "${cbdep_INSTALL_DIR}"
+        ${cbdep_PACKAGE} ${cbdep_VERSION}
+      RESULT_VARIABLE _cbdep_result
+      OUTPUT_VARIABLE _cbdep_out
+      ERROR_VARIABLE _cbdep_out
+    )
+    IF (_cbdep_result)
+      FILE (REMOVE_RECURSE "${cbdep_INSTALL_DIR}")
+      MESSAGE (FATAL_ERROR "Failed installing package ${cbdep_PACKAGE} ${cbdep_VERSION} with cbdep: ${_cbdep_out}")
+    ENDIF ()
   ENDMACRO (CBDEP_INSTALL)
 
   CB_GET_SUPPORTED_PLATFORM (_is_supported_platform)
