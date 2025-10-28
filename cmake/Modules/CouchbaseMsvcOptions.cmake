@@ -86,6 +86,22 @@ list(APPEND _cb_cxx_flags "/wd4800")
 # when building unit tests in kv-engine
 list(APPEND _cb_cxx_flags "/bigobj")
 
+# Set warning level to 4
+list(APPEND _cb_cxx_flags "/W4")
+
+# Disable "unreferenced formal parameter" warning
+list(APPEND _cb_cxx_flags "/wd4100")
+
+# Microsoft compiler warning C4458, classified as a level 4 warning,
+# indicates that a declaration of an identifier in a local scope (within
+# a function, for instance) hides the declaration of an identically-named
+# identifier at a class scope. This means that within that local scope,
+# references to the identifier will resolve to the locally declared version,
+# not the class member version.
+# We currently have too many of these to fix right now, so just disable
+# the warning for now.
+list(APPEND _cb_cxx_flags "/wd4458")
+
 # Convert the list to a string
 string(REPLACE ";" " " _cb_cxx_options "${_cb_cxx_flags}")
 
