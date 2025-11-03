@@ -7,9 +7,14 @@ ExternalProject_Add(fmt
   GIT_TAG ${_git_rev}
 
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
-	     -D CMAKE_BUILD_TYPE=RelWithDebInfo
-         -D CMAKE_CXX_VISIBILITY_PRESET=hidden
-         -D CMAKE_POSITION_INDEPENDENT_CODE=ON
+	    -D CMAKE_BUILD_TYPE=RelWithDebInfo
+      -D CMAKE_CXX_VISIBILITY_PRESET=hidden
+      -D CMAKE_POSITION_INDEPENDENT_CODE=ON
+      # Explicitly set LIBDIR to 'lib' so for single linux
+      # builds we don't put the libraries under
+      # `lib64` which is not a default search path for
+      # find_package() when we later consume this cbdep.
+      -D CMAKE_INSTALL_LIBDIR=lib
 
   BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
 

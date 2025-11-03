@@ -206,7 +206,7 @@ _ADD_DEP_PACKAGE(maven 3.5.2 master 6)
 _ADD_DEP_PACKAGE(openjdk-rt 1.8.0.171 UNUSED 2)
 
 _ADD_DEP_PACKAGE(double-conversion 3.0.0 v3.0.0 4)
-_ADD_DEP_PACKAGE(fmt 11.0.0 11.0.0 4)
+_ADD_DEP_PACKAGE(fmt 11.0.0 11.0.0 5)
 _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 1)
 _ADD_DEP_PACKAGE(benchmark v1.6.0 v1.6.0 1)
 _ADD_DEP_PACKAGE(googletest 1.11.0 1.11.0 4)
