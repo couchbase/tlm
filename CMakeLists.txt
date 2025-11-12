@@ -124,6 +124,11 @@ ENDIF (CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
 LIST (APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/tlm/cmake/Modules/")
 SET (COUCHBASE_SERVER_BUILD True CACHE BOOL "Indicating this is a server build")
 
+# Enable find_library() to search in both lib and lib64 directories.
+# Some dependencies have lib64 lib dirs and we want CMake to find them
+# regardless of the directory they're in.
+SET_PROPERTY(GLOBAL PROPERTY FIND_LIBRARY_USE_LIB64_PATHS ON)
+
 # Add the "realclean" top-level target that other things can hang
 # off of.
 ADD_CUSTOM_TARGET (realclean
