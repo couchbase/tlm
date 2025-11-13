@@ -328,10 +328,12 @@ IF (NOT FindCouchbaseGo_INCLUDED)
   # CGO_LIBRARY_DIRS - path(s) to libraries to search for C link
   # libraries
   #
+  # FIPS_MODE - whether to compile in FIPS 140-3 mode. Can be empty,
+  # "latest", or a version number.
   MACRO (GoModBuild)
 
     PARSE_ARGUMENTS (Go "DEPENDS;CGO_INCLUDE_DIRS;CGO_LIBRARY_DIRS"
-      "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GOVERSION;GCFLAGS;GOTAGS;GOBUILDMODE;LDFLAGS"
+      "TARGET;PACKAGE;OUTPUT;INSTALL_PATH;GOVERSION;GCFLAGS;GOTAGS;GOBUILDMODE;LDFLAGS;FIPS_MODE"
       "NOCONSOLE;UNSHIPPED" ${ARGN})
 
     IF (NOT Go_TARGET)
@@ -472,6 +474,7 @@ IF (NOT FindCouchbaseGo_INCLUDED)
         -D "CB_UNDEFINEDSANITIZER=${CB_UNDEFINEDSANITIZER}"
         -D "CB_THREADSANITIZER=${CB_THREADSANITIZER}"
         -D "CB_GO_UNSHIPPED=${Go_UNSHIPPED}"
+        -D "FIPS_MODE=${Go_FIPS_MODE}"
         -P "${TLM_MODULES_DIR}/go-modbuild.cmake"
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
       COMMENT "Building Go Modules target ${Go_TARGET} using Go ${_gover}"

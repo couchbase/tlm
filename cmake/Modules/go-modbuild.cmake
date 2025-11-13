@@ -29,6 +29,10 @@ IF (CGO_LDFLAGS)
   SET (ENV{CGO_LDFLAGS} "$ENV{CGO_LDFLAGS} ${_cgo_ldflags}")
 ENDIF ()
 
+IF (FIPS_MODE)
+  SET (ENV{GOFIPS140} "${FIPS_MODE}")
+ENDIF ()
+
 IF (NOT WIN32 AND NOT APPLE)
     # Only use the CMAKE C/CXX compiler for cgo on non-Windows platforms;
     # on Windows we use a different compiler (gcc) for cgo than for
