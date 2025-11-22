@@ -19,4 +19,11 @@ set(fmt_ROOT ${CMAKE_BINARY_DIR}/tlm/deps/fmt.exploded)
 find_package(fmt REQUIRED)
 if(fmt_FOUND)
     message(STATUS "Found fmt at: ${fmt_DIR}")
+    # Need to treat this target as a non-system target. Otherwise, on
+    # macOS, the include directory will be passed to the compiler with
+    # -isystem instead of -I, which causes it to be searched after
+    # /usr/local/include. `brew install ccache` causes `fmt` to be
+    # installed into /usr/local, so those include files will break the
+    # Server build.
+    set_target_properties(fmt::fmt PROPERTIES SYSTEM FALSE)
 endif()
