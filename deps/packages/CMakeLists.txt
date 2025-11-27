@@ -175,7 +175,7 @@ endif(WIN32)
 
 # Common CMake cache arguments for all packages to set compiler and C++ standard version
 # to avoid duplicating this in each of the individual package CMakeLists.txt files.
-list(APPEND common_cmake_cache_args -DCMAKE_CXX_STANDARD:STRING=17)
+list(APPEND common_cmake_cache_args -DCMAKE_CXX_STANDARD:STRING=20)
 list(APPEND common_cmake_cache_args -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER})
 list(APPEND common_cmake_cache_args -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER})
 
@@ -203,7 +203,7 @@ _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 _ADD_DEP_PACKAGE(flatbuffers v1.10.0 v1.10.0 7)
 
 _ADD_DEP_PACKAGE(json 3.11.3 v3.11.3 2)
-_ADD_DEP_PACKAGE(boost 1.82.0 boost-1.82.0 6)
+_ADD_DEP_PACKAGE(boost 1.86.0 boost-1.86.0 3)
 
 IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
   IF (PLATFORM STREQUAL "fedora26" OR PLATFORM STREQUAL "fedora27")
@@ -226,7 +226,7 @@ _ADD_DEP_PACKAGE(benchmark v1.9.1 v1.9.1 1)
 _ADD_DEP_PACKAGE(googletest 1.15.2 1.15.2 1)
 _ADD_DEP_PACKAGE(fuzztest v2025-02-14 v2025-02-14-couchbase 2)
 
-_ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 1_avx2)
+_ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 3_avx2)
 _ADD_DEP_PACKAGE(grpc 1.59.3 v1.59.3 1)
 _ADD_DEP_PACKAGE(pcre 8.44 v8.44 4)
 _ADD_DEP_PACKAGE(prometheus-cpp v1.2.1-couchbase v1.2.1-couchbase 1)

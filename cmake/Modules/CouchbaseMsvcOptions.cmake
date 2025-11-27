@@ -31,6 +31,10 @@ list(APPEND _cb_cxx_flags "/utf-8")
 # a bunch of unused code.
 list(APPEND _cb_cxx_flags "/D WIN32_LEAN_AND_MEAN")
 
+# Force MSVC to correctly define the __cplusplus macro for C++20 compatibility
+# This is needed for V8 which checks __cplusplus to verify C++20 support
+list(APPEND _cb_cxx_flags "/Zc:__cplusplus")
+
 #  folly.exploded\include\folly/container/detail/F14Policy.h(951):
 # warning C4996: warning STL4015: The std::iterator class template (used as
 # a base class to provide typedefs) is deprecated in C++17. (The <iterator>
