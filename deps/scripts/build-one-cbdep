@@ -13,6 +13,9 @@ rm -rf build
 mkdir build
 cd build
 
+# Set the umask to 022 to ensure that the build dirs get correct ACL
+umask 022
+
 # Set macos deployment target
 if [ "$(uname -s)" == "Darwin" ]; then
     export MACOSX_DEPLOYMENT_TARGET=13
