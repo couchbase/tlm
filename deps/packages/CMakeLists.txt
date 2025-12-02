@@ -193,7 +193,7 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 # For slightly historical reasons, we use the profile (aka build number
 # extension) "_avx2" to indicate this.
 #
-_ADD_DEP_PACKAGE(snappy 1.1.10 1.1.10 1_avx2)
+_ADD_DEP_PACKAGE(snappy 1.1.10 1.1.10 2_avx2)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
 _ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 12)
