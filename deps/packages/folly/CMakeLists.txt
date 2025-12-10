@@ -3,11 +3,6 @@ include(PlatformIntrospection)
 include(ExternalProject)
 include(CheckCXXCompilerFlag)
 
-# Set policy CMP0074 to NEW to allow use of <PackageName>_ROOT variables
-if(POLICY CMP0074)
-    cmake_policy(SET CMP0074 NEW)
-endif()
-
 # Expand folly's deps to a separate install directory so we don't end up
 # packaging them up in the folly cbdep itself.
 set(_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
@@ -37,37 +32,72 @@ file(GLOB folly_library_paths
     ${CMAKE_CURRENT_BINARY_DIR}/*.exploded/lib64)
 list(APPEND folly_library_paths ${_folly_deps_install}/lib)
 
-# Create a list of args that we want to pass to any folly build.
-set(cxx_flags "-fPIC -fvisibility=hidden")
+# Platform-specific settings
+set(cxx_flags "")
+set(folly_patch_command "")
 
-if (UNIX)
+if(UNIX)
+   list(APPEND cache_args ${common_cmake_cache_args})
+   set(cxx_flags "-fPIC -fvisibility=hidden")
+
+   # Require x86-64-v3 microarchitecture on x86_64 platforms
    check_cxx_compiler_flag(-march=x86-64-v3 HAVE_MARCH_X86_64_V3)
-   if (HAVE_MARCH_X86_64_V3)
+   if(HAVE_MARCH_X86_64_V3)
        message(STATUS "Building with -march=x86-64-v3")
-       set(cxx_flags "${cxx_flags} -march=x86-64-v3")
+       string(APPEND cxx_flags " -march=x86-64-v3")
    else()
        _DETERMINE_ARCH(HOST_ARCH)
-       if (${HOST_ARCH} STREQUAL x86_64)
-         message(FATAL_ERROR "Can't build with g++ on x86_64 without support for -march=x86-64-v3")
+       if(HOST_ARCH STREQUAL "x86_64")
+           message(FATAL_ERROR "Can't build with g++ on x86_64 without support for -march=x86-64-v3")
        endif()
    endif()
-   list(APPEND cache_args ${common_cmake_cache_args})
+
+   if(APPLE)
+       # Apple clang automatically adds -I/usr/local/include which can pick up
+       # Homebrew's fmt (e.g. from `brew install ccache`). Use -idirafter to push
+       # /usr/local/include to the END of the search order.
+       set(cxx_flags "-idirafter /usr/local/include ${cxx_flags}")
+   endif()
+
+   list(APPEND cache_args "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags}")
+
+elseif(WIN32)
+   # Glog/Gflags: we build statically, but headers default to dllimport.
+   # MSVC2022 requires '/utf-8'.
+   list(APPEND cache_args "-DCMAKE_CXX_FLAGS:STRING=/utf-8 -DGOOGLE_GLOG_DLL_DECL= -DGFLAGS_DLL_DECLARE_FLAG=")
+
+   # Folly code generation (GenerateFingerprintTables.exe) needs runtime
+   # dependencies in its path. Copy them into the build directory.
+   set(folly_patch_command ${CMAKE_COMMAND} -E copy_directory
+           ${_folly_deps_install}/bin <SOURCE_DIR>)
 endif()
-LIST(APPEND cache_args -DCMAKE_LIBRARY_PATH:STRING=${folly_library_paths})
+
+# Common cache args for all platforms
+list(APPEND cache_args -DCMAKE_LIBRARY_PATH:STRING=${folly_library_paths})
 list(APPEND cache_args -DCMAKE_INCLUDE_PATH:STRING=${folly_include_paths})
-list(APPEND cache_args -DCMAKE_CXX_FLAGS:STRING=${cxx_flags})
 list(APPEND cache_args -DCMAKE_BUILD_TYPE:STRING=RelWithDebInfo)
 list(APPEND cache_args "-DCMAKE_INSTALL_PREFIX:PATH=${CMAKE_CURRENT_BINARY_DIR}/install")
 list(APPEND cache_args -DBUILD_SHARED_LIBS:STRING=OFF)
 list(APPEND cache_args -DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
+list(APPEND cache_args -DCMAKE_POLICY_VERSION_MINIMUM:STRING=3.5)
+
+# Boost settings
 list(APPEND cache_args -DBoost_ADDITIONAL_VERSIONS:STRING=1.86)
 list(APPEND cache_args -DBoost_DETAILED_FAILURE_MSG:STRING=ON)
 list(APPEND cache_args -DBoost_USE_STATIC_LIBS:STRING=ON)
 list(APPEND cache_args -DBoost_NO_SYSTEM_PATHS:BOOL=ON)
 list(APPEND cache_args -DBoost_NO_BOOST_CMAKE:BOOL=ON)
 list(APPEND cache_args -DBOOST_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/boost.exploded)
+# Keep using FindBoost module (CMP0167 NEW would remove it)
+list(APPEND cache_args -DCMAKE_POLICY_DEFAULT_CMP0167:STRING=OLD)
+
+# fmt settings
 list(APPEND cache_args -Dfmt_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
 list(APPEND cache_args -Dfmt_DIR:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded/lib/cmake/fmt)
+# Ensure we find our exploded fmt, not any system-installed version
+list(APPEND cache_args -DCMAKE_POLICY_DEFAULT_CMP0074:STRING=NEW)
+
+# Disable optional packages we don't need
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_BZip2:BOOL=TRUE)
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibLZMA:BOOL=TRUE)
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Zstd:BOOL=TRUE)
@@ -78,24 +108,6 @@ list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Libiberty:BOOL=TRUE)
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibAIO:BOOL=TRUE)
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_LibUring:BOOL=TRUE)
 list(APPEND cache_args -DCMAKE_DISABLE_FIND_PACKAGE_Libsodium:BOOL=TRUE)
-list(APPEND cache_args -DCMAKE_POLICY_VERSION_MINIMUM:STRING=3.5)
-
-if(WIN32)
-   # Glog/Gflags: we build it statically, but headers default
-   # to defining all public symbols as dllimport which results in linker
-   # errors - the compiler is expecting dll(shared) symbols and not static.
-   # Explicitly define flags as empty to avoid this.
-   # MSVC2022 wants '/utf-8'
-   list(APPEND cache_args "-DCMAKE_CXX_FLAGS:STRING=/utf-8 -DGOOGLE_GLOG_DLL_DECL= -DGFLAGS_DLL_DECLARE_FLAG=")
-
-   # Folly code generation (GenerateFingerprintTables.exe) needs to run
-   # at build-time; and to do so it needs the runtime dependancies of folly
-   # (including libevent!) in its path. It's problematic to modify
-   # Windows PATH from inside CMake; so solve this by simply copying
-   # the runtime dependancies into the Folly build directory.
-   set(folly_patch_command ${CMAKE_COMMAND} -E copy_directory
-           ${_folly_deps_install}/bin <SOURCE_DIR>)
-endif()
 
 _DETERMINE_CPU_COUNT(_parallelism)
 
@@ -158,10 +170,8 @@ if (UNIX)
    ExternalProject_Add_StepDependencies(folly download folly.asan)
 endif()
 
-# Additionally build a Debug variant.
-# Build it for macOS / Linux as it can be useful to have a build of
-# folly with Debug checks enabled.
-if (NOT WIN32)
+# Additionally build a Debug variant for macOS / Linux.
+if(UNIX)
   ExternalProject_Add(folly.debug
         GIT_REPOSITORY ${_git_repo}
         GIT_TAG ${_git_rev}
