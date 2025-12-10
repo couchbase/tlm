@@ -17,7 +17,7 @@
 # in this same directory!
 #
 DECLARE_DEP (AWSSDK V2 VERSION 1.11.450 BUILD 2 PLATFORMS linux macosx)
-DECLARE_DEP (benchmark VERSION v1.9.1-cb1 PLATFORMS linux macosx windows)
+DECLARE_DEP (benchmark VERSION v1.9.4-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (breakpad V2 VERSION 2022.07.12 BUILD 1 PLATFORMS linux windows)
 DECLARE_DEP (boost VERSION 1.86.0-cb3 PLATFORMS linux macosx windows)
 DECLARE_DEP (cbpy V2 VERSION 3.11.10 BUILD 3 PLATFORMS linux macosx windows DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python/interp")
@@ -31,7 +31,7 @@ DECLARE_DEP (fmt VERSION 11.0.0-cb2 PLATFORMS linux macosx windows)
 DECLARE_DEP (gflags V2 VERSION 2.2.2 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (folly VERSION v2022.05.23.00-couchbase-cb5_avx2 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows)
-DECLARE_DEP (googletest VERSION 1.15.2-cb1 PLATFORMS linux macosx windows)
+DECLARE_DEP (googletest VERSION 1.17.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (grpc V2 VERSION 1.72.0 BUILD 3 PLATFORMS linux macosx windows)
 DECLARE_DEP (fuzztest VERSION v2025-02-14-cb2 PLATFORMS linux macosx)
 
