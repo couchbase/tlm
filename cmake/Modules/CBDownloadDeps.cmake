@@ -68,7 +68,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
 
     MESSAGE (STATUS "Downloading dependency md5: ${_md5file}")
     _DOWNLOAD_FILE ("${_md5url}" "${_cache_md5file_path}")
-    MESSAGE (STATUS "Downloading dependency: ${_file}")
+    MESSAGE (STATUS "Downloading dependency: ${_file} from ${url}")
     _DOWNLOAD_FILE ("${url}" "${_cache_file_path}")
     _CHECK_MD5 ("${_cache_file_path}" "${_cache_md5file_path}" _md5equal)
     IF (NOT _md5equal)
