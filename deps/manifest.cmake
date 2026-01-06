@@ -32,7 +32,7 @@ DECLARE_DEP (gflags V2 VERSION 2.2.2 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (folly VERSION v2022.05.23.00-couchbase-cb5_avx2 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows)
 DECLARE_DEP (googletest VERSION 1.17.0-cb1 PLATFORMS linux macosx windows)
-DECLARE_DEP (grpc V2 VERSION 1.72.0 BUILD 3 PLATFORMS linux macosx windows)
+DECLARE_DEP (grpc V2 VERSION 1.73.1 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (fuzztest VERSION v2025-02-14-cb2 PLATFORMS linux macosx)
 
 #
