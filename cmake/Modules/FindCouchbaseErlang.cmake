@@ -55,8 +55,6 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
           "rebar support will be unavailable")
       ELSE (NOT ESCRIPT_EXECUTABLE)
         MESSAGE(STATUS "Escript interpreter found in ${ESCRIPT_EXECUTABLE}")
-        SET (REBAR_SCRIPT "${CMAKE_CURRENT_LIST_DIR}/rebar3"
-          CACHE STRING "Path to default rebar script")
       ENDIF (NOT ESCRIPT_EXECUTABLE)
 
       MESSAGE(STATUS "Erlang nif header in ${ERLANG_INCLUDE_PATH}")
@@ -73,6 +71,61 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
 
     MARK_AS_ADVANCED(ERLANG_FOUND ERL_EXECUTABLE ERLC_EXECUTABLE ESCRIPT_EXECUTABLE ERLANG_INCLUDE_PATH)
   ENDIF (NOT ERLANG_FOUND)
+
+  IF (ESCRIPT_EXECUTABLE AND NOT REBAR_SCRIPT)
+    SET (_need_rebar_install TRUE)
+  ELSEIF (REBAR_SCRIPT AND NOT EXISTS "${REBAR_SCRIPT}")
+    MESSAGE(STATUS "Cached REBAR_SCRIPT ${REBAR_SCRIPT} no longer exists, reinstalling...")
+    UNSET(REBAR_SCRIPT CACHE)
+    SET (_need_rebar_install TRUE)
+  ENDIF()
+
+  IF (_need_rebar_install AND ESCRIPT_EXECUTABLE)
+    MESSAGE(STATUS "rebar3 not found, installing via cbdep...")
+
+    INCLUDE(CBDownloadDeps)
+
+    # Get the erlang bin directory to add to PATH
+    GET_FILENAME_COMPONENT(_escript_dir "${ESCRIPT_EXECUTABLE}" DIRECTORY)
+
+    # Temporarily add erlang bin to PATH for rebar3 installation
+    SET(_original_path "$ENV{PATH}")
+    IF (WIN32)
+      SET(ENV{PATH} "${_escript_dir};${_original_path}")
+    ELSE ()
+      SET(ENV{PATH} "${_escript_dir}:${_original_path}")
+    ENDIF ()
+
+    SET(_rebar_install_dir "${CMAKE_BINARY_DIR}/tlm/rebar3_install")
+
+    # Get rebar3 version from manifest if available, otherwise use a default
+    SET(_rebar_version "3.25.1")
+    EXECUTE_PROCESS(
+      COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_manifest_annot.py REBAR3_VERSION
+      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+      OUTPUT_VARIABLE _rebar_version_from_manifest
+      ERROR_QUIET
+      OUTPUT_STRIP_TRAILING_WHITESPACE)
+    IF (_rebar_version_from_manifest)
+      SET(_rebar_version "${_rebar_version_from_manifest}")
+    ENDIF()
+
+    MESSAGE(STATUS "Installing rebar3 version ${_rebar_version}")
+    CBDEP_INSTALL(PACKAGE rebar3 VERSION ${_rebar_version} INSTALL_DIR "${_rebar_install_dir}")
+
+    # Restore original PATH
+    SET(ENV{PATH} "${_original_path}")
+
+    SET(_rebar_script "${_rebar_install_dir}/rebar3-${_rebar_version}/bin/rebar3")
+    IF (NOT EXISTS "${_rebar_script}")
+      MESSAGE(WARNING "Failed to install rebar3 - expected at ${_rebar_script}")
+      MESSAGE(STATUS "rebar support will be unavailable")
+    ELSE()
+      MESSAGE(STATUS "rebar3 installed successfully at ${_rebar_script}")
+      SET (REBAR_SCRIPT "${_rebar_script}"
+        CACHE STRING "Path to default rebar script")
+    ENDIF()
+  ENDIF()
 
   # Adds a target named <target> which runs "rebar compile" in the
   # current source directory, and a target named <target>-clean to run
@@ -157,8 +210,26 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
     SET (REBAR3_CACHE_DIR "${CMAKE_BINARY_DIR}/tlm/rebar3_cache")
     FILE (MAKE_DIRECTORY "${REBAR3_CACHE_DIR}")
 
+    # On Windows, rebar3 is an escript file that needs to be invoked through escript.
+    # On macOS/Linux, the native build can be executed directly.
+    IF (WIN32)
+      SET(_rebar_cmd "${ESCRIPT_EXECUTABLE}" "${rebar_script}")
+    ELSE ()
+      SET(_rebar_cmd "${rebar_script}")
+    ENDIF ()
+
+    # Add Erlang bin directory to PATH so rebar3 can find erl
+    # Compute Erlang bin directory from ERL_EXECUTABLE
+    GET_FILENAME_COMPONENT(_erl_real_exe ${ERL_EXECUTABLE} REALPATH)
+    GET_FILENAME_COMPONENT(_erlang_bin_dir ${_erl_real_exe} PATH)
+    # Use --modify to prepend to PATH at runtime rather than expanding $ENV{PATH}
+    # at configure time. This avoids issues on Windows where paths contain spaces
+    # (e.g., "C:\Program Files\...") cause argument splitting.
+    SET(_erlang_path_modify --modify "PATH=path_list_prepend:${_erlang_bin_dir}")
+
     ADD_CUSTOM_TARGET (${Rebar_TARGET} ${_all}
       "${CMAKE_COMMAND}" -E env
+      ${_erlang_path_modify}
       CC=${REBAR_CC} CXX=${REBAR_CXX} REBAR_CACHE_DIR=${REBAR3_CACHE_DIR}
       ${_sysroot_arg}
       LIBSODIUM_INCLUDE_DIR=${LIBSODIUM_INCLUDE_DIR}
@@ -168,7 +239,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
       OPENSSL_LIB_DIR=${OPENSSL_LIB_DIR}
       OPENSSL_CRYPTO_LIBRARY=${OPENSSL_CRYPTO_LIBRARY}
       ${Rebar_EXTRA_ENV}
-      "${ESCRIPT_EXECUTABLE}" "${rebar_script}" ${Rebar_REBAR_OPTS}
+      ${_rebar_cmd} ${Rebar_REBAR_OPTS}
       ${Rebar_COMMAND}
       WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
 
@@ -176,6 +247,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
       SET(_eunit_target "${Rebar_TARGET}-eunit")
       ADD_CUSTOM_TARGET ("${_eunit_target}"
         "${CMAKE_COMMAND}" -E env
+        ${_erlang_path_modify}
         CC=${REBAR_CC} CXX=${REBAR_CXX}
         ${_sysroot_arg}
         LIBSODIUM_INCLUDE_DIR=${LIBSODIUM_INCLUDE_DIR}
@@ -185,7 +257,7 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
         OPENSSL_LIB_DIR=${OPENSSL_LIB_DIR}
         OPENSSL_CRYPTO_LIBRARY=${OPENSSL_CRYPTO_LIBRARY}
         ${Rebar_EXTRA_ENV}
-        "${ESCRIPT_EXECUTABLE}" "${rebar_script}"
+        ${_rebar_cmd}
         as test compile ${Rebar_EUNIT_OPTS}
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
 
@@ -208,9 +280,10 @@ IF (NOT FindCouchbaseErlang_INCLUDED)
     IF (NOT Rebar_NOCLEAN)
       ADD_CUSTOM_TARGET ("${Rebar_TARGET}-clean"
         "${CMAKE_COMMAND}" -E env
+        ${_erlang_path_modify}
         CC=${REBAR_CC} CXX=${REBAR_CXX}
         ${Rebar_EXTRA_ENV}
-        "${ESCRIPT_EXECUTABLE}" "${rebar_script}" clean
+        ${_rebar_cmd} clean
         COMMAND "${CMAKE_COMMAND}" -E remove_directory _build
         COMMAND "${CMAKE_COMMAND}" -E remove_directory .eunit
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}" VERBATIM)
