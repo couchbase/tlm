@@ -40,7 +40,7 @@ DECLARE_DEP (jemalloc_noprefix V2 VERSION 5.2.1 BUILD 11 PLATFORMS linux windows
 DECLARE_DEP (jemalloc_noprefix V2 VERSION 5.3.0 BUILD 10 PLATFORMS macosx)
 DECLARE_DEP (json VERSION 3.11.2-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (libevent VERSION 2.1.11-cb12 PLATFORMS linux macosx windows)
-DECLARE_DEP (libsodium V2 VERSION 1.0.18 BUILD 5 PLATFORMS linux macosx windows)
+DECLARE_DEP (libsodium V2 VERSION 1.0.21 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (liburing V2 VERSION 0.6 BUILD 3 PLATFORMS linux)
 DECLARE_DEP (libuv V2 VERSION 1.20.3 BUILD 17 PLATFORMS windows)
 DECLARE_DEP (libuv V2 VERSION 1.20.3 BUILD 23 PLATFORMS linux macosx)
