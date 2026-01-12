@@ -61,7 +61,7 @@ components:
         versions: [ 71.1 ]
     libsodium:
         bd-id: ef66948e-fcea-4a1a-8936-bb64c3866ec3
-        versions: [ 1.0.18 ]
+        versions: [ 1.0.21 ]
     liburing:
         bd-id: b37c3c42-04f2-4ac7-b52c-dc98252e0875
         versions: [ 0.6 ]
