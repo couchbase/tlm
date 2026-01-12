@@ -2,6 +2,10 @@
 # the path to the go compiler on disk, which is what we want)
 SET (ENV{GOROOT})
 
+# Prevent Go from automatically downloading a different toolchain version
+# based on 'toolchain' directives in go.mod files.
+SET (ENV{GOTOOLCHAIN} "local")
+
 # Use GOPATH to tell Go where to store downloaded and cached Go modules.
 # It will put things into pkg/mod.
 SET (ENV{GOPATH} "${GO_BINARY_DIR}")

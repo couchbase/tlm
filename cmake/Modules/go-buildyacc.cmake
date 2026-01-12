@@ -6,6 +6,10 @@ endif()
 SET (ENV{GOROOT} "${GOROOT}")
 SET (GO_EXECUTABLE "${GOROOT}/bin/go")
 
+# Prevent Go from automatically downloading a different toolchain version
+# based on 'toolchain' directives in go.mod files.
+SET (ENV{GOTOOLCHAIN} "local")
+
 # Set GOBIN to direct the output somewhere else
 GET_FILENAME_COMPONENT (_outdir "${GOYACC_EXE}" PATH)
 SET (ENV{GOBIN} "${_outdir}")

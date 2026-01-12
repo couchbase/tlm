@@ -90,6 +90,12 @@ ENDIF ()
 # case it's set to a bad value in the environment)
 SET (ENV{GO111MODULE} "on")
 
+# Prevent Go from automatically downloading a different toolchain version
+# based on 'toolchain' directives in go.mod files. This ensures builds use
+# only the Go version specified in CMake, which is important for accurate
+# Black Duck reports and reproducible builds.
+SET (ENV{GOTOOLCHAIN} "local")
+
 # Use GOCACHE to tell Go where to store intermediate compilation artifacts.
 # It places things directly into this directory, so we append /cache.
 SET (ENV{GOCACHE} "${GO_BINARY_DIR}/cache")

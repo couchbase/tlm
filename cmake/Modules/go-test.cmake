@@ -62,6 +62,10 @@ ENDIF (CB_GO_RACE_DETECTOR)
 SET (ENV{GOROOT} "${GOROOT}")
 SET (GO_EXECUTABLE "${GOROOT}/bin/go")
 
+# Prevent Go from automatically downloading a different toolchain version
+# based on 'toolchain' directives in go.mod files.
+SET (ENV{GOTOOLCHAIN} "local")
+
 # For Go 1.5 or better, use -pkgdir to separate the compiled bits out
 # of the source directories - separate directories per Go version, to
 # prevent conflicts.
