@@ -438,7 +438,7 @@ IF (NOT CBDownloadDeps_INCLUDED)
       "https://packages.couchbase.com/couchbase-server/deps-unsupported"
       CACHE STRING "URL of third-party dependency repository")
   ENDIF ()
-  SET (GO_DOWNLOAD_REPO "https://storage.googleapis.com/golang"
+  SET (GO_DOWNLOAD_REPO "https://go.dev/dl"
     CACHE STRING "URL of Golang downloads repository")
 
   # Default download cache in user's home directory; may be overridden
