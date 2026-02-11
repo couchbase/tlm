@@ -92,6 +92,7 @@ if (NOT CouchbaseInstall_INCLUDED)
         set (_deps_dirs "${TLM_DEPS_DIR}/jemalloc.exploded/Release/bin")
       endif ()
       list (APPEND _deps_dirs
+        "${TLM_DEPS_DIR}/libsodium.exploded/bin"
         "${TLM_DEPS_DIR}/openssl.exploded/bin"
         "${TLM_DEPS_DIR}/snappy.exploded/bin"
         "${TLM_DEPS_DIR}/zstd-cpp.exploded/bin"
