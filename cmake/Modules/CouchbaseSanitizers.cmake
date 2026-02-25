@@ -251,4 +251,8 @@ endif()
 list(APPEND _all_sanitizer_env ${THREAD_SANITIZER_TEST_ENV}
                                ${ADDRESS_SANITIZER_TEST_ENV}
                                ${UNDEFINED_SANITIZER_TEST_ENV})
-set(GTEST_ALL_SANITIZERS_ENV "[==[${_all_sanitizer_env}]==]")
+# In the case you want to add more variables to the environment we'd like
+# to avoid stripping off the [==[]==]. Push another variable without the
+# wrapper to use directly in these cases
+set(ALL_SANITIZERS_ENV "${_all_sanitizer_env}")
+set(GTEST_ALL_SANITIZERS_ENV "[==[${ALL_SANITIZERS_ENV}]==]")
