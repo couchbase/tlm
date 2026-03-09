@@ -63,7 +63,6 @@ if (NOT DEFINED GRPC_FOUND)
              absl_throw_delegate
              absl_int128
              absl_log_severity
-             absl_bad_optional_access
              absl_spinlock_wait
              absl_base
              upb
