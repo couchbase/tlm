@@ -18,8 +18,9 @@
 # targets named eg. "faiss" and "faiss_c". As such, there is no need for
 # things like FAISS_LIBRARIES etc.
 #
-# We set the flag CB_USE_FAISS, which will be OFF on for non-Enterprise
-# builds.
+# We set the flag CB_USE_FAISS, which will be OFF on for non-Enterprise builds.
+# ENABLE_CUDA_GPU defaults to OFF. When enabled at build time, Couchbase Server
+# is compiled with CUDA GPU enabled FAISS libraries.
 
 SET (_use_faiss OFF)
 IF (NOT BUILD_ENTERPRISE)
@@ -51,6 +52,23 @@ ELSE ()
   ELSEIF (APPLE)
     INSTALL (FILES "${faiss_ROOT}/lib/libomp.dylib" DESTINATION lib)
   ENDIF ()
+
+  IF (ENABLE_CUDA_GPU AND UNIX AND NOT APPLE)
+    INSTALL (DIRECTORY "${faiss_ROOT}/lib/"
+      DESTINATION lib
+      FILES_MATCHING
+      PATTERN "libcudart.so*"
+      PATTERN "libcublas.so*"
+      PATTERN "libcublasLt.so*"
+    )
+  ENDIF ()
 ENDIF ()
 
 SET (CB_USE_FAISS ${_use_faiss} CACHE BOOL "Whether Faiss is available in the build" FORCE)
+
+# ENABLE_CUDA_GPU is set in CMakeLists.txt before deps are processed;
+# ensure it's OFF if FAISS itself isn't available
+IF (NOT _use_faiss AND ENABLE_CUDA_GPU)
+  MESSAGE (WARNING "ENABLE_CUDA_GPU is ON but FAISS is not available; ignoring")
+  SET (ENABLE_CUDA_GPU OFF CACHE BOOL "Whether CUDA GPU support is enabled" FORCE)
+ENDIF ()

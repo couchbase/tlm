@@ -147,6 +147,10 @@ IF (NOT DEFINED CB_DOWNLOAD_DEPS)
        CACHE BOOL "Download prebuilt dependencies by default")
 ENDIF (NOT DEFINED CB_DOWNLOAD_DEPS)
 
+# ENABLE_CUDA_GPU is OFF by default
+# This determines whether to use gpu enabled faiss libraries.
+OPTION (ENABLE_CUDA_GPU "Enable CUDA GPU support" OFF)
+
 # Have to add deps before any other part of the build tries to FIND
 # anything (other than FindCouchbaseGo, which is its own thing)
 ADD_SUBDIRECTORY(tlm/deps)
