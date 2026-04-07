@@ -23,7 +23,7 @@ DECLARE_DEP (boost VERSION 1.86.0-cb3 PLATFORMS linux macosx windows)
 DECLARE_DEP (cbpy V2 VERSION 3.14.2 BUILD 1 PLATFORMS linux macosx windows DESTINATION "${CMAKE_INSTALL_PREFIX}/lib/python/interp")
 DECLARE_DEP (curl V2 VERSION 8.19.0 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (double-conversion VERSION 3.3.0-cb1 PLATFORMS linux macosx windows)
-DECLARE_DEP (erlang V2 VERSION 28.3 BUILD 1 PLATFORMS linux macosx windows)
+DECLARE_DEP (erlang V2 VERSION 28.3 BUILD 2 PLATFORMS linux macosx windows)
 # CUDA GPU support is only available on Linux
 IF(ENABLE_CUDA_GPU AND NOT WIN32 AND NOT APPLE)
   SET(FAISS_BUILD "8_avx2-cuda-gpu")
