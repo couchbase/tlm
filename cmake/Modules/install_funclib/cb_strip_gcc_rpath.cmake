@@ -25,7 +25,7 @@ FUNCTION (_strip_gcc_rpath_real binary)
     ENDIF ()
 
     # Strip chrpath's header output
-    STRING (REGEX REPLACE "^.*RPATH=" "" current_rpath "${current_rpath}")
+    STRING (REGEX REPLACE "^.*R(UN)?PATH=" "" current_rpath "${current_rpath}")
 
     # Split RPATH into a list
     STRING (REPLACE ":" ";" current_rpath "${current_rpath}")
@@ -40,6 +40,9 @@ FUNCTION (_strip_gcc_rpath_real binary)
         RETURN ()
     ENDIF ()
 
+    # Convert back to colon-separated RPATH for chrpath
+    STRING (REPLACE ";" ":" current_rpath "${current_rpath}")
+
     # Set the new RPATH for the binary
     EXECUTE_PROCESS (
         COMMAND "${chrpath}" -r "${current_rpath}" "${binary}"
@@ -50,7 +53,6 @@ FUNCTION (_strip_gcc_rpath_real binary)
     IF (NOT result EQUAL 0)
         MESSAGE(FATAL_ERROR "Failed to set RPATH for ${binary}: ${error}")
     ELSE ()
-        STRING (REPLACE ";" ":" current_rpath "${current_rpath}")
         MESSAGE(STATUS "Set runtime path \"${binary}\" to \"${current_rpath}\"")
     ENDIF ()
 
