@@ -7,6 +7,8 @@ then
     docker rm -f $_old > /dev/zero
 fi
 
+IMAGE=$(curl -sfL "https://raw.githubusercontent.com/couchbase/build-infra/master/docker-stacks/cv/cv-jenkins-agents.yml" | yq --yaml-fix-merge-anchor-to-spec=true e ".services.glibc228_large.image")
+
 # You might want to limit the resources in your docker container.
 # ex:
 #   --cpus 6 \
@@ -22,5 +24,5 @@ docker run -d \
   --name builder \
   --restart unless-stopped \
   --entrypoint '' \
-  couchbasebuild/server-linux-cv:latest \
+  ${IMAGE} \
   tail -f /dev/null
