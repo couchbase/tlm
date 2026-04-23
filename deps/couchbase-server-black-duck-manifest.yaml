@@ -111,11 +111,11 @@ components:
     # CMakeLists.txt (using the _install_gcc_file macro)
     libgcc:
         bd-id: e12b8d28-cc06-4ffe-9393-21982b677571
-        versions: [ 13.2.0 ]
+        versions: [ 15.2.0 ]
         license-approved: true
     libstdc++6:
         bd-id: 00b4e8b2-e862-45eb-a30a-41f2e65dcdcf
-        versions: [ 13.2.0 ]
+        versions: [ 15.2.0 ]
         license-approved: true
 
 # newer cbdeps packages that have embedded

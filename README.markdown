@@ -31,8 +31,8 @@ With these scripts installed (in path) building the system is as simple as:
     bash-4.2$ pwd
     /home/trond/Couchbase
     bash-4.2$ ./Build.sh
-    -- The C compiler identification is GNU 13.2.0
-    -- The CXX compiler identification is GNU 13.2.0
+    -- The C compiler identification is GNU 15.2.0
+    -- The CXX compiler identification is GNU 15.2.0
     [... cut ...]
     -- Installing: /home/trond/Couchbase/install/bin/cbsummary
     -- Installing: /home/trond/Couchbase/install/lib/python/cbupgrade
@@ -50,7 +50,7 @@ machine and start configuring the node.
 ## Software requirements
 
 * C/C++ compiler; one of:
-  * gcc 13.2 or newer
+  * gcc 15.2 or newer
   * Visual Studio 2022 or newer
   * Xcode
   * clang
