@@ -511,6 +511,7 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     IF (NOT BUILD_ONLY_TOOLS)
 
       ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
+      ADD_SUBDIRECTORY(query-ui)
       ADD_SUBDIRECTORY(vbmap)
 
       IF (NOT BUILD_COLUMNAR)
@@ -536,6 +537,11 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       # Analytics Maven project
       IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/analytics/CMakeLists.txt")
         ADD_SUBDIRECTORY (analytics)
+      ENDIF ()
+
+      # Analytics UI
+      IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/cbas-ui")
+        ADD_SUBDIRECTORY (cbas-ui)
       ENDIF ()
     ENDIF()
 
