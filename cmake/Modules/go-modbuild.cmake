@@ -175,6 +175,15 @@ if (CB_ADDRESSSANITIZER)
   set(_go_asan_option "-asan")
 endif()
 
+set(_go_coverage)
+IF (CB_GO_CODE_COVERAGE)
+    set(_go_coverage "-covermode=atomic")
+    IF (CB_GO_CODE_COVERAGE_PACKAGES)
+        list(APPEND _go_coverage "-coverpkg=${CB_GO_CODE_COVERAGE_PACKAGES}")
+    ENDIF ()
+    list(APPEND _go_coverage "-cover")
+ENDIF ()
+
 # Execute "go build".
 EXECUTE_PROCESS (
   RESULT_VARIABLE _failure
@@ -183,7 +192,7 @@ EXECUTE_PROCESS (
   COMMAND "${GOEXE}" build ${_go_asan_option}
     "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}"
     "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}"
-    ${_go_debug} ${_go_race} ${_go_modfile}
+    ${_go_debug} ${_go_race} ${_go_coverage} ${_go_modfile}
     -mod=mod -modcacherw
     -o "${OUTPUT}"
     "${PACKAGE}")
@@ -192,13 +201,3 @@ IF (_failure)
   MESSAGE ("Error running go build for package ${PACKAGE}!\n${_output}")
   MESSAGE (FATAL_ERROR "Failed running go modules build for package ${PACKAGE}")
 ENDIF (_failure)
-
-IF (CB_GO_CODE_COVERAGE)
-  EXECUTE_PROCESS (
-    COMMAND "${GOEXE}" test
-      -c -cover -covermode=count -coverpkg ${PACKAGE}
-      "-tags=${GOTAGS}" "-gcflags=${GCFLAGS}"
-      "-asmflags=${ASMFLAGS}" "-ldflags=${LDFLAGS}"
-      ${_go_debug}
-      "${PACKAGE}")
-ENDIF ()
