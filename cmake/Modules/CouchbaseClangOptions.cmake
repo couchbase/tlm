@@ -15,6 +15,7 @@
 
 # Set the compiler flags for Clang C and C++ compilator
 include(CheckCXXCompilerFlag)
+include(CheckCCompilerFlag)
 
 # Add common flags for C and C++
 if (CB_CODE_COVERAGE)
@@ -58,8 +59,14 @@ if(HAVE_DEBUG_DEFAULT_VERSION)
     list(APPEND _cb_c_flags -fdebug-default-version=4)
 endif()
 
-list(APPEND _cb_c_flags -mavx2)
-list(APPEND _cb_c_flags -msse4.2)
+check_c_compiler_flag(-mavx2 HAVE_MAVX2)
+if (HAVE_MAVX2)
+    list(APPEND _cb_c_flags -mavx2)
+endif()
+check_c_compiler_flag(-msse4.2 HAVE_MSSE42)
+if (HAVE_MSSE42)
+    list(APPEND _cb_c_flags -msse4.2)
+endif()
 
 # Copy the flags over to C++
 set(_cb_cxx_flags ${_cb_c_flags})
