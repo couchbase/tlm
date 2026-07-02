@@ -7,7 +7,7 @@ set(_openssl_install "${CMAKE_CURRENT_BINARY_DIR}/unused")
 set(_orig_install_prefix "${CMAKE_INSTALL_PREFIX}")
 set(CMAKE_INSTALL_PREFIX "${_openssl_install}")
 
-declare_dep(openssl V2 VERSION 3.1.1 BUILD 1 PLATFORMS linux macosx windows)
+declare_dep(openssl V2 VERSION 3.5.6 BUILD 1 PLATFORMS linux macosx windows)
 
 set(CMAKE_INSTALL_PREFIX "${_orig_install_prefix}")
 
@@ -62,6 +62,7 @@ ExternalProject_Add(libevent
   GIT_TAG ${_git_rev}
 
   CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
+             -D CMAKE_POLICY_VERSION_MINIMUM:STRING=3.5
              -D CMAKE_BUILD_TYPE=${_libevent_build_type}
              -D EVENT__DISABLE_BENCHMARK=ON
              -D EVENT__DISABLE_REGRESS=ON
