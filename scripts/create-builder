@@ -7,6 +7,15 @@ then
     docker rm -f $_old > /dev/zero
 fi
 
+if ! yq --version 2>/dev/null | grep -qi mikefarah; then
+    echo "ERROR: 'yq' is not mikefarah/yq (the Go version) required by this script." >&2
+    echo "Install it with:" >&2
+    echo "  sudo wget -qO /usr/local/bin/yq https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64" >&2
+    echo "  sudo chmod +x /usr/local/bin/yq" >&2
+    echo "and make sure /usr/local/bin precedes /usr/bin on your PATH." >&2
+    exit 1
+fi
+
 IMAGE=$(curl -sfL "https://raw.githubusercontent.com/couchbase/build-infra/master/docker-stacks/cv/cv-jenkins-agents.yml" | yq --yaml-fix-merge-anchor-to-spec=true e ".services.glibc228_large.image")
 
 # You might want to limit the resources in your docker container.
