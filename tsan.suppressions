@@ -44,3 +44,13 @@ race:memcached_logger_emfile_test
 
 # MB-68561: There is a deadlock being reported from rollback and expiry
 deadlock:ExpiredItemsCallback::callback
+
+# MB-71608: TSan false positive in OpenSSL's internal lock-free hashtable
+# (the default-libctx algorithm/namemap cache), populated lazily on first
+# crypto use from multiple threads — here DRBG init via cb::crypto from
+# magma's flusher threads. OpenSSL #29212 resolved this "not a bug": the
+# structure is thread-safe, but our libcrypto (cbdep OpenSSL 3.5.6) is built
+# WITHOUT TSan instrumentation, so TSan can't see OpenSSL's internal
+# synchronization and mis-reports it. https://github.com/openssl/openssl/issues/29212
+race:ossl_ht_get
+race:ossl_ht_insert
