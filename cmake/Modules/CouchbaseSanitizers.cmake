@@ -233,22 +233,36 @@ endif()
 # generated at runtime and hence CMake cannot know the name of the test target
 # to set properties on.
 # Instead we must pass the environment variables which need to be set to
-# gtest_discover_tests() via the ENVIRONMENT property. However, due to CMake's
-# lack of proper list typing, we need to use a bracket argument to prevent the
-# ENVIRONMENT "sub-list" in the properties below being expanded
-# and treated as additional properties - e.g. without brackets, the PROPERTIES:
+# gtest_discover_tests() via the ENVIRONMENT property. gtest_discover_tests()'s
+# PROPERTIES argument is a flat list which it walks two elements at a time
+# (name, value); if our multi-entry env list is expanded unquoted it
+# contributes more than one element and desyncs that pairing - e.g. passing:
 #
-#   TIMEOUT 600 ENVIRONMENT TSAN_OPTIONS=xxx ASAN_OPTIONS=yyy
+#   PROPERTIES TIMEOUT 600 ENVIRONMENT ${GTEST_ALL_SANITIZERS_ENV})
 #
-# is incorrectly expanded three properties:
-#   TIMEOUT:600
-#   ENVIRONMENT:TSAN_OPTIONS=xxx
-#   ASAN_OPTIONS=yyy
+# where GTEST_ALL_SANITIZERS_ENV expands unquoted to two elements
+# TSAN_OPTIONS=xxx and ASAN_OPTIONS=yyy, is incorrectly parsed as three
+# properties (TIMEOUT:600, ENVIRONMENT:TSAN_OPTIONS=xxx,
+# ASAN_OPTIONS=yyy:<missing value>) instead of the two we need
+# (TIMEOUT:600, ENVIRONMENT:TSAN_OPTIONS=xxx;ASAN_OPTIONS=yyy).
 #
-# instead of what we need:
-#   TIMEOUT:600
-#   ENVIRONMENT:TSAN_OPTIONS=xxx;ASAN_OPTIONS=yyy
+# GTEST_ALL_SANITIZERS_ENV is therefore collapsed into a single scalar string
+# (semicolons preserved literally) below.
+#
+# Quoting the reference at the call site (ENVIRONMENT "${GTEST_ALL_SANITIZERS_ENV}")
+# is NOT sufficient on its own: gtest_discover_tests() (see CouchbaseGoogleTest.cmake)
+# forwards its own arguments onward via an unquoted ${ARGN}, which re-flattens any
+# value containing a literal ';' exactly the same way, silently dropping everything
+# after the first ';' from the PROPERTIES pairing. Callers MUST additionally wrap the
+# whole combined value in a real bracket argument, e.g.:
+#   ENVIRONMENT "[==[${GTEST_ALL_SANITIZERS_ENV}]==]") or
+#   ENVIRONMENT "[==[SOME_VAR=1;${GTEST_ALL_SANITIZERS_ENV}]==]")
+# (the outer double-quotes are required too, so ${GTEST_ALL_SANITIZERS_ENV} is still
+# expanded - a literal, unquoted [==[...]==] does not expand variables at all).
+# This keeps the value intact as a single opaque token through every unquoted-${ARGN}
+# hop between here and the generated CTestTestfile.cmake; CTest itself then splits
+# that string on ';' back into individual env var assignments when it runs the test.
 list(APPEND _all_sanitizer_env ${THREAD_SANITIZER_TEST_ENV}
                                ${ADDRESS_SANITIZER_TEST_ENV}
                                ${UNDEFINED_SANITIZER_TEST_ENV})
-set(GTEST_ALL_SANITIZERS_ENV "[==[${_all_sanitizer_env}]==]")
+set(GTEST_ALL_SANITIZERS_ENV "${_all_sanitizer_env}")
