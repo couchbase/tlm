@@ -76,6 +76,7 @@ endif()
 # 3) `make <project>-coverage-report-{html,xml}` to generate a report.
 #
 function(ENABLE_CODE_COVERAGE_REPORT)
+   cmake_parse_arguments(ARG "" "" "EXTRA_GCOVR_ARGS" ${ARGN})
    get_filename_component(_cc_project ${CMAKE_CURRENT_BINARY_DIR} NAME)
 
    if (CB_CODE_COVERAGE)
@@ -96,6 +97,7 @@ function(ENABLE_CODE_COVERAGE_REPORT)
             # the functions separate. The default "abort" fails for our fork
             # of folly/AtomicBitSet.h, which exists in folly and in kv_engine.
             --merge-mode-functions=separate
+            ${ARG_EXTRA_GCOVR_ARGS}
           )
           add_custom_target(${_cc_project}-coverage-report-html
                             COMMAND ${CMAKE_COMMAND} -E remove_directory coverage
