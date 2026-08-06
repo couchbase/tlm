@@ -17,6 +17,13 @@
 include(CheckCXXCompilerFlag)
 include(CheckCCompilerFlag)
 
+option(ENABLE_CLANG_TRACE "Enable Clang -ftime-trace profiling" OFF)
+
+if (ENABLE_CLANG_TRACE)
+    list(APPEND _cb_c_flags -ftime-trace)
+    message(STATUS "ClangBuildAnalyzer profiling enabled (-ftime-trace)")
+endif ()
+
 # Add common flags for C and C++
 if (CB_CODE_COVERAGE)
     list(APPEND _cb_c_flags
