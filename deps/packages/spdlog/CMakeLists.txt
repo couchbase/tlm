@@ -2,7 +2,7 @@ include(ExternalProject)
 
 _DETERMINE_CPU_COUNT(_parallelism)
 
-DECLARE_DEP (fmt VERSION 11.0.0-cb2 PLATFORMS linux macosx windows)
+DECLARE_DEP (fmt VERSION 12.2.0-cb1 PLATFORMS linux macosx windows)
 list(APPEND cache_args ${common_cmake_cache_args})
 
 # spdlog won't build with C++ 17
