@@ -144,6 +144,7 @@ if [ ! -f build.ninja ] || [ ${source_root}/CMakeLists.txt -nt build.ninja ]
 then
   cmake -G Ninja \
     ${macos_cross_compilation_flags} \
+    -D CMAKE_EXPORT_COMPILE_COMMANDS=ON \
     -D CMAKE_INSTALL_PREFIX=${install_root} \
     -D CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE-DebugOptimized} \
     -D CB_PARALLEL_LINK_JOBS=${cb_parallel_link_jobs} \
