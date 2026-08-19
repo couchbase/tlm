@@ -235,6 +235,14 @@ Or pass extra options to the convenience `Build.sh` script provided:
 
     trond@ok source> EXTRA_CMAKE_OPTIONS="-D KEY=VALYE" ./Build.sh
 
+## Dependency Maintenance
+
+Third-party dependencies are declared in
+[`deps/manifest.cmake`](deps/manifest.cmake). See
+[`deps/dependency-audit.md`](deps/dependency-audit.md) for a reusable prompt
+template to check whether pinned dependency versions are lagging behind
+upstream releases.
+
 ## Static Analysis
 
 There are pre-canned build rules to allow you to run the
