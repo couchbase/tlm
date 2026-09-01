@@ -200,7 +200,7 @@ _ADD_DEP_PACKAGE(libevent 2.1.13 release-2.1.13-stable-couchbase 4)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
-_ADD_DEP_PACKAGE(flatbuffers v1.10.0 v1.10.0 7)
+_ADD_DEP_PACKAGE(flatbuffers v25.12.19-2026-02-06-03fffb2 v25.12.19-2026-02-06-03fffb2 8)
 
 _ADD_DEP_PACKAGE(json 3.11.3 v3.11.3 2)
 _ADD_DEP_PACKAGE(boost 1.86.0 boost-1.86.0 3)

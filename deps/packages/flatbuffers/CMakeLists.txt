@@ -13,7 +13,6 @@ ExternalProject_Add(flatbuffers
   BUILD_IN_SOURCE 1
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
-  PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/macos_disable_werror.patch
   CMAKE_CACHE_ARGS -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_CURRENT_BINARY_DIR}/install
                    ${FLATBUFFERS_COMPILER_OPTIONS}
   CMAKE_ARGS -D FLATBUFFERS_BUILD_TESTS=OFF
