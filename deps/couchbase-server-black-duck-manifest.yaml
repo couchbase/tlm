@@ -92,7 +92,7 @@ components:
         versions: [ 1.2.13 ]
     zstd-cpp:
         bd-id: 54703c9e-7b84-44e9-9da0-64e3eb4788d5
-        versions: [ 1.5.0 ]
+        versions: [ 1.5.7 ]
 
     #
     # End classic cbdeps.
