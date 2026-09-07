@@ -119,6 +119,15 @@ accepts a limited set of options which may be used to "tweak" your build:
 * `CMAKE_BUILD_TYPE` By default it produce a `DebugOptimized` build; this may be
   set to `Debug`, `DebugOptimized`, `Release`, `RelWithDebInfo` or `MinSizeRel`.
 
+`Build.sh` also looks for a `~/.cbbuildrc` file. If present, each
+non-comment line is passed to CMake as a `-D` option (in addition to
+`EXTRA_CMAKE_OPTIONS`); for example a line containing `CB_UNITY_BUILD=OFF`
+is translated into `-D CB_UNITY_BUILD=OFF`. Lines starting with `#`
+(and blank lines) are ignored. This is handy for options you always want
+set regardless of the checkout you're building in. If `~/.cbbuildrc` is
+newer than the build directory, `Build.sh` forces a CMake reconfigure so
+the updated options take effect even if nothing else changed.
+
 ### Simple build (Windows)
 
 The build is not optimized for Windows, but the following steps should work. Start with the

@@ -133,6 +133,28 @@ fi
 mkdir -p ${build_root} || errexit "Failed to create build directory: ${build_root}"
 cd ${build_root} || errexit "Failed to enter the build directory: ${build_root}"
 
+# Allow the user to provide extra CMake options via ~/.cbbuildrc. Each
+# non-comment (non "#") line is passed to CMake as a "-D" option. If the
+# file is newer than CMakeCache.txt we force CMake to reconfigure so the
+# new options take effect.
+force_cmake_config=false
+cbbuildrc="${HOME}/.cbbuildrc"
+if [ -f "${cbbuildrc}" ]
+then
+  while IFS= read -r line || [ -n "${line}" ]
+  do
+    case "${line}" in
+      \#*|'') continue ;;
+    esac
+    EXTRA_CMAKE_OPTIONS="${EXTRA_CMAKE_OPTIONS} -D ${line}"
+  done < "${cbbuildrc}"
+
+  if [ "${cbbuildrc}" -nt "${build_root}/CMakeCache.txt" ]
+  then
+    force_cmake_config=true
+  fi
+fi
+
 if [ ${source_root}/tlm/CMakeLists.txt -nt ${source_root}/CMakeLists.txt ]
 then
   chmod u+w ${source_root}/CMakeLists.txt || errexit "Failed to make ${source_root}/CMakeLists.txt writable"
@@ -140,7 +162,7 @@ then
   chmod u-w ${source_root}/CMakeLists.txt || errexit "Failed to make ${source_root}/CMakeLists.txt non-writable"
 fi
 
-if [ ! -f build.ninja ] || [ ${source_root}/CMakeLists.txt -nt build.ninja ]
+if [ ! -f build.ninja ] || [ ${source_root}/CMakeLists.txt -nt build.ninja ] || ${force_cmake_config}
 then
   cmake -G Ninja \
     ${macos_cross_compilation_flags} \
