@@ -14,7 +14,9 @@
 #   limitations under the License.
 
 # Set the compiler flags for Clang C and C++ compilator
+include(CheckCCompilerFlag)
 include(CheckCXXCompilerFlag)
+include(PlatformIntrospection)
 
 # Add common flags for C and C++
 if (CB_CODE_COVERAGE)
@@ -58,8 +60,27 @@ if(HAVE_DEBUG_DEFAULT_VERSION)
     list(APPEND _cb_c_flags -fdebug-default-version=4)
 endif()
 
-list(APPEND _cb_c_flags -mavx2)
-list(APPEND _cb_c_flags -msse4.2)
+# AVX2 and SSE4.2 are a baseline requirement for our x86_64 builds - the
+# same instructions gcc gets via -march=x86-64-v3. The flags are however
+# meaningless on other architectures (arm64); Clang 17 silently ignored
+# them there, whereas Clang 21 errors out. Only pass them when the
+# compiler accepts them, but refuse to configure an x86_64 build without
+# them rather than silently producing binaries lacking those
+# instructions.
+# Note: on aarch64 Clang accepts -msse4.2. it is only -mavx2 which 
+# is rejected. Keep the two checks combined. Splitting this into a
+# test per flag would start passing -msse4.2 on arm64.
+check_c_compiler_flag(-mavx2 HAVE_MAVX2)
+check_c_compiler_flag(-msse4.2 HAVE_MSSE42)
+if (HAVE_MAVX2 AND HAVE_MSSE42)
+    list(APPEND _cb_c_flags -mavx2 -msse4.2)
+else()
+    _DETERMINE_ARCH(HOST_ARCH)
+    if (${HOST_ARCH} STREQUAL x86_64)
+        message(FATAL_ERROR "Can't build with clang on x86_64 without support for -mavx2 and -msse4.2")
+    endif()
+    message(STATUS "Not building with -mavx2 / -msse4.2 (unsupported on ${HOST_ARCH})")
+endif()
 
 # Copy the flags over to C++
 set(_cb_cxx_flags ${_cb_c_flags})
