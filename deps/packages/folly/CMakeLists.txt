@@ -10,14 +10,13 @@ set(_folly_deps_install "${CMAKE_CURRENT_BINARY_DIR}/dep-install")
 set(CMAKE_INSTALL_PREFIX "${_folly_deps_install}")
 
 DECLARE_DEP (boost VERSION 1.86.0-cb3 PLATFORMS linux macosx windows)
-DECLARE_DEP (double-conversion VERSION 3.3.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (fast_float V2 VERSION 7.0.0 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (fmt VERSION 12.2.0-cb1 PLATFORMS linux macosx windows)
 DECLARE_DEP (gflags V2 VERSION 2.2.2 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (glog VERSION v0.4.0-cb3 PLATFORMS linux macosx windows_msvc2015 windows)
-DECLARE_DEP (jemalloc V2 VERSION 5.3.0 BUILD 14 PLATFORMS linux macosx windows)
-DECLARE_DEP (libevent VERSION 2.1.11-cb12 PLATFORMS linux macosx windows)
-DECLARE_DEP (openssl V2 VERSION 3.1.4 BUILD 1 PLATFORMS linux macosx windows)
+DECLARE_DEP (jemalloc V2 VERSION 5.3.1 BUILD 15 PLATFORMS linux macosx windows)
+DECLARE_DEP (libevent VERSION 2.1.13-cb2 PLATFORMS linux macosx windows)
+DECLARE_DEP (openssl V2 VERSION 3.5.7 BUILD 1 PLATFORMS linux macosx windows)
 DECLARE_DEP (zlib V2 VERSION 1.2.13 BUILD 2 PLATFORMS linux macosx windows)
 
 # Restore the INSTALL_PREFIX
@@ -81,15 +80,19 @@ list(APPEND cache_args -DBUILD_SHARED_LIBS:STRING=OFF)
 list(APPEND cache_args -DCMAKE_PREFIX_PATH:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
 list(APPEND cache_args -DCMAKE_POLICY_VERSION_MINIMUM:STRING=3.5)
 
-# Boost settings
-list(APPEND cache_args -DBoost_ADDITIONAL_VERSIONS:STRING=1.86)
+# Boost settings.
+# Folly's CMakeLists.txt unconditionally sets CMP0167 NEW, so
+# find_package(Boost) is config-mode only and none of the FindBoost module
+# variables (BOOST_ROOT, Boost_NO_SYSTEM_PATHS, Boost_NO_BOOST_CMAKE,
+# Boost_ADDITIONAL_VERSIONS) have any effect. Point at the exploded boost
+# via Boost_ROOT, which config mode honours under CMP0074 NEW.
+list(APPEND cache_args -DBoost_ROOT:PATH=${CMAKE_CURRENT_BINARY_DIR}/boost.exploded)
 list(APPEND cache_args -DBoost_DETAILED_FAILURE_MSG:STRING=ON)
-list(APPEND cache_args -DBoost_USE_STATIC_LIBS:STRING=ON)
-list(APPEND cache_args -DBoost_NO_SYSTEM_PATHS:BOOL=ON)
-list(APPEND cache_args -DBoost_NO_BOOST_CMAKE:BOOL=ON)
-list(APPEND cache_args -DBOOST_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/boost.exploded)
-# Keep using FindBoost module (CMP0167 NEW would remove it)
-list(APPEND cache_args -DCMAKE_POLICY_DEFAULT_CMP0167:STRING=OLD)
+# Our boost cbdep only ships static libraries, but folly's BOOST_LINK_STATIC
+# defaults to "auto" which means OFF anywhere other than MSVC. That makes
+# Boost's own config files reject the static variant as unsuitable, so ask
+# for static explicitly.
+list(APPEND cache_args -DBOOST_LINK_STATIC:STRING=ON)
 
 # fmt settings
 list(APPEND cache_args -Dfmt_ROOT:STRING=${CMAKE_CURRENT_BINARY_DIR}/fmt.exploded)
