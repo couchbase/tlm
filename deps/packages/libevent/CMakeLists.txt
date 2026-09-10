@@ -71,6 +71,8 @@ ExternalProject_Add(libevent
 
   ${test_step}
 
+  CMAKE_CACHE_ARGS ${common_cmake_toolchain_args}
+
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND $(MAKE) install
           COMMAND ${CMAKE_COMMAND} -E remove -f <INSTALL_DIR>/lib/cmake

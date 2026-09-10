@@ -26,7 +26,8 @@ ExternalProject_Add(icu4c
   ${patch_command}
 
   CONFIGURE_COMMAND sudo "${CMAKE_CURRENT_SOURCE_DIR}/check_xlocale_h.sh"
-  COMMAND <SOURCE_DIR>/source/configure LDFLAGS=${ICU_LDFLAGS}
+  COMMAND ${common_compiler_env}
+          <SOURCE_DIR>/source/configure LDFLAGS=${ICU_LDFLAGS}
                                                   --prefix=<INSTALL_DIR>
                                                   --disable-extras
                                                   --disable-layout

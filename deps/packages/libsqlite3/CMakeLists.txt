@@ -15,7 +15,7 @@ ELSE (APPLE)
     GIT_TAG ${_git_rev}
 
     BUILD_IN_SOURCE 1
-    CONFIGURE_COMMAND <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>
+    CONFIGURE_COMMAND ${common_compiler_env} <SOURCE_DIR>/configure --prefix=<INSTALL_DIR>
 
     BUILD_COMMAND $(MAKE)
 

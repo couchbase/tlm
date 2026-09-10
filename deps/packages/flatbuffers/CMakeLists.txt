@@ -13,7 +13,8 @@ ExternalProject_Add(flatbuffers
   BUILD_IN_SOURCE 1
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
-  CMAKE_CACHE_ARGS -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_CURRENT_BINARY_DIR}/install
+  CMAKE_CACHE_ARGS ${common_cmake_cache_args}
+                   -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_CURRENT_BINARY_DIR}/install
                    ${FLATBUFFERS_COMPILER_OPTIONS}
   CMAKE_ARGS -D FLATBUFFERS_BUILD_TESTS=OFF
              -D CMAKE_BUILD_TYPE=Release
@@ -29,7 +30,8 @@ if (WIN32)
     GIT_REPOSITORY ${_git_repo}
     GIT_TAG ${_git_rev}
     BUILD_IN_SOURCE 1
-    CMAKE_CACHE_ARGS -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_CURRENT_BINARY_DIR}/install
+    CMAKE_CACHE_ARGS ${common_cmake_cache_args}
+                     -DCMAKE_INSTALL_PREFIX:STRING=${CMAKE_CURRENT_BINARY_DIR}/install
                      ${FLATBUFFERS_COMPILER_OPTIONS}
     CMAKE_ARGS -D FLATBUFFERS_BUILD_TESTS=OFF
              -D CMAKE_BUILD_TYPE=Debug

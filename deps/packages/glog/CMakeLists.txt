@@ -8,6 +8,8 @@ ExternalProject_Add(glog
              -D CMAKE_BUILD_TYPE=RelWithDebInfo
              -D BUILD_SHARED_LIBS=OFF
 
+  CMAKE_CACHE_ARGS ${common_cmake_toolchain_args}
+
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   INSTALL_COMMAND $(MAKE) install
 )
@@ -22,6 +24,7 @@ if (WIN32)
     CMAKE_ARGS -D CMAKE_INSTALL_PREFIX=${CMAKE_CURRENT_BINARY_DIR}/install
                -D CMAKE_BUILD_TYPE=Debug
                -D BUILD_SHARED_LIBS=OFF
+    CMAKE_CACHE_ARGS ${common_cmake_toolchain_args}
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
   )
   ExternalProject_Add_StepDependencies(glog download glog_WinDebugCRT)

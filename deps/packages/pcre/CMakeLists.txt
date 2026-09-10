@@ -15,7 +15,7 @@ ExternalProject_Add (${_dep_package}
   GIT_REPOSITORY ${_git_repo}
   GIT_TAG ${_git_rev}
   CONFIGURE_COMMAND "${CMAKE_COMMAND}" -E make_directory <INSTALL_DIR>
-  BUILD_COMMAND "${_build_script}" <INSTALL_DIR> ${PLATFORM} "${_dep_version}"
+  BUILD_COMMAND ${common_compiler_env} "${_build_script}" <INSTALL_DIR> ${PLATFORM} "${_dep_version}"
   BUILD_IN_SOURCE 1
   INSTALL_DIR "${_install_dir}"
   INSTALL_COMMAND "${CMAKE_COMMAND}" -E copy

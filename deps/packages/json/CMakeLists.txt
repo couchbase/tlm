@@ -16,6 +16,8 @@ ExternalProject_Add(json
                       -D JSON_MultipleHeaders=ON
                       -D JSON_SystemInclude=ON
 
+    CMAKE_CACHE_ARGS ${common_cmake_toolchain_args}
+
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
     INSTALL_COMMAND ${CMAKE_COMMAND} --build . --target install
                       COMMAND ${CMAKE_COMMAND} -E remove_directory <INSTALL_DIR>/lib/pkgconfig)

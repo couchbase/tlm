@@ -31,6 +31,8 @@ ExternalProject_Add(${_dep_package}
             -DCMAKE_POSITION_INDEPENDENT_CODE=ON
             -DZLIB_ROOT=${CMAKE_CURRENT_BINARY_DIR}/zlib.exploded
 
+        CMAKE_CACHE_ARGS ${common_cmake_toolchain_args}
+
         INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
         )
 

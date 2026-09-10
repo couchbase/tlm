@@ -15,6 +15,7 @@ ExternalProject_Add(fuzztest
         -D_git_repo=${_git_repo}
         -D_git_rev=${_git_rev}
         -DGTest_ROOT=${GTest_ROOT}
+    CMAKE_CACHE_ARGS ${common_cmake_toolchain_args}
     BUILD_COMMAND ${CMAKE_COMMAND} --build . --parallel ${_parallelism}
     INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install)
 

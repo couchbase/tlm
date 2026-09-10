@@ -11,6 +11,9 @@ ExternalProject_Add(double-conversion
              -D CMAKE_POSITION_INDEPENDENT_CODE=ON
              -D CMAKE_CXX_STANDARD=17
              -D CMAKE_BUILD_TYPE=RelWithDebInfo
+
+  CMAKE_CACHE_ARGS ${common_cmake_toolchain_args}
+
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
 )
 

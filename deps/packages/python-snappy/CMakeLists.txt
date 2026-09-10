@@ -17,12 +17,13 @@ ExternalProject_Add(python-snappy
 
   CONFIGURE_COMMAND "${CMAKE_COMMAND}" -E echo Configuring python-snappy...
 
-  BUILD_COMMAND python setup.py build build_ext
+  BUILD_COMMAND ${common_compiler_env} python setup.py build build_ext
                 -I "${_snappy_install}/include" -L "${_snappy_install}/lib"
   BUILD_IN_SOURCE 1
 
   INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/install
-  INSTALL_COMMAND python setup.py install --install-lib <INSTALL_DIR>/lib/python/pysnappy2
+  INSTALL_COMMAND ${common_compiler_env}
+                  python setup.py install --install-lib <INSTALL_DIR>/lib/python/pysnappy2
 
   COMMAND ${CMAKE_COMMAND} -E echo FILE "(COPY lib DESTINATION \"\${CMAKE_INSTALL_PREFIX}\")" > <INSTALL_DIR>/CMakeLists.txt
 )

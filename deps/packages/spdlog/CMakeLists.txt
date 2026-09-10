@@ -3,10 +3,8 @@ include(ExternalProject)
 _DETERMINE_CPU_COUNT(_parallelism)
 
 DECLARE_DEP (fmt VERSION 12.2.0-cb1 PLATFORMS linux macosx windows)
-list(APPEND cache_args ${common_cmake_cache_args})
-
-# spdlog won't build with C++ 17
-LIST(REMOVE_AT cache_args 0)
+# Toolchain args only - spdlog won't build at C++20.
+list(APPEND cache_args ${common_cmake_toolchain_args})
 
 # Given we build spdlog twice on Windows, define the common cmake
 # arguments once.

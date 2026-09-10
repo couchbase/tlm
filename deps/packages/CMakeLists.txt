@@ -175,13 +175,23 @@ endif(WIN32)
 
 # Common CMake cache arguments for all packages to set compiler and C++ standard version
 # to avoid duplicating this in each of the individual package CMakeLists.txt files.
-list(APPEND common_cmake_cache_args -DCMAKE_CXX_STANDARD:STRING=20)
-list(APPEND common_cmake_cache_args -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER})
-list(APPEND common_cmake_cache_args -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER})
+# Packages which pin their own C++ standard should use the toolchain args alone.
+list(APPEND common_cmake_toolchain_args -DCMAKE_C_COMPILER:FILEPATH=${CMAKE_C_COMPILER})
+list(APPEND common_cmake_toolchain_args -DCMAKE_CXX_COMPILER:FILEPATH=${CMAKE_CXX_COMPILER})
 
 if (APPLE)
     # As of Morpheus the oldest supported target is 13
-    list(APPEND common_cmake_cache_args -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13)
+    list(APPEND common_cmake_toolchain_args -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=13)
+endif ()
+
+list(APPEND common_cmake_cache_args -DCMAKE_CXX_STANDARD:STRING=20)
+list(APPEND common_cmake_cache_args ${common_cmake_toolchain_args})
+
+# ExternalProject steps which don't run CMake never see CMAKE_<LANG>_COMPILER,
+# so hand them the configured compiler through the environment instead.
+if (NOT WIN32)
+    set(common_compiler_env ${CMAKE_COMMAND} -E env
+        "CC=${CMAKE_C_COMPILER}" "CXX=${CMAKE_CXX_COMPILER}")
 endif ()
 
 ADD_CUSTOM_TARGET(build-and-cache-all)
