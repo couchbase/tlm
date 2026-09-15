@@ -229,7 +229,6 @@ _ADD_DEP_PACKAGE(numactl 2.0.11 v2.0.11 4)
 _ADD_DEP_PACKAGE(maven 3.5.2 master 7)
 _ADD_DEP_PACKAGE(openjdk-rt 1.8.0.171 UNUSED 2)
 
-_ADD_DEP_PACKAGE(double-conversion 3.3.0 v3.3.0 1)
 _ADD_DEP_PACKAGE(fmt 12.2.0 12.2.0 1)
 _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 3)
 _ADD_DEP_PACKAGE(benchmark v1.9.4 v1.9.4 1)

@@ -5,7 +5,6 @@
 #  FOLLY_INCLUDE_DIR, where to find the headers
 
 # Folly required dependancies:
-INCLUDE(FindCouchbaseDoubleConversion)
 INCLUDE(FindCouchbaseGflags)
 INCLUDE(FindCouchbaseGlog)
 INCLUDE(FindCouchbaseLibevent)
@@ -89,12 +88,7 @@ if (FOLLY_LIBRARIES_UNSANITIZED)
     MESSAGE(STATUS "       unsanitized libraries: ${FOLLY_LIBRARIES_UNSANITIZED}")
 endif ()
 
-if(NOT DOUBLE_CONVERSION_INCLUDE_DIR OR NOT DOUBLE_CONVERSION_LIBRARIES)
-    MESSAGE(FATAL_ERROR "Can't use Folly without double-conversion library")
-endif()
-
-set(folly_dependancies ${DOUBLE_CONVERSION_LIBRARIES}
-            ${GFLAGS_LIBRARIES}
+set(folly_dependancies ${GFLAGS_LIBRARIES}
             ${GLOG_LIBRARIES}
             ${CMAKE_DL_LIBS}
             Boost::context
@@ -152,7 +146,6 @@ target_link_libraries(Folly::headers INTERFACE fmt::fmt)
 target_include_directories(Folly::headers INTERFACE
         ${FOLLY_CONFIG_INCLUDE_DIR}
         ${Boost_INCLUDE_DIR}
-        ${DOUBLE_CONVERSION_INCLUDE_DIR}
         ${GLOG_INCLUDE_DIR})
 target_compile_definitions(Folly::headers INTERFACE -DFOLLY_CFG_NO_COROUTINES=1)
 
@@ -162,7 +155,6 @@ list(APPEND FOLLY_INCLUDE_DIR )
 set(FOLLY_INCLUDE_DIR
     ${FOLLY_CONFIG_INCLUDE_DIR}
     ${Boost_INCLUDE_DIR}
-    ${DOUBLE_CONVERSION_INCLUDE_DIR}
     ${GLOG_INCLUDE_DIR}
     CACHE STRING "Folly include directories" FORCE)
 
