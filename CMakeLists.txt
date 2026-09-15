@@ -406,7 +406,28 @@ INCLUDE (CouchbaseStandalonePackages)
 
 IF (BUILD_ENTERPRISE)
   IF (BUILD_COLUMNAR)
-    MESSAGE (STATUS "Building Enterprise Analytics ${COLUMNAR_PRODUCT_VERSION} (server version ${PRODUCT_VERSION})")
+    # Name the product from the manifest rather than here: one branch serves
+    # every columnar product.  Read into a local, because ns_server and voltron
+    # read PRODUCT_DISPLAY_NAME themselves and treat an absent one as fatal --
+    # defining it here, empty, would silently satisfy their guard.
+    #
+    # Unlike the compatibility versions this is only a banner, and the older
+    # columnar manifests do not declare it, so an absent annotation drops the
+    # name rather than failing the configure.
+    SET (_display_name "${PRODUCT_DISPLAY_NAME}")
+    IF (NOT _display_name)
+      EXECUTE_PROCESS (
+          COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_manifest_annot.py PRODUCT_DISPLAY_NAME
+          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+          OUTPUT_VARIABLE _display_name
+          ERROR_QUIET
+          OUTPUT_STRIP_TRAILING_WHITESPACE)
+    ENDIF ()
+    IF (_display_name)
+      MESSAGE (STATUS "Building ${_display_name} ${COLUMNAR_PRODUCT_VERSION} (server version ${PRODUCT_VERSION})")
+    ELSE ()
+      MESSAGE (STATUS "Building columnar ${COLUMNAR_PRODUCT_VERSION} (server version ${PRODUCT_VERSION})")
+    ENDIF ()
   ELSE ()
     MESSAGE (STATUS "Building Couchbase Server ${PRODUCT_VERSION} Enterprise Edition")
   ENDIF ()
