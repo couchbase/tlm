@@ -221,34 +221,45 @@ ELSE ()
     SET (BUILD_COLUMNAR 0)
   ENDIF ()
 ENDIF ()
-IF (BUILD_COLUMNAR AND NOT DEFINED COLUMNAR_COMPAT_VERSION)
-  SET (COLUMNAR_COMPAT_VERSION "0.0.0")
-  EXECUTE_PROCESS(
-      COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_manifest_annot.py COLUMNAR_COMPAT_VERSION
-      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-      OUTPUT_VARIABLE COLUMNAR_COMPAT_VERSION
-      ERROR_VARIABLE _err_output
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-  IF (_err_output)
-    MESSAGE (WARNING "${_err_output}")
-    # Just in case
-    SET (COLUMNAR_COMPAT_VERSION "0.0.0")
-  ENDIF ()
-ENDIF ()
-IF (BUILD_COLUMNAR AND NOT DEFINED MIN_SUPPORTED_COLUMNAR_COMPAT_VERSION)
-  SET (MIN_SUPPORTED_COLUMNAR_COMPAT_VERSION "0.0.0")
-  EXECUTE_PROCESS(
-      COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_manifest_annot.py MIN_SUPPORTED_COLUMNAR_COMPAT_VERSION
-      WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
-      OUTPUT_VARIABLE MIN_SUPPORTED_COLUMNAR_COMPAT_VERSION
-      ERROR_VARIABLE _err_output
-      OUTPUT_STRIP_TRAILING_WHITESPACE)
-  IF (_err_output)
-    MESSAGE (WARNING "${_err_output}")
-    # Just in case
-    SET (MIN_SUPPORTED_COLUMNAR_COMPAT_VERSION "0.0.0")
-  ENDIF ()
+IF (BUILD_COLUMNAR)
+  # Read the manifest annotation of the same name into <var>.  -D on the cmake
+  # command line wins; otherwise the annotation has to be declared.  There is
+  # no default, because a defaulted compatibility version is indistinguishable
+  # from a correct one downstream: every real version sorts above it, so a
+  # defaulted floor admits every node it was meant to refuse.
+  #
+  # get_manifest_annot.py prints nothing and reports no error for an annotation
+  # it cannot find, so an empty result is what has to be caught here.
+  MACRO (_get_columnar_version_annot _var)
+    IF (NOT DEFINED ${_var})
+      SET (_annot_value)
+      EXECUTE_PROCESS(
+          COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_manifest_annot.py ${_var}
+          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+          OUTPUT_VARIABLE _annot_value
+          ERROR_VARIABLE _err_output
+          OUTPUT_STRIP_TRAILING_WHITESPACE)
+      IF (_err_output)
+        MESSAGE (WARNING "${_err_output}")
+      ENDIF ()
+      IF (NOT _annot_value)
+        MESSAGE (FATAL_ERROR
+                 "${_var} is not declared in the manifest.  A columnar build "
+                 "takes its compatibility versions from manifest annotations; "
+                 "declare ${_var} on the manifest's build project, or pass "
+                 "-D${_var} for a build without a manifest.")
+      ENDIF ()
+      SET (${_var} "${_annot_value}")
+      # Echo it the way BUILD_COLUMNAR is echoed: these values reach customers
+      # inside a config profile, and nothing downstream prints them, so a wrong
+      # one is otherwise invisible in a build log.
+      MESSAGE (STATUS "${_var}=${${_var}}")
+    ENDIF ()
+  ENDMACRO ()
 
+  _get_columnar_version_annot (COLUMNAR_COMPAT_VERSION)
+  _get_columnar_version_annot (MIN_SUPPORTED_COLUMNAR_COMPAT_VERSION)
+  _get_columnar_version_annot (MIN_SUPPORTED_COLUMNAR_PROVISIONED_COMPAT_VERSION)
 ENDIF ()
 
 # If the user has synced any closed-source code or if we are BUILD_COLUMNAR, assume building EE
@@ -399,7 +410,28 @@ INCLUDE (CouchbaseStandalonePackages)
 
 IF (BUILD_ENTERPRISE)
   IF (BUILD_COLUMNAR)
-    MESSAGE (STATUS "Building Enterprise Analytics ${COLUMNAR_PRODUCT_VERSION} (server version ${PRODUCT_VERSION})")
+    # Name the product from the manifest rather than here: one branch serves
+    # every columnar product.  Read into a local, because ns_server and voltron
+    # read PRODUCT_DISPLAY_NAME themselves and treat an absent one as fatal --
+    # defining it here, empty, would silently satisfy their guard.
+    #
+    # Unlike the compatibility versions this is only a banner, and the older
+    # columnar manifests do not declare it, so an absent annotation drops the
+    # name rather than failing the configure.
+    SET (_display_name "${PRODUCT_DISPLAY_NAME}")
+    IF (NOT _display_name)
+      EXECUTE_PROCESS (
+          COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_manifest_annot.py PRODUCT_DISPLAY_NAME
+          WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+          OUTPUT_VARIABLE _display_name
+          ERROR_QUIET
+          OUTPUT_STRIP_TRAILING_WHITESPACE)
+    ENDIF ()
+    IF (_display_name)
+      MESSAGE (STATUS "Building ${_display_name} ${COLUMNAR_PRODUCT_VERSION} (server version ${PRODUCT_VERSION})")
+    ELSE ()
+      MESSAGE (STATUS "Building columnar ${COLUMNAR_PRODUCT_VERSION} (server version ${PRODUCT_VERSION})")
+    ENDIF ()
   ELSE ()
     MESSAGE (STATUS "Building Couchbase Server ${PRODUCT_VERSION} Enterprise Edition")
   ENDIF ()
