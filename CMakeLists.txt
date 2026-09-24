@@ -377,7 +377,7 @@ ENDIF ()
 #    the manifest. Default to '0.0.0-0000' if not found in manifest.
 IF (BUILD_COLUMNAR AND DEFINED COLUMNAR_PRODUCT_VERSION)
   SET (COLUMNAR_PRODUCT_VERSION "${COLUMNAR_PRODUCT_VERSION}" CACHE BOOL
-      "Enterprise Analytics product version with build number" FORCE)
+      "Columnar product version with build number" FORCE)
 ELSEIF (BUILD_COLUMNAR AND NOT DEFINED COLUMNAR_PRODUCT_VERSION)
   SET (_columnar_version)
   EXECUTE_PROCESS(
@@ -505,9 +505,24 @@ ENDIF()
 IF (NOT BUILD_ONLY_TOOLS AND NOT COUCHBASE_KV_COMMIT_VALIDATION)
   # Add appropriate license files to main build
   IF (BUILD_COLUMNAR)
-    ADD_SUBDIRECTORY(product-texts/enterprise-analytics)
+    # product-texts and product-metadata keep a directory per product key, so
+    # take the key from the manifest: one branch serves every columnar product.
+    # Manifests from before the annotation are all Enterprise Analytics.
+    EXECUTE_PROCESS (
+        COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_manifest_annot.py PRODUCT
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        OUTPUT_VARIABLE _columnar_product
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    IF (NOT _columnar_product)
+      SET (_columnar_product "enterprise-analytics")
+    ENDIF ()
+    IF (NOT EXISTS "${PROJECT_SOURCE_DIR}/product-texts/${_columnar_product}/CMakeLists.txt")
+      MESSAGE (FATAL_ERROR "product-texts has no directory for product '${_columnar_product}'")
+    ENDIF ()
+    ADD_SUBDIRECTORY(product-texts/${_columnar_product})
     STRING (REGEX MATCH "^[^-]+" _version "${COLUMNAR_PRODUCT_VERSION}")
-    SET (NOTICES_FILE "product-metadata/enterprise-analytics/blackduck/${_version}/notices.txt")
+    SET (NOTICES_FILE "product-metadata/${_columnar_product}/blackduck/${_version}/notices.txt")
   ELSE ()
     ADD_SUBDIRECTORY(product-texts/couchbase-server)
     STRING (REGEX MATCH "^[^-]+" _version "${PRODUCT_VERSION}")
