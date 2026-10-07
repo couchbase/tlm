@@ -276,6 +276,19 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     COMMENT "Ensuring all go.mod files are tidied"
     VERBATIM)
 
+  # Top-level target which depends on all individual -vulncheck targets.
+  # Each GoModBuild() target that is shipped gets a TARGET-vulncheck
+  # target which runs govulncheck in binary mode against the built
+  # executable, writing JSON results to
+  # ${CMAKE_BINARY_DIR}/govulncheck/TARGET.json. These are NOT part of
+  # the ALL target, as govulncheck requires network access to the
+  # vulnerability database, which changes daily.
+  ADD_CUSTOM_TARGET (go-vulncheck)
+  IF (NOT DEFINED GOVULNCHECK_VERSION)
+    SET (GOVULNCHECK_VERSION v1.7.0)
+  ENDIF ()
+  SET (GOVULNCHECK_OUTPUT_DIR "${CMAKE_BINARY_DIR}/govulncheck")
+
   # Adds a target named TARGET which (always) calls "go build PACKAGE".
   # This delegates incremental-build responsibilities to the go
   # compiler, which is generally what you want. This target presumes
@@ -488,6 +501,39 @@ IF (NOT FindCouchbaseGo_INCLUDED)
     ENDIF ()
     ADD_DEPENDENCIES (all-go ${Go_TARGET})
     MESSAGE (STATUS "Added Go Modules build target '${Go_TARGET}' using Go ${_gover}")
+
+    # Vulnerability scanning target for shipped executables
+    IF (NOT Go_UNSHIPPED)
+      SET (_govulncheck_exe "${CMAKE_BINARY_DIR}/tlm/govulncheck")
+      IF (WIN32)
+        SET (_govulncheck_exe "${_govulncheck_exe}.exe")
+      ENDIF ()
+      IF (NOT TARGET govulncheck)
+        GET_GOROOT (SUPPORTED_NEWER _vc_goroot _vc_gover govulncheck govulncheck-build 1)
+        ADD_CUSTOM_TARGET (govulncheck
+          COMMAND "${CMAKE_COMMAND}"
+            -D "GOVULNCHECK_EXE=${_govulncheck_exe}"
+            -D "GOVULNCHECK_VERSION=${GOVULNCHECK_VERSION}"
+            -D "GOROOT=${_vc_goroot}"
+            -D "GO_BINARY_DIR=${GO_BINARY_DIR}/go-${_vc_gover}"
+            -P "${TLM_MODULES_DIR}/go-buildvulncheck.cmake"
+          COMMENT "Building govulncheck ${GOVULNCHECK_VERSION} using Go ${_vc_gover}"
+          JOB_POOL golang_build_pool
+          VERBATIM)
+      ENDIF ()
+
+      ADD_CUSTOM_TARGET (${Go_TARGET}-vulncheck
+        COMMAND "${CMAKE_COMMAND}"
+          -D "GOVULNCHECK_EXE=${_govulncheck_exe}"
+          -D "GOROOT=${_goroot}"
+          -D "BINARY=${_exe}"
+          -D "OUTPUT=${GOVULNCHECK_OUTPUT_DIR}/${Go_TARGET}.json"
+          -P "${TLM_MODULES_DIR}/go-vulncheck.cmake"
+        COMMENT "Running govulncheck on ${Go_TARGET}"
+        VERBATIM)
+      ADD_DEPENDENCIES (${Go_TARGET}-vulncheck ${Go_TARGET} govulncheck)
+      ADD_DEPENDENCIES (go-vulncheck ${Go_TARGET}-vulncheck)
+    ENDIF ()
 
     # go-modbuild.cmake will produce the output executable in the
     # current binary dir. Install it from there if requested.
