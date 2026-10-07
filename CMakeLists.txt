@@ -494,7 +494,7 @@ IF (NOT BUILD_ONLY_TOOLS)
 
 ENDIF()
 
-IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
+IF (NOT COUCHBASE_KV_COMMIT_VALIDATION AND EXISTS "${PROJECT_SOURCE_DIR}/forestdb")
     ADD_SUBDIRECTORY(forestdb)
     SET (FORESTDB_INCLUDE_DIR "${ForestDB_SOURCE_DIR}/include")
     SET(FORESTDB_LIBRARY_DIR "${ForestDB_BINARY_DIR}")
@@ -552,13 +552,17 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     IF (NOT BUILD_ONLY_TOOLS)
       ADD_SUBDIRECTORY(couchbase-cli)
       ADD_SUBDIRECTORY(couchdb)
-      ADD_SUBDIRECTORY(geocouch)
+      IF (EXISTS "${PROJECT_SOURCE_DIR}/geocouch")
+        ADD_SUBDIRECTORY(geocouch)
+      ENDIF ()
     ENDIF()
 
     IF (NOT BUILD_ONLY_TOOLS)
 
       ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
-      ADD_SUBDIRECTORY(vbmap)
+      IF (EXISTS "${PROJECT_SOURCE_DIR}/vbmap")
+        ADD_SUBDIRECTORY(vbmap)
+      ENDIF ()
 
       IF (NOT BUILD_COLUMNAR)
         IF (BUILD_ENTERPRISE)
@@ -573,7 +577,9 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ENDIF()
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbauth)
 
-      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
+      IF (EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/docloader")
+        ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
+      ENDIF ()
 
       # Analytics CBGT connector
       IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbas")
