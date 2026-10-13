@@ -381,7 +381,7 @@ ENDIF ()
 #    the manifest. Default to '0.0.0-0000' if not found in manifest.
 IF (BUILD_COLUMNAR AND DEFINED COLUMNAR_PRODUCT_VERSION)
   SET (COLUMNAR_PRODUCT_VERSION "${COLUMNAR_PRODUCT_VERSION}" CACHE BOOL
-      "Enterprise Analytics product version with build number" FORCE)
+      "Columnar product version with build number" FORCE)
 ELSEIF (BUILD_COLUMNAR AND NOT DEFINED COLUMNAR_PRODUCT_VERSION)
   SET (_columnar_version)
   EXECUTE_PROCESS(
@@ -494,7 +494,7 @@ IF (NOT BUILD_ONLY_TOOLS)
 
 ENDIF()
 
-IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
+IF (NOT COUCHBASE_KV_COMMIT_VALIDATION AND EXISTS "${PROJECT_SOURCE_DIR}/forestdb")
     ADD_SUBDIRECTORY(forestdb)
     SET (FORESTDB_INCLUDE_DIR "${ForestDB_SOURCE_DIR}/include")
     SET(FORESTDB_LIBRARY_DIR "${ForestDB_BINARY_DIR}")
@@ -509,9 +509,24 @@ ENDIF()
 IF (NOT BUILD_ONLY_TOOLS AND NOT COUCHBASE_KV_COMMIT_VALIDATION)
   # Add appropriate license files to main build
   IF (BUILD_COLUMNAR)
-    ADD_SUBDIRECTORY(product-texts/enterprise-analytics)
+    # product-texts and product-metadata keep a directory per product key, so
+    # take the key from the manifest: one branch serves every columnar product.
+    # Manifests from before the annotation are all Enterprise Analytics.
+    EXECUTE_PROCESS (
+        COMMAND ${PYTHON_EXECUTABLE} tlm/scripts/get_manifest_annot.py PRODUCT
+        WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}
+        OUTPUT_VARIABLE _columnar_product
+        ERROR_QUIET
+        OUTPUT_STRIP_TRAILING_WHITESPACE)
+    IF (NOT _columnar_product)
+      SET (_columnar_product "enterprise-analytics")
+    ENDIF ()
+    IF (NOT EXISTS "${PROJECT_SOURCE_DIR}/product-texts/${_columnar_product}/CMakeLists.txt")
+      MESSAGE (FATAL_ERROR "product-texts has no directory for product '${_columnar_product}'")
+    ENDIF ()
+    ADD_SUBDIRECTORY(product-texts/${_columnar_product})
     STRING (REGEX MATCH "^[^-]+" _version "${COLUMNAR_PRODUCT_VERSION}")
-    SET (NOTICES_FILE "product-metadata/enterprise-analytics/blackduck/${_version}/notices.txt")
+    SET (NOTICES_FILE "product-metadata/${_columnar_product}/blackduck/${_version}/notices.txt")
   ELSE ()
     ADD_SUBDIRECTORY(product-texts/couchbase-server)
     STRING (REGEX MATCH "^[^-]+" _version "${PRODUCT_VERSION}")
@@ -537,13 +552,17 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     IF (NOT BUILD_ONLY_TOOLS)
       ADD_SUBDIRECTORY(couchbase-cli)
       ADD_SUBDIRECTORY(couchdb)
-      ADD_SUBDIRECTORY(geocouch)
+      IF (EXISTS "${PROJECT_SOURCE_DIR}/geocouch")
+        ADD_SUBDIRECTORY(geocouch)
+      ENDIF ()
     ENDIF()
 
     IF (NOT BUILD_ONLY_TOOLS)
 
       ADD_SUBDIRECTORY(ns_server ${CMAKE_CURRENT_SOURCE_DIR}/ns_server/build)
-      ADD_SUBDIRECTORY(vbmap)
+      IF (EXISTS "${PROJECT_SOURCE_DIR}/vbmap")
+        ADD_SUBDIRECTORY(vbmap)
+      ENDIF ()
 
       IF (NOT BUILD_COLUMNAR)
         IF (BUILD_ENTERPRISE)
@@ -558,7 +577,9 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ENDIF()
       ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbauth)
 
-      ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
+      IF (EXISTS "${PROJECT_SOURCE_DIR}/goproj/src/github.com/couchbase/docloader")
+        ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/docloader)
+      ENDIF ()
 
       # Analytics CBGT connector
       IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbas")
