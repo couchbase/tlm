@@ -58,9 +58,16 @@ if (NOT DEFINED FindCouchbaseCurl_INCLUDED)
 
     # Pretend we're using Modern CMake to find this thing.
     add_library(Curl::libcurl SHARED IMPORTED)
-    set_target_properties(Curl::libcurl
-        PROPERTIES
-        IMPORTED_LOCATION ${CURL_LIBRARIES})
+    if (WIN32)
+        # On Windows we link with the import library (libcurl_imp.lib)
+        set_target_properties(Curl::libcurl
+            PROPERTIES
+            IMPORTED_IMPLIB ${CURL_LIBRARIES})
+    else ()
+        set_target_properties(Curl::libcurl
+            PROPERTIES
+            IMPORTED_LOCATION ${CURL_LIBRARIES})
+    endif ()
     target_include_directories(Curl::libcurl INTERFACE
         ${CURL_INCLUDE_DIR})
 
