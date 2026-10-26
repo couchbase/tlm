@@ -66,13 +66,15 @@ if(HAVE_DEBUG_DEFAULT_VERSION)
     list(APPEND _cb_c_flags -fdebug-default-version=4)
 endif()
 
-check_c_compiler_flag(-mavx2 HAVE_MAVX2)
-if (HAVE_MAVX2)
-    list(APPEND _cb_c_flags -mavx2)
-endif()
-check_c_compiler_flag(-msse4.2 HAVE_MSSE42)
-if (HAVE_MSSE42)
-    list(APPEND _cb_c_flags -msse4.2)
+# These are x86 only. Some clang versions accept (and ignore) them on other
+# architectures so the compiler check passes, but newer versions reject them.
+if (CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|AMD64)$")
+    check_c_compiler_flag(-mavx2 HAVE_MAVX2)
+    check_c_compiler_flag(-msse4.2 HAVE_MSSE42)
+    if (NOT (HAVE_MAVX2 AND HAVE_MSSE42))
+        message(FATAL_ERROR "Can't build with clang on x86_64 without support for -mavx2 and -msse4.2")
+    endif()
+    list(APPEND _cb_c_flags -mavx2 -msse4.2)
 endif()
 
 # Copy the flags over to C++
