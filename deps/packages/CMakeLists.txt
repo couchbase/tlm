@@ -193,7 +193,7 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 _ADD_DEP_PACKAGE(snappy 1.1.10 1.1.10 2)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
-_ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 12)
+_ADD_DEP_PACKAGE(libevent 2.1.11 release-2.1.11-stable 13)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
@@ -223,7 +223,7 @@ _ADD_DEP_PACKAGE(glog v0.4.0 v0.4.0 3)
 _ADD_DEP_PACKAGE(benchmark v1.6.2 v1.6.2 2)
 _ADD_DEP_PACKAGE(googletest 1.14.0 1.14.0 1)
 
-_ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 19)
+_ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 21)
 _ADD_DEP_PACKAGE(grpc 1.59.3 v1.59.3 1)
 _ADD_DEP_PACKAGE(pcre 8.44 v8.44 3)
 _ADD_DEP_PACKAGE(opentelemetry-cpp v1.0.0-rc4.cb v1.0.0-rc4.cb 1)
