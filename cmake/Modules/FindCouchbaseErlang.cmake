@@ -12,6 +12,10 @@
 #  ERLSCRIPT_EXECUTABLE, The name of the escript interpreter
 #  ERLANG_INCLUDE_PATH, The directory for erl_nif.h
 
+IF (erlang IN_LIST CB_SKIP_DEPS)
+  RETURN ()
+ENDIF ()
+
 # Prevent double-definition if two projects use this script
 IF (NOT FindCouchbaseErlang_INCLUDED)
 

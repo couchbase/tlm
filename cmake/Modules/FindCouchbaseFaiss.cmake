@@ -29,6 +29,9 @@ IF (NOT BUILD_ENTERPRISE)
 ELSEIF (BUILD_ONLY_TOOLS)
   # No Faiss for tools-only builds
 
+ELSEIF (faiss IN_LIST CB_SKIP_DEPS)
+  # No Faiss when the package isn't downloaded
+
 ELSE ()
   SET (_use_faiss ON)
   FIND_PACKAGE (faiss CONFIG REQUIRED)

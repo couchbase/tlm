@@ -159,6 +159,11 @@ IF (NOT CBDownloadDeps_INCLUDED)
       MESSAGE (FATAL_ERROR "Cannot use ALLOW_MULTIPLE without DESTINATION")
     ENDIF ()
 
+    IF (name IN_LIST CB_SKIP_DEPS)
+      MESSAGE (STATUS "Dependency ${name} is in CB_SKIP_DEPS, skipping...")
+      RETURN ()
+    ENDIF ()
+
     # If this dependency has already been declared, skip it.
     # Exception: if we are building the cbdeps packages themselves then
     # allow duplicates; as each cbdep may need the package for it's

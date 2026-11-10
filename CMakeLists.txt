@@ -76,6 +76,12 @@ OPTION(COUCHBASE_KV_COMMIT_VALIDATION
        "Only build modules used by KV commit validation"
        OFF)
 
+# cbdeps packages not to download; the matching FindCouchbase modules are no-ops
+IF (COUCHBASE_KV_COMMIT_VALIDATION)
+  LIST (APPEND CB_SKIP_DEPS
+        erlang faiss fast_float grpc maven pcre prometheus protoc-gen-go)
+ENDIF ()
+
 # This option should be be enabled in the early phases of development
 # (e.g. when developing off master) and is used to guard additional
 # runtime checks which are desirable to report during testing; but

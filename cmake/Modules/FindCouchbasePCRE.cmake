@@ -11,6 +11,10 @@
 # Linking it to MSVC-compiled C/C++ code will likely not work due to the
 # absence of the .lib link library. See comment further down.
 
+IF (pcre IN_LIST CB_SKIP_DEPS)
+  RETURN ()
+ENDIF ()
+
 IF (NOT DEFINED PCRE_FOUND)
 
   # Supported platforms should only use the provided hints
