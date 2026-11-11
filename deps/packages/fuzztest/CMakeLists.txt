@@ -3,7 +3,7 @@ include(ExternalProject)
 
 _DETERMINE_CPU_COUNT(_parallelism)
 
-DECLARE_DEP(googletest VERSION 1.15.2-cb1 PLATFORMS linux macosx windows)
+DECLARE_DEP(googletest VERSION 1.17.0-cb1 PLATFORMS linux macosx windows)
 set(GTest_ROOT ${CMAKE_CURRENT_BINARY_DIR}/googletest.exploded)
 
 ExternalProject_Add(fuzztest
