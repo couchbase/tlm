@@ -192,7 +192,7 @@ ADD_CUSTOM_TARGET(build-and-cache-all)
 _ADD_DEP_PACKAGE(snappy 1.1.10 1.1.10 3)
 _ADD_DEP_PACKAGE(python-snappy c97d633 c97d633 2)
 _ADD_DEP_PACKAGE(icu4c 59.1 r59.1 4)
-_ADD_DEP_PACKAGE(libevent 2.1.13 release-2.1.13-stable 2)
+_ADD_DEP_PACKAGE(libevent 2.1.13 release-2.1.13-stable 5)
 
 _ADD_DEP_PACKAGE(libsqlite3 3.7.2 3.7.2 1)
 
@@ -222,7 +222,7 @@ _ADD_DEP_PACKAGE(benchmark v1.9.1 v1.9.1 1)
 _ADD_DEP_PACKAGE(googletest 1.15.2 1.15.2 1)
 _ADD_DEP_PACKAGE(fuzztest v2025-02-14 v2025-02-14-couchbase 2)
 
-_ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 3_avx2)
+_ADD_DEP_PACKAGE(folly v2022.05.23.00-couchbase v2022.05.23.00-couchbase 8_avx2)
 _ADD_DEP_PACKAGE(grpc 1.59.3 v1.59.3 1)
 _ADD_DEP_PACKAGE(pcre 8.44 v8.44 4)
 _ADD_DEP_PACKAGE(prometheus-cpp v1.2.1-couchbase v1.2.1-couchbase 1)
