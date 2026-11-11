@@ -1,0 +1,48 @@
+diff --git a/folly/container/detail/F14SetFallback.h b/folly/container/detail/F14SetFallback.h
+index 6ab1070ad..b411ecf63 100644
+--- a/folly/container/detail/F14SetFallback.h
++++ b/folly/container/detail/F14SetFallback.h
+@@ -252,7 +252,12 @@ class F14BasicSet
+     return contains(key) ? 1 : 0;
+   }
+
+-  using Super::find;
++  // Not "using Super::find": with C++20, libstdc++'s unordered_set has
++  // its own heterogeneous find(const K&) template, which is ambiguous
++  // with the one below (backport of upstream folly fix).
++  iterator find(key_type const& key) { return Super::find(key); }
++
++  const_iterator find(key_type const& key) const { return Super::find(key); }
+
+   template <typename K>
+   EnableHeterogeneousFind<K, iterator> find(K const& key) {
+diff --git a/folly/memory/detail/MallocImpl.cpp b/folly/memory/detail/MallocImpl.cpp
+index 5ef77e163..919f647ff 100644
+--- a/folly/memory/detail/MallocImpl.cpp
++++ b/folly/memory/detail/MallocImpl.cpp
+@@ -41,7 +41,10 @@ size_t (*xallocx)(void*, size_t, size_t, int) = nullptr;
+ size_t (*sallocx)(const void*, int) = nullptr;
+ void (*dallocx)(void*, int) = nullptr;
+ void (*sdallocx)(void*, size_t, int) = nullptr;
++// glibc 2.43+ declares free_aligned_sized() (C23) in <stdlib.h>
++#if !(defined(__GLIBC_PREREQ) && __GLIBC_PREREQ(2, 43))
+ void (*free_aligned_sized)(void*, size_t, size_t) = nullptr;
++#endif
+ size_t (*nallocx)(size_t, int) = nullptr;
+ int (*mallctl)(const char*, void*, size_t*, void*, size_t) = nullptr;
+ int (*mallctlnametomib)(const char*, size_t*, size_t*) = nullptr;
+diff --git a/folly/memory/detail/MallocImpl.h b/folly/memory/detail/MallocImpl.h
+index 91f41f57c..4dd9612b0 100644
+--- a/folly/memory/detail/MallocImpl.h
++++ b/folly/memory/detail/MallocImpl.h
+@@ -53,7 +53,10 @@ extern size_t (*xallocx)(void*, size_t, size_t, int);
+ extern size_t (*sallocx)(const void*, int);
+ extern void (*dallocx)(void*, int);
+ extern void (*sdallocx)(void*, size_t, int);
++// glibc 2.43+ declares free_aligned_sized() (C23) in <stdlib.h>
++#if !(defined(__GLIBC_PREREQ) && __GLIBC_PREREQ(2, 43))
+ extern void (*free_aligned_sized)(void*, size_t, size_t);
++#endif
+ extern size_t (*nallocx)(size_t, int);
+ extern int (*mallctl)(const char*, void*, size_t*, void*, size_t);
+ extern int (*mallctlnametomib)(const char*, size_t*, size_t*);

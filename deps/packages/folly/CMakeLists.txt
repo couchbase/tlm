@@ -60,6 +60,14 @@ if(UNIX)
 
    list(APPEND cache_args "-DCMAKE_CXX_FLAGS:STRING=${cxx_flags}")
 
+   # - F14's non-SIMD fallback (used on e.g. s390x) has an ambiguous
+   #   find() with libstdc++'s C++20 heterogeneous lookup (backported
+   #   from upstream folly).
+   # - glibc 2.43 declares free_aligned_sized() (C23), which clashes with
+   #   folly's function pointer of the same name in sanitizer builds.
+   set(folly_patch_command git apply
+           ${CMAKE_CURRENT_SOURCE_DIR}/folly-glibc243-f14fallback.patch)
+
 elseif(WIN32)
    # Glog/Gflags: we build statically, but headers default to dllimport.
    # MSVC2022 requires '/utf-8'.
