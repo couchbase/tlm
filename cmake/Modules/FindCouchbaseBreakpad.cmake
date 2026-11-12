@@ -24,7 +24,9 @@ if (NOT DEFINED BREAKPAD_FOUND)
     include(PlatformIntrospection)
 
     cb_get_supported_platform(_is_supported_platform)
-    if (_is_supported_platform AND NOT APPLE)
+    # Breakpad doesn't support macOS or the s390x architecture
+    if (_is_supported_platform AND NOT APPLE AND
+        NOT CMAKE_SYSTEM_PROCESSOR STREQUAL "s390x")
         string(TOLOWER ${CMAKE_SYSTEM_NAME} LCASE_SYSTEM)
 
         set(_breakpad_exploded ${CMAKE_BINARY_DIR}/tlm/deps/breakpad.exploded)
