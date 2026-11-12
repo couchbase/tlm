@@ -312,6 +312,23 @@ IF (NOT CBDownloadDeps_INCLUDED)
     # other downloaded deps (and probably should), but we have less control
     # other whether any parts of the build do naughty things like modify the
     # exploded dep contents.
+
+    # Use the Go installation specified by CB_GO_ROOT_OVERRIDE (if any)
+    # instead of downloading the requested version.
+    IF (CB_GO_ROOT_OVERRIDE)
+      IF (WIN32)
+        SET (_goexe "${CB_GO_ROOT_OVERRIDE}/bin/go.exe")
+      ELSE ()
+        SET (_goexe "${CB_GO_ROOT_OVERRIDE}/bin/go")
+      ENDIF ()
+      IF (NOT EXISTS "${_goexe}")
+        MESSAGE (FATAL_ERROR "CB_GO_ROOT_OVERRIDE is set to "
+          "${CB_GO_ROOT_OVERRIDE}, but ${_goexe} does not exist!")
+      ENDIF ()
+      SET (${var} "${CB_GO_ROOT_OVERRIDE}" PARENT_SCOPE)
+      RETURN ()
+    ENDIF ()
+
     _DETERMINE_ARCH (_arch)
     SET (_installdir "${CB_DOWNLOAD_DEPS_CACHE}/exploded/${_arch}")
     SET (_goroot "${_installdir}/go${GOVERSION}")
@@ -406,6 +423,11 @@ IF (NOT CBDownloadDeps_INCLUDED)
   ENDIF ()
   SET (GO_DOWNLOAD_REPO "https://go.dev/dl"
     CACHE STRING "URL of Golang downloads repository")
+  SET (CB_GO_ROOT_OVERRIDE "" CACHE PATH
+    "GOROOT of a Go installation to use for all Go builds instead of downloading the requested Go versions")
+  IF (CB_GO_ROOT_OVERRIDE)
+    MESSAGE (STATUS "Using Go from ${CB_GO_ROOT_OVERRIDE} for all Go builds")
+  ENDIF ()
 
   # Default download cache in user's home directory; may be overridden
   # by CB_DOWNLOAD_DEPS_CACHE environment variable or by
