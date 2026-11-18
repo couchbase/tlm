@@ -76,6 +76,10 @@ OPTION(COUCHBASE_KV_COMMIT_VALIDATION
        "Only build modules used by KV commit validation"
        OFF)
 
+OPTION(COUCHBASE_BUILD_ANALYTICS
+       "Build the Analytics service (cbas + analytics Maven project)"
+       ON)
+
 # cbdeps packages not to download; the matching FindCouchbase modules are no-ops
 IF (COUCHBASE_KV_COMMIT_VALIDATION)
   LIST (APPEND CB_SKIP_DEPS
@@ -228,6 +232,12 @@ ELSE ()
   ENDIF ()
 ENDIF ()
 IF (BUILD_COLUMNAR)
+  # Analytics is the product being built, so it cannot be skipped
+  IF (NOT COUCHBASE_BUILD_ANALYTICS)
+    MESSAGE (FATAL_ERROR
+             "COUCHBASE_BUILD_ANALYTICS cannot be OFF for a columnar build")
+  ENDIF ()
+
   # Read the manifest annotation of the same name into <var>.  -D on the cmake
   # command line wins; otherwise the annotation has to be declared.  There is
   # no default, because a defaulted compatibility version is indistinguishable
@@ -588,12 +598,12 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
       ENDIF ()
 
       # Analytics CBGT connector
-      IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbas")
+      IF (BUILD_ENTERPRISE AND COUCHBASE_BUILD_ANALYTICS AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/goproj/src/github.com/couchbase/cbas")
         ADD_SUBDIRECTORY(goproj/src/github.com/couchbase/cbas)
       ENDIF ()
 
       # Analytics Maven project
-      IF (BUILD_ENTERPRISE AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/analytics/CMakeLists.txt")
+      IF (BUILD_ENTERPRISE AND COUCHBASE_BUILD_ANALYTICS AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/analytics/CMakeLists.txt")
         ADD_SUBDIRECTORY (analytics)
       ENDIF ()
     ENDIF()
