@@ -80,6 +80,10 @@ OPTION(COUCHBASE_BUILD_ANALYTICS
        "Build the Analytics service (cbas + analytics Maven project)"
        ON)
 
+OPTION(COUCHBASE_BUILD_BACKUP
+       "Build the Backup service and tools (cbbs + backup)"
+       ON)
+
 # cbdeps packages not to download; the matching FindCouchbase modules are no-ops
 IF (COUCHBASE_KV_COMMIT_VALIDATION)
   LIST (APPEND CB_SKIP_DEPS
@@ -609,11 +613,11 @@ IF (NOT COUCHBASE_KV_COMMIT_VALIDATION)
     ENDIF()
 
     # many of the columnar dev tests depend on samples, which depends on backup
-    IF (EXISTS "${PROJECT_SOURCE_DIR}/backup" AND (NOT BUILD_COLUMNAR OR CB_DEVELOPER_BUILD))
+    IF (COUCHBASE_BUILD_BACKUP AND EXISTS "${PROJECT_SOURCE_DIR}/backup" AND (NOT BUILD_COLUMNAR OR CB_DEVELOPER_BUILD))
       ADD_SUBDIRECTORY(backup)
     ENDIF()
 
-    IF (BUILD_ENTERPRISE AND EXISTS "${PROJECT_SOURCE_DIR}/cbbs")
+    IF (BUILD_ENTERPRISE AND COUCHBASE_BUILD_BACKUP AND EXISTS "${PROJECT_SOURCE_DIR}/cbbs")
         ADD_SUBDIRECTORY(cbbs)
     ENDIF()
 
