@@ -34,7 +34,7 @@ list(APPEND _cb_c_flags -fvisibility=hidden -pthread)
 set(_cb_cxx_flags ${_cb_c_flags})
 
 # Add C specific options
-list(APPEND cb_c_flags
+list(APPEND _cb_c_flags
      -std=gnu99
      -Wall
      -pedantic
@@ -56,7 +56,7 @@ list(APPEND _cb_cxx_flags
 
 if (HAVE_MARCH_X86_64_V3)
    message(STATUS "Building with -march=x86-64-v3")
-   list(APPEND cb_c_flags -march=x86-64-v3)
+   list(APPEND _cb_c_flags -march=x86-64-v3)
    list(APPEND _cb_cxx_flags -march=x86-64-v3)
 else()
    _DETERMINE_ARCH(HOST_ARCH)
