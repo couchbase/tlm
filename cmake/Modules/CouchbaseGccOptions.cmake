@@ -63,6 +63,23 @@ else()
    if (${HOST_ARCH} STREQUAL x86_64)
       message(FATAL_ERROR "Can't build with g++ on x86_64 without support for -march=x86-64-v3")
    endif()
+
+   # RHEL 9 requires z14 as the minimum hardware level; match the
+   # defaults used by the RHEL 9 system compiler.
+   if (${HOST_ARCH} STREQUAL s390x)
+      check_c_compiler_flag(-march=z14 HAVE_MARCH_Z14)
+      if (NOT HAVE_MARCH_Z14)
+         message(FATAL_ERROR "Can't build with gcc on s390x without support for -march=z14")
+      endif()
+      list(APPEND _cb_c_flags -march=z14)
+      list(APPEND _cb_cxx_flags -march=z14)
+
+      check_c_compiler_flag(-mtune=z15 HAVE_MTUNE_Z15)
+      if (HAVE_MTUNE_Z15)
+         list(APPEND _cb_c_flags -mtune=z15)
+         list(APPEND _cb_cxx_flags -mtune=z15)
+      endif()
+   endif()
 endif()
 
 # Convert the list to a string
